@@ -1,43 +1,51 @@
 #!/usr/bin/env python 
 """
-This module subscribes to speed topic and sends SPs through serial comm
+This module subscribes to speed topic and sends SPs through serial port
 
-It invokes the class SerMesProtocol() to manage the serial port. When a
-new speed value is received, it is send to the external UGV using the
-serial protocol object.
+If run as main script, it invokes the class SerMesProtocol() to manage 
+the serial port. When a new speed value is received, it is send to the 
+external UGV using the serial protocol object.
+
+The move_robot function has a speed limit set to [89-165]. This limit is
+needed when the robot is connected to a DC source with a small intensity
+limit.
+If the program is run when the UGV is powered through a USB-B cable, it 
+will not be able to move, as the limit is too small to be able to move.
 """
-# Standar libraries
+# Standard libraries
 import glob
 import struct
 import sys
 import getopt
+# Math libraries
+import numpy as np
 # ROS libraries
 import rospy
 from geometry_msgs.msg import Twist
 # Local libraries
 from serialcomm import SerMesProtocol
-
-def main(argv):
-    # This exception prevents a crash when no device is connected to CPU        
-    try:
-        port = glob.glob('/dev/ttyUSB*')[0]
-    except IndexError:
-        print 'It was not detected any serial port connected to PC'		
-        sys.exit(1)  
-
-    baudrate = 57600
+    
+def connect_and_check(robot_id, port=None, baudrate=57600):
+    """Returns an instance of SerMesProtocol and checks it is ready."""
+    # This exception prevents a crash when no device is connected to CPU.
+    # If no port is specified, the function looks for the first available. 
+    if not port:
+        try:
+            port = glob.glob('/dev/ttyUSB*')[0]
+        except IndexError:
+            print 'It was not detected any serial port connected to PC'		
+            sys.exit()
     # Converts the Python id number to a C valid number, in unsigned byte
-    my_serial = SerMesProtocol(port=port, baudrate=baudrate)    
-    my_serial.SLAVE_ID = struct.pack( '>B',robot_id)
+    serialcomm = SerMesProtocol(port=port, baudrate=baudrate)    
+    serialcomm.SLAVE_ID = struct.pack( '>B',robot_id)
     # Checks connection to board. If broken, program exits
-    if my_serial.ready():
+    if serialcomm.ready():
         print "The board is ready"
-        listener()
+        listener(robot_id)
     else:
         print "The board is not ready"
         sys.exit()
-    # spin() simply keeps python from exiting until this node is stopped
-    rospy.spin()
+    return serialcomm        
         
 def listener(robot_id):
     """Creates a node and subscribes to its robot 'cmd_vel' topic.""" 
@@ -112,25 +120,38 @@ def get_2WD_speeds(vLinear, vRotation, minInput=-0.3, maxInput=0.3,
     v_clipped = np.clip([vR_raw, vL_raw], minAngular, maxAngular)
     v_num = (v_clipped - minAngular) * (maxOutput - minOutput)
     v_den = (maxAngular - minAngular)
+    import pdb; pdb.set_trace()
     v_scaled = minOutput + v_num // v_den
     v_R, v_L = v_scaled.astype(int)
     return v_R, v_L   
      
-
     
 if __name__ == "__main__":
-    # This exception forces to give the robot_id argument
+    #This exception forces to give the robot_id argument within run command.
+    help_msg = 'Usage: messenger.py [-r <robot_id>], [--robotid=<robot_id>]'
     try:
-        opts, args = getopt.getopt(sys.argv,"hr:",["robotid="])
+        opts, args = getopt.getopt(sys.argv[1:], "hr:", ["robotid="])
     except getopt.GetoptError:
-        print 'messenger.py -r <robot_id>'
-   for opt, arg in opts:
-      if opt == '-h':
-         print 'messenger.py -r, --robotid <robot_id>'
-         sys.exit()
-      elif opt in ("-r", "--robotid"):
-         robot_id = arg        
-    main(robot_id)
+        print help_msg
+        sys.exit()
+    if not opts:
+        print help_msg
+        sys.exit()
+    for opt, arg in opts:
+        if opt == '-h':
+            print help_msg
+            sys.exit()
+        elif opt in ("-r", "--robotid"):
+            robot_id = int(arg)
+    # Creates an instance of SerMesProtocol and checks connection to port
+    my_serial = connect_and_check(robot_id)
+    # Keeps python from exiting until this node is stopped
+    rospy.spin()   
+    
+    git filter-branch --force --index-filter \
+'git rm --cached --ignore-unmatch uvispace/path_tracker.py' \
+--prune-empty --tag-name-filter cat -- --all
     
     
     
+        

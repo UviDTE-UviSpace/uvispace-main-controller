@@ -1,9 +1,10 @@
 #!/usr/bin/env python
-"""Package intended communicate with UGVs and calculate paths."""
+"""This package communicates with user and sensors and find paths."""
 # ROS libraries
 import rospy
 from geometry_msgs.msg import Twist, Pose2D
-
+# Local libraries
+import path_tracker
 
 class RobotController(object):
     """
@@ -11,26 +12,32 @@ class RobotController(object):
     """
     def __init__(self, robot_id=1, port=None, baudrate=57600):
         self.robot_id = robot_id
-        self.port = port
-        self.baudrate = baudrate
         self.init = False
-        self.serial = None
-        self.comm_is_ready = False   
-        rospy.init_node('robot{}_controller'.format(robot_id),    
-                        anonymous=True)      
-    
-    def subscribe_to_navigation_topic(self):
-        """ Subscribes the node to a pose topic """
-        rospy.Subscriber('/robot_{}/pose2d'.format(self.robot_id), Pose2D, 
-					     self.new_pose, queue_size=1)
-    
-    def subscribe_to_goal_topic(self):
-        """ Subscribes the node to a goal topic """  
- 		rospy.Subscriber('/robot_{}/goal'.format(self.robot_id), Pose2D, 
-					     self.new_goal, queue_size=1)   
-					     
-    def publish_to_speeds_topic(self):					     
-					     
+        self.speeds = Twist()
+        self.QCTracker = path_tracker.QuadCurveTracker()
+        self.pub_cmd_vel = rospy.Publisher('/robot/cmd_vel', Twist, 
+					                       queue_size=1)
+		
+	def new_pose(self, msg):
+		if self.init == False:
+			self.QCTracker.append_point((msg.x, msg.y))  
+			self.init = True
+		rospy.loginfo('Location: %.3f, %.3f, %.3f' %(msg.x, msg.y, msg.theta))
+		vl, va = self.QCTracker.run(msg.x, msg.y, msg.theta)
+		rospy.loginfo('Speeds: %.3f, %.3f' %(vl, va))
+		self.twist.linear.x, self.twist.angular.z =  vl, va
+		self.pub_cmd_vel.publish(self.twist)
+
+	def new_goal(self, msg):
+		if self.init :
+			goal_point = (msg.x, msg.y)
+			# Adds the new goal to the current path, calculating all the 
+			# intermediate points and stacking them to the path array
+			self.QCTracker.append_point(goal_point)
+			rospy.loginfo('New goal: %.3f, %.3f' %(msg.x, msg.y))
+		else :
+			rospy.loginfo(' The system is not yet initialized. \
+			Waiting for a pose to be published ')
     
     
     

@@ -20,7 +20,6 @@ class SerMesProtocol(Serial):
     In master-slave data from the device is simply passed as return from 
     a function that exist for every command implemented.  
     """
-
     def __init__(self, port,
                        baudrate,
                        stopbits=1,
@@ -61,7 +60,7 @@ class SerMesProtocol(Serial):
         while not ready:     
             if count == tries:
                 print "Unable to connect. Exited after {} tries".format(tries)
-                sys.exit(1)
+                sys.exit()
             self.send_message(self.READY)     
             #wait for the response from the device
             fun_code = self.read_message()[1]
@@ -112,8 +111,6 @@ class SerMesProtocol(Serial):
             else:
                 return False 
 
-
-
     #-------------MASTER-SLAVE COMMANDS AUXILIAR FUNCTIONS-------------#
     def send_message(self, fun_code, data='', send_delay=0.01):
         """
@@ -143,8 +140,7 @@ class SerMesProtocol(Serial):
                                                     sent_data = data,
                                                     etx = self.ETX)
         #sends message.
-        print 'sending... {}'.format(" ".join( hex(ord(n)) for n in message ) )
-
+        print 'sending... {}'.format(" ".join(hex(ord(n)) for n in message ))
         self.write(message)
 
 
@@ -175,7 +171,7 @@ class SerMesProtocol(Serial):
         data = ""
         _STX = ""
         ### Reading of the auxiliary initial bytes ###
-        # The 1st byte of transmission corresponds to the 'start transmission'.
+        #The 1st byte of transmission corresponds to 'start transmission'.
         start_time = time.time()
         while _STX != self.STX :
             current_time = time.time()
@@ -192,8 +188,8 @@ class SerMesProtocol(Serial):
         # With the try-except statements, it is checked that there 
         # is data available in the 2 length bytes.
         try:
-            length = struct.unpack('>H',self.serial.read(2))[0]
-        except error:
+            length = struct.unpack('>H',self.read(2))[0]
+        except:
             print 'Received length bytes are not valid'
             return (Rx_OK, fun_code, length, data)
         print ('received data length = {}'.format(length) )
@@ -201,8 +197,8 @@ class SerMesProtocol(Serial):
         fun_code = self.read(1)      
         for i in range(length):
             data = '{previous_data} {new_data}'.format(previous_data = data, 
-                                                 new_data = self.serial.read(1))
-        # Reading of the last byte, corresponding to end of transmission check.
+                                               new_data = self.read(1))
+        #Reading of the last byte, corresponding to end of transmission check.
         _ETX = self.read(1)
         ##### Check of message validity #####
         if (_STX == self.STX) and (_ETX == self.ETX) \
