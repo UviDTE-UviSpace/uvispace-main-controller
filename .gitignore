@@ -1,9 +1,8 @@
 # Compiled python modules.
-*.pyc
+**.pyc
 
 # Backup gedit files.
-/*~
-*~
+**~
 
 # Setuptools distribution folder.
 /dist/
@@ -11,3 +10,6 @@
 # Python egg metadata, regenerated from source files by setuptools.
 /*.egg-info
 /*.egg
+
+# Other modules
+**path_tracker.py
