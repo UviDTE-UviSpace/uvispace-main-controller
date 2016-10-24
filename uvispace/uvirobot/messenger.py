@@ -147,11 +147,5 @@ if __name__ == "__main__":
     my_serial = connect_and_check(robot_id)
     # Keeps python from exiting until this node is stopped
     rospy.spin()   
-    
-    git filter-branch --force --index-filter \
-'git rm --cached --ignore-unmatch uvispace/path_tracker.py' \
---prune-empty --tag-name-filter cat -- --all
-    
-    
-    
-        
+
+
