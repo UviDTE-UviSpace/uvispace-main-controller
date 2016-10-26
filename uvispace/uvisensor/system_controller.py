@@ -33,7 +33,8 @@ class VideoSensorThread(threading.Thread, VideoSensor):
         self.running = True
         self.lock = threading.Lock()
         self.condition = threading.Condition()
-        self.stop_run()
+        self.lock.acquire()
+        #Starts the thread activity
         self.start()
         
     def kill(self):
@@ -223,15 +224,15 @@ class VideoSensorThread(threading.Thread, VideoSensor):
         return leaved_objects
 
 
-
 class SystemController():
     def __init__(self):
-        self.sensors_list = self._check_available_sensors()
-        self.connect_sensors(self.sensors_list)
+        self.sensors = {}
         self.targets = {}
+        self.sensors_list = self._check_available_sensors()
+        self.connect_sensors(self.sensors_list)    
         
     def _check_available_sensors(self):
-        """Checks if exist the configuration file of the video sensor."""
+        """Checks if exist a configuration file of the video sensor."""
         file_list = os.listdir(os.getcwd())
         sens_list = []
         for i in range(4):
@@ -244,7 +245,6 @@ class SystemController():
         return sens_list 
         
     def connect_sensors(self, sensors_list):
-        self.sensors = {}
         logging.info('Connecting video sensors...')
         for sensor_id in sensors_list:
             self.sensors[sensor_id] = VideoSensorThread('video_sensor%i.cfg' %(sensor_id), sensor_id) 
@@ -270,7 +270,8 @@ class SystemController():
     def start_sensors(self):
         logging.info('Starting video sensors...')
         for sensor in self.sensors.itervalues():
-            sensor.start_run()
+            #releases the lock object. Resets the lock to unlocked and returns
+            sensor.lock.release()
         logging.info('Started video sensors.')
         
     def stop_sensors(self):

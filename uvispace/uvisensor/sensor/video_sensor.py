@@ -34,7 +34,8 @@ class Client:
                 self.sock.connect((self.IP, self.PORT))
                 logging.info('Starting TCP client...')
                 logging.info('Connected with IP: %s and PORT: %s.' %(self.IP, self.PORT))
-                self.read() # Reads the welcome message
+                # Reads the welcome message
+                self.sock.recv(self.BUFFER_SIZE).strip() 
                 self.connected = True
             except:
                 self.connected = False
@@ -89,7 +90,7 @@ class Client:
 
     def write_register(self, reg, value):
         """Writes a register value."""
-        self.write('w,%s,%s\n' %(reg, value))
+        self.sock.send('w,%s,%s\n' %(reg, value))
         return self.read()
         
 
@@ -103,7 +104,6 @@ class Camera():
     
     def __init__(self):
         """Initializes the camera configuration values."""
-        self.load_camera_configuration()
         self.image = None
         self.image_gray = None
         # Size of image sensor
@@ -228,7 +228,6 @@ class Sensor():
     
     def __init__(self):
         """Initializes the sensor configuration values."""
-        self.load_sensor_configuration()
         self.trackers = {}
         
 #-------------------------------------------------------------------------------
@@ -510,7 +509,12 @@ def init_tracking(video_sensor, start_id=0):
     for i, box in enumerate(windows):
         target_id, box = i + start_id + 1, box * 2
         targets[str(target_id)] = [box[1,0] - box[0,0], box[1,1] - box[0,1]]
-        print video_sensor.configure_tracker(str(target_id), [box[0,0], box[0,1], box[1,0] - box[0,0], box[1,1] - box[0,1]])
+        print video_sensor.configure_tracker(str(target_id), 
+                                              [box[0,0], box[0,1], 
+                                               box[1,0] - box[0,0], 
+                                               box[1,1] - box[0,1]
+                                              ]
+                                             )
     video_sensor.read_register('al')
     return targets
 
