@@ -41,24 +41,33 @@ def connect_and_check(robot_id, port=None, baudrate=57600):
     # Checks connection to board. If broken, program exits
     if serialcomm.ready():
         print "The board is ready"
-        listener(robot_id)
     else:
         print "The board is not ready"
         sys.exit()
     return serialcomm        
         
-def listener(robot_id):
+def listener(robot_id, serial):
     """Creates a node and subscribes to its robot 'cmd_vel' topic.""" 
-    rospy.init_node('robot{}_messenger'.format(robot_id), anonymous=True)
+    try:
+        rospy.init_node('robot{}_messenger'.format(robot_id), anonymous=True)
+    except rospy.exceptions.ROSException:
+        pass
     rospy.Subscriber('/robot_{}/cmd_vel'.format(robot_id), Twist, 
-                     move_robot, queue_size=1)        
+                     move_robot, callback_args=serial, queue_size=1)    
+                     
+def messenger_shutdown():
+    """When messenger is shutdown, robot speeds must be set to 0."""
+    stop_speed = Twist()
+    stop_speed.linear.x = 0.0
+    stop_speed.angular.z = 0.0
+    move_robot(stop_speed, my_serial)
     
-def move_robot(data, rho=0.065, L=0.150):
+def move_robot(data, serial, rho=0.065, L=0.150):
     """Converts Twist msg into 2WD value and send it through port."""
     v_RightWheel, v_LeftWheel = get_2WD_speeds(data.linear.x, data.angular.z)
     rospy.loginfo('I am sending R: {} L: {}'.format(v_RightWheel,
                                                       v_LeftWheel) )
-    my_serial.move([v_RightWheel, v_LeftWheel])
+    serial.move([v_RightWheel, v_LeftWheel])
             
 def get_2WD_speeds(vLinear, vRotation, minInput=-0.3, maxInput=0.3, 
                     minOutput=89, maxOutput=165, rho=0.065, L=0.150):
@@ -120,7 +129,6 @@ def get_2WD_speeds(vLinear, vRotation, minInput=-0.3, maxInput=0.3,
     v_clipped = np.clip([vR_raw, vL_raw], minAngular, maxAngular)
     v_num = (v_clipped - minAngular) * (maxOutput - minOutput)
     v_den = (maxAngular - minAngular)
-    import pdb; pdb.set_trace()
     v_scaled = minOutput + v_num // v_den
     v_R, v_L = v_scaled.astype(int)
     return v_R, v_L   
@@ -128,6 +136,7 @@ def get_2WD_speeds(vLinear, vRotation, minInput=-0.3, maxInput=0.3,
     
 if __name__ == "__main__":
     #This exception forces to give the robot_id argument within run command.
+    #import pdb; pdb.set_trace()
     help_msg = 'Usage: messenger.py [-r <robot_id>], [--robotid=<robot_id>]'
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hr:", ["robotid="])
@@ -145,6 +154,8 @@ if __name__ == "__main__":
             robot_id = int(arg)
     # Creates an instance of SerMesProtocol and checks connection to port
     my_serial = connect_and_check(robot_id)
+    listener(robot_id, my_serial)
+    rospy.on_shutdown(messenger_shutdown)    
     # Keeps python from exiting until this node is stopped
     rospy.spin()   
 
