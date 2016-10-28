@@ -17,8 +17,6 @@ import glob
 import struct
 import sys
 import getopt
-# Math libraries
-import numpy as np
 # ROS libraries
 import rospy
 from geometry_msgs.msg import Twist
@@ -78,75 +76,10 @@ def move_robot(data, serial):
     rospy.loginfo('I am sending R: {} L: {}'.format(v_RightWheel,
                                                       v_LeftWheel) )
     serial.move([v_RightWheel, v_LeftWheel])
-            
-#def get_2WD_speeds(vLinear, vRotation, minInput=-0.3, maxInput=0.3, 
-#                    minOutput=89, maxOutput=165, rho=0.065, L=0.150):
-#    """
-#    Obtains two speeds components, one for each side of the vehicle. It
-#    calculates the resulting value according to the output required 
-#    scale. This calculus responds to the dynamics system proposed on the 
-#    paper: http://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=5674957
 
-#    Parameters
-#    ----------
-#    vLinear : int or float
-#        desired linear speed of the vehicle.
 
-#    vRotation : int or float
-#        desired rotatory speed of the vehicle.
-
-#    minInput : int or float
-#        input value for reverse linear direction at max speed.
-
-#    maxInput : int or float
-#        input value for direct linear direction at max speed.
-
-#    minOutput : int or float
-#        output value for minimum set point sent to the vehicle.
-
-#    maxOutput : int or float
-#        output value for maximum set point sent to the vehicle. 
-
-#    rho : float 
-#        Parameter of the dynamic model, which represents the vehicle's 
-#        wheels diameter, in meters.
-
-#    L : float
-#        Parameter of the dynamic model, which represents the distance 
-#        between the driving wheels of the vehicle.
-
-#    Returns
-#    -------
-#    v_R : 0 to 255 int
-#        output value for the right wheel.
-#        0 corresponds to max speed at reverse direction.
-#        255 corresponds to max speed at direct direction.
-#        127 corresponds to null speed.
-
-#    v_L : 0 to 255 int
-#        output value for the left wheel.
-#    """
-#    # Conversion of the linear speed range to the wheels angular speed.
-#    maxAngular = maxInput / rho
-#    minAngular = minInput / rho
-#    # Both terms are previosly calculated to reduce redundant operations.
-#    term1 = (1 / rho ) * vLinear
-#    term2 = (2 * rho * vRotation) / L
-#    # Calculates non-scaled raw values of the speeds.
-#    vR_raw = term1 + term2
-#    vL_raw = term1 - term2
-#    # Clips and scales the speed values to minOutput and maxOutput.
-#    v_clipped = np.clip([vR_raw, vL_raw], minAngular, maxAngular)
-#    v_num = (v_clipped - minAngular) * (maxOutput - minOutput)
-#    v_den = (maxAngular - minAngular)
-#    v_scaled = minOutput + v_num // v_den
-#    v_R, v_L = v_scaled.astype(int)
-#    return v_R, v_L   
-     
-    
 if __name__ == "__main__":
     #This exception forces to give the robot_id argument within run command.
-    #import pdb; pdb.set_trace()
     help_msg = 'Usage: messenger.py [-r <robot_id>], [--robotid=<robot_id>]'
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hr:", ["robotid="])
