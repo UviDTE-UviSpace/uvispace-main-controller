@@ -24,11 +24,14 @@ import rospy
 from geometry_msgs.msg import Twist
 # Local libraries
 from serialcomm import SerMesProtocol
+from speedtransform import Speed
     
 def connect_and_check(robot_id, port=None, baudrate=57600):
-    """Returns an instance of SerMesProtocol and checks it is ready."""
-    # This exception prevents a crash when no device is connected to CPU.
-    # If no port is specified, the function looks for the first available. 
+    """Returns an instance of SerMesProtocol and checks it is ready.
+    
+     If no port is specified, the function takes the first available.
+     """
+    # This exception prevents a crash when no device is connected to CPU.   
     if not port:
         try:
             port = glob.glob('/dev/ttyUSB*')[0]
@@ -37,7 +40,7 @@ def connect_and_check(robot_id, port=None, baudrate=57600):
             sys.exit()
     # Converts the Python id number to a C valid number, in unsigned byte
     serialcomm = SerMesProtocol(port=port, baudrate=baudrate)    
-    serialcomm.SLAVE_ID = struct.pack( '>B',robot_id)
+    serialcomm.SLAVE_ID = struct.pack('>B', robot_id)
     # Checks connection to board. If broken, program exits
     if serialcomm.ready():
         print "The board is ready"
@@ -46,14 +49,15 @@ def connect_and_check(robot_id, port=None, baudrate=57600):
         sys.exit()
     return serialcomm        
         
-def listener(robot_id, serial):
+def listener(robot_id, robot_speed, serial):
     """Creates a node and subscribes to its robot 'cmd_vel' topic.""" 
     try:
         rospy.init_node('robot{}_messenger'.format(robot_id), anonymous=True)
     except rospy.exceptions.ROSException:
         pass
     rospy.Subscriber('/robot_{}/cmd_vel'.format(robot_id), Twist, 
-                     move_robot, callback_args=serial, queue_size=1)    
+                     move_robot, callback_args=serial,
+                     queue_size=1)    
                      
 def messenger_shutdown():
     """When messenger is shutdown, robot speeds must be set to 0."""
@@ -62,76 +66,82 @@ def messenger_shutdown():
     stop_speed.angular.z = 0.0
     move_robot(stop_speed, my_serial)
     
-def move_robot(data, serial, rho=0.065, L=0.150):
+def move_robot(data, serial):
     """Converts Twist msg into 2WD value and send it through port."""
-    v_RightWheel, v_LeftWheel = get_2WD_speeds(data.linear.x, data.angular.z)
+#    serial = args[0]
+#    robot_speed = args[1]
+    linear = data.linear.x
+    angular = data.angular.z
+    robot_speed.set_speed([linear, angular], 'linear_angular')
+    robot_speed.get_2WD_speeds()
+    v_RightWheel, v_LeftWheel = robot_speed.nonlinear_transform()
     rospy.loginfo('I am sending R: {} L: {}'.format(v_RightWheel,
                                                       v_LeftWheel) )
     serial.move([v_RightWheel, v_LeftWheel])
             
-def get_2WD_speeds(vLinear, vRotation, minInput=-0.3, maxInput=0.3, 
-                    minOutput=89, maxOutput=165, rho=0.065, L=0.150):
-    """
-    Obtains two speeds components, one for each side of the vehicle. It
-    calculates the resulting value according to the output required 
-    scale. This calculus responds to the dynamics system proposed on the 
-    paper: http://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=5674957
+#def get_2WD_speeds(vLinear, vRotation, minInput=-0.3, maxInput=0.3, 
+#                    minOutput=89, maxOutput=165, rho=0.065, L=0.150):
+#    """
+#    Obtains two speeds components, one for each side of the vehicle. It
+#    calculates the resulting value according to the output required 
+#    scale. This calculus responds to the dynamics system proposed on the 
+#    paper: http://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=5674957
 
-    Parameters
-    ----------
-    vLinear : int or float
-        desired linear speed of the vehicle.
+#    Parameters
+#    ----------
+#    vLinear : int or float
+#        desired linear speed of the vehicle.
 
-    vRotation : int or float
-        desired rotatory speed of the vehicle.
+#    vRotation : int or float
+#        desired rotatory speed of the vehicle.
 
-    minInput : int or float
-        input value for reverse linear direction at max speed.
+#    minInput : int or float
+#        input value for reverse linear direction at max speed.
 
-    maxInput : int or float
-        input value for direct linear direction at max speed.
+#    maxInput : int or float
+#        input value for direct linear direction at max speed.
 
-    minOutput : int or float
-        output value for minimum set point sent to the vehicle.
+#    minOutput : int or float
+#        output value for minimum set point sent to the vehicle.
 
-    maxOutput : int or float
-        output value for maximum set point sent to the vehicle. 
+#    maxOutput : int or float
+#        output value for maximum set point sent to the vehicle. 
 
-    rho : float 
-        Parameter of the dynamic model, which represents the vehicle's 
-        wheels diameter, in meters.
+#    rho : float 
+#        Parameter of the dynamic model, which represents the vehicle's 
+#        wheels diameter, in meters.
 
-    L : float
-        Parameter of the dynamic model, which represents the distance 
-        between the driving wheels of the vehicle.
+#    L : float
+#        Parameter of the dynamic model, which represents the distance 
+#        between the driving wheels of the vehicle.
 
-    Returns
-    -------
-    v_R : 0 to 255 int
-        output value for the right wheel.
-        0 corresponds to max speed at reverse direction.
-        255 corresponds to max speed at direct direction.
-        127 corresponds to null speed.
+#    Returns
+#    -------
+#    v_R : 0 to 255 int
+#        output value for the right wheel.
+#        0 corresponds to max speed at reverse direction.
+#        255 corresponds to max speed at direct direction.
+#        127 corresponds to null speed.
 
-    v_L : 0 to 255 int
-        output value for the left wheel.
-    """
-    # Conversion of the linear speed range to the wheels angular speed.
-    maxAngular = maxInput / rho
-    minAngular = minInput / rho
-    # Both terms are previosly calculated to reduce redundant operations.
-    term1 = (1 / rho ) * vLinear
-    term2 = (2 * rho * vRotation) / L
-    # Calculates non-scaled raw values of the speeds.
-    vR_raw = term1 + term2
-    vL_raw = term1 - term2
-    # Clips and scales the speed values to minOutput and maxOutput.
-    v_clipped = np.clip([vR_raw, vL_raw], minAngular, maxAngular)
-    v_num = (v_clipped - minAngular) * (maxOutput - minOutput)
-    v_den = (maxAngular - minAngular)
-    v_scaled = minOutput + v_num // v_den
-    v_R, v_L = v_scaled.astype(int)
-    return v_R, v_L   
+#    v_L : 0 to 255 int
+#        output value for the left wheel.
+#    """
+#    # Conversion of the linear speed range to the wheels angular speed.
+#    maxAngular = maxInput / rho
+#    minAngular = minInput / rho
+#    # Both terms are previosly calculated to reduce redundant operations.
+#    term1 = (1 / rho ) * vLinear
+#    term2 = (2 * rho * vRotation) / L
+#    # Calculates non-scaled raw values of the speeds.
+#    vR_raw = term1 + term2
+#    vL_raw = term1 - term2
+#    # Clips and scales the speed values to minOutput and maxOutput.
+#    v_clipped = np.clip([vR_raw, vL_raw], minAngular, maxAngular)
+#    v_num = (v_clipped - minAngular) * (maxOutput - minOutput)
+#    v_den = (maxAngular - minAngular)
+#    v_scaled = minOutput + v_num // v_den
+#    v_R, v_L = v_scaled.astype(int)
+#    return v_R, v_L   
      
     
 if __name__ == "__main__":
@@ -154,7 +164,8 @@ if __name__ == "__main__":
             robot_id = int(arg)
     # Creates an instance of SerMesProtocol and checks connection to port
     my_serial = connect_and_check(robot_id)
-    listener(robot_id, my_serial)
+    robot_speed = Speed([0,0])
+    listener(robot_id, robot_speed, my_serial)
     rospy.on_shutdown(messenger_shutdown)    
     # Keeps python from exiting until this node is stopped
     rospy.spin()   
