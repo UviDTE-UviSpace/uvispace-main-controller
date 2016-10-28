@@ -174,8 +174,8 @@ class Speed(object):
         speed[speed>zero_value] = (num1[speed>zero_value] / den1) + min_B
         #Operations applied to values smaller than zero_value
         speed[speed<zero_value] = (num2[speed<zero_value] / den2) + min_A
-        #Zero values are turned to 0
-        speed[speed==zero_value] = (max_A + min_B) / 2
+        #Zero values are turned to 127
+        speed[speed==zero_value] = 127
         self._speed = speed
         self._scale = 'non-linear'
         return self._speed
