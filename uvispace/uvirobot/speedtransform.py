@@ -226,7 +226,7 @@ class Speed(object):
             
         Returns
         -------
-        self._speed : 2-element np.array()
+        self._speed : 2-element np.array() [V_Right, V_Left]
             output value for the right and left wheels. Maximum and 
             minimum limits are modified proportionally to rho.
         """
