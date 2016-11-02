@@ -1,4 +1,5 @@
 #!/usr/bin/env python 
+import sys
 import numpy as np
 
 class Speed(object):
@@ -13,7 +14,7 @@ class Speed(object):
     SPEEDFORMATS = ('linear_angular', '2_wheel_drive')
     SPEEDSCALES = ('linear', 'non-linear')
     
-    def __init__(self, speed, min_value=-0.3, max_value=0.3,
+    def __init__(self, speed=[0,0], min_value=-0.3, max_value=0.3,
                  spd_format='linear_angular'):
         self._min_value = min_value
         self._max_value = max_value
@@ -32,7 +33,7 @@ class Speed(object):
         Input speed must be a 2-value list or tupple. If out of bounds, 
         it will be rounded to the nearest bound.
         """
-        s = np.array([None, None])
+        s = np.array([0.0, 0.0])
         try:
             for index, value in enumerate(speed):
                 s[index] = float(value)
@@ -41,8 +42,9 @@ class Speed(object):
         else:
             if len(speed) is not 2:
                 raise ValueError("Not a valid speed: {}".format(speed))
-        # If no errors are raised, assign values to _speed attribute.
+        #If no errors are raised, assign values to _speed attribute.
         self._speed = s
+        #The speed value is rounded to the nearest limit when out of bounds.
         self.check_bounds()
         self._set_format(speed_format)
         self._set_scale(speed_scale)
@@ -63,7 +65,15 @@ class Speed(object):
             pass
             #Checks if the speed value is in segmentA or segmentB.
         return self._speed
-
+        
+    def get_min_value(self):
+        """ Returns the minimum allowed value for a linear scale."""   
+        return self._min_value
+        
+    def get_max_value(self):
+        """ Returns the maximum allowed value for a linear scale."""   
+        return self._max_value
+        
     def _set_format(self, new_format):
         """Sets the format of the speed.
         
@@ -119,7 +129,8 @@ class Speed(object):
         return new_value
         
     def nonlinear_transform(self, min_A=30, max_A=100,
-                                  min_B=160, max_B=220):
+                                  min_B=160, max_B=220, 
+                                  scale_zero = 127):
         """ 
         Makes a non-linear conversion of speed values.
         
@@ -139,14 +150,14 @@ class Speed(object):
         it belongs to segment B it is rescalated between min_B and 
         max_B. The mid value is assigned to 0.
         
-                  min_value                max_value
+                  min_value    zero_value    max_value
                       |------------|-----------|         
                        segment A      segment B
                           
                                    
-        min_A             max_A   127   min_B             max_B
+        min_A             max_A         min_B             max_B
           |-----------------|      |      |-----------------|
-        
+                               scale_zero
         Parameters
         ----------
         value : int or float
@@ -155,13 +166,19 @@ class Speed(object):
         min_A, max_A, min_B, max_B : int or float
             limit values for the segments A and B. The transformed
             values will belong to one of the 2 intervals and 0.
-            min_A < max_A < 0 < min_B < max_B
+            min_A < max_A < scale_zero < min_B < max_B
         """
         if self._scale is not 'linear':
             raise ValueError("Not a valid scale type: {}".format(self._scale))
-        if not (min_A < max_A < min_B < max_B):
+        try:
+             condition = (float(min_A) < float(max_A) < float(scale_zero)
+                                            < float(min_B) < float(max_B))
+        except (ValueError, TypeError) as e:
+            raise e
+        if not (float(min_A) < float(max_A) < float(scale_zero)
+                                  < float(min_B) < float(max_B)):
             raise ValueError("Not valid segment limits. \
-                              min_A < max_A < min_B < max_B")
+                    min_A < max_A < scale_zero < min_B < max_B")
         #Gets the value of the middle point
         zero_value = (self._max_value + self._min_value) / 2.0
         speed = self._speed
@@ -174,8 +191,8 @@ class Speed(object):
         speed[speed>zero_value] = (num1[speed>zero_value] / den1) + min_B
         #Operations applied to values smaller than zero_value
         speed[speed<zero_value] = (num2[speed<zero_value] / den2) + min_A
-        #Zero values are turned to 127
-        speed[speed==zero_value] = 127
+        #Zero values are turned to the new scale defined zero
+        speed[speed==zero_value] = scale_zero
         self._speed = speed
         self._scale = 'non-linear'
         return self._speed

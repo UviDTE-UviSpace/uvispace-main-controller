@@ -74,11 +74,11 @@ class iSpacePublisher():
 
 
 if __name__ == '__main__':    
-    import os
-    print os.getcwd()
-    pkg_dir = roslib.packages.get_pkg_dir('ispace_sensor')
-    os.chdir(pkg_dir + '/src/')	# changes directory to <package>/src	
-    print os.getcwd()		# prints current directory
+#    import os
+#    print os.getcwd()
+#    pkg_dir = roslib.packages.get_pkg_dir('ispace_sensor')
+#    os.chdir(pkg_dir + '/src/')	# changes directory to <package>/src	
+#    print os.getcwd()		# prints current directory
 
     iSpacePublisher()
 
