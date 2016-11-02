@@ -115,4 +115,25 @@ class MyNonLinearTransformTestCases(unittest.TestCase):
                                          scale_zero = 127)
 
 
+class Get2WDSpeedsTestCases(unittest.TestCase):
+    """Tests the get_2WD_speeds method."""
+    def test_get_2wd_speeds(self):
+        """Speed() get_2WD_speeds method: Checks max lineal."""
+        my_speed = Speed()
+        max_allowed = my_speed.get_max_value()
+        min_allowed = my_speed.get_min_value()
+        #First case. lineal max speed, no angular speed
+        my_speed.set_speed([max_allowed, 0.0], 'linear_angular')
+        my_speed.get_2WD_speeds(rho=0.065, L=0.150)
+        # 4.61 = 0.3 / 0.065
+        npt.assert_allclose(my_speed._speed, [4.615, 4.615], atol=0.001)
+        #New case. lineal reverse max speed, no angular speed
+        my_speed = Speed()
+        my_speed.set_speed([min_allowed, 0.0], 'linear_angular')
+        my_speed.get_2WD_speeds(rho=0.065, L=0.150)
+        npt.assert_allclose(my_speed._speed, [-4.615, -4.615], atol=0.001)
+        
+        
+        
+        
 
