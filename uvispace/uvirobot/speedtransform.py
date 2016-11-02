@@ -151,7 +151,7 @@ class Speed(object):
         max_B. The mid value is assigned to 0.
         
                   min_value    zero_value    max_value
-                      |------------|-----------|         
+                      |------------|------------|         
                        segment A      segment B
                           
                                    
@@ -210,10 +210,10 @@ class Speed(object):
         
         Parameters
         ----------
-        vLinear : int or float
+        vLinear = self._speed[0] : int or float
             value of the linear speed of the vehicle.
 
-        vRotation : int or float
+        vRotation = self._speed[1] : int or float
             value of the angular speed of the vehicle.
 
         rho : float 
@@ -226,11 +226,9 @@ class Speed(object):
             
         Returns
         -------
-        rl_speeds[] : 0 to 255 int 2-element np.array()
-            output value for the right and left wheels.
-            0 corresponds to max speed at reverse direction.
-            255 corresponds to max speed at direct direction.
-            127 corresponds to null speed.            
+        self._speed : 2-element np.array()
+            output value for the right and left wheels. Maximum and 
+            minimum limits are modified proportionally to rho.
         """
         self.rho = rho
         if self.get_format() is '2_wheel_drive':
@@ -248,8 +246,7 @@ class Speed(object):
         vR_raw = term1 + term2
         vL_raw = term1 - term2
         #Clips the raw velocities to avoid invalid values
-        rl_speeds = np.clip([vR_raw, vL_raw], self._min_value,
-                                              self._max_value)
+        rl_speeds = np.clip([vR_raw, vL_raw], self._min_value, self._max_value)
         self.set_speed(rl_speeds, '2_wheel_drive')
         return self._speed
 

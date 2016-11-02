@@ -29,7 +29,7 @@ def new_node(robot_id):
     rospy.Subscriber('/robot_{}/goal'.format(robot_id), Pose2D, 
 			         my_robot.new_goal, queue_size=1)
     rospy.on_shutdown(my_robot.on_shutdown)
-    rospy.spin()	
+    	
 
 if __name__ == "__main__":
     #This exception forces to give the robot_id argument within run command.
@@ -51,5 +51,5 @@ if __name__ == "__main__":
             robot_id = int(arg)
     # Calls the main function        
     new_node(robot_id)
-			     
-				     
+    rospy.spin()
+

@@ -6,11 +6,11 @@ If run as main script, it invokes the class SerMesProtocol() to manage
 the serial port. When a new speed value is received, it is send to the 
 external UGV using the serial protocol object.
 
-The move_robot function has a speed limit set to [89-165]. This limit is
-needed when the robot is connected to a DC source with a small intensity
-limit.
+The move_robot function has a default speed limit set to [89-165]. This 
+limit is needed when the robot is connected to a DC source with a small 
+intensity limit.
 If the program is run when the UGV is powered through a USB-B cable, it 
-will not be able to move, as the limit is too small to be able to move.
+will move slowly, as the limit is too small to be able to move properly.
 """
 # Standard libraries
 import glob
@@ -27,8 +27,8 @@ from speedtransform import Speed
 def connect_and_check(robot_id, port=None, baudrate=57600):
     """Returns an instance of SerMesProtocol and checks it is ready.
     
-     If no port is specified, the function takes the first available.
-     """
+    If no port is specified, the function takes the first available.
+    """
     # This exception prevents a crash when no device is connected to CPU.   
     if not port:
         try:
@@ -66,6 +66,7 @@ def messenger_shutdown():
     
 def move_robot(data, serial):
     """Converts Twist msg into 2WD value and send it through port."""
+    #Change proposal. In order to accept all the parameterfs
 #    serial = args[0]
 #    robot_speed = args[1]
     linear = data.linear.x
@@ -73,8 +74,7 @@ def move_robot(data, serial):
     robot_speed.set_speed([linear, angular], 'linear_angular')
     robot_speed.get_2WD_speeds()
     v_RightWheel, v_LeftWheel = robot_speed.nonlinear_transform()
-    rospy.loginfo('I am sending R: {} L: {}'.format(v_RightWheel,
-                                                      v_LeftWheel) )
+    rospy.loginfo('I am sending R: {} L: {}'.format(v_RightWheel, v_LeftWheel))
     serial.move([v_RightWheel, v_LeftWheel])
 
 
@@ -95,12 +95,12 @@ if __name__ == "__main__":
             sys.exit()
         elif opt in ("-r", "--robotid"):
             robot_id = int(arg)
-    # Creates an instance of SerMesProtocol and checks connection to port
+    #Creates an instance of SerMesProtocol and checks connection to port
     my_serial = connect_and_check(robot_id)
-    robot_speed = Speed([0,0])
+    robot_speed = Speed()
     listener(robot_id, robot_speed, my_serial)
     rospy.on_shutdown(messenger_shutdown)    
-    # Keeps python from exiting until this node is stopped
+    #Keeps python from exiting until this node is stopped
     rospy.spin()   
 
 
