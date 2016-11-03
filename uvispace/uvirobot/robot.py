@@ -36,7 +36,7 @@ class RobotController(object):
             self.init = True
         rospy.loginfo('Location: {}, {}, {}'.format(pose.x, pose.y, pose.theta))
         linear, angular = self.QCTracker.run(pose.x, pose.y, pose.theta)
-        rospy.loginfo('Speeds: {}, {}'.format(vl, va))
+        rospy.loginfo('Speeds: {}, {}'.format(linear, angular))
         self.speeds.linear.x = linear
         self.speeds.angular.z = angular
         self.pub_vel.publish(self.speeds)
