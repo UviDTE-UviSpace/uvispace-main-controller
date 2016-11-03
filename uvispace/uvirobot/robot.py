@@ -34,9 +34,11 @@ class RobotController(object):
         if self.init == False:
             self.QCTracker.append_point((pose.x, pose.y))  
             self.init = True
-        rospy.loginfo('Location: {}, {}, {}'.format(pose.x, pose.y, pose.theta))
         linear, angular = self.QCTracker.run(pose.x, pose.y, pose.theta)
-        rospy.loginfo('Speeds: {}, {}'.format(linear, angular))
+        rospy.loginfo('\nLocation--> '
+               'X: {pose.x}, Y: {pose.y}, theta: {pose.theta} \n'
+               'Speeds--> Linear: {linear}, Angular {angular}'.format(
+               pose=pose, linear=linear, angular=angular))
         self.speeds.linear.x = linear
         self.speeds.angular.z = angular
         self.pub_vel.publish(self.speeds)
@@ -56,7 +58,7 @@ class RobotController(object):
             # Adds the new goal to the current path, calculating all the 
             # intermediate points and stacking them to the path array
             self.QCTracker.append_point(goal_point)
-            rospy.loginfo('New goal: {}, {}'.format(goal.x, goal.y))
+            rospy.loginfo('New goal--> X: {}, Y: {}'.format(goal.x, goal.y))
         else :
             rospy.loginfo(' The system is not yet initialized. \
             Waiting for a pose to be published ')
@@ -66,6 +68,6 @@ class RobotController(object):
         self.speeds.linear.x = 0.0
         self.speeds.angular.z = 0.0
         self.pub_vel.publish(self.speeds)       
-    
-    
-    
+
+
+
