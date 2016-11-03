@@ -73,7 +73,7 @@ def move_robot(data, serial):
     angular = data.angular.z
     robot_speed.set_speed([linear, angular], 'linear_angular')
     robot_speed.get_2WD_speeds()
-    v_RightWheel, v_LeftWheel = robot_speed.nonlinear_transform()
+    v_RightWheel, v_LeftWheel = robot_speed.nonlinear_transform(min_A=70, max_B=190)
     rospy.loginfo('I am sending R: {} L: {}'.format(v_RightWheel, v_LeftWheel))
     serial.move([v_RightWheel, v_LeftWheel])
 
