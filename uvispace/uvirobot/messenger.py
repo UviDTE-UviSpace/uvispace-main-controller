@@ -64,7 +64,6 @@ def messenger_shutdown():
     stop_speed.linear.x = 0.0
     stop_speed.angular.z = 0.0
     move_robot(stop_speed, my_serial)
-    
     wait_mean_time = sum(wait_times) / len(wait_times)
     speed_calc_mean_time = sum(speed_calc_times) / len(speed_calc_times)
     xbee_mean_time = sum(xbee_times) / len(xbee_times)
@@ -75,10 +74,10 @@ def messenger_shutdown():
                    xbee=xbee_mean_time)
           )
     
-def move_robot(data, serial):
+def move_robot(data, my_serial):
     """Converts Twist msg into 2WD value and send it through port."""
     #Change proposal. In order to accept all the parameterfs
-#    serial = args[0]
+#    my_serial = args[0]
 #    robot_speed = args[1]
     global t0
     global t1
@@ -92,14 +91,10 @@ def move_robot(data, serial):
     speed_calc_times.append(t2-t1)
     robot_speed.set_speed([linear, angular], 'linear_angular')
     robot_speed.get_2WD_speeds()
-<<<<<<< HEAD
     v_RightWheel, v_LeftWheel = robot_speed.nonlinear_transform(min_A=70,
                                                                 max_B=190)
-=======
-    v_RightWheel, v_LeftWheel = robot_speed.nonlinear_transform(min_A=70, max_B=190)
->>>>>>> b6faa42f2dd167a94e02aa89ffe94705095af52f
     rospy.loginfo('I am sending R: {} L: {}'.format(v_RightWheel, v_LeftWheel))
-    serial.move([v_RightWheel, v_LeftWheel])
+    my_serial.move([v_RightWheel, v_LeftWheel])
     t0 = time.time()
     xbee_times.append(t0-t2)
     rospy.loginfo('Transmission ended succesfully\n\n')
