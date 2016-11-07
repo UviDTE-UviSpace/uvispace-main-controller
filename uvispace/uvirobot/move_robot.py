@@ -18,9 +18,9 @@ id of the desired robot. It must be the same as the one passed to the
 messenger.py module.
 """
 
-def new_node(robot_id):
+def new_node(my_robot, robot_id):
     """Main function. Subscribes to topics and spins until aborted."""
-    my_robot = RobotController(robot_id)
+    
     rospy.init_node('move_robot_{}'.format(robot_id), anonymous=True)
     # The pose is published by the uvispace package
     rospy.Subscriber('/robot_{}/pose2d'.format(robot_id), Pose2D, 
@@ -29,6 +29,7 @@ def new_node(robot_id):
     rospy.Subscriber('/robot_{}/goal'.format(robot_id), Pose2D, 
 			         my_robot.new_goal, queue_size=1)
     rospy.on_shutdown(my_robot.on_shutdown)
+
     	
 
 if __name__ == "__main__":
@@ -49,7 +50,10 @@ if __name__ == "__main__":
             sys.exit()
         elif opt in ("-r", "--robotid"):
             robot_id = int(arg)
-    # Calls the main function        
-    new_node(robot_id)
+    # Calls the main function  
+    my_robot = RobotController(robot_id)      
+    new_node(my_robot, robot_id)
     rospy.spin()
+    #After shutdown, the path is saved to a text file.
+    print 'Test path: \n {}'.format(my_robot.QCTracker.path)
 
