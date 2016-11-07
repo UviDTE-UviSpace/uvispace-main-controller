@@ -67,7 +67,5 @@ class RobotController(object):
         """ Shutdown method. Is called when execution is aborted."""
         self.speeds.linear.x = 0.0
         self.speeds.angular.z = 0.0
-        self.pub_vel.publish(self.speeds)       
-
-
+        self.pub_vel.publish(self.speeds)   
 
