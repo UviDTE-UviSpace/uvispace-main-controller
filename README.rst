@@ -43,7 +43,7 @@ The *messenger* module stablish a connection with the board. It has been tested 
 .. code-block:: bash
 
    $ cd /<path_to_UviSpace>/uvispace/
-   $ python  -m uvirobot/messenger.py -- -r <robot_id>
+   $ python  -m uvirobot/messenger.py -r <robot_id>
 
 * Alternatively, execute the *messenger.py* module on an *IPython* session:
 
@@ -71,7 +71,7 @@ The *move_robot* module listens to the publishing of new positions (poses) of th
 .. code-block:: bash
 
    $ cd /<path_to_UviSpace>/uvispace/
-   $ python  -m uvirobot/move_robot.py -- -r <robot_id>
+   $ python  -m uvirobot/move_robot.py -r <robot_id>
 
 * Alternatively, execute the module on an *IPython* session:
 
