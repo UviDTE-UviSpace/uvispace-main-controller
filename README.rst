@@ -21,7 +21,7 @@ uvirobot
 
 The uvirobot package contains all the modules required to control an UGV i.e.: Connect to it via an XBee module, receive position and goal parameters, calculate the path to the goal, stablish speed set points, transform the speed value to a valid input to the Arduino board on the UGV and send the values to it.
 
-Before executing any of its modules, roscore has to be run on a Terminal (Ctrl + Alt + C):
+Before executing any of its modules, roscore has to be run on a Terminal (Ctrl + Alt + T):
 
 .. code-block:: bash
 
