@@ -18,6 +18,7 @@ import struct
 import sys
 import getopt
 import time
+import serial
 # ROS libraries
 import rospy
 from geometry_msgs.msg import Twist
@@ -56,23 +57,7 @@ def listener(robot_id, robot_speed, serial):
         pass
     rospy.Subscriber('/robot_{}/cmd_vel'.format(robot_id), Twist, 
                      move_robot, callback_args=serial,
-                     queue_size=1)    
-                     
-def messenger_shutdown():
-    """When messenger is shutdown, robot speeds must be set to 0."""
-    stop_speed = Twist()
-    stop_speed.linear.x = 0.0
-    stop_speed.angular.z = 0.0
-    move_robot(stop_speed, my_serial)
-    wait_mean_time = sum(wait_times) / len(wait_times)
-    speed_calc_mean_time = sum(speed_calc_times) / len(speed_calc_times)
-    xbee_mean_time = sum(xbee_times) / len(xbee_times)
-    print ('Wait mean time: {wait}\n'
-           'Speed calculation mean time: {speed}\n'
-           'XBee message sending mean time: {xbee}'
-           .format(wait=wait_mean_time, speed=speed_calc_mean_time,
-                   xbee=xbee_mean_time)
-          )
+                     queue_size=1)
     
 def move_robot(data, my_serial):
     """Converts Twist msg into 2WD value and send it through port."""
@@ -99,6 +84,26 @@ def move_robot(data, my_serial):
     xbee_times.append(t0-t2)
     rospy.loginfo('Transmission ended succesfully\n\n')
 
+def stop_request(my_serial):
+    """Sends a null speed to the UGV."""
+    stop_speed = Twist()
+    stop_speed.linear.x = 0.0
+    stop_speed.angular.z = 0.0
+    move_robot(stop_speed, my_serial)
+
+
+def print_times(wait_times, speed_calc_times, xbee_times):
+    """Calculates the average time of each part of the process."""
+    wait_mean_time = sum(wait_times) / len(wait_times)
+    speed_calc_mean_time = sum(speed_calc_times) / len(speed_calc_times)
+    xbee_mean_time = sum(xbee_times) / len(xbee_times)
+    print ('Wait mean time: {wait}\n'
+           'Speed calculation mean time: {speed}\n'
+           'XBee message sending mean time: {xbee}'
+           .format(wait=wait_mean_time, speed=speed_calc_mean_time,
+                   xbee=xbee_mean_time)
+          )
+          
 
 if __name__ == "__main__":
     #This exception forces to give the robot_id argument within run command.
@@ -125,9 +130,10 @@ if __name__ == "__main__":
     my_serial = connect_and_check(robot_id)
     robot_speed = Speed()
     t0 = time.time()
-    listener(robot_id, robot_speed, my_serial)
-    rospy.on_shutdown(messenger_shutdown)    
+    listener(robot_id, robot_speed, my_serial)  
     #Keeps python from exiting until this node is stopped
     rospy.spin()   
+    stop_request(my_serial)
+    print_times(wait_times, speed_calc_times, xbee_times)
 
 
