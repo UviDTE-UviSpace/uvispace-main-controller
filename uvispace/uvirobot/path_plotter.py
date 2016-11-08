@@ -5,7 +5,7 @@ import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import host_subplot
 
-def init_plotting():
+def format_plotting():
     plt.rcParams['figure.figsize'] = (10, 8)
     plt.rcParams['font.size'] = 30
     plt.rcParams['font.family'] = 'Times New Roman'
@@ -32,22 +32,17 @@ def init_plotting():
     plt.gca().spines['right'].set_color('none')
     plt.gca().spines['top'].set_color('none')
     plt.gca().xaxis.set_ticks_position('bottom')
-    plt.gca().yaxis.set_ticks_position('left')
-    
-        
-def plot(desired_path, real_path=''):
+    plt.gca().yaxis.set_ticks_position('left')   
+
+def plot(input_path, real_route):
     """Drawing on a figure the desired and real paths."""
-    #Creates a codes list. The first element is where the drawing begins
-#    codes = [mpath.Path.MOVETO]
-#    for i in desired_path[1:]:
-#        #codes list must be same length as the path. An straigth line is 
-#        #drawed from to second element to the end.
-#        codes.append(mpath.Path.LINETO)
-    x, y = desired_path[:,0], desired_path[:,1]
+    x1, y1 = input_path[:,0], input_path[:,1]
+    x2, y2 = real_route[:,0], real_route[:,1]
     #Draws the figure
-    init_plotting()
+    format_plotting()
     ax = plt.subplot(111)
-    line, = ax.plot(x, y, 'bo-')
+    line1, = ax.plot(x1, y1, 'bo-')
+    line2, = ax.plot(x2, y2, 'ro-')    
     ax.grid()
     ax.axis('equal')
     ax.set_xlim([-2, 2])
@@ -56,15 +51,27 @@ def plot(desired_path, real_path=''):
     ax.set_ylabel('Y Axis')
     plt.show()
 
-import numpy as np
-test_path = np.array(
-      [[ 0. ,  0. ],
-       [ 0.1,  0.1],
-       [ 0.1,  0.2],
-       [ 0.1,  0.3],
-       [ 0.2,  0.5],
-       [ 0.4,  0.6]])
-plot(test_path)
+
+if __name__ == "__main__":
+    import numpy as np
+    test_path = np.array(
+          [[ 0.0,  0.0],
+           [ 0.1,  0.1],
+           [ 0.1,  0.2],
+           [ 0.1,  0.3],
+           [ 0.2,  0.5],
+           [ 0.4,  0.6]])
+    test_route = np.array(
+          [[ 0.0,  0.0],
+           [ 0.0,  -0.1],
+           [ 0.1,  0.0],
+           [ 0.4,  0.5],
+           [ 0.5,  0.6],
+           [ 0.8,  0.7],
+           [ 1.0,  0.0],
+           [ 0.7,  -0.6],
+           [ 2.0,  -1.6]])
+    plot(test_path, test_route)
 
 
 

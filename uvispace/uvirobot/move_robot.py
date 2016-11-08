@@ -65,6 +65,7 @@ if __name__ == "__main__":
     np.savetxt(temp_file, my_robot.QCTracker.path, fmt='%.2f')
     temp_file.close()
     #Plots the robot ideal path.
-    path_plotter.plot(my_robot.QCTracker.path)
+    print my_robot.QCTracker.route
+    path_plotter.plot(my_robot.QCTracker.path, my_robot.QCTracker.route)
     
 
