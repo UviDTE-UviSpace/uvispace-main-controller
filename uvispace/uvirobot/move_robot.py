@@ -1,12 +1,16 @@
 #!/usr/bin/env python
 # Standard libraries
 import sys
+import os
 import getopt
+import numpy as np
+import time
 #ROS libraries
 import rospy
 from geometry_msgs.msg import Twist, Pose2D
 #Local libraries
 from robot import RobotController
+import path_plotter
 """ 
 This module gets info from pose2d topic and publishes to speed topic
 
@@ -29,7 +33,6 @@ def new_node(my_robot, robot_id):
     rospy.Subscriber('/robot_{}/goal'.format(robot_id), Pose2D, 
 			         my_robot.new_goal, queue_size=1)
     rospy.on_shutdown(my_robot.on_shutdown)
-
     	
 
 if __name__ == "__main__":
@@ -55,5 +58,13 @@ if __name__ == "__main__":
     new_node(my_robot, robot_id)
     rospy.spin()
     #After shutdown, the path is saved to a text file.
-    print 'Test path: \n {}'.format(my_robot.QCTracker.path)
+    script_path = os.path.dirname(os.path.realpath(__file__))
+    #A file identifier is generated from the current time value
+    file_id = int(time.time())
+    temp_file = open('{}/tmp/path{}.log'.format(script_path, file_id), 'a')
+    np.savetxt(temp_file, my_robot.QCTracker.path, fmt='%.2f')
+    temp_file.close()
+    #Plots the robot ideal path.
+    path_plotter.plot(my_robot.QCTracker.path)
+    
 
