@@ -27,6 +27,7 @@ def format_plotting():
     plt.rcParams['legend.frameon'] = False
     plt.rcParams['legend.loc'] = 'lower left'
     plt.rcParams['axes.linewidth'] = 1
+    plt.rcParams['axes.grid'] = True    
     plt.rcParams['lines.linewidth'] = 5
 
     plt.gca().spines['right'].set_color('none')
@@ -41,8 +42,9 @@ def plot(input_path, real_route):
     #Draws the figure
     format_plotting()
     ax = plt.subplot(111)
-    line1, = ax.plot(x1, y1, 'bo-')
-    line2, = ax.plot(x2, y2, 'ro-')    
+    #Plotting of the 2 lines, with 'point' markers and blue and red colours
+    line1, = ax.plot(x1, y1, 'b.-')
+    line2, = ax.plot(x2, y2, 'r.-')    
     ax.grid()
     ax.axis('equal')
     ax.set_xlim([-2, 2])
@@ -72,6 +74,34 @@ if __name__ == "__main__":
            [ 0.7,  -0.6],
            [ 2.0,  -1.6]])
     plot(test_path, test_route)
-
+    
+#ellipse with center in (0,0), width
+ellipse = np.array([
+       [ 0.00, -1.00],
+       [ 0.27, -1.00],
+       [ 0.52, -0.89],
+       [ 0.71, -0.71],
+       [ 0.89, -0.52],
+       [ 1.00, -0.27],
+       [ 1.00,  0.00],
+       [ 1.00,  0.27],
+       [ 0.89,  0.52],
+       [ 0.71,  0.71],
+       [ 0.52,  0.89],
+       [ 0.27,  1.00],
+       [ 0.00,  1.00],
+       [-0.27,  1.00],
+       [-0.52,  0.89],
+       [-0.71,  0.71],
+       [-0.89,  0.52],
+       [-1.00,  0.27],
+       [-1.00,  0.00],
+       [-1.00, -0.27],
+       [-0.89, -0.52],
+       [-0.71, -0.71],
+       [-0.52, -0.89],
+       [-0.27, -1.00],
+       [ 0.00, -1.00],
+       [ 0.00, -1.00]])
 
 
