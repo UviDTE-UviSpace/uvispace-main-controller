@@ -143,7 +143,7 @@ if __name__ == "__main__":
     file_id = int(time.time())
     temp_file = open('{}/tmp/comm{}.log'.format(script_path, file_id), 'a')
     for item in xbee_times:
-        print>>temp_file, item
+        print>>temp_file, '{0:.5f}'.format(item)
     temp_file.close()
     #Plots the robot ideal path.
     plotter.xbee_plot(xbee_times)
