@@ -5,6 +5,7 @@ import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import host_subplot
 import numpy as np
+import os
 
 def format_plotting():
     plt.rcParams['figure.figsize'] = (10, 8)
@@ -56,6 +57,7 @@ def path_plot(input_path, real_route):
     ax.set_ylim([-2, 2])
     ax.set_xlabel('X Axis')    
     ax.set_ylabel('Y Axis')
+    savefig('{}/tmp/path_plot.eps'.format(script_path), bbox_inches='tight')
     plt.show()
 
 def xbee_plot(commtimes):
@@ -71,11 +73,13 @@ def xbee_plot(commtimes):
     data = np.array([comm_numbers, commtimes]).transpose()
     x1, y1 = data[:,0], data[:,1]
     format_plotting()
-    ax = plt.subplot(111) 
+    ax = plt.subplot(111)
     line1, = ax.plot(x1, y1, 'bo-')
-    ax.set_xlabel('Communication number')    
-    ax.set_ylabel('Time (s)')    
-    plt.show()  
+    ax.set_xlabel('Communication number')
+    ax.set_ylabel('Time (s)')
+    script_path = os.path.dirname(os.path.realpath(__file__))
+    savefig('{}/tmp/xbee_plot.eps'.format(script_path), bbox_inches='tight')
+    plt.show()
 
 
 if __name__ == "__main__":
