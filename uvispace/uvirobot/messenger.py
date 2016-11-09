@@ -19,12 +19,14 @@ import sys
 import getopt
 import time
 import serial
+import os
 # ROS libraries
 import rospy
 from geometry_msgs.msg import Twist
 # Local libraries
 from serialcomm import SerMesProtocol
 from speedtransform import Speed
+import plotter
     
 def connect_and_check(robot_id, port=None, baudrate=57600):
     """Returns an instance of SerMesProtocol and checks it is ready.
@@ -135,5 +137,18 @@ if __name__ == "__main__":
     rospy.spin()   
     stop_request(my_serial)
     print_times(wait_times, speed_calc_times, xbee_times)
+    #After shutdown, the path is saved to a text file.
+    script_path = os.path.dirname(os.path.realpath(__file__))
+    #A file identifier is generated from the current time value
+    file_id = int(time.time())
+    temp_file = open('{}/tmp/comm{}.log'.format(script_path, file_id), 'a')
+    for item in xbee_times:
+        print>>temp_file, item
+    temp_file.close()
+    #Plots the robot ideal path.
+    plotter.xbee_plot(xbee_times)
+    
+
+    
 
 
