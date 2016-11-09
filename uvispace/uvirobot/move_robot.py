@@ -23,8 +23,7 @@ messenger.py module.
 """
 
 def new_node(my_robot, robot_id):
-    """Main function. Subscribes to topics and spins until aborted."""
-    
+    """Subscribe to topics and spins until aborted."""   
     rospy.init_node('move_robot_{}'.format(robot_id), anonymous=True)
     # The pose is published by the uvispace package
     rospy.Subscriber('/robot_{}/pose2d'.format(robot_id), Pose2D, 
@@ -33,8 +32,20 @@ def new_node(my_robot, robot_id):
     rospy.Subscriber('/robot_{}/goal'.format(robot_id), Pose2D, 
 			         my_robot.new_goal, queue_size=1)
     rospy.on_shutdown(my_robot.on_shutdown)
-    	
-
+    
+def make_a_rectangle():
+    """Set the robot path to a rectangle of fixed vertices."""
+    pointA = Pose2D(x=1.0, y=0.5)
+    pointB = Pose2D(x=-1.0, y=0.5)
+    pointC = Pose2D(x=-1.0, y=-0.5)
+    pointD = Pose2D(x=1.0, y=-0.5)
+    pointE = Pose2D(x=1.0, y=0.0)
+    my_robot.new_goal(pointA)
+    my_robot.new_goal(pointB)
+    my_robot.new_goal(pointC)
+    my_robot.new_goal(pointD)
+    my_robot.new_goal(pointE)    
+    
 if __name__ == "__main__":
     #This exception forces to give the robot_id argument within run command.
     #import pdb; pdb.set_trace()
@@ -56,6 +67,12 @@ if __name__ == "__main__":
     # Calls the main function  
     my_robot = RobotController(robot_id)      
     new_node(my_robot, robot_id)
+    #Until the first pose is not published, the robot instance 
+    #is not initialized.
+    while not my_robot.init:
+        pass
+    #This function sends 4 rectangle points to the robot path.
+    make_a_rectangle()
     rospy.spin()
     #After shutdown, the path is saved to a text file.
     script_path = os.path.dirname(os.path.realpath(__file__))
@@ -65,7 +82,6 @@ if __name__ == "__main__":
     np.savetxt(temp_file, my_robot.QCTracker.path, fmt='%.2f')
     temp_file.close()
     #Plots the robot ideal path.
-    print my_robot.QCTracker.route
     plotter.path_plot(my_robot.QCTracker.path, my_robot.QCTracker.route)
     
 
