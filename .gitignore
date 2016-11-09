@@ -4,6 +4,9 @@
 # Backup gedit files.
 **~
 
+#Log files
+**/temp
+
 # Setuptools distribution folder.
 /dist/
 
