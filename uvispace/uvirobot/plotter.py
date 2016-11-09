@@ -45,6 +45,7 @@ def path_plot(input_path, real_route):
     except IndexError:
         x2, y2 = real_route[0], real_route[1]
     #Draws the figure
+    fig = plt.figure()
     format_plotting()
     ax = plt.subplot(111)
     #Plotting of the 2 lines, with 'point' markers and blue and red colours
@@ -56,7 +57,8 @@ def path_plot(input_path, real_route):
     ax.set_ylim([-2, 2])
     ax.set_xlabel('X Axis')    
     ax.set_ylabel('Y Axis')
-    savefig('{}/tmp/path_plot.eps'.format(script_path), bbox_inches='tight')
+    script_path = os.path.dirname(os.path.realpath(__file__))
+    plt.savefig('{}/tmp/path_plot.eps'.format(script_path), bbox_inches='tight')
     plt.show()
 
 def xbee_plot(commtimes):
@@ -71,13 +73,14 @@ def xbee_plot(commtimes):
     comm_numbers = np.arange(len(commtimes))
     data = np.array([comm_numbers, commtimes]).transpose()
     x1, y1 = data[:,0], data[:,1]
+    fig = plt.figure()
     format_plotting()
     ax = plt.subplot(111)
     line1, = ax.plot(x1, y1, 'bo-')
     ax.set_xlabel('Communication number')
     ax.set_ylabel('Time (s)')
     script_path = os.path.dirname(os.path.realpath(__file__))
-    savefig('{}/tmp/xbee_plot.eps'.format(script_path), bbox_inches='tight')
+    plt.savefig('{}/tmp/xbee_plot.eps'.format(script_path), bbox_inches='tight')
     plt.show()
 
 
