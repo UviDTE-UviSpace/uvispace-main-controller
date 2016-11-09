@@ -4,6 +4,7 @@ import matplotlib.path as mpath
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import host_subplot
+import numpy as np
 
 def format_plotting():
     plt.rcParams['figure.figsize'] = (10, 8)
@@ -28,15 +29,15 @@ def format_plotting():
     plt.rcParams['legend.loc'] = 'lower left'
     plt.rcParams['axes.linewidth'] = 1
     plt.rcParams['axes.grid'] = True    
-    plt.rcParams['lines.linewidth'] = 5
+    plt.rcParams['lines.linewidth'] = 1
 
     plt.gca().spines['right'].set_color('none')
     plt.gca().spines['top'].set_color('none')
     plt.gca().xaxis.set_ticks_position('bottom')
     plt.gca().yaxis.set_ticks_position('left')   
 
-def plot(input_path, real_route):
-    """Drawing on a figure the desired and real paths."""
+def path_plot(input_path, real_route):
+    """Draw on a figure the desired and real paths."""
     x1, y1 = input_path[:,0], input_path[:,1]
     x2, y2 = real_route[:,0], real_route[:,1]
     #Draws the figure
@@ -52,6 +53,26 @@ def plot(input_path, real_route):
     ax.set_xlabel('X Axis')    
     ax.set_ylabel('Y Axis')
     plt.show()
+
+def xbee_plot(commtimes):
+    """Draw the history of communication times with the XBee modules.
+    
+    The input is a list with the communication times history.
+    The plot data is a 2xN array, where N is the number of requests sent to
+    the XBee module through serial port. 
+    The first element of each pair is the sending number and the second
+    element is the time it took to receive back the acknowledge message.
+    """
+#    import pdb; pdb.set_trace()
+    comm_numbers = np.arange(len(commtimes))
+    data = np.array([comm_numbers, commtimes]).transpose()
+    x1, y1 = data[:,0], data[:,1]
+    format_plotting()
+    ax = plt.subplot(111) 
+    line1, = ax.plot(x1, y1, 'bo-')
+    ax.set_xlabel('Communication Nº')    
+    ax.set_ylabel('Time (s)')    
+    plt.show()  
 
 
 if __name__ == "__main__":
@@ -76,32 +97,6 @@ if __name__ == "__main__":
     plot(test_path, test_route)
     
 #ellipse with center in (0,0), width
-ellipse = np.array([
-       [ 0.00, -1.00],
-       [ 0.27, -1.00],
-       [ 0.52, -0.89],
-       [ 0.71, -0.71],
-       [ 0.89, -0.52],
-       [ 1.00, -0.27],
-       [ 1.00,  0.00],
-       [ 1.00,  0.27],
-       [ 0.89,  0.52],
-       [ 0.71,  0.71],
-       [ 0.52,  0.89],
-       [ 0.27,  1.00],
-       [ 0.00,  1.00],
-       [-0.27,  1.00],
-       [-0.52,  0.89],
-       [-0.71,  0.71],
-       [-0.89,  0.52],
-       [-1.00,  0.27],
-       [-1.00,  0.00],
-       [-1.00, -0.27],
-       [-0.89, -0.52],
-       [-0.71, -0.71],
-       [-0.52, -0.89],
-       [-0.27, -1.00],
-       [ 0.00, -1.00],
-       [ 0.00, -1.00]])
+
 
 
