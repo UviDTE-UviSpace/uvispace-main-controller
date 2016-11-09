@@ -5,7 +5,7 @@
 **~
 
 #Log files
-**/temp
+**/temp/*.log
 
 # Setuptools distribution folder.
 /dist/
