@@ -10,7 +10,7 @@ import rospy
 from geometry_msgs.msg import Twist, Pose2D
 #Local libraries
 from robot import RobotController
-import path_plotter
+import plotter
 """ 
 This module gets info from pose2d topic and publishes to speed topic
 
@@ -66,6 +66,6 @@ if __name__ == "__main__":
     temp_file.close()
     #Plots the robot ideal path.
     print my_robot.QCTracker.route
-    path_plotter.plot(my_robot.QCTracker.path, my_robot.QCTracker.route)
+    plotter.path_plot(my_robot.QCTracker.path, my_robot.QCTracker.route)
     
 
