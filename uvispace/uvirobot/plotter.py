@@ -39,7 +39,11 @@ def format_plotting():
 def path_plot(input_path, real_route):
     """Draw on a figure the desired and real paths."""
     x1, y1 = input_path[:,0], input_path[:,1]
-    x2, y2 = real_route[:,0], real_route[:,1]
+    #If there is only one point in the array, an IndexError will be raised.
+    try:
+        x2, y2 = real_route[:,0], real_route[:,1]
+    except IndexError:
+        x2, y2 = real_route[0], real_route[1]
     #Draws the figure
     format_plotting()
     ax = plt.subplot(111)
@@ -63,14 +67,13 @@ def xbee_plot(commtimes):
     The first element of each pair is the sending number and the second
     element is the time it took to receive back the acknowledge message.
     """
-#    import pdb; pdb.set_trace()
     comm_numbers = np.arange(len(commtimes))
     data = np.array([comm_numbers, commtimes]).transpose()
     x1, y1 = data[:,0], data[:,1]
     format_plotting()
     ax = plt.subplot(111) 
     line1, = ax.plot(x1, y1, 'bo-')
-    ax.set_xlabel('Communication Nº')    
+    ax.set_xlabel('Communication number')    
     ax.set_ylabel('Time (s)')    
     plt.show()  
 
