@@ -1,0 +1,3 @@
+This folder is for storing log files
+
+All the log files must end with .log in order to be ignored by the git program
