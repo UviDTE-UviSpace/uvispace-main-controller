@@ -29,7 +29,6 @@ def format_plotting():
     plt.rcParams['legend.frameon'] = False
     plt.rcParams['legend.loc'] = 'lower left'
     plt.rcParams['axes.linewidth'] = 1
-    plt.rcParams['axes.grid'] = True    
     plt.rcParams['lines.linewidth'] = 1
 
     plt.gca().spines['right'].set_color('none')
