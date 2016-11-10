@@ -29,9 +29,9 @@ from speedtransform import Speed
 import plotter
     
 def connect_and_check(robot_id, port=None, baudrate=57600):
-    """Returns an instance of SerMesProtocol and checks it is ready.
+    """Return an instance of SerMesProtocol and check it is ready.
     
-    If no port is specified, the function takes the first available.
+    If no port is specified, take the first one available.
     """
     # This exception prevents a crash when no device is connected to CPU.   
     if not port:
@@ -40,10 +40,10 @@ def connect_and_check(robot_id, port=None, baudrate=57600):
         except IndexError:
             print 'It was not detected any serial port connected to PC'		
             sys.exit()
-    # Converts the Python id number to a C valid number, in unsigned byte
+    #Converts the Python id number to a C valid number, in unsigned byte
     serialcomm = SerMesProtocol(port=port, baudrate=baudrate)    
     serialcomm.SLAVE_ID = struct.pack('>B', robot_id)
-    # Checks connection to board. If broken, program exits
+    #Checks connection to board. If broken, program exits
     if serialcomm.ready():
         print "The board is ready"
     else:
@@ -52,7 +52,7 @@ def connect_and_check(robot_id, port=None, baudrate=57600):
     return serialcomm        
         
 def listener(robot_id, robot_speed, serial):
-    """Creates a node and subscribes to its robot 'cmd_vel' topic.""" 
+    """Create a node and subscribe to its robot 'cmd_vel' topic.""" 
     try:
         rospy.init_node('robot{}_messenger'.format(robot_id), anonymous=True)
     except rospy.exceptions.ROSException:
@@ -62,7 +62,7 @@ def listener(robot_id, robot_speed, serial):
                      queue_size=1)
     
 def move_robot(data, my_serial):
-    """Converts Twist msg into 2WD value and send it through port."""
+    """Convert Twist msg into 2WD value and send it through port."""
     #Change proposal. In order to accept all the parameterfs
 #    my_serial = args[0]
 #    robot_speed = args[1]
@@ -87,7 +87,7 @@ def move_robot(data, my_serial):
     rospy.loginfo('Transmission ended succesfully\n\n')
 
 def stop_request(my_serial):
-    """Sends a null speed to the UGV."""
+    """Send a null speed to the UGV."""
     stop_speed = Twist()
     stop_speed.linear.x = 0.0
     stop_speed.angular.z = 0.0
@@ -95,7 +95,7 @@ def stop_request(my_serial):
 
 
 def print_times(wait_times, speed_calc_times, xbee_times):
-    """Calculates the average time of each part of the process."""
+    """Calculate the average time of each part of the process."""
     wait_mean_time = sum(wait_times) / len(wait_times)
     speed_calc_mean_time = sum(speed_calc_times) / len(speed_calc_times)
     xbee_mean_time = sum(xbee_times) / len(xbee_times)
@@ -137,7 +137,10 @@ if __name__ == "__main__":
     rospy.spin()   
     stop_request(my_serial)
     print_times(wait_times, speed_calc_times, xbee_times)
-    #After shutdown, the path is saved to a text file.
+    
+    ###############################################################
+    ########## Print the log output to files and plot it ##########
+    ###############################################################
     script_path = os.path.dirname(os.path.realpath(__file__))
     #A file identifier is generated from the current time value
     file_id = int(time.time())
@@ -145,8 +148,13 @@ if __name__ == "__main__":
     for item in xbee_times:
         print>>temp_file, '{0:.5f}'.format(item)
     temp_file.close()
+    temp_file = open('{}/tmp/waittimes{}.log'.format(script_path, 
+                                                     file_id), 'a')
+    for item in wait_times:
+        print>>temp_file, '{0:.5f}'.format(item)
+    temp_file.close()
     #Plots the robot ideal path.
-    plotter.xbee_plot(xbee_times)
+    plotter.times_plot(xbee_times, wait_times)
     
 
     

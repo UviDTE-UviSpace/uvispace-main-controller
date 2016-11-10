@@ -10,7 +10,7 @@ import os
 def format_plotting():
     plt.rcParams['figure.figsize'] = (10, 8)
     plt.rcParams['font.size'] = 30
-    plt.rcParams['font.family'] = 'Times New Roman'
+#    plt.rcParams['font.family'] = 'Times New Roman'
     plt.rcParams['axes.labelsize'] = plt.rcParams['font.size']
     plt.rcParams['axes.titlesize'] = 1.2*plt.rcParams['font.size']
     plt.rcParams['legend.fontsize'] = 0.7 * plt.rcParams['font.size']
@@ -30,6 +30,7 @@ def format_plotting():
     plt.rcParams['legend.loc'] = 'lower left'
     plt.rcParams['axes.linewidth'] = 1
     plt.rcParams['lines.linewidth'] = 1
+    plt.rcParams['lines.markersize'] = 3
 
     plt.gca().spines['right'].set_color('none')
     plt.gca().spines['top'].set_color('none')
@@ -61,26 +62,34 @@ def path_plot(input_path, real_route):
     plt.savefig('{}/tmp/path_plot.eps'.format(script_path), bbox_inches='tight')
     plt.show()
 
-def xbee_plot(commtimes):
+def times_plot(commtimes, waittimes):
     """Draw the history of communication times with the XBee modules.
     
-    The input is a list with the communication times history.
-    The plot data is a 2xN array, where N is the number of requests sent to
-    the XBee module through serial port. 
+    The input are 2 lists with the process times history.
+    The plot data is a 2xN array, where N is the number of requests sent 
+    to the XBee module through serial port. 
     The first element of each pair is the sending number and the second
     element is the time it took to receive back the acknowledge message.
     """
     comm_numbers = np.arange(len(commtimes))
-    data = np.array([comm_numbers, commtimes]).transpose()
-    x1, y1 = data[:,0], data[:,1]
+    commdata = np.array([comm_numbers, commtimes]).transpose()
+    x1, y1 = commdata[:,0], commdata[:,1]
+    #The first value of waittimes is ignored as it is the time for setting up.
+    wait_numbers = np.arange(len(waittimes[1:]))
+    waitdata = np.array([wait_numbers[1:], waittimes]).transpose()
+    x2, y2 = waitdata[:,0], waitdata[:,1]
     fig = plt.figure()
     format_plotting()
     ax = plt.subplot(111)
-    line1, = ax.plot(x1, y1, 'bo-')
+    line1, = ax.plot(x1, y1, 'bo-', label= 'Communication times')
+    line2, = ax.plot(x2, y2, 'ro-', label= 'Waiting times')
+    ax.grid()
     ax.set_xlabel('Communication number')
     ax.set_ylabel('Time (s)')
+    legend = plt.legend(loc='upper right', shadow=True)
     script_path = os.path.dirname(os.path.realpath(__file__))
-    plt.savefig('{}/tmp/xbee_plot.eps'.format(script_path), bbox_inches='tight')
+    plt.savefig('{}/tmp/times_plot.eps'.format(script_path),
+                                         bbox_inches='tight')
     plt.show()
 
 
@@ -103,7 +112,7 @@ if __name__ == "__main__":
            [ 1.0,  0.0],
            [ 0.7,  -0.6],
            [ 2.0,  -1.6]])
-    plot(test_path, test_route)
+    path_plot(test_path, test_route)
     
 #ellipse with center in (0,0), width
 
