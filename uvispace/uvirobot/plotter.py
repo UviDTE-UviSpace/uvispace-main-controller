@@ -77,7 +77,11 @@ def times_plot(commtimes, waittimes):
     #The first value of waittimes is ignored as it is the time for setting up.
     wait_numbers = np.arange(len(waittimes[1:]))
     waitdata = np.array([wait_numbers[1:], waittimes]).transpose()
-    x2, y2 = waitdata[:,0], waitdata[:,1]
+    #If there is only one point in the array, an IndexError will be raised.
+    try:
+        x2, y2 = waitdata[:,0], waitdata[:,1]
+    except IndexError:
+        x2, y2 = waitdata[0], waitdata[1]
     fig = plt.figure()
     format_plotting()
     ax = plt.subplot(111)
