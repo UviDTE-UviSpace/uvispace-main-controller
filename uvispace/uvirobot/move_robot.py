@@ -79,7 +79,7 @@ if __name__ == "__main__":
     #A file identifier is generated from the current time value
     file_id = int(time.time())
     temp_file = open('{}/tmp/path{}.log'.format(script_path, file_id), 'a')
-    np.savetxt(temp_file, my_robot.QCTracker.path, fmt='%.2f')
+    np.savetxt(temp_file, my_robot.QCTracker.route, fmt='%.2f')
     temp_file.close()
     #Plots the robot ideal path.
     plotter.path_plot(my_robot.QCTracker.path, my_robot.QCTracker.route)
