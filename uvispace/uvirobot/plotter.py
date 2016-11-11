@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 #Standard libraries
-import matplotlib.path as mpath
-import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import host_subplot
 import numpy as np
@@ -9,13 +7,13 @@ import os
 
 def format_plotting():
     plt.rcParams['figure.figsize'] = (10, 8)
-    plt.rcParams['font.size'] = 30
+    plt.rcParams['font.size'] = 22
 #    plt.rcParams['font.family'] = 'Times New Roman'
     plt.rcParams['axes.labelsize'] = plt.rcParams['font.size']
-    plt.rcParams['axes.titlesize'] = 1.2*plt.rcParams['font.size']
-    plt.rcParams['legend.fontsize'] = 0.7 * plt.rcParams['font.size']
-    plt.rcParams['xtick.labelsize'] = 0.8*plt.rcParams['font.size']
-    plt.rcParams['ytick.labelsize'] = 0.8*plt.rcParams['font.size']
+    plt.rcParams['axes.titlesize'] = 1.2 * plt.rcParams['font.size']
+    plt.rcParams['legend.fontsize'] = 0.9 * plt.rcParams['font.size']
+    plt.rcParams['xtick.labelsize'] = 0.6 * plt.rcParams['font.size']
+    plt.rcParams['ytick.labelsize'] = 0.6 * plt.rcParams['font.size']
     plt.rcParams['savefig.dpi'] = 1000
     plt.rcParams['savefig.format'] = 'eps'
     plt.rcParams['xtick.major.size'] = 3
@@ -26,8 +24,8 @@ def format_plotting():
     plt.rcParams['ytick.minor.size'] = 3
     plt.rcParams['ytick.major.width'] = 1
     plt.rcParams['ytick.minor.width'] = 1
-    plt.rcParams['legend.frameon'] = False
-    plt.rcParams['legend.loc'] = 'lower left'
+    plt.rcParams['legend.frameon'] = True
+    plt.rcParams['legend.loc'] = 'upper right'
     plt.rcParams['axes.linewidth'] = 1
     plt.rcParams['lines.linewidth'] = 1
     plt.rcParams['lines.markersize'] = 3
@@ -46,7 +44,6 @@ def path_plot(input_path, real_route):
     except IndexError:
         x2, y2 = real_route[0], real_route[1]
     #Draws the figure
-    fig = plt.figure()
     format_plotting()
     ax = plt.subplot(111)
     #Plotting of the 2 lines, with 'point' markers and blue and red colours
@@ -82,16 +79,20 @@ def times_plot(commtimes, waittimes):
         x2, y2 = waitdata[:,0], waitdata[:,1]
     except IndexError:
         x2, y2 = waitdata[0], waitdata[1]
-    fig = plt.figure()
     format_plotting()
+#    fig = plt.figure()
     ax = plt.subplot(111)
     line1, = ax.plot(x1, y1, 'bo-', label= 'Communication times')
     line2, = ax.plot(x2, y2, 'ro-', label= 'Waiting times')
     ax.grid()
+    ax.set_xlim(left=0)
+    ax.set_ylim(bottom=0)
     ax.set_xlabel('Communication number')
     ax.set_ylabel('Time (s)')
-    legend = plt.legend(loc='upper right', shadow=True)
+    legend = plt.legend(shadow=True)
     script_path = os.path.dirname(os.path.realpath(__file__))
+
+#    import pdb; pdb.set_trace()
     plt.savefig('{}/tmp/times_plot.eps'.format(script_path),
                                          bbox_inches='tight')
     plt.show()
