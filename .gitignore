@@ -4,10 +4,15 @@
 # Backup gedit files.
 **~
 
+##tmp folder
 #Log files
 **/tmp/*.log
-**/tmp/**/
+#Subfolders
+**/tmp/**/**
+#eps files (graphs)
 **/tmp/*.eps
+#tar files
+**/tmp/*.tar
 
 # Setuptools distribution folder.
 /dist/
