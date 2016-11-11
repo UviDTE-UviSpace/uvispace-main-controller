@@ -6,6 +6,8 @@
 
 #Log files
 **/tmp/*.log
+**/tmp/**/
+**/tmp/*.eps
 
 # Setuptools distribution folder.
 /dist/
