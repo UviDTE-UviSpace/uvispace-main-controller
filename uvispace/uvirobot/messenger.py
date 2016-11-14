@@ -144,15 +144,13 @@ if __name__ == "__main__":
     script_path = os.path.dirname(os.path.realpath(__file__))
     #A file identifier is generated from the current time value
     file_id = int(time.time())
-    temp_file = open('{}/tmp/comm{}.log'.format(script_path, file_id), 'a')
-    for item in xbee_times:
-        print>>temp_file, '{0:.5f}'.format(item)
-    temp_file.close()
-    temp_file = open('{}/tmp/waittimes{}.log'.format(script_path, 
-                                                     file_id), 'a')
-    for item in wait_times:
-        print>>temp_file, '{0:.5f}'.format(item)
-    temp_file.close()
+    with open('{}/tmp/comm{}.log'.format(script_path, file_id), 'a') as f:
+        for item in xbee_times:
+            print>>f, '{0:.5f}'.format(item)
+    with open('{}/tmp/waittimes{}.log'.format(script_path, 
+                                              file_id), 'a') as f:
+        for item in wait_times:
+            print>>f, '{0:.5f}'.format(item)
     #Plots the robot ideal path.
     plotter.times_plot(xbee_times, wait_times)
     

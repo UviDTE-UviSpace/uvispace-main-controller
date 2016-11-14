@@ -74,13 +74,15 @@ if __name__ == "__main__":
     #This function sends 4 rectangle points to the robot path.
     make_a_rectangle()
     rospy.spin()
-    #After shutdown, the path is saved to a text file.
+    
+    ###############################################################
+    ########## Print the log output to files and plot it ##########
+    ###############################################################
     script_path = os.path.dirname(os.path.realpath(__file__))
     #A file identifier is generated from the current time value
     file_id = int(time.time())
-    temp_file = open('{}/tmp/path{}.log'.format(script_path, file_id), 'a')
-    np.savetxt(temp_file, my_robot.QCTracker.route, fmt='%.2f')
-    temp_file.close()
+    with open('{}/tmp/path{}.log'.format(script_path, file_id), 'a') as f:
+        np.savetxt(f, my_robot.QCTracker.route, fmt='%.2f')
     #Plots the robot ideal path.
     plotter.path_plot(my_robot.QCTracker.path, my_robot.QCTracker.route)
     
