@@ -35,10 +35,10 @@ def new_node(my_robot, robot_id):
     
 def make_a_rectangle():
     """Set the robot path to a rectangle of fixed vertices."""
-    pointA = Pose2D(x=1.0, y=0.5)
-    pointB = Pose2D(x=-1.0, y=0.5)
-    pointC = Pose2D(x=-1.0, y=-0.5)
-    pointD = Pose2D(x=1.0, y=-0.5)
+    pointA = Pose2D(x=1.0, y=1.0)
+    pointB = Pose2D(x=-1.0, y=1.0)
+    pointC = Pose2D(x=-1.0, y=-1.0)
+    pointD = Pose2D(x=1.0, y=-1.0)
     pointE = Pose2D(x=1.0, y=0.0)
     my_robot.new_goal(pointA)
     my_robot.new_goal(pointB)
