@@ -77,7 +77,13 @@ def move_robot(data, my_serial):
     t2 = time.time()
     speed_calc_times.append(t2-t1)
     robot_speed.set_speed([linear, angular], 'linear_angular')
-    robot_speed.get_2WD_speeds()
+    #Get the right and left speeds in case of direct movement
+    #The coeficients were found empirically
+    if (robot_speed.get_speed()[0] > 0):
+        robot_speed.get_2WD_speeds(wheels_modifiers=[0.53, 1])
+    #Get the right and left speeds in case of reverse movement
+    else:
+        robot_speed.get_2WD_speeds(wheels_modifiers=[1, 1])
     v_RightWheel, v_LeftWheel = robot_speed.nonlinear_transform(min_A=70,
                                                                 max_B=190)
     rospy.loginfo('I am sending R: {} L: {}'.format(v_RightWheel, v_LeftWheel))
