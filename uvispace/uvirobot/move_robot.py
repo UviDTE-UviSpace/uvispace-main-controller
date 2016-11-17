@@ -49,9 +49,11 @@ def make_a_rectangle():
 if __name__ == "__main__":
     #This exception forces to give the robot_id argument within run command.
     #import pdb; pdb.set_trace()
-    help_msg = 'Usage: move_robot.py [-r <robot_id>], [--robotid=<robot_id>]'
+    rectangle_path = False
+    help_msg = ('Usage: move_robot.py [-r <robot_id>], [--robotid=<robot_id>], '
+                            '[--rectangle]')
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "hr:", ["robotid="])
+        opts, args = getopt.getopt(sys.argv[1:], "hr:", ["robotid=", "rectangle"])
     except getopt.GetoptError:
         print help_msg
         sys.exit()
@@ -64,6 +66,8 @@ if __name__ == "__main__":
             sys.exit()
         elif opt in ("-r", "--robotid"):
             robot_id = int(arg)
+        elif opt == "--rectangle":
+            rectangle_path = True
     # Calls the main function  
     my_robot = RobotController(robot_id)      
     new_node(my_robot, robot_id)
@@ -72,7 +76,8 @@ if __name__ == "__main__":
     while not my_robot.init:
         pass
     #This function sends 4 rectangle points to the robot path.
-    make_a_rectangle()
+    if rectangle_path:
+        make_a_rectangle()
     rospy.spin()
     
     ###############################################################
