@@ -125,7 +125,7 @@ class Get2WDSpeedsTestCases(unittest.TestCase):
         #First case. lineal max speed, no angular speed
         my_speed.set_speed([max_allowed, 0.0], 'linear_angular')
         my_speed.get_2WD_speeds(rho=0.065, L=0.150)
-        # 4.61 = 0.3 / 0.065
+        # 4.615 = 0.3 / 0.065
         npt.assert_allclose(my_speed._speed, [4.615, 4.615], atol=0.001)
         #New case. lineal reverse max speed, no angular speed
         my_speed = Speed()
@@ -133,6 +133,23 @@ class Get2WDSpeedsTestCases(unittest.TestCase):
         my_speed.get_2WD_speeds(rho=0.065, L=0.150)
         npt.assert_allclose(my_speed._speed, [-4.615, -4.615], atol=0.001)
         
+    def test_wheel_coeficients(self):
+        """Speed() get_2WD_speeds method: Checks wheel coeficients."""
+        my_speed = Speed()
+        max_allowed = my_speed.get_max_value()
+        min_allowed = my_speed.get_min_value()
+        #First case, positive values
+        my_speed.set_speed([max_allowed, 0], 'linear_angular')
+        my_speed.get_2WD_speeds(rho=0.065, L=0.150, wheels_modifiers=[1,0.5])
+        #4.615 = max_allowed / rho = 0.3 / 0.065
+        #2.308 = 4.615 * 0.5
+        npt.assert_allclose(my_speed._speed, [4.615, 2.308], atol=0.001)
+        #Second case, negative values
+        my_speed.set_speed([min_allowed, 0], 'linear_angular')
+        my_speed.get_2WD_speeds(rho=0.065, L=0.150, wheels_modifiers=[0.5,1])
+        #4.615 = max_allowed / rho = 0.3 / 0.065
+        #2.308 = 4.615 * 0.5
+        npt.assert_allclose(my_speed._speed, [-2.308, -4.615], atol=0.001)  
         
         
         

@@ -6,9 +6,9 @@ class Speed(object):
     """
     This class manages the speed values compatible with a 2WD vehicle.
     
-    An initial speed value must be provided. Default speed format is 
-    linear_angular. This means that the speed is a 2-value array, whose
-    items corresponds to the linear and angular speed respectively.
+    Default speed format is linear_angular. This means that the speed is
+    a 2-value array, whose items corresponds to the linear and angular 
+    speed respectively.
     """    
     # Available speed formats
     SPEEDFORMATS = ('linear_angular', '2_wheel_drive')
@@ -21,14 +21,14 @@ class Speed(object):
         self._speed = np.array([None, None])
         self._format = None
         self._scale = 'linear'
-        
+        #Wheel's diameter
         self.rho = None
         #Calls the set_speed method to initialize the format and speed 
         #attributes.
         self.set_speed(speed, spd_format)
         
     def set_speed(self, speed, speed_format, speed_scale='linear'):
-        """Sets the speed value.
+        """Set the speed value.
         
         Input speed must be a 2-value list or tupple. If out of bounds, 
         it will be rounded to the nearest bound.
@@ -50,11 +50,11 @@ class Speed(object):
         self._set_scale(speed_scale)
     
     def get_speed(self):
-        """Returns the value of the speed."""
+        """Return the value of the speed."""
         return self._speed
                 
     def check_bounds(self):
-        """Checks that the speed values are inside valid bounds."""
+        """Check that the speed values are inside valid bounds."""
         if self._scale == 'linear':
             for index, value in enumerate(self._speed):
                 if (self._speed[index] < self._min_value):
@@ -67,15 +67,15 @@ class Speed(object):
         return self._speed
         
     def get_min_value(self):
-        """ Returns the minimum allowed value for a linear scale."""   
+        """ Return the minimum allowed value for a linear scale."""   
         return self._min_value
         
     def get_max_value(self):
-        """ Returns the maximum allowed value for a linear scale."""   
+        """ Return the maximum allowed value for a linear scale."""   
         return self._max_value
         
     def _set_format(self, new_format):
-        """Sets the format of the speed.
+        """Set the format of the speed.
         
         Available values : 
         ----------------
@@ -95,11 +95,11 @@ class Speed(object):
         self._format = new_format
         
     def get_format(self):
-        """Returns the format value."""
+        """Return the format value."""
         return self._format
         
     def _set_scale(self, new_scale):
-        """Sets the scale of the speed.
+        """Set the scale of the speed.
         
         Available values : 
         ----------------
@@ -112,11 +112,11 @@ class Speed(object):
         self._scale = new_scale
                 
     def get_scale(self):
-        """Returns the scale value."""
+        """Return the scale value."""
         return self._scale
 
     def linear_transform(self, new_min, new_max):
-        """Changes the range of values of the speed.
+        """Change the range of values of the speed.
         
         This is a linear conversion of the speed values.
         """
@@ -132,7 +132,7 @@ class Speed(object):
                                   min_B=160, max_B=220, 
                                   scale_zero = 127):
         """ 
-        Makes a non-linear conversion of speed values.
+        Make a non-linear conversion of speed values.
         
         Intended to avoid useless points near to 0 on a real UGV, it
         translates the input speeds to useful segments.
@@ -197,13 +197,13 @@ class Speed(object):
         self._scale = 'non-linear'
         return self._speed
         
-    def get_2WD_speeds(self, rho=0.065, L=0.150):
+    def get_2WD_speeds(self, rho=0.065, L=0.150, wheels_modifiers=[1,1]):
         """
-        Obtains two speeds components, one for each side of the vehicle.
+        Obtain two speeds components, one for each side of the vehicle.
         
         It calculates the speed component for each side, when  the
         linear and angular velocities of the vehicle are given.
-        The calculation changes as well the maximum and minimum values.
+        The method also changes the maximum and minimum values.
         
         This calculus responds to the dynamics system proposed on: 
         http://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=5674957
@@ -222,7 +222,15 @@ class Speed(object):
 
         L : float
             Parameter of the dynamic model, which represents the distance 
-            between the driving wheels of the vehicle. 
+            between the driving wheels of the vehicle.
+
+        wheels_modifiers : float 2-element list (0 to 1)
+            Fit coeficient for each wheel. It is intended to adjust the
+            error between the ideal model and the real system. Thus, it
+            corrects the performance difference between the 2 wheels.
+            It is recommended to tune this values by testing them on the 
+            real vehicle.
+            
             
         Returns
         -------
@@ -236,6 +244,8 @@ class Speed(object):
             return self.get_speed()
         vLinear = self._speed[0]
         vRotation = self._speed[1]
+        #Extract and clip the 2 coefficients from the input list
+        right_coef, left_coef = np.clip(wheels_modifiers, 0, 1)
         #Conversion of the linear speed range to the wheels angular speed.
         self._max_value /= rho
         self._min_value /= rho
@@ -243,8 +253,8 @@ class Speed(object):
         term1 = (1 / rho ) * vLinear
         term2 = (2 * rho * vRotation) / L    
         #Calculates the raw velocity values.
-        vR_raw = term1 + term2
-        vL_raw = term1 - term2
+        vR_raw = (term1 + term2) * right_coef
+        vL_raw = (term1 - term2) * left_coef
         #Clips the raw velocities to avoid invalid values
         rl_speeds = np.clip([vR_raw, vL_raw], self._min_value, self._max_value)
         self.set_speed(rl_speeds, '2_wheel_drive')
