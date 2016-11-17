@@ -23,3 +23,6 @@
 
 # Other modules
 **path_tracker.py
+
+# Deprecated files
+/uvispace/deprecated/**
