@@ -79,7 +79,7 @@ class VideoSensor(object):
         self._params['exposure'] = self.config.getint('Camera', 'exposure')
         self._params['output'] = 0
 
-    def write_configuration_registers(self):
+    def write_conf_registers(self):
         """Write to the FPGA registers the loaded configuration."""
         ####SENSOR COLOR THRESHOLDS####
         #They must be string type.
