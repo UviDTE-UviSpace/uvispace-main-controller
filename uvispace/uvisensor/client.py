@@ -12,6 +12,7 @@ https://github.com/biosbits/bits/blob/master/python/_socket.py
 # Standard libraries
 import logging
 import socket
+import ast
 from socket import socket as Socket
 
 class Client(Socket):
@@ -115,7 +116,8 @@ class Client(Socket):
         """Read the value of a register."""
         self.send('r,{}\n'.format(reg))
         result = self.recv(self.buffer_size)
-        return eval(result)
+        formatted_result = ast.literal_eval(result)
+        return formatted_result
 
     def write_register(self, reg, value):
         """Write a value into a register and clean up input buffer."""
