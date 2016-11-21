@@ -10,9 +10,9 @@ _socket.socket class source code can be found in the following link:
 https://github.com/biosbits/bits/blob/master/python/_socket.py
 """
 # Standard libraries
+import ast
 import logging
 import socket
-import ast
 from socket import socket as Socket
 
 class Client(Socket):
@@ -30,17 +30,24 @@ class Client(Socket):
     * recv(buflen) : read the specified number of bytes
     * settimeout(timeout)
     """
-    def __init__(self, ip, port, buffer_size=2048, timeout=1.0):
+    #Allowed register values
+    REGISTERS = {'RED_THRESHOLD': 'rt', 
+                 'GREEN_THRESHOLD': 'gt',
+                 'BLUE_THRESHOLD': 'bt',
+                 'IMAGE_SHAPE': 'is',
+                 'IMAGE_EXPOSURE': 'ie',
+                 'SYSTEM_INDEXES': 'si',
+                 'SYSTEM_SHAPE': 'ss',
+                 'SYSTEM_MODES': 'sm',
+                 'SYSTEM_OUTPUT': 'so'}
+    #Allowed command values
+    COMMANDS = {'CLOSE_CONNECTION': 'Q'}
+                 
+    def __init__(self, buffer_size=2048, timeout=1.0):
         """Set attributes, inheritance and logger.
                 
         Parameters
         ----------
-        ip : string
-            IP adress of the device that will be connected.
-            
-        port: int
-            Device port where the connection will be stablished.
-            
         buffer_size : int
             size in bytes of the buffer for the incomming data.
             
@@ -52,18 +59,28 @@ class Client(Socket):
         #Initializes parent class
         Socket.__init__(self, family=socket.AF_INET, type=socket.SOCK_STREAM)
         #Connection parameters for the client device
-        self.ip = ip
-        self.port = port
+        self.ip = ''
+        self.port = None
         self.buffer_size = buffer_size
         self._logger = logging.getLogger(__name__)
         #Call parent method for setting the timeout
         self.settimeout(timeout)
 
-    def open_connection(self):
+    def open_connection(self, ip, port):
         """Create the socket connection.
-        
+
         After connecting, the input buffer is read for emptying it.
+
+        Parameters
+        ----------
+        ip : string
+            IP adress of the device that will be connected.
+
+        port: int
+            Device port where the connection will be stablished.
         """
+        self.ip = ip
+        self.port = port
         self.connect((self.ip, self.port))
         self._logger.info('Started TCP client with IP: {} '
                           'and PORT:{}.'.format(self.ip, self.port))
@@ -79,7 +96,7 @@ class Client(Socket):
         #as it changes its class when it is closed.
         #WARNING: not valid method for Python3.
         if not isinstance(self._sock, socket._closedsocket):
-            self.send('Q\n')
+            self.write_command('CLOSE_CONNECTION')
             self.close()
             self._logger.info('Closed the TCP client')
         else:
@@ -97,30 +114,40 @@ class Client(Socket):
         packages = []
         #Do not stop reading new packages until target 'size' is reached.
         while (bytes < size):
-            received_package = self.sock.recv(self.buffer_size)
+            received_package = self.recv(self.buffer_size)
             bytes += len(received_package)
             packages.append(received_package)
-            _logger.debug('Received {} bytes of {} ({:.2f})\r'
+            self._logger.debug('Received {} bytes of {} ({:.2f})\r'
                           ''.format(bytes, size, (100 * float(bytes)/size))
                          )
         #Cocatenate all the packages in a unique variable
         data = ''.join(packages)
         return data
         
-    def write_command(self, data):
-        """Send a command to the TCP client and return the response."""
+    def write_command(self, command, clean_buffer=False):
+        """
+        Send a command to the TCP/IP client.
+        
+        Set the clean_buffer arg to True for doing a clean-up reading 
+        after writing.
+        """
+        data = COMMANDS[command]
         self.send('{}\n'.format(data))
-        return self.recv(self.buffer_size)
+        if clean_buffer:
+            self.recv(self.buffer_size)
+        return 
     
-    def read_register(self, reg):
+    def read_register(self, regkey):
         """Read the value of a register."""
+        reg = REGISTERS[regkey]
         self.send('r,{}\n'.format(reg))
         result = self.recv(self.buffer_size)
         formatted_result = ast.literal_eval(result)
         return formatted_result
 
-    def write_register(self, reg, value):
+    def write_register(self, regkey, value):
         """Write a value into a register and clean up input buffer."""
+        reg = REGISTERS[regkey]
         self.send('w,{},{}\n'.format(reg, value))
         return self.recv(self.buffer_size)
 
