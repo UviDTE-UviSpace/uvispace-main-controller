@@ -4,6 +4,7 @@
 import ast
 import ConfigParser
 import logging
+import socket
 #Local libraries
 from client import Client
 
@@ -16,7 +17,7 @@ class VideoSensor(object):
         Path of the camera config file.
     """
     #Allowed attribute values.
-    PARAMETERS = (width, height)
+    PARAMETERS = ('width', 'height')
 
     def __init__(self, filename=''):
         """
@@ -47,7 +48,7 @@ class VideoSensor(object):
         self._ip = self.config.get('VideoSensor', 'IP')
         self._port = int(self.config.get('VideoSensor', 'PORT'))
         try:
-            self._client.connect(self._ip, self._port)
+            self._client. open_connection(self._ip, self._port)
             self._connected = True
         except socket.timeout:
             self._logger.warning('Unable to connect to port')
@@ -77,7 +78,7 @@ class VideoSensor(object):
         self._params['row_mode'] = self.config.getint('Camera', 'row_mode')
         self._params['skip'] = self._params['row_mode']
         self._params['exposure'] = self.config.getint('Camera', 'exposure')
-        self._params['output'] = 0
+        self._params['output'] = 4
 
     def write_conf_registers(self):
         """Write to the FPGA registers the loaded configuration."""
