@@ -1,0 +1,65 @@
+11/22/2016 06:17:24 PM is when this event was logged.
+11/22/2016 06:17:25 PM Unable to connect to port
+11/22/2016 06:18:44 PM is when this event was logged.
+11/22/2016 06:18:45 PM Unable to connect to port
+11/22/2016 06:19:25 PM is when this event was logged.
+11/22/2016 06:19:26 PM Unable to connect to port
+11/22/2016 06:20:24 PM is when this event was logged.
+11/22/2016 06:20:25 PM Unable to connect to port
+11/22/2016 06:21:11 PM is when this event was logged.
+11/22/2016 06:21:12 PM Unable to connect to port
+WARNING:is when this event was logged.
+WARNING:Unable to connect to port
+06:22:38 PM WARNING:is when this event was logged.
+06:22:39 PM WARNING:Unable to connect to port
+18:23:41 WARNING:is when this event was logged.
+18:23:42 WARNING:Unable to connect to port
+18:24:29 INFO:Started TCP client with IP: 172.19.5.214 and PORT:5005.
+18:25:05 INFO:Started TCP client with IP: 172.19.5.214 and PORT:5005.
+18:25:06 WARNING:Unable to connect to port
+18:28:14 INFO:Started TCP client with IP: 172.19.5.214 and PORT:5005.
+18:28:15 WARNING:Unable to connect to port
+18:28:55 INFO:Closed the TCP client
+18:30:25 DEBUG:Unable to close TCP client. Already closed
+18:30:44 WARNING:Unable to connect to port
+18:43:25 WARNING:Unable to connect to port
+18:43:54 WARNING:Unable to connect to port
+18:44:31 INFO:Started TCP client with IP: 172.19.5.215 and PORT:5005.
+18:45:51 DEBUG:Received 2048 bytes of 311688 (0.66)
+18:45:51 DEBUG:Received 4096 bytes of 311688 (1.31)
+18:45:51 DEBUG:Received 6144 bytes of 311688 (1.97)
+18:45:51 DEBUG:Received 8192 bytes of 311688 (2.63)
+18:45:51 DEBUG:Received 10240 bytes of 311688 (3.29)
+18:45:51 DEBUG:Received 12288 bytes of 311688 (3.94)
+18:45:51 DEBUG:Received 14336 bytes of 311688 (4.60)
+18:45:51 DEBUG:Received 16384 bytes of 311688 (5.26)
+18:45:51 DEBUG:Received 18432 bytes of 311688 (5.91)
+18:45:51 DEBUG:Received 20480 bytes of 311688 (6.57)
+18:45:51 DEBUG:Received 22528 bytes of 311688 (7.23)
+18:45:51 DEBUG:Received 24576 bytes of 311688 (7.88)
+18:45:51 DEBUG:Received 26624 bytes of 311688 (8.54)
+18:45:51 DEBUG:Received 28672 bytes of 311688 (9.20)
+18:45:51 DEBUG:Received 30720 bytes of 311688 (9.86)
+18:45:51 DEBUG:Received 32768 bytes of 311688 (10.51)
+18:45:51 DEBUG:Received 34816 bytes of 311688 (11.17)
+18:45:51 DEBUG:Received 36864 bytes of 311688 (11.83)
+18:45:51 DEBUG:Received 38912 bytes of 311688 (12.48)
+18:45:51 DEBUG:Received 40960 bytes of 311688 (13.14)
+18:45:51 DEBUG:Received 43008 bytes of 311688 (13.80)
+18:45:51 DEBUG:Received 45056 bytes of 311688 (14.46)
+18:45:51 DEBUG:Received 47104 bytes of 311688 (15.11)
+18:45:51 DEBUG:Received 49152 bytes of 311688 (15.77)
+18:45:51 DEBUG:Received 51200 bytes of 311688 (16.43)
+18:45:51 DEBUG:Received 53248 bytes of 311688 (17.08)
+18:45:51 DEBUG:Received 55296 bytes of 311688 (17.74)
+18:45:51 DEBUG:Received 57344 bytes of 311688 (18.40)
+18:45:51 DEBUG:Received 59392 bytes of 311688 (19.05)
+18:45:51 DEBUG:Received 61440 bytes of 311688 (19.71)
+18:45:51 DEBUG:Received 63488 bytes of 311688 (20.37)
+18:45:51 DEBUG:Received 65536 bytes of 311688 (21.03)
+18:45:51 DEBUG:Received 67584 bytes of 311688 (21.68)
+18:45:51 DEBUG:Received 69632 bytes of 311688 (22.34)
+18:45:51 DEBUG:Received 71680 bytes of 311688 (23.00)
+18:45:51 DEBUG:Received 73728 bytes of 311688 (23.65)
+18:45:51 DEBUG:Received 75776 bytes of 311688 (24.31)
+18:45:51 DEBUG:Received 76816 bytes of 311688 (24.65)
