@@ -31,18 +31,25 @@ class Client(Socket):
     * settimeout(timeout)
     """
     #Allowed register values
-    REGISTERS = {'RED_THRESHOLD': 'rt', 
-                 'GREEN_THRESHOLD': 'gt',
-                 'BLUE_THRESHOLD': 'bt',
-                 'IMAGE_SHAPE': 'is',
-                 'IMAGE_EXPOSURE': 'ie',
-                 'SYSTEM_INDEXES': 'si',
-                 'SYSTEM_SHAPE': 'ss',
-                 'SYSTEM_MODES': 'sm',
-                 'SYSTEM_OUTPUT': 'so'}
+    _REGISTERS = {'RED_THRESHOLD': 'rt', 
+                  'GREEN_THRESHOLD': 'gt',
+                  'BLUE_THRESHOLD': 'bt',
+                  'IMAGE_SHAPE': 'is',
+                  'IMAGE_EXPOSURE': 'ie',
+                  'SYSTEM_INDEXES': 'si',
+                  'SYSTEM_SHAPE': 'ss',
+                  'SYSTEM_MODES': 'sm',
+                  'SYSTEM_OUTPUT': 'so',
+                  'TRACKER_RESOURCES': 'tr',
+                  'UNKNOWN': 'fa'}
     #Allowed command values
-    COMMANDS = {'CLOSE_CONNECTION': 'Q'}
-                 
+    _COMMANDS = {'CLOSE_CONNECTION': 'Q',
+                 'CONFIGURE_CAMERA': 'C',
+                 'SET_VGA_OUTPUT': 'V',
+                 'GET_GRAY_IMAGE': 'G',
+                 'GET_COLOR_IMAGE': 'D',
+                 'GET_NEW_FRAME': 'S'}
+
     def __init__(self, buffer_size=2048, timeout=1.0):
         """Set attributes, inheritance and logger.
                 
@@ -112,12 +119,14 @@ class Client(Socket):
         """
         bytes = 0
         packages = []
+        import pdb; pdb.set_trace()
         #Do not stop reading new packages until target 'size' is reached.
         while (bytes < size):
             received_package = self.recv(self.buffer_size)
+            
             bytes += len(received_package)
             packages.append(received_package)
-            self._logger.debug('Received {} bytes of {} ({:.2f})\r'
+            self._logger.debug('Received {} bytes of {} ({:.2f}%)\r'
                           ''.format(bytes, size, (100 * float(bytes)/size))
                          )
         #Cocatenate all the packages in a unique variable
@@ -131,7 +140,7 @@ class Client(Socket):
         Set the clean_buffer arg to True for doing a clean-up reading 
         after writing.
         """
-        data = COMMANDS[command]
+        data = self._COMMANDS[command]
         self.send('{}\n'.format(data))
         if clean_buffer:
             self.recv(self.buffer_size)
@@ -139,15 +148,16 @@ class Client(Socket):
     
     def read_register(self, regkey):
         """Read the value of a register."""
-        reg = REGISTERS[regkey]
+        reg = self._REGISTERS[regkey]
         self.send('r,{}\n'.format(reg))
         result = self.recv(self.buffer_size)
+        #Convert the string input into a valid value e.g. list or int
         formatted_result = ast.literal_eval(result)
         return formatted_result
 
     def write_register(self, regkey, value):
         """Write a value into a register and clean up input buffer."""
-        reg = REGISTERS[regkey]
+        reg = self._REGISTERS[regkey]
         self.send('w,{},{}\n'.format(reg, value))
         return self.recv(self.buffer_size)
 
