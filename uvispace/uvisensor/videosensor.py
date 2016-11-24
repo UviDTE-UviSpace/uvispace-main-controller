@@ -17,7 +17,10 @@ class VideoSensor(object):
         Path of the camera config file.
     """
     #Allowed attribute values.
-    PARAMETERS = ('width', 'height')
+    PARAMETERS = ('width', 
+                  'height',
+                  'start_col',
+                  'start_row')
 
     def __init__(self, filename=''):
         """
@@ -34,10 +37,10 @@ class VideoSensor(object):
         #Begin a logger, and associate it to the module __name__
         self._logger = logging.getLogger(__name__)
         #Instantiate a configuration class and read input filename.
-        self.config = ConfigParser.RawConfigParser()
-        self.config.read(filename)
+        self.conf = ConfigParser.RawConfigParser()
+        self.conf.read(filename)
         #Open connection if a filename is given
-        if self.config.sections():
+        if self.conf.sections():
             self.connect_client()
 
     def connect_client(self):
@@ -45,13 +48,19 @@ class VideoSensor(object):
         Read TCP/IP parameters in config file and connect to the device. 
         """
         #The IP and PORT parameters are stored in the config file.
-        self._ip = self.config.get('VideoSensor', 'IP')
-        self._port = int(self.config.get('VideoSensor', 'PORT'))
         try:
-            self._client. open_connection(self._ip, self._port)
+            self._ip = self.conf.get('VideoSensor', 'IP')
+            self._port = int(self.conf.get('VideoSensor', 'PORT'))
+        except NoSectionError:
+            self._logger.ERROR('Missing config file: {}'.format(self.filename))
+            return
+        self._logger.debug('Opened configuration file. '
+                           'Connecting to {}'.format(self._ip))
+        try:
+            self._client.open_connection(self._ip, self._port)
             self._connected = True
         except socket.timeout:
-            self._logger.warning('Unable to connect to port')
+            self._logger.warning('Unable to connect to port. Timeout')
 
     def disconnect_client(self):
         """Close TCP/IP connection with the device."""
@@ -59,54 +68,83 @@ class VideoSensor(object):
         self._connected = False
 
     def load_configuration(self):
-        """Read camera and sensor parameters in config file."""
+        """
+        Load the config file and send the configuration to the FPGA.
+        
+        Read camera and sensor parameters in config file."""
         #Sensor color thresholds parameters
         self._params['red_thresholds'] = ast.literal_eval(
-                                self.config.get('Sensor', 'red_thresholds'))
+                                self.conf.get('Sensor', 'red_thresholds'))
         self._params['green_thresholds'] = ast.literal_eval(
-                                self.config.get('Sensor', 'green_thresholds'))
+                                self.conf.get('Sensor', 'green_thresholds'))
         self._params['blue_thresholds'] = ast.literal_eval(
-                                self.config.get('Sensor', 'blue_thresholds'))
+                                self.conf.get('Sensor', 'blue_thresholds'))
         #Camera acquisition geometry parameters
-        self._params['width'] = self.config.getint('Camera', 'width')
-        self._params['height'] = self.config.getint('Camera', 'height')
-        self._params['start_col'] = self.config.getint('Camera', 'start_column')
-        self._params['start_row'] = self.config.getint('Camera', 'start_row')
-        self._params['col_size'] = self.config.getint('Camera', 'column_size')
-        self._params['row_size'] = self.config.getint('Camera', 'row_size')
-        self._params['col_mode'] = self.config.getint('Camera', 'column_mode')
-        self._params['row_mode'] = self.config.getint('Camera', 'row_mode')
+        self._params['width'] = self.conf.getint('Camera', 'width')
+        self._params['height'] = self.conf.getint('Camera', 'height')
+        self._params['start_col'] = self.conf.getint('Camera', 'start_column')
+        self._params['start_row'] = self.conf.getint('Camera', 'start_row')
+        self._params['col_size'] = self.conf.getint('Camera', 'column_size')
+        self._params['row_size'] = self.conf.getint('Camera', 'row_size')
+        self._params['col_mode'] = self.conf.getint('Camera', 'column_mode')
+        self._params['row_mode'] = self.conf.getint('Camera', 'row_mode')
+        self._params['exposure'] = self.conf.getint('Camera', 'exposure')
         self._params['skip'] = self._params['row_mode']
-        self._params['exposure'] = self.config.getint('Camera', 'exposure')
-        self._params['output'] = 4
-
-    def write_conf_registers(self):
-        """Write to the FPGA registers the loaded configuration."""
+        self._params['output'] = 0
+        #---------------------------------------------------------#
+        ###Write to the FPGA registers the loaded configuration.###
         ####SENSOR COLOR THRESHOLDS####
-        #They must be string type.
-        self._client.write_register('RED_THRESHOLD', 
-                        str(self._params['red_thresholds']))
-        self._client.write_register('GREEN_THRESHOLD', 
-                        str(self._params['green_thresholds']))
-        self._client.write_register('BLUE_THRESHOLD', 
-                        str(self._params['blue_thresholds']))
+        #They must be of string type.
+        self.set_register('RED_THRESHOLD', self._params['red_thresholds'])
+        self.set_register('GREEN_THRESHOLD', self._params['green_thresholds'])
+        self.set_register('BLUE_THRESHOLD', self._params['blue_thresholds'])
         ####CAMERA GEOMETRY PARAMETERS####
         #They must be string type.
-        self._client.write_register('IMAGE_SHAPE', '{}{}'.format(
-                        self._params['width'], self._params['height']))
-        self._client.write_register('IMAGE_EXPOSURE', 
-                        str(self._params['exposure']))
+        self.set_register('IMAGE_SHAPE', (self._params['width'], 
+                                          self._params['height']))
+        self.set_register('IMAGE_EXPOSURE', self._params['exposure'])
         #Why is adding 15 and 53??
-        self._client.write_register('SYSTEM_INDEXES', '{}{}'.format(
-                        self._params['start_col'] + 15, 
-                        self._params['start_row'] + 53))
-        self._client.write_register('SYSTEM_SHAPE', '{}{}'.format(
-                        self._params['col_size'], self._params['row_size']))
-        self._client.write_register('SYSTEM_MODES', '{}{}'.format(
-                        self._params['col_mode'], self._params['row_mode']))
-        self._client.write_register('SYSTEM_OUTPUT', 
-                        str(self._params['output']))
+        self.set_register('SYSTEM_INDEXES', (self._params['start_col'],
+                                             self._params['start_row']))
+        self.set_register('SYSTEM_SHAPE', (self._params['col_size'], 
+                                           self._params['row_size']))
+        self.set_register('SYSTEM_MODES', (self._params['col_mode'], 
+                                           self._params['row_mode']))
+        self.set_register('SYSTEM_OUTPUT', self._params['output'])
+        #Send the configuration command to the FPGA
+        conf = self._client.write_command('CONFIGURE_CAMERA', True)
+        logging.debug(repr("Obtained '{}' "
+                           "after 'CONFIGURE_CAMERA'".format(conf)))
 
+    def set_register(self, register, value):
+        """
+        Write the desired value into an FPGA register.
+        
+        Parameters
+        ----------
+        register : string
+            key identifier of valid register name of the FPGA. The full
+            list of valid keys and their associated name can be found on
+            the documentation of the client.Client class.
+        
+        value : int or 2-element tuple/list
+            the value that will be written to the register. It is 
+            mandatory to send it as string type. Thus, the value has to
+            be converted. For tupples or lists, brackets or parenthesis
+            are not allowed, so they have to be eliminated.
+            
+            examples :
+                sent_value = '6' ---> OK
+                sent_value = '(3.45, 2.21)' ---> No OK
+                sent_value = '3.45, 2.21' ---> OK
+        """
+        #In case of lists, the FPGA only understands decomposed string elements.
+        #i.e. '(value1, value2)' is not valid. 'value1,value2' is valid.
+        message = self._client.write_register(register, str(value))
+        import pdb;pdb.set_trace()
+        self._logger.debug(repr("Obtained '{}' after "
+                           "writing {} on {} register.".format(message,
+                                                              value, register)))
 
 
 
