@@ -41,7 +41,8 @@ class Client(Socket):
                   'SYSTEM_MODES': 'sm',
                   'SYSTEM_OUTPUT': 'so',
                   'TRACKER_RESOURCES': 'tr',
-                  'UNKNOWN': 'fa'}
+                  'UNKNOWN': 'fa',
+                  'UNKNOWN2': 'al'}
     #Allowed command values
     _COMMANDS = {'CLOSE_CONNECTION': 'Q',
                  'CONFIGURE_CAMERA': 'C',
@@ -50,7 +51,7 @@ class Client(Socket):
                  'GET_COLOR_IMAGE': 'D',
                  'GET_NEW_FRAME': 'S'}
 
-    def __init__(self, buffer_size=2048, timeout=1.0):
+    def __init__(self, buffer_size=2048, timeout=2.0):
         """Set attributes, inheritance and logger.
                 
         Parameters
@@ -91,7 +92,7 @@ class Client(Socket):
         self.connect((self.ip, self.port))
         self._logger.info('Started TCP client with IP: {} '
                           'and PORT:{}.'.format(self.ip, self.port))
-        #Empty the data buffer, as it contains the welcome message.
+        #Empty the data buffer, as it contains the 'welcome message'.
         self.recv(self.buffer_size)
         
     def close_connection(self):
@@ -105,7 +106,7 @@ class Client(Socket):
         if not isinstance(self._sock, socket._closedsocket):
             self.write_command('CLOSE_CONNECTION')
             self.close()
-            self._logger.info('Closed the TCP client')
+            self._logger.info('Closed the TCP client\n\n{}'.format(75*'-'))
         else:
             self._logger.debug('Unable to close TCP client. Already closed')
         
@@ -119,11 +120,15 @@ class Client(Socket):
         """
         bytes = 0
         packages = []
-        import pdb; pdb.set_trace()
         #Do not stop reading new packages until target 'size' is reached.
         while (bytes < size):
-            received_package = self.recv(self.buffer_size)
-            
+            try:
+                received_package = self.recv(self.buffer_size)
+            except socket.timeout:
+                amount = 100 * float(bytes)/size
+                self._logger.warning('Stopped data acquisition with {:.2f}% '
+                                     'of the data acquired'.format(amount))
+                break
             bytes += len(received_package)
             packages.append(received_package)
             self._logger.debug('Received {} bytes of {} ({:.2f}%)\r'
@@ -142,9 +147,13 @@ class Client(Socket):
         """
         data = self._COMMANDS[command]
         self.send('{}\n'.format(data))
+        message = "EMPTY BUFFER"
         if clean_buffer:
-            self.recv(self.buffer_size)
-        return 
+            try:
+                message = self.recv(self.buffer_size)
+            except socket.timeout:
+                pass
+        return message
     
     def read_register(self, regkey):
         """Read the value of a register."""
@@ -159,7 +168,13 @@ class Client(Socket):
         """Write a value into a register and clean up input buffer."""
         reg = self._REGISTERS[regkey]
         self.send('w,{},{}\n'.format(reg, value))
-        return self.recv(self.buffer_size)
+        #Sometimes an ACK message is returned. It has to be checked for
+        #cleaning the buffer.
+        try:
+            message = self.recv(self.buffer_size)
+        except socket.timeout:
+            message = "EMPTY BUFFER"
+        return message
 
 
 
