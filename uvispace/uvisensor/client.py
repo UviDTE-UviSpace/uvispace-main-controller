@@ -42,7 +42,8 @@ class Client(Socket):
                   'SYSTEM_OUTPUT': 'so',
                   'TRACKER_RESOURCES': 'tr',
                   'UNKNOWN': 'fa',
-                  'UNKNOWN2': 'al'}
+                  'UNKNOWN2': 'al',
+                  'UNKNOWN3': 'aw'}
     #Allowed command values
     _COMMANDS = {'CLOSE_CONNECTION': 'Q',
                  'CONFIGURE_CAMERA': 'C',
@@ -131,9 +132,8 @@ class Client(Socket):
                 break
             bytes += len(received_package)
             packages.append(received_package)
-            self._logger.debug('Received {} bytes of {} ({:.2f}%)\r'
-                          ''.format(bytes, size, (100 * float(bytes)/size))
-                         )
+        self._logger.debug('Received {} bytes of {} ({:.2f}%)\r'.format(
+                           bytes, size, (100 * float(bytes)/size)))
         #Cocatenate all the packages in a unique variable
         data = ''.join(packages)
         return data
