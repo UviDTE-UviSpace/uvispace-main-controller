@@ -4,6 +4,7 @@
 import ast
 import ConfigParser
 import logging
+import pylab
 import socket
 #Local libraries
 from client import Client
@@ -71,7 +72,12 @@ class VideoSensor(object):
         """
         Load the config file and send the configuration to the FPGA.
         
-        Read camera and sensor parameters in config file."""
+        * Read camera and sensor parameters in self.filename. They are 
+        then stored in the self._params variable. 
+        
+        * Write paramters in the FPGA registers by calling set_resgister()
+         method. Send 'CONFIGURE_CAMERA' command to FPGA.
+        """
         #Sensor color thresholds parameters
         self._params['red_thresholds'] = ast.literal_eval(
                                 self.conf.get('Sensor', 'red_thresholds'))
@@ -138,13 +144,66 @@ class VideoSensor(object):
                 sent_value = '(3.45, 2.21)' ---> No OK
                 sent_value = '3.45, 2.21' ---> OK
         """
-        #In case of lists, the FPGA only understands decomposed string elements.
+        #int values are directly converted to string variables.
+        if type(value) in (str, int):
+            formatted_value = str(value)
+        #In case of tuples, FPGA only understands decomposed string elements.
         #i.e. '(value1, value2)' is not valid. 'value1,value2' is valid.
-        message = self._client.write_register(register, str(value))
-        import pdb;pdb.set_trace()
-        self._logger.debug(repr("Obtained '{}' after "
-                           "writing {} on {} register.".format(message,
-                                                              value, register)))
+        elif type(value) is tuple:
+            #First element is added individually because it is not preceded
+            #by a comma separator.
+            formatted_value = str(value[0])
+            for i in value[1:]:
+                formatted_value = "{},{}".format(formatted_value, value[i])
+        else:
+            logging.warning("Not valid value type for {}".format(value))
+        message = self._client.write_register(register, formatted_value)
+        self._logger.debug(repr("Obtained '{}' after writing {} on {} register."
+                                "".format(message, formatted_value, register)))
+
+    def capture_frame(self, get_gray=True, tries=20):
+        """
+        This method requests a frame to the FPGA.
+        
+        Paramters
+        ---------
+        get_gray : Boolean
+            if true, a gray-scale image will be requested. If false,
+            the requested image will be colored
+        
+        tries : int
+            number of times that the system will try to obtain the 
+            requested image. After the last try, the system will exit.
+        """
+        #Request a frame capture to the socket client
+        message = self._client.write_command('GET_NEW_FRAME', True)
+        while message != "Image captured.\n":
+            if not tries:
+                logging.warning("Stop waiting for a frame after 20 tries")
+                sys.exit()
+            tries -= 1
+            #Timeout error means that the FPGA buffer is empty. If this
+            #happens, it will try to read the buffer again.
+            try:
+                message = self._client.recv(self._client.buffer_size)
+            except socket.timeout:
+                pass
+        logging.debug(repr("'{}' after {} tries.".format(message, 20 - tries)))
+        #dim (dimensions) is the number of components per pixel.
+        if get_gray:
+            command = 'GET_GRAY_IMAGE'
+            dim = 1
+            shape = (self._params['height'], self._params['width'])
+        else:
+            command = 'GET_COLOR_IMAGE'
+            dim = 3
+            shape = (self._params['height'], self._params['width'], dim)
+        self._client.write_command(command)
+        logging.debug("'{}' command sent.".format(command))
+        #SIZE = Width x Height x Dimensions
+        img_size = self._params['width'] * self._params['height'] * dim
+        data = self._client.read_data(img_size)
+        image = pylab.fromstring(data, dtype=pylab.uint8).reshape(shape)
 
 
 
