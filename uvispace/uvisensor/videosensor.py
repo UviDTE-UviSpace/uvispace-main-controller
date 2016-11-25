@@ -161,7 +161,7 @@ class VideoSensor(object):
         self._logger.debug(repr("Obtained '{}' after writing {} on {} register."
                                 "".format(message, formatted_value, register)))
 
-    def capture_frame(self, get_gray=True, tries=20):
+    def capture_frame(self, gray=True, tries=20):
         """
         This method requests a frame to the FPGA.
         
@@ -174,6 +174,14 @@ class VideoSensor(object):
         tries : int
             number of times that the system will try to obtain the 
             requested image. After the last try, the system will exit.
+            
+        Returns
+        -------
+        image : MxNxdim numpy.array
+            image contained in an array with dimensions specified in the
+            configuration file. If gray color is True, the dim value 
+            will be 1, and 3 for False (representing color images). dim
+            equals to the number of components per pixel.
         """
         #Request a frame capture to the socket client
         message = self._client.write_command('GET_NEW_FRAME', True)
@@ -190,7 +198,7 @@ class VideoSensor(object):
                 pass
         logging.debug(repr("'{}' after {} tries.".format(message, 20 - tries)))
         #dim (dimensions) is the number of components per pixel.
-        if get_gray:
+        if gray:
             command = 'GET_GRAY_IMAGE'
             dim = 1
             shape = (self._params['height'], self._params['width'])
@@ -204,6 +212,7 @@ class VideoSensor(object):
         img_size = self._params['width'] * self._params['height'] * dim
         data = self._client.read_data(img_size)
         image = pylab.fromstring(data, dtype=pylab.uint8).reshape(shape)
+        return image
 
 
 
