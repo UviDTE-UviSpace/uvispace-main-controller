@@ -2,10 +2,10 @@
 """
 This module contains the class SerMesProtocol().
 """
-import time
 from serial import Serial
 import struct
 import sys
+import time
 
 class SerMesProtocol(Serial):
     """
