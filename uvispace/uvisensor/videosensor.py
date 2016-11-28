@@ -5,12 +5,13 @@ import ast
 import ConfigParser
 import logging
 import pylab
+from scipy import misc
 import socket
 #Local libraries
 from client import Client
 
 class VideoSensor(object):
-    """This class contains methods for dealing with a FPGA-camera system
+    """This class contains methods for dealing with FPGA-camera system
 
     Parameters
     ----------
@@ -18,10 +19,20 @@ class VideoSensor(object):
         Path of the camera config file.
     """
     #Allowed attribute values.
-    PARAMETERS = ('width', 
+    PARAMETERS = ('red_thresholds',
+                  'green_thresholds',
+                  'blue_thresholds',
+                  'width', 
                   'height',
                   'start_col',
-                  'start_row')
+                  'start_row',
+                  'col_size',
+                  'row_size',
+                  'col_mode',
+                  'row_mode',
+                  'exposure',
+                  'skip',
+                  'output')
 
     def __init__(self, filename=''):
         """
@@ -68,15 +79,15 @@ class VideoSensor(object):
         self._client.close_connection()
         self._connected = False
 
-    def load_configuration(self):
+    def load_configuration(self, write2fpga=True):
         """
         Load the config file and send the configuration to the FPGA.
         
         * Read camera and sensor parameters in self.filename. They are 
         then stored in the self._params variable. 
-        
-        * Write paramters in the FPGA registers by calling set_resgister()
-         method. Send 'CONFIGURE_CAMERA' command to FPGA.
+        * If write2fpga flag is True, write paramters in the FPGA 
+        registers by calling set_resgister() method. Finally, send 
+        'CONFIGURE_CAMERA' command to FPGA.
         """
         #Sensor color thresholds parameters
         self._params['red_thresholds'] = ast.literal_eval(
@@ -97,7 +108,11 @@ class VideoSensor(object):
         self._params['exposure'] = self.conf.getint('Camera', 'exposure')
         self._params['skip'] = self._params['row_mode']
         self._params['output'] = 0
-        #---------------------------------------------------------#
+        #If the flag is marked as False, the method stops here.
+        if not write2fpga:
+            logging.debug("Loaded parameters. FPGA wasn't configured")
+            return
+        #--------------------------------------------------------------#
         ###Write to the FPGA registers the loaded configuration.###
         ####SENSOR COLOR THRESHOLDS####
         #They must be of string type.
@@ -153,15 +168,15 @@ class VideoSensor(object):
             #First element is added individually because it is not preceded
             #by a comma separator.
             formatted_value = str(value[0])
-            for i in value[1:]:
-                formatted_value = "{},{}".format(formatted_value, value[i])
+            for item in value[1:]:
+                formatted_value = "{},{}".format(formatted_value, item)
         else:
             logging.warning("Not valid value type for {}".format(value))
         message = self._client.write_register(register, formatted_value)
         self._logger.debug(repr("Obtained '{}' after writing {} on {} register."
                                 "".format(message, formatted_value, register)))
 
-    def capture_frame(self, gray=True, tries=20):
+    def capture_frame(self, gray=True, tries=20, output_file=''):
         """
         This method requests a frame to the FPGA.
         
@@ -174,6 +189,10 @@ class VideoSensor(object):
         tries : int
             number of times that the system will try to obtain the 
             requested image. After the last try, the system will exit.
+            
+        output_file : URL str
+            name of the output file were the image will be stored. If 
+            left blank, the image will not be saved.
             
         Returns
         -------
@@ -212,6 +231,8 @@ class VideoSensor(object):
         img_size = self._params['width'] * self._params['height'] * dim
         data = self._client.read_data(img_size)
         image = pylab.fromstring(data, dtype=pylab.uint8).reshape(shape)
+        if output_file:
+            misc.imsave(output_file, image)
         return image
 
 
