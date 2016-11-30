@@ -53,7 +53,7 @@ class Image(object):
         #Why is it neccesary to divide by 4??
         thr_min = int(red_c[0], 2) / 4
         thr_max = int(red_c[1], 2) / 4
-        logging.debug("Image threshold between {} and {}".format(thr_min, thr_max)
+        logging.debug("Thresholding between {} and {}".format(thr_min, thr_max))
         #The first binary approach is obtained evaluating 2 thresholds
         raw_binarized = cv2.inRange(self.image, thr_min, thr_max)
         #A simple erosion gets rid of the whole noise. Dilating the eroded image 
@@ -105,7 +105,10 @@ class Image(object):
         #Get the vertices of each shape in the image.
         for cnt in contours_list:
             coords = skimage.measure.approximate_polygon(cnt, tolerance)
-            self.contours.append(coords)
+            #The initial vertex is repeatead at the end. Thus, if len is 2
+            #it implies a single point polygon. If len is 3 implies a line.
+            if len(coords) > 2:
+                self.contours.append(coords)
             logging.debug("A {}-vertices shape was found".format(len(coords)))
         return self.contours
 
