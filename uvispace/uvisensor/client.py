@@ -41,9 +41,13 @@ class Client(Socket):
                   'SYSTEM_MODES': 'sm',
                   'SYSTEM_OUTPUT': 'so',
                   'TRACKER_RESOURCES': 'tr',
-                  'UNKNOWN': 'fa',
-                  'UNKNOWN2': 'al',
-                  'UNKNOWN3': 'aw'}
+                  'ACTIVATE_TRACKER': 'at',
+                  'DEACTIVATE_TRACKER': 'dt',
+                  'FREE_TRACKER': 'ft',
+                  'FREE_ALL': 'fa',
+                  'ACTUAL_LOCATION': 'al',
+                  'ACTIVE_WINDOWS': 'aw',
+                  'SET_WINDOW': 'sw'}
     #Allowed command values
     _COMMANDS = {'CLOSE_CONNECTION': 'Q',
                  'CONFIGURE_CAMERA': 'C',
