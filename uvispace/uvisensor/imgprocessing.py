@@ -108,9 +108,39 @@ class Image(object):
             #The initial vertex is repeatead at the end. Thus, if len is 2
             #it implies a single point polygon. If len is 3 implies a line.
             if len(coords) > 2:
-                self.contours.append(coords)
+                self.contours.append(coords[1:])
             logging.debug("A {}-vertices shape was found".format(len(coords)))
         return self.contours
+
+    @staticmethod 
+    def get_triangle_position(vertices):
+        """Return the angle and the front vertex of the triangle.
+        
+        The input are the coordinates of 3 vertices defining a triangle,
+        packed in a single 3x2 array.
+        The returned angle is expressed in radians, in the range 
+        [-pi, pi]"""
+        vertices = vertices.astype(np.float32)
+        #Calculate the length of the sides i.e. the Euclidean distance
+        side_A = np.linalg.norm(vertices[0] - vertices[1])
+        side_B = np.linalg.norm(vertices[0] - vertices[2])
+        side_C = np.linalg.norm(vertices[1] - vertices[2])
+        #If 2 sides are equal, the common vertex is the front one and 
+        #The base midpoint is calculated with the other 2.
+        import pdb; pdb.set_trace()
+        if side_A == side_B:
+            midpoint = (vertices[1]+vertices[2]) / 2
+            x, y = vertices[0] - midpoint
+            angle = np.arctan2(x, y)
+        elif side_B == side_C:
+            midpoint = (vertices[0]+vertices[1]) / 2
+            x, y = vertices[2] - midpoint
+            angle = np.arctan2(x, y)
+        else:
+            midpoint = (vertices[0]+vertices[2]) / 2
+            x, y = vertices[1] - midpoint
+            angle = np.arctan2(y, x)
+        return midpoint[0], midpoint[1], angle    
 
 #    def get_corners(self):
 #        """Locates the boundary corners of shapes in the image.
