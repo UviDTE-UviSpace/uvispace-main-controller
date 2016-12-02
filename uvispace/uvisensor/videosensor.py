@@ -175,6 +175,13 @@ class VideoSensor(object):
         message = self._client.write_register(register, formatted_value)
         self._logger.debug(repr("Obtained '{}' after writing {} on {} register."
                                 "".format(message, formatted_value, register)))
+    def configure_tracker(self):
+        self.write_register('sw', '%s,%i,%i,%i,%i' %(tracker_id, x, y, width, height))
+        for i, box in enumerate(windows):
+            target_id, box = i + start_id + 1, box * 2
+            targets[str(target_id)] = [box[1,0] - box[0,0], box[1,1] - box[0,1]]
+            print video_sensor.configure_tracker(str(target_id), [box[0,0], box[0,1], box[1,0] - box[0,0], box[1,1] - box[0,1]])
+        video_sensor.read_register('al')
 
     def capture_frame(self, gray=True, tries=20, output_file=''):
         """
