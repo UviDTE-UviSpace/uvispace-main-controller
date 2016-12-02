@@ -8,13 +8,84 @@ from scipy import ndimage
 import skimage.measure
 import skimage.morphology
 
+class Triangle(object):
+    def __init__(self, vertices):
+        self.vertices = vertices.astype(np.float32)
+        #The barycenter X is equal to the sum of the X coordinates divided by 3
+        self.barycenter = self.vertices.sum(axis=0) / 3
+        self.sides = np.zeros([3])
+        self.base_index = None
+        self.midpoint = np.array([])
+        self.angle = None
+        self.window = np.array([])
+
+    def get_pose(self):
+        """
+        Return triangle's angle and base midpoint, given its vertices.
+
+        The coordinates of 3 vertices defining the triangle are used,
+        packed in a single 3x2 array. This method asumes that the
+        triangle is isosceles and the 2 equal sides are bigger than 
+        the different one, called base.
+        
+        Returns
+        -------
+        midpoint[0] : float32
+            X coordinate of the midpoint of the triangle's base side.
+
+        midpoint[1] : float32
+            Y coordinate of the midpoint of the triangle's base side.
+
+        angle : float32
+            Orientation angle of the triangle. It is the resulting angle
+            between the horizontal axis and the segment that goes from 
+            the triangle's midpoint to the frontal vertex. It is 
+            expressed in radians, in the range [-pi, pi]
+        """
+        vertices = self.vertices.astype(np.float32)
+        #Calculate the length of the sides i.e. the Euclidean distance
+        self.sides[0] = np.linalg.norm(vertices[2] - vertices[1])
+        self.sides[1] = np.linalg.norm(vertices[0] - vertices[2])
+        self.sides[2] = np.linalg.norm(vertices[1] - vertices[0])
+        #If 2 sides are equal, the common vertex is the front one and 
+        #The base midpoint is calculated with the other 2.
+        self.base_index = np.argmin(self.sides)
+        self.midpoint = (vertices[self.base_index-1]
+                         + vertices[self.base_index-2]) / 2
+        x, y = vertices[self.base_index] - self.midpoint
+        #The array 'y'(rows) counts downwards, contrary to the coordinate system.
+        self.angle = np.arctan2(-y, x)
+        return self.midpoint[0], self.midpoint[1], self.angle
+
+    def get_window(self, k=1.25):
+        """
+        Get the coordinates of a rectangle window around the triangle.
+        
+        At first, the barycenter of the triangle is calculated. Then, 
+        the window is calculated as a rectangle with its sides k times
+        the longest side further from the 
+        barycenter.
+        
+        Returns
+        -------
+        self.window : 2x2 NumPy array
+            array representing a square parallel to the horizontal 
+            coordinates axe. The first row contains the X and Y minimum
+            values of the square, and the second row contains the X and 
+            Y maximum values of the square.
+        """
+        distance = self.sides.max() * k
+        self.window = np.array([self.barycenter - distance, 
+                                self.barycenter + distance])
+        return self.window
+
+
 class Image(object):
     """Class with image processing methods oriented to UGV detection."""
     def __init__(self, image):
         self.image = image
         self._binarized = None
-        self.corners_list = []
-        self.contours = []
+        self.triangles = []
 
     def binarize(self, thresholds):
         """Get a binarized image from a grey image given the thresholds.
@@ -74,7 +145,7 @@ class Image(object):
         logging.debug("Image binarization finished")
         return self._binarized
 
-    def get_vertices(self, tolerance=5):
+    def get_shapes(self, tolerance=5):
         """
         For each shape on the binarized image, returns its vertices.
 
@@ -100,146 +171,20 @@ class Image(object):
         logging.debug("Getting the shapes' vertices in the image")
         #Obtain a list with all the contours in the image, separating each
         #shape in a different element of the list
-        self.contours = []
         contours_list = skimage.measure.find_contours(self._binarized, 200)
         #Get the vertices of each shape in the image.
         for cnt in contours_list:
             coords = skimage.measure.approximate_polygon(cnt, tolerance)
             #The initial vertex is repeatead at the end. Thus, if len is 2
             #it implies a single point polygon. If len is 3 implies a line.
-            if len(coords) > 2:
-                self.contours.append(coords[1:])
+            if len(coords) == 4:
+                triangle = Triangle(coords[1:])
+                self.triangles.append(triangle)
             logging.debug("A {}-vertices shape was found".format(len(coords)))
-        return self.contours
+        return self.triangles
 
-    @staticmethod 
-    def get_triangle_position(vertices):
-        """Return the angle and the front vertex of the triangle.
+
         
-        The input are the coordinates of 3 vertices defining a triangle,
-        packed in a single 3x2 array.
-        The returned angle is expressed in radians, in the range 
-        [-pi, pi]"""
-        vertices = vertices.astype(np.float32)
-        #Calculate the length of the sides i.e. the Euclidean distance
-        side_A = np.linalg.norm(vertices[0] - vertices[1])
-        side_B = np.linalg.norm(vertices[0] - vertices[2])
-        side_C = np.linalg.norm(vertices[1] - vertices[2])
-        #If 2 sides are equal, the common vertex is the front one and 
-        #The base midpoint is calculated with the other 2.
-        import pdb; pdb.set_trace()
-        if side_A == side_B:
-            midpoint = (vertices[1]+vertices[2]) / 2
-            x, y = vertices[0] - midpoint
-            angle = np.arctan2(x, y)
-        elif side_B == side_C:
-            midpoint = (vertices[0]+vertices[1]) / 2
-            x, y = vertices[2] - midpoint
-            angle = np.arctan2(x, y)
-        else:
-            midpoint = (vertices[0]+vertices[2]) / 2
-            x, y = vertices[1] - midpoint
-            angle = np.arctan2(y, x)
-        return midpoint[0], midpoint[1], angle    
 
-#    def get_corners(self):
-#        """Locates the boundary corners of shapes in the image.
-#        
-#        This algorithm assume 8-connectivity. So the connected
-#        components labeling operator scans the image and examines the
-#        four neighbors (west, north, north-west and north-east) of the
-#        point which have already been encountered.
-#        """
-#        width, height = self._binarized.shape[1], self.image.shape[0]
-#        img = np.zeros((height, width), dtype=np.uint8)
-#        label = 0
-#        max_label = 0
-#        sizes = [0]
-#        corners = [np.zeros([8, 2])]
-#        for y in range(1, height):
-#            for x in range(1, width - 1):
-#                if self._binarized[y,x]:
-#                    size = 0
-#                    corner = np.array([[width, height], # left2
-#                                    [width, height], # left1
-#                                    [width, height], # top1
-#                                    [width, height], # top2
-#                                    [0, 0], # right1
-#                                    [0, 0], # right2
-#                                    [0, 0], # bottom2
-#                                    [0, 0]]) # bottom1  
-#                    # Labeling
-#                    west = img[y,x-1]
-#                    north_west = img[y-1,x-1]
-#                    north = img[y-1,x]
-#                    north_east = img[y-1,x+1]
-#                    if west:
-#                        label = west
-#                    elif north_west:
-#                        label = north_west
-#                    elif north:
-#                        label = north
-#                    elif north_east:
-#                        label = north_east
-#                    else:
-#                        label = max_label + 1
-#                        max_label = label
-#                        sizes.append(size)
-#                        corners.append(corner)
-#                    img[y,x] = label
-#                    # Connected
-#                    if north_east and (north_east != label):
-#                        size = sizes[north_east]
-#                        sizes[north_east] = 0
-#                        corner = corners[north_east]
-#                    # Corners
-#                    if label:
-#                        sizes[label] = sizes[label] + size + 1
-#                        if corners[label][0,0] >= x: # left2
-#                            corners[label][0] = x, y
-#                        if corners[label][1,0] > x: # left1
-#                            corners[label][1] = x, y
-#                        if corners[label][2,1] > y: # top1
-#                            corners[label][2] = x, y
-#                        if corners[label][3,1] >= y: # top2
-#                            corners[label][3] = x, y
-#                        if corners[label][4,0] < x: # right1
-#                            corners[label][4] = x, y
-#                        if corners[label][5,0] <= x: # right2
-#                            corners[label][5] = x, y
-#                        if corners[label][6,1] <= y: # bottom2
-#                            corners[label][6] = x, y
-#                        if corners[label][7,1] < y: # bottom1
-#                            corners[label][7] = x, y
-#                        # Adds corners of connected components 
-#                        if corners[label][0,0] > corner[0,0]:
-#                            corners[label][0] = corner[0]    
-#                        if corners[label][1,0] > corner[1,0]:
-#                            corners[label][1] = corner[1] 
-#                        if corners[label][2,1] > corner[2,1]:
-#                            corners[label][2] = corner[2]    
-#                        if corners[label][3,1] > corner[3,1]:
-#                            corners[label][3] = corner[3] 
-#                        if corners[label][4,0] < corner[4,0]:
-#                            corners[label][4] = corner[4] 
-#                        if corners[label][5,0] < corner[5,0]:
-#                            corners[label][5] = corner[5]
-#                        if corners[label][6,1] < corner[6,1]:
-#                            corners[label][6] = corner[6]
-#                        if corners[label][7,1] < corner[7,1]:
-#                            corners[label][7] = corner[7]
-#        sort_indexes = np.argsort(np.array(sizes))
-#        for sort_index in sort_indexes[::-1]:
-#            if sizes[sort_index] > 75:
-#                v = np.vstack((corners[sort_index][1:], 
-#                               corners[sort_index][0]))
-#                D = sum(corners[sort_index][:,0] * v[:,1])
-#                I = sum(corners[sort_index][:,1] * v[:,0])
-#                area = abs(D - I) / 2
-#                if sizes[sort_index] > 0.7 * area:
-#                    self.corners_list.append(corners[sort_index])
-#            else:
-#                break
-#        return self.corners_list
 
 
