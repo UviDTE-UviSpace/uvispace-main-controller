@@ -5985,3 +5985,2513 @@ after writing 0 on SYSTEM_OUTPUT register.
 16:46:23.368 INFO:Closed the TCP client
 
 ---------------------------------------------------------------------------
+11:42:00.880 INFO:BEGINNING MAIN EXECUTION
+11:42:00.894 DEBUG:Opened configuration file. Connecting to 172.19.5.213
+11:42:00.896 INFO:Started TCP client with IP: 172.19.5.213 and PORT:5005.
+11:42:00.900 DEBUG:"Obtained '(551040525,784051947)\n' after writing 551040525,784051947 on RED_THRESHOLD register."
+11:42:00.902 DEBUG:"Obtained '(4198404,0)\n' after writing 4198404,0 on GREEN_THRESHOLD register."
+11:42:00.904 DEBUG:"Obtained '(4198404,0)\n' after writing 4198404,0 on BLUE_THRESHOLD register."
+11:42:00.905 DEBUG:"Obtained '(648,486)\n' after writing 648,486 on IMAGE_SHAPE register."
+11:42:00.907 DEBUG:"Obtained '1111\n' after writing 1111 on IMAGE_EXPOSURE register."
+11:42:00.909 DEBUG:"Obtained '(0,0)\n' after writing 0,0 on SYSTEM_INDEXES register."
+11:42:00.911 DEBUG:"Obtained '(2591,1943)\n' after writing 2591,1943 on SYSTEM_SHAPE register."
+11:42:00.912 DEBUG:"Obtained '(1,1)\n' after writing 1,1 on SYSTEM_MODES register."
+11:42:00.914 DEBUG:"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+11:42:01.024 DEBUG:"Obtained 'Camera sensor configured.\n' after 'CONFIGURE_CAMERA'"
+11:42:01.026 DEBUG:"Obtained 'All trackers freed.\n' after writing  on FREE_ALL register."
+11:42:01.028 DEBUG:"Obtained '4\n' after writing 4 on SYSTEM_OUTPUT register."
+11:42:01.140 DEBUG:"'Image captured.\n' after 0 tries."
+11:42:01.140 DEBUG:'GET_GRAY_IMAGE' command sent.
+11:42:03.958 DEBUG:Received 314928 bytes of 314928 (100.00%)
+11:43:23.208 DEBUG:Thresholding between 131 and 186
+11:43:23.440 DEBUG:Image binarization finished
+11:43:27.591 DEBUG:Getting the shapes' vertices in the image
+11:43:27.597 DEBUG:A 2-vertices shape was found
+11:43:27.597 DEBUG:A 2-vertices shape was found
+11:43:27.597 DEBUG:A 2-vertices shape was found
+11:43:27.599 DEBUG:A 4-vertices shape was found
+11:49:20.503 DEBUG:"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+11:49:20.503 INFO:Closed the TCP client
+
+---------------------------------------------------------------------------
+11:49:35.733 INFO:BEGINNING MAIN EXECUTION
+11:49:35.733 DEBUG:Opened configuration file. Connecting to 172.19.5.213
+11:49:35.735 INFO:Started TCP client with IP: 172.19.5.213 and PORT:5005.
+11:49:35.739 DEBUG:"Obtained '(551040525,784051947)\n' after writing 551040525,784051947 on RED_THRESHOLD register."
+11:49:35.741 DEBUG:"Obtained '(4198404,0)\n' after writing 4198404,0 on GREEN_THRESHOLD register."
+11:49:35.742 DEBUG:"Obtained '(4198404,0)\n' after writing 4198404,0 on BLUE_THRESHOLD register."
+11:49:35.744 DEBUG:"Obtained '(648,486)\n' after writing 648,486 on IMAGE_SHAPE register."
+11:49:35.746 DEBUG:"Obtained '1111\n' after writing 1111 on IMAGE_EXPOSURE register."
+11:49:35.748 DEBUG:"Obtained '(0,0)\n' after writing 0,0 on SYSTEM_INDEXES register."
+11:49:35.750 DEBUG:"Obtained '(2591,1943)\n' after writing 2591,1943 on SYSTEM_SHAPE register."
+11:49:35.751 DEBUG:"Obtained '(1,1)\n' after writing 1,1 on SYSTEM_MODES register."
+11:49:35.753 DEBUG:"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+11:49:37.557 DEBUG:"Obtained 'Camera sensor configured.\n' after 'CONFIGURE_CAMERA'"
+11:49:37.559 DEBUG:"Obtained 'All trackers freed.\n' after writing  on FREE_ALL register."
+11:49:37.560 DEBUG:"Obtained '4\n' after writing 4 on SYSTEM_OUTPUT register."
+11:49:41.557 DEBUG:"'Image captured.\n' after 0 tries."
+11:49:41.557 DEBUG:'GET_GRAY_IMAGE' command sent.
+11:49:45.346 DEBUG:Received 314928 bytes of 314928 (100.00%)
+11:49:45.346 DEBUG:Thresholding between 131 and 186
+11:49:45.376 DEBUG:Image binarization finished
+11:49:45.377 DEBUG:Getting the shapes' vertices in the image
+11:49:45.383 DEBUG:A 2-vertices shape was found
+11:49:45.384 DEBUG:A 4-vertices shape was found
+11:50:13.958 DEBUG:"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+11:50:13.958 INFO:Closed the TCP client
+
+---------------------------------------------------------------------------
+11:50:18.478 INFO:BEGINNING MAIN EXECUTION
+11:50:18.478 DEBUG:Opened configuration file. Connecting to 172.19.5.213
+11:50:18.480 INFO:Started TCP client with IP: 172.19.5.213 and PORT:5005.
+11:50:18.484 DEBUG:"Obtained '(551040525,784051947)\n' after writing 551040525,784051947 on RED_THRESHOLD register."
+11:50:18.486 DEBUG:"Obtained '(4198404,0)\n' after writing 4198404,0 on GREEN_THRESHOLD register."
+11:50:18.488 DEBUG:"Obtained '(4198404,0)\n' after writing 4198404,0 on BLUE_THRESHOLD register."
+11:50:18.490 DEBUG:"Obtained '(648,486)\n' after writing 648,486 on IMAGE_SHAPE register."
+11:50:18.492 DEBUG:"Obtained '1111\n' after writing 1111 on IMAGE_EXPOSURE register."
+11:50:18.493 DEBUG:"Obtained '(0,0)\n' after writing 0,0 on SYSTEM_INDEXES register."
+11:50:18.495 DEBUG:"Obtained '(2591,1943)\n' after writing 2591,1943 on SYSTEM_SHAPE register."
+11:50:18.497 DEBUG:"Obtained '(1,1)\n' after writing 1,1 on SYSTEM_MODES register."
+11:50:18.499 DEBUG:"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+11:50:19.557 DEBUG:"Obtained 'Camera sensor configured.\n' after 'CONFIGURE_CAMERA'"
+11:50:19.559 DEBUG:"Obtained 'All trackers freed.\n' after writing  on FREE_ALL register."
+11:50:19.561 DEBUG:"Obtained '4\n' after writing 4 on SYSTEM_OUTPUT register."
+11:50:23.557 DEBUG:"'Image captured.\n' after 0 tries."
+11:50:23.558 DEBUG:'GET_GRAY_IMAGE' command sent.
+11:50:27.350 DEBUG:Received 314928 bytes of 314928 (100.00%)
+11:50:27.350 DEBUG:Thresholding between 131 and 186
+11:50:27.376 DEBUG:Image binarization finished
+11:50:27.376 DEBUG:Getting the shapes' vertices in the image
+11:50:27.383 DEBUG:A 2-vertices shape was found
+11:50:27.383 DEBUG:A 2-vertices shape was found
+11:50:27.384 DEBUG:A 4-vertices shape was found
+11:52:07.221 DEBUG:"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+11:52:07.222 INFO:Closed the TCP client
+
+---------------------------------------------------------------------------
+11:52:20.663 INFO:BEGINNING MAIN EXECUTION
+11:52:20.664 DEBUG:Opened configuration file. Connecting to 172.19.5.213
+11:52:20.665 INFO:Started TCP client with IP: 172.19.5.213 and PORT:5005.
+11:52:20.669 DEBUG:"Obtained '(551040525,784051947)\n' after writing 551040525,784051947 on RED_THRESHOLD register."
+11:52:20.671 DEBUG:"Obtained '(4198404,0)\n' after writing 4198404,0 on GREEN_THRESHOLD register."
+11:52:20.673 DEBUG:"Obtained '(4198404,0)\n' after writing 4198404,0 on BLUE_THRESHOLD register."
+11:52:20.675 DEBUG:"Obtained '(648,486)\n' after writing 648,486 on IMAGE_SHAPE register."
+11:52:20.677 DEBUG:"Obtained '1111\n' after writing 1111 on IMAGE_EXPOSURE register."
+11:52:20.679 DEBUG:"Obtained '(0,0)\n' after writing 0,0 on SYSTEM_INDEXES register."
+11:52:20.680 DEBUG:"Obtained '(2591,1943)\n' after writing 2591,1943 on SYSTEM_SHAPE register."
+11:52:20.682 DEBUG:"Obtained '(1,1)\n' after writing 1,1 on SYSTEM_MODES register."
+11:52:20.684 DEBUG:"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+11:52:22.559 DEBUG:"Obtained 'Camera sensor configured.\n' after 'CONFIGURE_CAMERA'"
+11:52:22.561 DEBUG:"Obtained 'All trackers freed.\n' after writing  on FREE_ALL register."
+11:52:22.562 DEBUG:"Obtained '4\n' after writing 4 on SYSTEM_OUTPUT register."
+11:52:26.559 DEBUG:"'Image captured.\n' after 0 tries."
+11:52:26.559 DEBUG:'GET_GRAY_IMAGE' command sent.
+11:52:30.354 DEBUG:Received 314928 bytes of 314928 (100.00%)
+11:52:30.354 DEBUG:Thresholding between 131 and 186
+11:52:30.380 DEBUG:Image binarization finished
+11:52:30.380 DEBUG:Getting the shapes' vertices in the image
+11:52:30.386 DEBUG:A 2-vertices shape was found
+11:52:30.387 DEBUG:A 2-vertices shape was found
+11:52:30.388 DEBUG:A 4-vertices shape was found
+11:52:30.388 DEBUG:A 2-vertices shape was found
+11:52:39.060 DEBUG:"Obtained '(194,324,67,66)\n' after writing 1,194,324,67,66 on SET_WINDOW register."
+11:56:30.676 DEBUG:"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+11:56:30.676 INFO:Closed the TCP client
+
+---------------------------------------------------------------------------
+11:57:34.115 INFO:BEGINNING MAIN EXECUTION
+11:57:34.116 DEBUG:Opened configuration file. Connecting to 172.19.5.213
+11:57:34.117 INFO:Started TCP client with IP: 172.19.5.213 and PORT:5005.
+11:57:34.121 DEBUG:"Obtained '(551040525,784051947)\n' after writing 551040525,784051947 on RED_THRESHOLD register."
+11:57:34.123 DEBUG:"Obtained '(4198404,0)\n' after writing 4198404,0 on GREEN_THRESHOLD register."
+11:57:34.125 DEBUG:"Obtained '(4198404,0)\n' after writing 4198404,0 on BLUE_THRESHOLD register."
+11:57:34.127 DEBUG:"Obtained '(648,486)\n' after writing 648,486 on IMAGE_SHAPE register."
+11:57:34.129 DEBUG:"Obtained '1111\n' after writing 1111 on IMAGE_EXPOSURE register."
+11:57:34.130 DEBUG:"Obtained '(0,0)\n' after writing 0,0 on SYSTEM_INDEXES register."
+11:57:34.132 DEBUG:"Obtained '(2591,1943)\n' after writing 2591,1943 on SYSTEM_SHAPE register."
+11:57:34.134 DEBUG:"Obtained '(1,1)\n' after writing 1,1 on SYSTEM_MODES register."
+11:57:34.136 DEBUG:"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+11:57:35.562 DEBUG:"Obtained 'Camera sensor configured.\n' after 'CONFIGURE_CAMERA'"
+11:57:35.564 DEBUG:"Obtained 'All trackers freed.\n' after writing  on FREE_ALL register."
+11:57:35.566 DEBUG:"Obtained '4\n' after writing 4 on SYSTEM_OUTPUT register."
+11:57:39.562 DEBUG:"'Image captured.\n' after 0 tries."
+11:57:39.563 DEBUG:'GET_GRAY_IMAGE' command sent.
+11:57:43.350 DEBUG:Received 314928 bytes of 314928 (100.00%)
+11:57:43.350 DEBUG:Thresholding between 131 and 186
+11:57:43.370 DEBUG:Image binarization finished
+11:57:43.370 DEBUG:Getting the shapes' vertices in the image
+11:57:43.375 DEBUG:A 2-vertices shape was found
+11:57:43.376 DEBUG:A 4-vertices shape was found
+11:58:23.978 DEBUG:"Obtained '(193,322,71,71)\n' after writing 1,193,322,71,71 on SET_WINDOW register."
+11:58:32.217 DEBUG:"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+11:58:32.218 INFO:Closed the TCP client
+
+---------------------------------------------------------------------------
+12:09:30.958 INFO:BEGINNING MAIN EXECUTION
+12:09:30.959 DEBUG:Opened configuration file. Connecting to 172.19.5.213
+12:09:30.960 INFO:Started TCP client with IP: 172.19.5.213 and PORT:5005.
+12:09:30.965 DEBUG:"Obtained '(551040525,784051947)\n' after writing 551040525,784051947 on RED_THRESHOLD register."
+12:09:30.967 DEBUG:"Obtained '(4198404,0)\n' after writing 4198404,0 on GREEN_THRESHOLD register."
+12:09:30.968 DEBUG:"Obtained '(4198404,0)\n' after writing 4198404,0 on BLUE_THRESHOLD register."
+12:09:30.970 DEBUG:"Obtained '(648,486)\n' after writing 648,486 on IMAGE_SHAPE register."
+12:09:30.972 DEBUG:"Obtained '1111\n' after writing 1111 on IMAGE_EXPOSURE register."
+12:09:30.974 DEBUG:"Obtained '(0,0)\n' after writing 0,0 on SYSTEM_INDEXES register."
+12:09:30.976 DEBUG:"Obtained '(2591,1943)\n' after writing 2591,1943 on SYSTEM_SHAPE register."
+12:09:30.977 DEBUG:"Obtained '(1,1)\n' after writing 1,1 on SYSTEM_MODES register."
+12:09:30.979 DEBUG:"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+12:09:32.571 DEBUG:"Obtained 'Camera sensor configured.\n' after 'CONFIGURE_CAMERA'"
+12:09:32.573 DEBUG:"Obtained 'All trackers freed.\n' after writing  on FREE_ALL register."
+12:09:32.574 DEBUG:"Obtained '4\n' after writing 4 on SYSTEM_OUTPUT register."
+12:09:36.571 DEBUG:"'Image captured.\n' after 0 tries."
+12:09:36.571 DEBUG:'GET_GRAY_IMAGE' command sent.
+12:09:40.362 DEBUG:Received 314928 bytes of 314928 (100.00%)
+12:09:40.362 DEBUG:Thresholding between 131 and 186
+12:09:40.388 DEBUG:Image binarization finished
+12:09:40.388 DEBUG:Getting the shapes' vertices in the image
+12:09:40.394 DEBUG:A 2-vertices shape was found
+12:09:40.394 DEBUG:A 2-vertices shape was found
+12:09:40.395 DEBUG:A 2-vertices shape was found
+12:09:40.396 DEBUG:A 4-vertices shape was found
+12:09:40.396 DEBUG:Configurating tracker 1
+12:09:40.398 DEBUG:"Obtained '(194,322,70,70)\n' after writing 1,194,322,70,70 on SET_WINDOW register."
+12:09:40.402 DEBUG:"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+12:09:40.402 INFO:Closed the TCP client
+
+---------------------------------------------------------------------------
+12:13:16.420 INFO:BEGINNING MAIN EXECUTION
+12:13:16.421 DEBUG:Opened configuration file. Connecting to 172.19.5.213
+12:13:16.423 INFO:Started TCP client with IP: 172.19.5.213 and PORT:5005.
+12:13:16.427 DEBUG:"Obtained '(551040525,784051947)\n' after writing 551040525,784051947 on RED_THRESHOLD register."
+12:13:16.429 DEBUG:"Obtained '(4198404,0)\n' after writing 4198404,0 on GREEN_THRESHOLD register."
+12:13:16.431 DEBUG:"Obtained '(4198404,0)\n' after writing 4198404,0 on BLUE_THRESHOLD register."
+12:13:16.432 DEBUG:"Obtained '(648,486)\n' after writing 648,486 on IMAGE_SHAPE register."
+12:13:16.434 DEBUG:"Obtained '1111\n' after writing 1111 on IMAGE_EXPOSURE register."
+12:13:16.436 DEBUG:"Obtained '(0,0)\n' after writing 0,0 on SYSTEM_INDEXES register."
+12:13:16.438 DEBUG:"Obtained '(2591,1943)\n' after writing 2591,1943 on SYSTEM_SHAPE register."
+12:13:16.440 DEBUG:"Obtained '(1,1)\n' after writing 1,1 on SYSTEM_MODES register."
+12:13:16.441 DEBUG:"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+12:13:17.574 DEBUG:"Obtained 'Camera sensor configured.\n' after 'CONFIGURE_CAMERA'"
+12:13:17.576 DEBUG:"Obtained 'All trackers freed.\n' after writing  on FREE_ALL register."
+12:13:17.577 DEBUG:"Obtained '4\n' after writing 4 on SYSTEM_OUTPUT register."
+12:13:21.574 DEBUG:"'Image captured.\n' after 0 tries."
+12:13:21.574 DEBUG:'GET_GRAY_IMAGE' command sent.
+12:13:25.366 DEBUG:Received 314928 bytes of 314928 (100.00%)
+12:13:25.409 DEBUG:Thresholding between 131 and 186
+12:13:25.430 DEBUG:Image binarization finished
+12:13:25.430 DEBUG:Getting the shapes' vertices in the image
+12:13:25.435 DEBUG:A 2-vertices shape was found
+12:13:25.436 DEBUG:A 2-vertices shape was found
+12:13:25.436 DEBUG:A 2-vertices shape was found
+12:13:25.437 DEBUG:A 4-vertices shape was found
+12:13:25.437 DEBUG:A 2-vertices shape was found
+12:13:25.438 DEBUG:Configurating tracker 1
+12:13:25.440 DEBUG:"Obtained '(195,323,67,67)\n' after writing 1,195,323,67,67 on SET_WINDOW register."
+12:13:25.443 DEBUG:"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+12:13:25.443 INFO:Closed the TCP client
+
+---------------------------------------------------------------------------
+12:18:49.050 INFO:BEGINNING MAIN EXECUTION
+12:18:49.051 DEBUG:Opened configuration file. Connecting to 172.19.5.213
+12:18:49.052 INFO:Started TCP client with IP: 172.19.5.213 and PORT:5005.
+12:18:49.057 DEBUG:"Obtained '(551040525,784051947)\n' after writing 551040525,784051947 on RED_THRESHOLD register."
+12:18:49.059 DEBUG:"Obtained '(4198404,0)\n' after writing 4198404,0 on GREEN_THRESHOLD register."
+12:18:49.061 DEBUG:"Obtained '(4198404,0)\n' after writing 4198404,0 on BLUE_THRESHOLD register."
+12:18:49.062 DEBUG:"Obtained '(648,486)\n' after writing 648,486 on IMAGE_SHAPE register."
+12:18:49.064 DEBUG:"Obtained '1111\n' after writing 1111 on IMAGE_EXPOSURE register."
+12:18:49.066 DEBUG:"Obtained '(0,0)\n' after writing 0,0 on SYSTEM_INDEXES register."
+12:18:49.068 DEBUG:"Obtained '(2591,1943)\n' after writing 2591,1943 on SYSTEM_SHAPE register."
+12:18:49.070 DEBUG:"Obtained '(1,1)\n' after writing 1,1 on SYSTEM_MODES register."
+12:18:49.071 DEBUG:"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+12:18:50.578 DEBUG:"Obtained 'Camera sensor configured.\n' after 'CONFIGURE_CAMERA'"
+12:18:50.580 DEBUG:"Obtained 'All trackers freed.\n' after writing  on FREE_ALL register."
+12:18:50.582 DEBUG:"Obtained '4\n' after writing 4 on SYSTEM_OUTPUT register."
+12:18:54.578 DEBUG:"'Image captured.\n' after 0 tries."
+12:18:54.578 DEBUG:'GET_GRAY_IMAGE' command sent.
+12:18:58.370 DEBUG:Received 314928 bytes of 314928 (100.00%)
+12:18:58.424 DEBUG:Thresholding between 131 and 186
+12:18:58.445 DEBUG:Image binarization finished
+12:18:58.445 DEBUG:Getting the shapes' vertices in the image
+12:18:58.450 DEBUG:A 2-vertices shape was found
+12:18:58.452 DEBUG:A 4-vertices shape was found
+12:18:58.452 DEBUG:Configurating tracker 1
+12:18:58.454 DEBUG:"Obtained '(194,322,70,70)\n' after writing 1,194,322,70,70 on SET_WINDOW register."
+12:21:17.930 DEBUG:"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+12:21:17.930 INFO:Closed the TCP client
+
+---------------------------------------------------------------------------
+12:21:40.960 INFO:BEGINNING MAIN EXECUTION
+12:21:40.961 DEBUG:Opened configuration file. Connecting to 172.19.5.213
+12:21:40.963 INFO:Started TCP client with IP: 172.19.5.213 and PORT:5005.
+12:21:42.965 WARNING:Unable to connect to port. Timeout
+12:47:46.622 INFO:BEGINNING MAIN EXECUTION
+12:47:46.623 DEBUG:Opened configuration file. Connecting to 172.19.5.213
+12:47:46.624 INFO:Started TCP client with IP: 172.19.5.213 and PORT:5005.
+12:47:46.628 DEBUG:"Obtained '(551040525,784051947)\n' after writing 551040525,784051947 on RED_THRESHOLD register."
+12:47:46.630 DEBUG:"Obtained '(4198404,0)\n' after writing 4198404,0 on GREEN_THRESHOLD register."
+12:47:46.632 DEBUG:"Obtained '(4198404,0)\n' after writing 4198404,0 on BLUE_THRESHOLD register."
+12:47:46.634 DEBUG:"Obtained '(648,486)\n' after writing 648,486 on IMAGE_SHAPE register."
+12:47:46.636 DEBUG:"Obtained '1111\n' after writing 1111 on IMAGE_EXPOSURE register."
+12:47:46.638 DEBUG:"Obtained '(0,0)\n' after writing 0,0 on SYSTEM_INDEXES register."
+12:47:46.640 DEBUG:"Obtained '(2591,1943)\n' after writing 2591,1943 on SYSTEM_SHAPE register."
+12:47:46.641 DEBUG:"Obtained '(1,1)\n' after writing 1,1 on SYSTEM_MODES register."
+12:47:46.643 DEBUG:"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+12:47:47.811 DEBUG:"Obtained 'Camera sensor configured.\n' after 'CONFIGURE_CAMERA'"
+12:47:47.813 DEBUG:"Obtained 'All trackers freed.\n' after writing  on FREE_ALL register."
+12:47:47.815 DEBUG:"Obtained '4\n' after writing 4 on SYSTEM_OUTPUT register."
+12:47:51.811 DEBUG:"'Image captured.\n' after 0 tries."
+12:47:51.811 DEBUG:'GET_GRAY_IMAGE' command sent.
+12:47:55.602 DEBUG:Received 314928 bytes of 314928 (100.00%)
+12:47:55.644 DEBUG:Thresholding between 131 and 186
+12:47:55.665 DEBUG:Image binarization finished
+12:47:55.665 DEBUG:Getting the shapes' vertices in the image
+12:47:55.671 DEBUG:A 2-vertices shape was found
+12:47:55.671 DEBUG:A 2-vertices shape was found
+12:47:55.671 DEBUG:A 2-vertices shape was found
+12:47:55.672 DEBUG:A 2-vertices shape was found
+12:47:55.673 DEBUG:A 4-vertices shape was found
+12:47:55.673 DEBUG:A 2-vertices shape was found
+12:47:55.673 DEBUG:Configurating tracker 1
+12:47:55.675 DEBUG:"Obtained '(388,644,140,140)\n' after writing 1,388,644,140,140 on SET_WINDOW register."
+13:04:47.558 DEBUG:Configurating tracker 1
+13:04:47.560 DEBUG:"Obtained '(388,644,140,140)\n' after writing 1,388,644,140,140 on SET_WINDOW register."
+13:04:48.854 DEBUG:Configurating tracker 1
+13:04:48.856 DEBUG:"Obtained '(388,644,140,140)\n' after writing 1,388,644,140,140 on SET_WINDOW register."
+13:04:54.198 DEBUG:Configurating tracker 1
+13:04:54.200 DEBUG:"Obtained '(388,644,140,140)\n' after writing 1,388,644,140,140 on SET_WINDOW register."
+13:05:58.790 DEBUG:Configurating tracker 1
+13:05:58.792 DEBUG:"Obtained '(388,644,140,140)\n' after writing 1,388,644,140,140 on SET_WINDOW register."
+13:06:55.981 DEBUG:Configurating tracker 1
+13:06:55.983 DEBUG:"Obtained '(388,644,140,140)\n' after writing 1,388,644,140,140 on SET_WINDOW register."
+13:07:03.037 DEBUG:Configurating tracker 1
+13:07:03.039 DEBUG:"Obtained '(388,644,140,140)\n' after writing 1,388,644,140,140 on SET_WINDOW register."
+13:08:07.826 DEBUG:"'Image captured.\n' after 0 tries."
+13:08:07.826 DEBUG:'GET_GRAY_IMAGE' command sent.
+13:08:11.614 DEBUG:Received 314928 bytes of 314928 (100.00%)
+13:08:11.740 DEBUG:Thresholding between 131 and 186
+13:08:11.766 DEBUG:Image binarization finished
+13:08:11.874 DEBUG:Getting the shapes' vertices in the image
+13:08:11.881 DEBUG:A 2-vertices shape was found
+13:08:11.881 DEBUG:A 2-vertices shape was found
+13:08:11.882 DEBUG:A 2-vertices shape was found
+13:08:11.883 DEBUG:A 4-vertices shape was found
+13:08:11.883 DEBUG:A 2-vertices shape was found
+13:08:47.862 DEBUG:"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+13:08:47.862 INFO:Closed the TCP client
+
+---------------------------------------------------------------------------
+13:08:55.485 INFO:BEGINNING MAIN EXECUTION
+13:08:55.486 DEBUG:Opened configuration file. Connecting to 172.19.5.213
+13:08:55.487 INFO:Started TCP client with IP: 172.19.5.213 and PORT:5005.
+13:08:55.491 DEBUG:"Obtained '(551040525,784051947)\n' after writing 551040525,784051947 on RED_THRESHOLD register."
+13:08:55.494 DEBUG:"Obtained '(4198404,0)\n' after writing 4198404,0 on GREEN_THRESHOLD register."
+13:08:55.496 DEBUG:"Obtained '(4198404,0)\n' after writing 4198404,0 on BLUE_THRESHOLD register."
+13:08:55.498 DEBUG:"Obtained '(648,486)\n' after writing 648,486 on IMAGE_SHAPE register."
+13:08:55.500 DEBUG:"Obtained '1111\n' after writing 1111 on IMAGE_EXPOSURE register."
+13:08:55.501 DEBUG:"Obtained '(0,0)\n' after writing 0,0 on SYSTEM_INDEXES register."
+13:08:55.503 DEBUG:"Obtained '(2591,1943)\n' after writing 2591,1943 on SYSTEM_SHAPE register."
+13:08:55.505 DEBUG:"Obtained '(1,1)\n' after writing 1,1 on SYSTEM_MODES register."
+13:08:55.507 DEBUG:"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+13:08:56.827 DEBUG:"Obtained 'Camera sensor configured.\n' after 'CONFIGURE_CAMERA'"
+13:08:56.829 DEBUG:"Obtained 'All trackers freed.\n' after writing  on FREE_ALL register."
+13:08:56.831 DEBUG:"Obtained '4\n' after writing 4 on SYSTEM_OUTPUT register."
+13:09:00.827 DEBUG:"'Image captured.\n' after 0 tries."
+13:09:00.827 DEBUG:'GET_GRAY_IMAGE' command sent.
+13:09:04.614 DEBUG:Received 314928 bytes of 314928 (100.00%)
+13:09:04.614 DEBUG:Thresholding between 131 and 186
+13:09:04.640 DEBUG:Image binarization finished
+13:09:04.640 DEBUG:Getting the shapes' vertices in the image
+13:09:04.646 DEBUG:A 2-vertices shape was found
+13:09:04.647 DEBUG:A 4-vertices shape was found
+13:09:04.648 DEBUG:A 2-vertices shape was found
+13:09:04.648 DEBUG:Configurating tracker 1
+13:09:04.650 DEBUG:"Obtained '(390,646,136,136)\n' after writing 1,390,646,136,136 on SET_WINDOW register."
+13:10:50.589 DEBUG:"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+13:10:50.589 INFO:Closed the TCP client
+
+---------------------------------------------------------------------------
+13:24:44.302 INFO:BEGINNING MAIN EXECUTION
+13:24:44.303 DEBUG:Opened configuration file. Connecting to 172.19.5.213
+13:24:46.305 WARNING:Unable to connect to port. Timeout
+13:27:01.373 INFO:BEGINNING MAIN EXECUTION
+13:27:01.374 DEBUG:Opened configuration file. Connecting to 172.19.5.213
+13:27:01.376 INFO:Started TCP client with IP: 172.19.5.213 and PORT:5005.
+13:27:01.380 DEBUG:"Obtained '(551040525,784051947)\n' after writing 551040525,784051947 on RED_THRESHOLD register."
+13:27:01.382 DEBUG:"Obtained '(4198404,0)\n' after writing 4198404,0 on GREEN_THRESHOLD register."
+13:27:01.384 DEBUG:"Obtained '(4198404,0)\n' after writing 4198404,0 on BLUE_THRESHOLD register."
+13:27:01.386 DEBUG:"Obtained '(648,486)\n' after writing 648,486 on IMAGE_SHAPE register."
+13:27:01.388 DEBUG:"Obtained '1111\n' after writing 1111 on IMAGE_EXPOSURE register."
+13:27:01.389 DEBUG:"Obtained '(0,0)\n' after writing 0,0 on SYSTEM_INDEXES register."
+13:27:01.391 DEBUG:"Obtained '(2591,1943)\n' after writing 2591,1943 on SYSTEM_SHAPE register."
+13:27:01.393 DEBUG:"Obtained '(1,1)\n' after writing 1,1 on SYSTEM_MODES register."
+13:27:01.395 DEBUG:"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+13:27:01.505 DEBUG:"Obtained 'Camera sensor configured.\n' after 'CONFIGURE_CAMERA'"
+13:27:01.507 DEBUG:"Obtained 'All trackers freed.\n' after writing  on FREE_ALL register."
+13:27:01.509 DEBUG:"Obtained '4\n' after writing 4 on SYSTEM_OUTPUT register."
+13:27:01.620 DEBUG:"'Image captured.\n' after 0 tries."
+13:27:01.621 DEBUG:'GET_GRAY_IMAGE' command sent.
+13:27:04.454 DEBUG:Received 314928 bytes of 314928 (100.00%)
+13:27:04.454 DEBUG:Thresholding between 131 and 186
+13:27:04.480 DEBUG:Image binarization finished
+13:27:04.480 DEBUG:Getting the shapes' vertices in the image
+13:27:04.487 DEBUG:A 2-vertices shape was found
+13:27:04.487 DEBUG:A 2-vertices shape was found
+13:27:04.487 DEBUG:A 2-vertices shape was found
+13:27:04.488 DEBUG:A 4-vertices shape was found
+13:27:04.489 DEBUG:A 2-vertices shape was found
+13:27:04.489 DEBUG:Configurating tracker 1
+13:27:04.491 DEBUG:"Obtained '(390,646,136,136)\n' after writing 1,390,646,136,136 on SET_WINDOW register."
+13:28:12.453 DEBUG:"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+13:28:12.453 INFO:Closed the TCP client
+
+---------------------------------------------------------------------------
+13:37:51.585 INFO:BEGINNING MAIN EXECUTION
+13:37:51.586 DEBUG:Opened configuration file. Connecting to 172.19.5.213
+13:37:51.587 INFO:Started TCP client with IP: 172.19.5.213 and PORT:5005.
+13:37:51.591 DEBUG:"Obtained '(551040525,784051947)\n' after writing 551040525,784051947 on RED_THRESHOLD register."
+13:37:51.593 DEBUG:"Obtained '(4198404,0)\n' after writing 4198404,0 on GREEN_THRESHOLD register."
+13:37:51.595 DEBUG:"Obtained '(4198404,0)\n' after writing 4198404,0 on BLUE_THRESHOLD register."
+13:37:51.597 DEBUG:"Obtained '(648,486)\n' after writing 648,486 on IMAGE_SHAPE register."
+13:37:51.599 DEBUG:"Obtained '1111\n' after writing 1111 on IMAGE_EXPOSURE register."
+13:37:51.601 DEBUG:"Obtained '(0,0)\n' after writing 0,0 on SYSTEM_INDEXES register."
+13:37:51.602 DEBUG:"Obtained '(2591,1943)\n' after writing 2591,1943 on SYSTEM_SHAPE register."
+13:37:51.604 DEBUG:"Obtained '(1,1)\n' after writing 1,1 on SYSTEM_MODES register."
+13:37:51.606 DEBUG:"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+13:37:52.734 DEBUG:"Obtained 'Camera sensor configured.\n' after 'CONFIGURE_CAMERA'"
+13:37:52.735 DEBUG:"Obtained 'All trackers freed.\n' after writing  on FREE_ALL register."
+13:37:52.737 DEBUG:"Obtained '4\n' after writing 4 on SYSTEM_OUTPUT register."
+13:37:56.734 DEBUG:"'Image captured.\n' after 0 tries."
+13:37:56.734 DEBUG:'GET_GRAY_IMAGE' command sent.
+13:38:00.522 DEBUG:Received 314928 bytes of 314928 (100.00%)
+13:38:00.522 DEBUG:Thresholding between 131 and 186
+13:38:00.548 DEBUG:Image binarization finished
+13:38:00.548 DEBUG:Getting the shapes' vertices in the image
+13:38:00.554 DEBUG:A 2-vertices shape was found
+13:38:00.555 DEBUG:A 3-vertices shape was found
+13:38:00.556 DEBUG:A 4-vertices shape was found
+13:38:00.557 DEBUG:Configurating tracker 1
+13:38:00.559 DEBUG:"Obtained '(388,644,140,140)\n' after writing 1,388,644,140,140 on SET_WINDOW register."
+13:38:38.417 DEBUG:"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+13:38:38.417 INFO:Closed the TCP client
+
+---------------------------------------------------------------------------
+13:43:45.038 INFO:BEGINNING MAIN EXECUTION
+13:43:45.039 DEBUG:Opened configuration file. Connecting to 172.19.5.213
+13:43:45.041 INFO:Started TCP client with IP: 172.19.5.213 and PORT:5005.
+13:43:45.045 DEBUG:"Obtained '(551040525,784051947)\n' after writing 551040525,784051947 on RED_THRESHOLD register."
+13:43:45.047 DEBUG:"Obtained '(4198404,0)\n' after writing 4198404,0 on GREEN_THRESHOLD register."
+13:43:45.049 DEBUG:"Obtained '(4198404,0)\n' after writing 4198404,0 on BLUE_THRESHOLD register."
+13:43:45.050 DEBUG:"Obtained '(648,486)\n' after writing 648,486 on IMAGE_SHAPE register."
+13:43:45.052 DEBUG:"Obtained '1111\n' after writing 1111 on IMAGE_EXPOSURE register."
+13:43:45.054 DEBUG:"Obtained '(0,0)\n' after writing 0,0 on SYSTEM_INDEXES register."
+13:43:45.056 DEBUG:"Obtained '(2591,1943)\n' after writing 2591,1943 on SYSTEM_SHAPE register."
+13:43:45.058 DEBUG:"Obtained '(1,1)\n' after writing 1,1 on SYSTEM_MODES register."
+13:43:45.059 DEBUG:"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+13:43:46.738 DEBUG:"Obtained 'Camera sensor configured.\n' after 'CONFIGURE_CAMERA'"
+13:43:46.740 DEBUG:"Obtained 'All trackers freed.\n' after writing  on FREE_ALL register."
+13:43:46.742 DEBUG:"Obtained '4\n' after writing 4 on SYSTEM_OUTPUT register."
+13:43:50.738 DEBUG:"'Image captured.\n' after 0 tries."
+13:43:50.738 DEBUG:'GET_GRAY_IMAGE' command sent.
+13:43:54.530 DEBUG:Received 314928 bytes of 314928 (100.00%)
+13:43:54.530 DEBUG:Thresholding between 131 and 186
+13:43:54.555 DEBUG:Image binarization finished
+13:43:54.556 DEBUG:Getting the shapes' vertices in the image
+13:43:54.562 DEBUG:A 2-vertices shape was found
+13:43:54.563 DEBUG:A 2-vertices shape was found
+13:43:54.563 DEBUG:A 2-vertices shape was found
+13:43:54.564 DEBUG:A 4-vertices shape was found
+13:43:54.564 DEBUG:Configurating tracker 1
+13:46:20.117 DEBUG:"Obtained '(390,646,136,136)\n' after writing 1,390,646,136,136 on SET_WINDOW register."
+13:46:25.926 DEBUG:"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+13:46:25.926 INFO:Closed the TCP client
+
+---------------------------------------------------------------------------
+13:48:05.989 INFO:BEGINNING MAIN EXECUTION
+13:48:05.990 DEBUG:Opened configuration file. Connecting to 172.19.5.213
+13:48:05.991 INFO:Started TCP client with IP: 172.19.5.213 and PORT:5005.
+13:48:05.995 DEBUG:"Obtained '(551040525,784051947)\n' after writing 551040525,784051947 on RED_THRESHOLD register."
+13:48:05.997 DEBUG:"Obtained '(4198404,0)\n' after writing 4198404,0 on GREEN_THRESHOLD register."
+13:48:05.999 DEBUG:"Obtained '(4198404,0)\n' after writing 4198404,0 on BLUE_THRESHOLD register."
+13:48:06.001 DEBUG:"Obtained '(648,486)\n' after writing 648,486 on IMAGE_SHAPE register."
+13:48:06.003 DEBUG:"Obtained '1111\n' after writing 1111 on IMAGE_EXPOSURE register."
+13:48:06.004 DEBUG:"Obtained '(0,0)\n' after writing 0,0 on SYSTEM_INDEXES register."
+13:48:06.006 DEBUG:"Obtained '(2591,1943)\n' after writing 2591,1943 on SYSTEM_SHAPE register."
+13:48:06.008 DEBUG:"Obtained '(1,1)\n' after writing 1,1 on SYSTEM_MODES register."
+13:48:06.009 DEBUG:"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+13:48:07.741 DEBUG:"Obtained 'Camera sensor configured.\n' after 'CONFIGURE_CAMERA'"
+13:48:07.743 DEBUG:"Obtained 'All trackers freed.\n' after writing  on FREE_ALL register."
+13:48:07.745 DEBUG:"Obtained '4\n' after writing 4 on SYSTEM_OUTPUT register."
+13:48:11.741 DEBUG:"'Image captured.\n' after 0 tries."
+13:48:11.742 DEBUG:'GET_GRAY_IMAGE' command sent.
+13:48:15.530 DEBUG:Received 314928 bytes of 314928 (100.00%)
+13:48:15.530 DEBUG:Thresholding between 131 and 186
+13:48:15.555 DEBUG:Image binarization finished
+13:48:15.556 DEBUG:Getting the shapes' vertices in the image
+13:48:15.562 DEBUG:A 2-vertices shape was found
+13:48:15.563 DEBUG:A 2-vertices shape was found
+13:48:15.564 DEBUG:A 4-vertices shape was found
+13:48:15.564 DEBUG:Configurating tracker 1
+13:48:25.156 DEBUG:"Obtained '(644,388,140,140)\n' after writing 1,644,388,140,140 on SET_WINDOW register."
+14:14:16.016 INFO:BEGINNING MAIN EXECUTION
+14:14:16.017 DEBUG:Opened configuration file. Connecting to 172.19.5.213
+14:14:16.018 INFO:Started TCP client with IP: 172.19.5.213 and PORT:5005.
+14:14:18.020 WARNING:Unable to connect to port. Timeout
+14:19:56.367 INFO:BEGINNING MAIN EXECUTION
+14:19:56.368 DEBUG:Opened configuration file. Connecting to 172.19.5.213
+14:19:56.370 INFO:Started TCP client with IP: 172.19.5.213 and PORT:5005.
+14:19:56.374 DEBUG:"Obtained '(551040525,784051947)\n' after writing 551040525,784051947 on RED_THRESHOLD register."
+14:19:56.376 DEBUG:"Obtained '(4198404,0)\n' after writing 4198404,0 on GREEN_THRESHOLD register."
+14:19:56.378 DEBUG:"Obtained '(4198404,0)\n' after writing 4198404,0 on BLUE_THRESHOLD register."
+14:19:56.380 DEBUG:"Obtained '(648,486)\n' after writing 648,486 on IMAGE_SHAPE register."
+14:19:56.381 DEBUG:"Obtained '1111\n' after writing 1111 on IMAGE_EXPOSURE register."
+14:19:56.383 DEBUG:"Obtained '(0,0)\n' after writing 0,0 on SYSTEM_INDEXES register."
+14:19:56.385 DEBUG:"Obtained '(2591,1943)\n' after writing 2591,1943 on SYSTEM_SHAPE register."
+14:19:56.387 DEBUG:"Obtained '(1,1)\n' after writing 1,1 on SYSTEM_MODES register."
+14:19:56.388 DEBUG:"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+14:19:56.499 DEBUG:"Obtained 'Camera sensor configured.\n' after 'CONFIGURE_CAMERA'"
+14:19:56.500 DEBUG:"Obtained 'All trackers freed.\n' after writing  on FREE_ALL register."
+14:19:56.502 DEBUG:"Obtained '4\n' after writing 4 on SYSTEM_OUTPUT register."
+14:19:56.615 DEBUG:"'Image captured.\n' after 0 tries."
+14:19:56.615 DEBUG:'GET_GRAY_IMAGE' command sent.
+14:19:59.438 DEBUG:Received 314928 bytes of 314928 (100.00%)
+14:19:59.485 DEBUG:Thresholding between 131 and 186
+14:19:59.511 DEBUG:Image binarization finished
+14:19:59.511 DEBUG:Getting the shapes' vertices in the image
+14:19:59.516 DEBUG:A 2-vertices shape was found
+14:19:59.516 DEBUG:A 2-vertices shape was found
+14:19:59.517 DEBUG:A 4-vertices shape was found
+14:19:59.518 DEBUG:A 2-vertices shape was found
+14:19:59.518 DEBUG:A 2-vertices shape was found
+14:44:25.491 DEBUG:Configurating tracker 1
+14:44:29.693 DEBUG:"Obtained '(616,356,144,144)\n' after writing 1,616,356,144,144 on SET_WINDOW register."
+14:44:47.557 DEBUG:"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+14:44:47.557 INFO:Closed the TCP client
+
+---------------------------------------------------------------------------
+14:44:49.605 INFO:BEGINNING MAIN EXECUTION
+14:44:49.606 DEBUG:Opened configuration file. Connecting to 172.19.5.213
+14:44:49.608 INFO:Started TCP client with IP: 172.19.5.213 and PORT:5005.
+14:44:49.612 DEBUG:"Obtained '(551040525,784051947)\n' after writing 551040525,784051947 on RED_THRESHOLD register."
+14:44:49.614 DEBUG:"Obtained '(4198404,0)\n' after writing 4198404,0 on GREEN_THRESHOLD register."
+14:44:49.616 DEBUG:"Obtained '(4198404,0)\n' after writing 4198404,0 on BLUE_THRESHOLD register."
+14:44:49.617 DEBUG:"Obtained '(648,486)\n' after writing 648,486 on IMAGE_SHAPE register."
+14:44:49.619 DEBUG:"Obtained '1111\n' after writing 1111 on IMAGE_EXPOSURE register."
+14:44:49.621 DEBUG:"Obtained '(0,0)\n' after writing 0,0 on SYSTEM_INDEXES register."
+14:44:49.623 DEBUG:"Obtained '(2591,1943)\n' after writing 2591,1943 on SYSTEM_SHAPE register."
+14:44:49.625 DEBUG:"Obtained '(1,1)\n' after writing 1,1 on SYSTEM_MODES register."
+14:44:49.626 DEBUG:"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+14:44:50.760 DEBUG:"Obtained 'Camera sensor configured.\n' after 'CONFIGURE_CAMERA'"
+14:44:50.762 DEBUG:"Obtained 'All trackers freed.\n' after writing  on FREE_ALL register."
+14:44:50.764 DEBUG:"Obtained '4\n' after writing 4 on SYSTEM_OUTPUT register."
+14:44:54.760 DEBUG:"'Image captured.\n' after 0 tries."
+14:44:54.761 DEBUG:'GET_GRAY_IMAGE' command sent.
+14:44:58.554 DEBUG:Received 314928 bytes of 314928 (100.00%)
+14:44:58.596 DEBUG:Thresholding between 131 and 186
+14:44:58.617 DEBUG:Image binarization finished
+14:44:58.618 DEBUG:Getting the shapes' vertices in the image
+14:44:58.623 DEBUG:A 2-vertices shape was found
+14:44:58.623 DEBUG:A 2-vertices shape was found
+14:44:58.624 DEBUG:A 2-vertices shape was found
+14:44:58.625 DEBUG:A 4-vertices shape was found
+14:44:58.625 DEBUG:A 2-vertices shape was found
+14:44:58.625 DEBUG:A 2-vertices shape was found
+14:44:58.626 DEBUG:A 2-vertices shape was found
+14:45:09.850 DEBUG:Configurating tracker 1
+14:45:12.396 DEBUG:"Obtained '(618,360,138,136)\n' after writing 1,618,360,138,136 on SET_WINDOW register."
+14:45:23.109 DEBUG:"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+14:45:23.109 INFO:Closed the TCP client
+
+---------------------------------------------------------------------------
+14:45:27.965 INFO:BEGINNING MAIN EXECUTION
+14:45:27.965 DEBUG:Opened configuration file. Connecting to 172.19.5.213
+14:45:27.967 INFO:Started TCP client with IP: 172.19.5.213 and PORT:5005.
+14:45:27.971 DEBUG:"Obtained '(551040525,784051947)\n' after writing 551040525,784051947 on RED_THRESHOLD register."
+14:45:27.973 DEBUG:"Obtained '(4198404,0)\n' after writing 4198404,0 on GREEN_THRESHOLD register."
+14:45:27.975 DEBUG:"Obtained '(4198404,0)\n' after writing 4198404,0 on BLUE_THRESHOLD register."
+14:45:27.976 DEBUG:"Obtained '(648,486)\n' after writing 648,486 on IMAGE_SHAPE register."
+14:45:27.978 DEBUG:"Obtained '1111\n' after writing 1111 on IMAGE_EXPOSURE register."
+14:45:27.980 DEBUG:"Obtained '(0,0)\n' after writing 0,0 on SYSTEM_INDEXES register."
+14:45:27.982 DEBUG:"Obtained '(2591,1943)\n' after writing 2591,1943 on SYSTEM_SHAPE register."
+14:45:27.984 DEBUG:"Obtained '(1,1)\n' after writing 1,1 on SYSTEM_MODES register."
+14:45:27.985 DEBUG:"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+14:45:29.761 DEBUG:"Obtained 'Camera sensor configured.\n' after 'CONFIGURE_CAMERA'"
+14:45:29.763 DEBUG:"Obtained 'All trackers freed.\n' after writing  on FREE_ALL register."
+14:45:29.764 DEBUG:"Obtained '4\n' after writing 4 on SYSTEM_OUTPUT register."
+14:45:33.761 DEBUG:"'Image captured.\n' after 0 tries."
+14:45:33.761 DEBUG:'GET_GRAY_IMAGE' command sent.
+14:45:37.550 DEBUG:Received 314928 bytes of 314928 (100.00%)
+14:45:37.598 DEBUG:Thresholding between 131 and 186
+14:45:37.623 DEBUG:Image binarization finished
+14:45:37.623 DEBUG:Getting the shapes' vertices in the image
+14:45:37.628 DEBUG:A 2-vertices shape was found
+14:45:37.629 DEBUG:A 2-vertices shape was found
+14:45:37.630 DEBUG:A 4-vertices shape was found
+14:45:37.630 DEBUG:A 2-vertices shape was found
+14:45:37.630 DEBUG:A 2-vertices shape was found
+14:45:37.631 DEBUG:Configurating tracker 1
+14:45:37.632 DEBUG:"Obtained '(618,360,138,136)\n' after writing 1,618,360,138,136 on SET_WINDOW register."
+17:26:34.394 DEBUG:"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+17:26:34.394 INFO:Closed the TCP client
+
+---------------------------------------------------------------------------
+17:26:40.496 INFO:BEGINNING MAIN EXECUTION
+17:26:40.497 DEBUG:Opened configuration file. Connecting to 172.19.5.213
+17:26:40.498 INFO:Started TCP client with IP: 172.19.5.213 and PORT:5005.
+17:26:40.502 DEBUG:"Obtained '(551040525,784051947)\n' after writing 551040525,784051947 on RED_THRESHOLD register."
+17:26:40.504 DEBUG:"Obtained '(4198404,0)\n' after writing 4198404,0 on GREEN_THRESHOLD register."
+17:26:40.506 DEBUG:"Obtained '(4198404,0)\n' after writing 4198404,0 on BLUE_THRESHOLD register."
+17:26:40.508 DEBUG:"Obtained '(648,486)\n' after writing 648,486 on IMAGE_SHAPE register."
+17:26:40.509 DEBUG:"Obtained '1111\n' after writing 1111 on IMAGE_EXPOSURE register."
+17:26:40.511 DEBUG:"Obtained '(0,0)\n' after writing 0,0 on SYSTEM_INDEXES register."
+17:26:40.513 DEBUG:"Obtained '(2591,1943)\n' after writing 2591,1943 on SYSTEM_SHAPE register."
+17:26:40.515 DEBUG:"Obtained '(1,1)\n' after writing 1,1 on SYSTEM_MODES register."
+17:26:40.516 DEBUG:"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+17:26:41.887 DEBUG:"Obtained 'Camera sensor configured.\n' after 'CONFIGURE_CAMERA'"
+17:26:41.889 DEBUG:"Obtained 'All trackers freed.\n' after writing  on FREE_ALL register."
+17:26:41.890 DEBUG:"Obtained '4\n' after writing 4 on SYSTEM_OUTPUT register."
+17:26:45.887 DEBUG:"'Image captured.\n' after 0 tries."
+17:26:45.887 DEBUG:'GET_GRAY_IMAGE' command sent.
+17:26:49.674 DEBUG:Received 314928 bytes of 314928 (100.00%)
+17:26:49.721 DEBUG:Thresholding between 131 and 186
+17:26:49.746 DEBUG:Image binarization finished
+17:26:49.746 DEBUG:Getting the shapes' vertices in the image
+17:26:49.752 DEBUG:A 4-vertices shape was found
+17:26:49.752 DEBUG:Configurating tracker 1
+17:26:49.754 DEBUG:"Obtained '(618,254,138,138)\n' after writing 1,618,254,138,138 on SET_WINDOW register."
+17:26:55.057 DEBUG:"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+17:26:55.058 INFO:Closed the TCP client
+
+---------------------------------------------------------------------------
+17:27:09.737 INFO:BEGINNING MAIN EXECUTION
+17:27:09.738 DEBUG:Opened configuration file. Connecting to 172.19.5.213
+17:27:09.739 INFO:Started TCP client with IP: 172.19.5.213 and PORT:5005.
+17:27:09.743 DEBUG:"Obtained '(551040525,784051947)\n' after writing 551040525,784051947 on RED_THRESHOLD register."
+17:27:09.745 DEBUG:"Obtained '(4198404,0)\n' after writing 4198404,0 on GREEN_THRESHOLD register."
+17:27:09.747 DEBUG:"Obtained '(4198404,0)\n' after writing 4198404,0 on BLUE_THRESHOLD register."
+17:27:09.749 DEBUG:"Obtained '(648,486)\n' after writing 648,486 on IMAGE_SHAPE register."
+17:27:09.751 DEBUG:"Obtained '1111\n' after writing 1111 on IMAGE_EXPOSURE register."
+17:27:09.753 DEBUG:"Obtained '(0,0)\n' after writing 0,0 on SYSTEM_INDEXES register."
+17:27:09.755 DEBUG:"Obtained '(2591,1943)\n' after writing 2591,1943 on SYSTEM_SHAPE register."
+17:27:09.756 DEBUG:"Obtained '(1,1)\n' after writing 1,1 on SYSTEM_MODES register."
+17:27:09.758 DEBUG:"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+17:27:10.887 DEBUG:"Obtained 'Camera sensor configured.\n' after 'CONFIGURE_CAMERA'"
+17:27:10.889 DEBUG:"Obtained 'All trackers freed.\n' after writing  on FREE_ALL register."
+17:27:10.891 DEBUG:"Obtained '4\n' after writing 4 on SYSTEM_OUTPUT register."
+17:27:14.887 DEBUG:"'Image captured.\n' after 0 tries."
+17:27:14.887 DEBUG:'GET_GRAY_IMAGE' command sent.
+17:27:18.678 DEBUG:Received 314928 bytes of 314928 (100.00%)
+17:27:18.722 DEBUG:Thresholding between 131 and 186
+17:27:18.743 DEBUG:Image binarization finished
+17:27:18.744 DEBUG:Getting the shapes' vertices in the image
+17:27:18.750 DEBUG:A 4-vertices shape was found
+17:27:18.750 DEBUG:Configurating tracker 1
+17:27:18.752 DEBUG:"Obtained '(620,256,134,134)\n' after writing 1,620,256,134,134 on SET_WINDOW register."
+17:27:18.793 DEBUG:Getting the shapes' vertices in the image
+17:27:54.777 DEBUG:"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+17:27:54.777 INFO:Closed the TCP client
+
+---------------------------------------------------------------------------
+17:27:56.425 INFO:BEGINNING MAIN EXECUTION
+17:27:56.426 DEBUG:Opened configuration file. Connecting to 172.19.5.213
+17:27:56.427 INFO:Started TCP client with IP: 172.19.5.213 and PORT:5005.
+17:27:56.431 DEBUG:"Obtained '(551040525,784051947)\n' after writing 551040525,784051947 on RED_THRESHOLD register."
+17:27:56.433 DEBUG:"Obtained '(4198404,0)\n' after writing 4198404,0 on GREEN_THRESHOLD register."
+17:27:56.435 DEBUG:"Obtained '(4198404,0)\n' after writing 4198404,0 on BLUE_THRESHOLD register."
+17:27:56.437 DEBUG:"Obtained '(648,486)\n' after writing 648,486 on IMAGE_SHAPE register."
+17:27:56.439 DEBUG:"Obtained '1111\n' after writing 1111 on IMAGE_EXPOSURE register."
+17:27:56.441 DEBUG:"Obtained '(0,0)\n' after writing 0,0 on SYSTEM_INDEXES register."
+17:27:56.443 DEBUG:"Obtained '(2591,1943)\n' after writing 2591,1943 on SYSTEM_SHAPE register."
+17:27:56.444 DEBUG:"Obtained '(1,1)\n' after writing 1,1 on SYSTEM_MODES register."
+17:27:56.446 DEBUG:"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+17:27:57.888 DEBUG:"Obtained 'Camera sensor configured.\n' after 'CONFIGURE_CAMERA'"
+17:27:57.890 DEBUG:"Obtained 'All trackers freed.\n' after writing  on FREE_ALL register."
+17:27:57.891 DEBUG:"Obtained '4\n' after writing 4 on SYSTEM_OUTPUT register."
+17:28:01.888 DEBUG:"'Image captured.\n' after 0 tries."
+17:28:01.888 DEBUG:'GET_GRAY_IMAGE' command sent.
+17:28:05.678 DEBUG:Received 314928 bytes of 314928 (100.00%)
+17:28:05.721 DEBUG:Thresholding between 131 and 186
+17:28:05.743 DEBUG:Image binarization finished
+17:28:05.743 DEBUG:Getting the shapes' vertices in the image
+17:28:05.749 DEBUG:A 4-vertices shape was found
+17:28:05.749 DEBUG:A 2-vertices shape was found
+17:28:05.750 DEBUG:Configurating tracker 1
+17:28:05.752 DEBUG:"Obtained '(618,252,140,142)\n' after writing 1,618,252,140,142 on SET_WINDOW register."
+17:28:05.779 DEBUG:Getting the shapes' vertices in the image
+17:30:20.736 DEBUG:"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+17:30:20.736 INFO:Closed the TCP client
+
+---------------------------------------------------------------------------
+17:30:40.760 INFO:BEGINNING MAIN EXECUTION
+17:30:40.761 DEBUG:Opened configuration file. Connecting to 172.19.5.213
+17:30:40.762 INFO:Started TCP client with IP: 172.19.5.213 and PORT:5005.
+17:30:40.766 DEBUG:"Obtained '(551040525,784051947)\n' after writing 551040525,784051947 on RED_THRESHOLD register."
+17:30:40.768 DEBUG:"Obtained '(4198404,0)\n' after writing 4198404,0 on GREEN_THRESHOLD register."
+17:30:40.770 DEBUG:"Obtained '(4198404,0)\n' after writing 4198404,0 on BLUE_THRESHOLD register."
+17:30:40.772 DEBUG:"Obtained '(648,486)\n' after writing 648,486 on IMAGE_SHAPE register."
+17:30:40.774 DEBUG:"Obtained '1111\n' after writing 1111 on IMAGE_EXPOSURE register."
+17:30:40.775 DEBUG:"Obtained '(0,0)\n' after writing 0,0 on SYSTEM_INDEXES register."
+17:30:40.777 DEBUG:"Obtained '(2591,1943)\n' after writing 2591,1943 on SYSTEM_SHAPE register."
+17:30:40.779 DEBUG:"Obtained '(1,1)\n' after writing 1,1 on SYSTEM_MODES register."
+17:30:40.780 DEBUG:"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+17:30:41.890 DEBUG:"Obtained 'Camera sensor configured.\n' after 'CONFIGURE_CAMERA'"
+17:30:41.892 DEBUG:"Obtained 'All trackers freed.\n' after writing  on FREE_ALL register."
+17:30:41.893 DEBUG:"Obtained '4\n' after writing 4 on SYSTEM_OUTPUT register."
+17:30:45.890 DEBUG:"'Image captured.\n' after 0 tries."
+17:30:45.890 DEBUG:'GET_GRAY_IMAGE' command sent.
+17:30:49.682 DEBUG:Received 314928 bytes of 314928 (100.00%)
+17:30:49.711 DEBUG:Thresholding between 131 and 186
+17:30:49.727 DEBUG:Image binarization finished
+17:30:49.728 DEBUG:Getting the shapes' vertices in the image
+17:32:22.134 DEBUG:A 4-vertices shape was found
+17:32:22.135 DEBUG:Configurating tracker 1
+17:32:22.137 DEBUG:"Obtained '(620,256,134,134)\n' after writing 1,620,256,134,134 on SET_WINDOW register."
+17:32:22.184 DEBUG:Getting the shapes' vertices in the image
+17:32:27.735 DEBUG:"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+17:32:27.735 INFO:Closed the TCP client
+
+---------------------------------------------------------------------------
+17:33:15.039 INFO:BEGINNING MAIN EXECUTION
+17:33:15.039 DEBUG:Opened configuration file. Connecting to 172.19.5.213
+17:33:15.041 INFO:Started TCP client with IP: 172.19.5.213 and PORT:5005.
+17:33:15.045 DEBUG:"Obtained '(551040525,784051947)\n' after writing 551040525,784051947 on RED_THRESHOLD register."
+17:33:15.047 DEBUG:"Obtained '(4198404,0)\n' after writing 4198404,0 on GREEN_THRESHOLD register."
+17:33:15.049 DEBUG:"Obtained '(4198404,0)\n' after writing 4198404,0 on BLUE_THRESHOLD register."
+17:33:15.051 DEBUG:"Obtained '(648,486)\n' after writing 648,486 on IMAGE_SHAPE register."
+17:33:15.053 DEBUG:"Obtained '1111\n' after writing 1111 on IMAGE_EXPOSURE register."
+17:33:15.054 DEBUG:"Obtained '(0,0)\n' after writing 0,0 on SYSTEM_INDEXES register."
+17:33:15.056 DEBUG:"Obtained '(2591,1943)\n' after writing 2591,1943 on SYSTEM_SHAPE register."
+17:33:15.058 DEBUG:"Obtained '(1,1)\n' after writing 1,1 on SYSTEM_MODES register."
+17:33:15.060 DEBUG:"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+17:33:16.892 DEBUG:"Obtained 'Camera sensor configured.\n' after 'CONFIGURE_CAMERA'"
+17:33:16.894 DEBUG:"Obtained 'All trackers freed.\n' after writing  on FREE_ALL register."
+17:33:16.896 DEBUG:"Obtained '4\n' after writing 4 on SYSTEM_OUTPUT register."
+17:33:20.892 DEBUG:"'Image captured.\n' after 0 tries."
+17:33:20.892 DEBUG:'GET_GRAY_IMAGE' command sent.
+17:33:24.686 DEBUG:Received 314928 bytes of 314928 (100.00%)
+17:33:24.723 DEBUG:Thresholding between 131 and 186
+17:33:24.743 DEBUG:Image binarization finished
+17:33:24.744 DEBUG:Getting the shapes' vertices in the image
+17:33:28.261 DEBUG:A 4-vertices shape was found
+17:33:28.262 DEBUG:Configurating tracker 1
+17:33:28.264 DEBUG:"Obtained '(618,254,138,138)\n' after writing 1,618,254,138,138 on SET_WINDOW register."
+17:33:28.307 DEBUG:Getting the shapes' vertices in the image
+17:33:28.308 DEBUG:A 4-vertices shape was found
+17:33:28.333 DEBUG:Getting the shapes' vertices in the image
+17:33:28.334 DEBUG:A 4-vertices shape was found
+17:33:28.358 DEBUG:Getting the shapes' vertices in the image
+17:33:28.359 DEBUG:A 4-vertices shape was found
+17:33:28.384 DEBUG:Getting the shapes' vertices in the image
+17:33:28.385 DEBUG:A 4-vertices shape was found
+17:33:28.409 DEBUG:Getting the shapes' vertices in the image
+17:33:28.410 DEBUG:A 4-vertices shape was found
+17:33:28.435 DEBUG:Getting the shapes' vertices in the image
+17:33:28.436 DEBUG:A 4-vertices shape was found
+17:33:28.460 DEBUG:Getting the shapes' vertices in the image
+17:33:28.461 DEBUG:A 4-vertices shape was found
+17:33:28.486 DEBUG:Getting the shapes' vertices in the image
+17:33:28.487 DEBUG:A 3-vertices shape was found
+17:33:28.511 DEBUG:Getting the shapes' vertices in the image
+17:33:28.512 DEBUG:A 4-vertices shape was found
+17:33:28.537 DEBUG:Getting the shapes' vertices in the image
+17:33:28.538 DEBUG:A 4-vertices shape was found
+17:33:28.562 DEBUG:Getting the shapes' vertices in the image
+17:33:28.563 DEBUG:A 4-vertices shape was found
+17:33:28.588 DEBUG:Getting the shapes' vertices in the image
+17:33:28.589 DEBUG:A 4-vertices shape was found
+17:33:28.613 DEBUG:Getting the shapes' vertices in the image
+17:33:28.614 DEBUG:A 4-vertices shape was found
+17:33:28.638 DEBUG:Getting the shapes' vertices in the image
+17:33:28.639 DEBUG:A 4-vertices shape was found
+17:33:28.664 DEBUG:Getting the shapes' vertices in the image
+17:33:28.665 DEBUG:A 4-vertices shape was found
+17:33:28.689 DEBUG:Getting the shapes' vertices in the image
+17:33:28.690 DEBUG:A 4-vertices shape was found
+17:33:28.715 DEBUG:Getting the shapes' vertices in the image
+17:33:28.716 DEBUG:A 4-vertices shape was found
+17:33:28.740 DEBUG:Getting the shapes' vertices in the image
+17:33:28.741 DEBUG:A 4-vertices shape was found
+17:33:28.766 DEBUG:Getting the shapes' vertices in the image
+17:33:28.767 DEBUG:A 4-vertices shape was found
+17:33:28.791 DEBUG:Getting the shapes' vertices in the image
+17:33:28.792 DEBUG:A 4-vertices shape was found
+17:33:28.817 DEBUG:Getting the shapes' vertices in the image
+17:33:28.818 DEBUG:A 4-vertices shape was found
+17:33:28.842 DEBUG:Getting the shapes' vertices in the image
+17:33:28.843 DEBUG:A 4-vertices shape was found
+17:33:28.868 DEBUG:Getting the shapes' vertices in the image
+17:33:28.869 DEBUG:A 4-vertices shape was found
+17:33:28.893 DEBUG:Getting the shapes' vertices in the image
+17:33:28.894 DEBUG:A 4-vertices shape was found
+17:33:28.919 DEBUG:Getting the shapes' vertices in the image
+17:33:28.920 DEBUG:A 4-vertices shape was found
+17:33:28.944 DEBUG:Getting the shapes' vertices in the image
+17:33:28.946 DEBUG:A 4-vertices shape was found
+17:33:28.970 DEBUG:Getting the shapes' vertices in the image
+17:33:28.971 DEBUG:A 4-vertices shape was found
+17:33:28.995 DEBUG:Getting the shapes' vertices in the image
+17:33:28.996 DEBUG:A 4-vertices shape was found
+17:33:29.021 DEBUG:Getting the shapes' vertices in the image
+17:33:29.022 DEBUG:A 4-vertices shape was found
+17:33:29.046 DEBUG:Getting the shapes' vertices in the image
+17:33:29.047 DEBUG:A 4-vertices shape was found
+17:33:29.072 DEBUG:Getting the shapes' vertices in the image
+17:33:29.073 DEBUG:A 4-vertices shape was found
+17:33:29.097 DEBUG:Getting the shapes' vertices in the image
+17:33:29.098 DEBUG:A 4-vertices shape was found
+17:33:29.123 DEBUG:Getting the shapes' vertices in the image
+17:33:29.124 DEBUG:A 4-vertices shape was found
+17:33:29.148 DEBUG:Getting the shapes' vertices in the image
+17:33:29.149 DEBUG:A 4-vertices shape was found
+17:33:29.174 DEBUG:Getting the shapes' vertices in the image
+17:33:29.175 DEBUG:A 4-vertices shape was found
+17:33:29.199 DEBUG:Getting the shapes' vertices in the image
+17:33:29.200 DEBUG:A 3-vertices shape was found
+17:33:29.225 DEBUG:Getting the shapes' vertices in the image
+17:33:29.226 DEBUG:A 4-vertices shape was found
+17:33:29.250 DEBUG:Getting the shapes' vertices in the image
+17:33:29.251 DEBUG:A 3-vertices shape was found
+17:33:29.276 DEBUG:Getting the shapes' vertices in the image
+17:33:29.277 DEBUG:A 4-vertices shape was found
+17:33:29.301 DEBUG:Getting the shapes' vertices in the image
+17:33:29.302 DEBUG:A 3-vertices shape was found
+17:33:29.327 DEBUG:Getting the shapes' vertices in the image
+17:33:29.328 DEBUG:A 4-vertices shape was found
+17:33:29.352 DEBUG:Getting the shapes' vertices in the image
+17:33:29.353 DEBUG:A 4-vertices shape was found
+17:33:29.378 DEBUG:Getting the shapes' vertices in the image
+17:33:29.379 DEBUG:A 4-vertices shape was found
+17:33:29.403 DEBUG:Getting the shapes' vertices in the image
+17:33:29.404 DEBUG:A 4-vertices shape was found
+17:33:29.428 DEBUG:Getting the shapes' vertices in the image
+17:33:29.429 DEBUG:A 4-vertices shape was found
+17:33:29.454 DEBUG:Getting the shapes' vertices in the image
+17:33:29.455 DEBUG:A 4-vertices shape was found
+17:33:29.479 DEBUG:Getting the shapes' vertices in the image
+17:33:29.480 DEBUG:A 4-vertices shape was found
+17:33:29.505 DEBUG:Getting the shapes' vertices in the image
+17:33:29.506 DEBUG:A 4-vertices shape was found
+17:33:29.530 DEBUG:Getting the shapes' vertices in the image
+17:33:29.531 DEBUG:A 4-vertices shape was found
+17:33:29.556 DEBUG:Getting the shapes' vertices in the image
+17:33:29.557 DEBUG:A 4-vertices shape was found
+17:33:29.581 DEBUG:Getting the shapes' vertices in the image
+17:33:29.582 DEBUG:A 4-vertices shape was found
+17:33:29.607 DEBUG:Getting the shapes' vertices in the image
+17:33:29.608 DEBUG:A 4-vertices shape was found
+17:33:29.632 DEBUG:Getting the shapes' vertices in the image
+17:33:29.633 DEBUG:A 4-vertices shape was found
+17:33:29.658 DEBUG:Getting the shapes' vertices in the image
+17:33:29.659 DEBUG:A 4-vertices shape was found
+17:33:29.683 DEBUG:Getting the shapes' vertices in the image
+17:33:29.684 DEBUG:A 4-vertices shape was found
+17:33:29.709 DEBUG:Getting the shapes' vertices in the image
+17:33:29.710 DEBUG:A 4-vertices shape was found
+17:33:29.734 DEBUG:Getting the shapes' vertices in the image
+17:33:29.735 DEBUG:A 3-vertices shape was found
+17:33:29.760 DEBUG:Getting the shapes' vertices in the image
+17:33:29.761 DEBUG:A 4-vertices shape was found
+17:33:29.785 DEBUG:Getting the shapes' vertices in the image
+17:33:29.786 DEBUG:A 3-vertices shape was found
+17:33:29.811 DEBUG:Getting the shapes' vertices in the image
+17:33:29.812 DEBUG:A 4-vertices shape was found
+17:33:29.836 DEBUG:Getting the shapes' vertices in the image
+17:33:29.837 DEBUG:A 4-vertices shape was found
+17:33:29.862 DEBUG:Getting the shapes' vertices in the image
+17:33:29.863 DEBUG:A 4-vertices shape was found
+17:33:29.887 DEBUG:Getting the shapes' vertices in the image
+17:33:29.888 DEBUG:A 4-vertices shape was found
+17:33:29.913 DEBUG:Getting the shapes' vertices in the image
+17:33:29.914 DEBUG:A 4-vertices shape was found
+17:33:29.938 DEBUG:Getting the shapes' vertices in the image
+17:33:29.939 DEBUG:A 4-vertices shape was found
+17:33:29.964 DEBUG:Getting the shapes' vertices in the image
+17:33:29.965 DEBUG:A 4-vertices shape was found
+17:33:29.989 DEBUG:Getting the shapes' vertices in the image
+17:33:29.990 DEBUG:A 4-vertices shape was found
+17:33:30.015 DEBUG:Getting the shapes' vertices in the image
+17:33:30.016 DEBUG:A 3-vertices shape was found
+17:33:30.040 DEBUG:Getting the shapes' vertices in the image
+17:33:30.041 DEBUG:A 4-vertices shape was found
+17:33:30.066 DEBUG:Getting the shapes' vertices in the image
+17:33:30.067 DEBUG:A 4-vertices shape was found
+17:33:30.091 DEBUG:Getting the shapes' vertices in the image
+17:33:30.092 DEBUG:A 4-vertices shape was found
+17:33:30.116 DEBUG:Getting the shapes' vertices in the image
+17:33:30.117 DEBUG:A 4-vertices shape was found
+17:33:30.142 DEBUG:Getting the shapes' vertices in the image
+17:33:30.143 DEBUG:A 4-vertices shape was found
+17:33:30.167 DEBUG:Getting the shapes' vertices in the image
+17:33:30.168 DEBUG:A 3-vertices shape was found
+17:33:30.193 DEBUG:Getting the shapes' vertices in the image
+17:33:30.194 DEBUG:A 4-vertices shape was found
+17:33:30.218 DEBUG:Getting the shapes' vertices in the image
+17:33:30.219 DEBUG:A 4-vertices shape was found
+17:33:30.244 DEBUG:Getting the shapes' vertices in the image
+17:33:30.245 DEBUG:A 3-vertices shape was found
+17:33:30.269 DEBUG:Getting the shapes' vertices in the image
+17:33:30.270 DEBUG:A 4-vertices shape was found
+17:33:30.295 DEBUG:Getting the shapes' vertices in the image
+17:33:30.296 DEBUG:A 4-vertices shape was found
+17:33:30.320 DEBUG:Getting the shapes' vertices in the image
+17:33:30.321 DEBUG:A 4-vertices shape was found
+17:33:30.346 DEBUG:Getting the shapes' vertices in the image
+17:33:30.347 DEBUG:A 4-vertices shape was found
+17:33:30.371 DEBUG:Getting the shapes' vertices in the image
+17:33:30.372 DEBUG:A 4-vertices shape was found
+17:33:30.397 DEBUG:Getting the shapes' vertices in the image
+17:33:30.398 DEBUG:A 4-vertices shape was found
+17:33:30.422 DEBUG:Getting the shapes' vertices in the image
+17:33:30.423 DEBUG:A 4-vertices shape was found
+17:33:30.448 DEBUG:Getting the shapes' vertices in the image
+17:33:30.449 DEBUG:A 4-vertices shape was found
+17:33:30.473 DEBUG:Getting the shapes' vertices in the image
+17:33:30.474 DEBUG:A 3-vertices shape was found
+17:33:30.499 DEBUG:Getting the shapes' vertices in the image
+17:33:30.500 DEBUG:A 4-vertices shape was found
+17:33:30.524 DEBUG:Getting the shapes' vertices in the image
+17:33:30.525 DEBUG:A 4-vertices shape was found
+17:33:30.550 DEBUG:Getting the shapes' vertices in the image
+17:33:30.551 DEBUG:A 4-vertices shape was found
+17:33:30.575 DEBUG:Getting the shapes' vertices in the image
+17:33:30.577 DEBUG:A 4-vertices shape was found
+17:33:30.601 DEBUG:Getting the shapes' vertices in the image
+17:33:30.602 DEBUG:A 4-vertices shape was found
+17:33:30.626 DEBUG:Getting the shapes' vertices in the image
+17:33:30.627 DEBUG:A 4-vertices shape was found
+17:33:30.652 DEBUG:Getting the shapes' vertices in the image
+17:33:30.653 DEBUG:A 4-vertices shape was found
+17:33:30.677 DEBUG:Getting the shapes' vertices in the image
+17:33:30.678 DEBUG:A 4-vertices shape was found
+17:33:30.703 DEBUG:Getting the shapes' vertices in the image
+17:33:30.704 DEBUG:A 4-vertices shape was found
+17:33:30.728 DEBUG:Getting the shapes' vertices in the image
+17:33:30.729 DEBUG:A 4-vertices shape was found
+17:33:30.754 DEBUG:Getting the shapes' vertices in the image
+17:33:30.755 DEBUG:A 4-vertices shape was found
+17:33:30.779 DEBUG:Getting the shapes' vertices in the image
+17:33:30.780 DEBUG:A 4-vertices shape was found
+17:33:30.805 DEBUG:Getting the shapes' vertices in the image
+17:33:30.806 DEBUG:A 4-vertices shape was found
+17:33:30.830 DEBUG:Getting the shapes' vertices in the image
+17:33:30.831 DEBUG:A 4-vertices shape was found
+17:33:30.856 DEBUG:Getting the shapes' vertices in the image
+17:33:30.857 DEBUG:A 4-vertices shape was found
+17:33:30.881 DEBUG:Getting the shapes' vertices in the image
+17:33:30.882 DEBUG:A 4-vertices shape was found
+17:33:30.906 DEBUG:Getting the shapes' vertices in the image
+17:33:30.907 DEBUG:A 4-vertices shape was found
+17:33:30.932 DEBUG:Getting the shapes' vertices in the image
+17:33:30.933 DEBUG:A 4-vertices shape was found
+17:33:30.957 DEBUG:Getting the shapes' vertices in the image
+17:33:30.958 DEBUG:A 4-vertices shape was found
+17:33:30.983 DEBUG:Getting the shapes' vertices in the image
+17:33:30.984 DEBUG:A 4-vertices shape was found
+17:33:31.008 DEBUG:Getting the shapes' vertices in the image
+17:33:31.009 DEBUG:A 3-vertices shape was found
+17:33:31.034 DEBUG:Getting the shapes' vertices in the image
+17:33:31.035 DEBUG:A 4-vertices shape was found
+17:33:31.059 DEBUG:Getting the shapes' vertices in the image
+17:33:31.060 DEBUG:A 4-vertices shape was found
+17:33:31.085 DEBUG:Getting the shapes' vertices in the image
+17:33:31.086 DEBUG:A 4-vertices shape was found
+17:33:31.110 DEBUG:Getting the shapes' vertices in the image
+17:33:31.111 DEBUG:A 4-vertices shape was found
+17:33:31.136 DEBUG:Getting the shapes' vertices in the image
+17:33:31.137 DEBUG:A 4-vertices shape was found
+17:33:31.161 DEBUG:Getting the shapes' vertices in the image
+17:33:31.162 DEBUG:A 4-vertices shape was found
+17:33:31.187 DEBUG:Getting the shapes' vertices in the image
+17:33:31.188 DEBUG:A 4-vertices shape was found
+17:33:31.212 DEBUG:Getting the shapes' vertices in the image
+17:33:31.213 DEBUG:A 4-vertices shape was found
+17:33:31.238 DEBUG:Getting the shapes' vertices in the image
+17:33:31.239 DEBUG:A 4-vertices shape was found
+17:33:31.263 DEBUG:Getting the shapes' vertices in the image
+17:33:31.264 DEBUG:A 4-vertices shape was found
+17:33:31.289 DEBUG:Getting the shapes' vertices in the image
+17:33:31.290 DEBUG:A 4-vertices shape was found
+17:33:31.314 DEBUG:Getting the shapes' vertices in the image
+17:33:31.315 DEBUG:A 4-vertices shape was found
+17:33:31.340 DEBUG:Getting the shapes' vertices in the image
+17:33:31.341 DEBUG:A 4-vertices shape was found
+17:33:31.365 DEBUG:Getting the shapes' vertices in the image
+17:33:31.366 DEBUG:A 4-vertices shape was found
+17:33:31.391 DEBUG:Getting the shapes' vertices in the image
+17:33:31.392 DEBUG:A 4-vertices shape was found
+17:33:31.416 DEBUG:Getting the shapes' vertices in the image
+17:33:31.417 DEBUG:A 4-vertices shape was found
+17:33:31.442 DEBUG:Getting the shapes' vertices in the image
+17:33:31.443 DEBUG:A 4-vertices shape was found
+17:33:31.467 DEBUG:Getting the shapes' vertices in the image
+17:33:31.468 DEBUG:A 4-vertices shape was found
+17:33:31.493 DEBUG:Getting the shapes' vertices in the image
+17:33:31.494 DEBUG:A 4-vertices shape was found
+17:33:31.518 DEBUG:Getting the shapes' vertices in the image
+17:33:31.519 DEBUG:A 4-vertices shape was found
+17:33:31.544 DEBUG:Getting the shapes' vertices in the image
+17:33:31.545 DEBUG:A 4-vertices shape was found
+17:33:31.569 DEBUG:Getting the shapes' vertices in the image
+17:33:31.570 DEBUG:A 4-vertices shape was found
+17:33:31.594 DEBUG:Getting the shapes' vertices in the image
+17:33:31.595 DEBUG:A 4-vertices shape was found
+17:33:31.620 DEBUG:Getting the shapes' vertices in the image
+17:33:31.621 DEBUG:A 4-vertices shape was found
+17:33:31.645 DEBUG:Getting the shapes' vertices in the image
+17:33:31.646 DEBUG:A 4-vertices shape was found
+17:33:31.671 DEBUG:Getting the shapes' vertices in the image
+17:33:31.672 DEBUG:A 4-vertices shape was found
+17:33:31.696 DEBUG:Getting the shapes' vertices in the image
+17:33:31.697 DEBUG:A 4-vertices shape was found
+17:33:31.722 DEBUG:Getting the shapes' vertices in the image
+17:33:31.723 DEBUG:A 4-vertices shape was found
+17:33:31.747 DEBUG:Getting the shapes' vertices in the image
+17:33:31.748 DEBUG:A 4-vertices shape was found
+17:33:31.773 DEBUG:Getting the shapes' vertices in the image
+17:33:31.774 DEBUG:A 4-vertices shape was found
+17:33:31.798 DEBUG:Getting the shapes' vertices in the image
+17:33:31.800 DEBUG:A 4-vertices shape was found
+17:33:31.824 DEBUG:Getting the shapes' vertices in the image
+17:33:31.825 DEBUG:A 4-vertices shape was found
+17:33:31.849 DEBUG:Getting the shapes' vertices in the image
+17:33:31.850 DEBUG:A 4-vertices shape was found
+17:33:31.875 DEBUG:Getting the shapes' vertices in the image
+17:33:31.876 DEBUG:A 4-vertices shape was found
+17:33:31.900 DEBUG:Getting the shapes' vertices in the image
+17:33:31.901 DEBUG:A 4-vertices shape was found
+17:33:31.926 DEBUG:Getting the shapes' vertices in the image
+17:33:31.927 DEBUG:A 4-vertices shape was found
+17:33:31.951 DEBUG:Getting the shapes' vertices in the image
+17:33:31.952 DEBUG:A 3-vertices shape was found
+17:33:31.977 DEBUG:Getting the shapes' vertices in the image
+17:33:31.978 DEBUG:A 3-vertices shape was found
+17:33:32.002 DEBUG:Getting the shapes' vertices in the image
+17:33:32.003 DEBUG:A 4-vertices shape was found
+17:33:32.028 DEBUG:Getting the shapes' vertices in the image
+17:33:32.029 DEBUG:A 4-vertices shape was found
+17:33:32.053 DEBUG:Getting the shapes' vertices in the image
+17:33:32.054 DEBUG:A 4-vertices shape was found
+17:33:32.079 DEBUG:Getting the shapes' vertices in the image
+17:33:32.080 DEBUG:A 4-vertices shape was found
+17:33:32.104 DEBUG:Getting the shapes' vertices in the image
+17:33:32.105 DEBUG:A 4-vertices shape was found
+17:33:32.130 DEBUG:Getting the shapes' vertices in the image
+17:33:32.131 DEBUG:A 3-vertices shape was found
+17:33:32.155 DEBUG:Getting the shapes' vertices in the image
+17:33:32.156 DEBUG:A 4-vertices shape was found
+17:33:32.181 DEBUG:Getting the shapes' vertices in the image
+17:33:32.182 DEBUG:A 4-vertices shape was found
+17:33:32.206 DEBUG:Getting the shapes' vertices in the image
+17:33:32.207 DEBUG:A 4-vertices shape was found
+17:33:32.232 DEBUG:Getting the shapes' vertices in the image
+17:33:32.233 DEBUG:A 4-vertices shape was found
+17:33:32.257 DEBUG:Getting the shapes' vertices in the image
+17:33:32.258 DEBUG:A 3-vertices shape was found
+17:33:32.283 DEBUG:Getting the shapes' vertices in the image
+17:33:32.284 DEBUG:A 4-vertices shape was found
+17:33:32.308 DEBUG:Getting the shapes' vertices in the image
+17:33:32.309 DEBUG:A 4-vertices shape was found
+17:33:32.334 DEBUG:Getting the shapes' vertices in the image
+17:33:32.335 DEBUG:A 4-vertices shape was found
+17:33:32.359 DEBUG:Getting the shapes' vertices in the image
+17:33:32.360 DEBUG:A 4-vertices shape was found
+17:33:32.384 DEBUG:Getting the shapes' vertices in the image
+17:33:32.385 DEBUG:A 4-vertices shape was found
+17:33:32.410 DEBUG:Getting the shapes' vertices in the image
+17:33:32.411 DEBUG:A 4-vertices shape was found
+17:33:32.435 DEBUG:Getting the shapes' vertices in the image
+17:33:32.436 DEBUG:A 4-vertices shape was found
+17:33:32.461 DEBUG:Getting the shapes' vertices in the image
+17:33:32.462 DEBUG:A 4-vertices shape was found
+17:33:32.486 DEBUG:Getting the shapes' vertices in the image
+17:33:32.487 DEBUG:A 4-vertices shape was found
+17:33:32.512 DEBUG:Getting the shapes' vertices in the image
+17:33:32.513 DEBUG:A 4-vertices shape was found
+17:33:32.537 DEBUG:Getting the shapes' vertices in the image
+17:33:32.538 DEBUG:A 4-vertices shape was found
+17:33:32.563 DEBUG:Getting the shapes' vertices in the image
+17:33:32.564 DEBUG:A 4-vertices shape was found
+17:33:32.588 DEBUG:Getting the shapes' vertices in the image
+17:33:32.589 DEBUG:A 4-vertices shape was found
+17:33:32.614 DEBUG:Getting the shapes' vertices in the image
+17:33:32.615 DEBUG:A 4-vertices shape was found
+17:33:32.639 DEBUG:Getting the shapes' vertices in the image
+17:33:32.640 DEBUG:A 4-vertices shape was found
+17:33:32.665 DEBUG:Getting the shapes' vertices in the image
+17:33:32.666 DEBUG:A 4-vertices shape was found
+17:33:32.690 DEBUG:Getting the shapes' vertices in the image
+17:33:32.691 DEBUG:A 4-vertices shape was found
+17:33:32.716 DEBUG:Getting the shapes' vertices in the image
+17:33:32.717 DEBUG:A 4-vertices shape was found
+17:33:32.741 DEBUG:Getting the shapes' vertices in the image
+17:33:32.742 DEBUG:A 4-vertices shape was found
+17:33:32.767 DEBUG:Getting the shapes' vertices in the image
+17:33:32.768 DEBUG:A 4-vertices shape was found
+17:33:32.792 DEBUG:Getting the shapes' vertices in the image
+17:33:32.793 DEBUG:A 4-vertices shape was found
+17:33:32.818 DEBUG:Getting the shapes' vertices in the image
+17:33:32.819 DEBUG:A 3-vertices shape was found
+17:33:32.843 DEBUG:Getting the shapes' vertices in the image
+17:33:32.844 DEBUG:A 3-vertices shape was found
+17:33:32.869 DEBUG:Getting the shapes' vertices in the image
+17:33:32.870 DEBUG:A 4-vertices shape was found
+17:33:32.894 DEBUG:Getting the shapes' vertices in the image
+17:33:32.895 DEBUG:A 4-vertices shape was found
+17:33:32.920 DEBUG:Getting the shapes' vertices in the image
+17:33:32.921 DEBUG:A 4-vertices shape was found
+17:33:32.945 DEBUG:Getting the shapes' vertices in the image
+17:33:32.946 DEBUG:A 4-vertices shape was found
+17:33:32.971 DEBUG:Getting the shapes' vertices in the image
+17:33:32.972 DEBUG:A 3-vertices shape was found
+17:33:32.996 DEBUG:Getting the shapes' vertices in the image
+17:33:32.997 DEBUG:A 4-vertices shape was found
+17:33:33.022 DEBUG:Getting the shapes' vertices in the image
+17:33:33.023 DEBUG:A 4-vertices shape was found
+17:33:33.047 DEBUG:Getting the shapes' vertices in the image
+17:33:33.048 DEBUG:A 3-vertices shape was found
+17:33:33.072 DEBUG:Getting the shapes' vertices in the image
+17:33:33.073 DEBUG:A 4-vertices shape was found
+17:33:33.098 DEBUG:Getting the shapes' vertices in the image
+17:33:33.099 DEBUG:A 4-vertices shape was found
+17:33:33.123 DEBUG:Getting the shapes' vertices in the image
+17:33:33.124 DEBUG:A 3-vertices shape was found
+17:33:33.149 DEBUG:Getting the shapes' vertices in the image
+17:33:33.150 DEBUG:A 4-vertices shape was found
+17:33:33.174 DEBUG:Getting the shapes' vertices in the image
+17:33:33.175 DEBUG:A 4-vertices shape was found
+17:33:33.200 DEBUG:Getting the shapes' vertices in the image
+17:33:33.201 DEBUG:A 4-vertices shape was found
+17:33:33.225 DEBUG:Getting the shapes' vertices in the image
+17:33:33.226 DEBUG:A 4-vertices shape was found
+17:33:33.251 DEBUG:Getting the shapes' vertices in the image
+17:33:33.253 DEBUG:A 4-vertices shape was found
+17:33:33.276 DEBUG:Getting the shapes' vertices in the image
+17:33:33.277 DEBUG:A 4-vertices shape was found
+17:33:33.302 DEBUG:Getting the shapes' vertices in the image
+17:33:33.303 DEBUG:A 4-vertices shape was found
+17:33:33.327 DEBUG:Getting the shapes' vertices in the image
+17:33:33.328 DEBUG:A 4-vertices shape was found
+17:33:33.353 DEBUG:Getting the shapes' vertices in the image
+17:33:33.354 DEBUG:A 4-vertices shape was found
+17:33:33.378 DEBUG:Getting the shapes' vertices in the image
+17:33:33.379 DEBUG:A 4-vertices shape was found
+17:33:33.404 DEBUG:Getting the shapes' vertices in the image
+17:33:33.405 DEBUG:A 3-vertices shape was found
+17:33:33.429 DEBUG:Getting the shapes' vertices in the image
+17:33:33.430 DEBUG:A 4-vertices shape was found
+17:33:33.460 DEBUG:Getting the shapes' vertices in the image
+17:33:33.461 DEBUG:A 4-vertices shape was found
+17:33:33.480 DEBUG:Getting the shapes' vertices in the image
+17:33:33.481 DEBUG:A 3-vertices shape was found
+17:33:33.506 DEBUG:Getting the shapes' vertices in the image
+17:33:33.507 DEBUG:A 4-vertices shape was found
+17:33:33.531 DEBUG:Getting the shapes' vertices in the image
+17:33:33.532 DEBUG:A 4-vertices shape was found
+17:33:33.557 DEBUG:Getting the shapes' vertices in the image
+17:33:33.558 DEBUG:A 4-vertices shape was found
+17:33:33.582 DEBUG:Getting the shapes' vertices in the image
+17:33:33.583 DEBUG:A 4-vertices shape was found
+17:33:33.608 DEBUG:Getting the shapes' vertices in the image
+17:33:33.609 DEBUG:A 4-vertices shape was found
+17:33:33.633 DEBUG:Getting the shapes' vertices in the image
+17:33:33.634 DEBUG:A 4-vertices shape was found
+17:33:33.659 DEBUG:Getting the shapes' vertices in the image
+17:33:33.660 DEBUG:A 4-vertices shape was found
+17:33:33.689 DEBUG:Getting the shapes' vertices in the image
+17:33:33.691 DEBUG:A 4-vertices shape was found
+17:33:33.710 DEBUG:Getting the shapes' vertices in the image
+17:33:33.711 DEBUG:A 4-vertices shape was found
+17:33:33.735 DEBUG:Getting the shapes' vertices in the image
+17:33:33.736 DEBUG:A 3-vertices shape was found
+17:33:33.761 DEBUG:Getting the shapes' vertices in the image
+17:33:33.762 DEBUG:A 4-vertices shape was found
+17:33:33.786 DEBUG:Getting the shapes' vertices in the image
+17:33:33.787 DEBUG:A 4-vertices shape was found
+17:33:33.812 DEBUG:Getting the shapes' vertices in the image
+17:33:33.813 DEBUG:A 4-vertices shape was found
+17:33:33.837 DEBUG:Getting the shapes' vertices in the image
+17:33:33.838 DEBUG:A 4-vertices shape was found
+17:33:33.867 DEBUG:Getting the shapes' vertices in the image
+17:33:33.868 DEBUG:A 3-vertices shape was found
+17:33:33.888 DEBUG:Getting the shapes' vertices in the image
+17:33:33.889 DEBUG:A 4-vertices shape was found
+17:33:33.913 DEBUG:Getting the shapes' vertices in the image
+17:33:33.914 DEBUG:A 4-vertices shape was found
+17:33:33.939 DEBUG:Getting the shapes' vertices in the image
+17:33:33.940 DEBUG:A 4-vertices shape was found
+17:33:33.970 DEBUG:Getting the shapes' vertices in the image
+17:33:33.971 DEBUG:A 4-vertices shape was found
+17:33:33.990 DEBUG:Getting the shapes' vertices in the image
+17:33:33.991 DEBUG:A 4-vertices shape was found
+17:33:34.016 DEBUG:Getting the shapes' vertices in the image
+17:33:34.017 DEBUG:A 4-vertices shape was found
+17:33:34.041 DEBUG:Getting the shapes' vertices in the image
+17:33:34.042 DEBUG:A 4-vertices shape was found
+17:33:34.066 DEBUG:Getting the shapes' vertices in the image
+17:33:34.067 DEBUG:A 4-vertices shape was found
+17:33:34.092 DEBUG:Getting the shapes' vertices in the image
+17:33:34.093 DEBUG:A 4-vertices shape was found
+17:33:34.117 DEBUG:Getting the shapes' vertices in the image
+17:33:34.118 DEBUG:A 4-vertices shape was found
+17:33:34.149 DEBUG:Getting the shapes' vertices in the image
+17:33:34.151 DEBUG:A 4-vertices shape was found
+17:33:34.168 DEBUG:Getting the shapes' vertices in the image
+17:33:34.169 DEBUG:A 4-vertices shape was found
+17:33:34.194 DEBUG:Getting the shapes' vertices in the image
+17:33:34.195 DEBUG:A 4-vertices shape was found
+17:33:34.219 DEBUG:Getting the shapes' vertices in the image
+17:33:34.220 DEBUG:A 4-vertices shape was found
+17:33:34.245 DEBUG:Getting the shapes' vertices in the image
+17:33:34.246 DEBUG:A 4-vertices shape was found
+17:33:34.270 DEBUG:Getting the shapes' vertices in the image
+17:33:34.271 DEBUG:A 4-vertices shape was found
+17:33:34.296 DEBUG:Getting the shapes' vertices in the image
+17:33:34.298 DEBUG:A 4-vertices shape was found
+17:33:34.321 DEBUG:Getting the shapes' vertices in the image
+17:33:34.322 DEBUG:A 4-vertices shape was found
+17:33:34.347 DEBUG:Getting the shapes' vertices in the image
+17:33:34.348 DEBUG:A 4-vertices shape was found
+17:33:34.372 DEBUG:Getting the shapes' vertices in the image
+17:33:34.373 DEBUG:A 4-vertices shape was found
+17:33:34.398 DEBUG:Getting the shapes' vertices in the image
+17:33:34.399 DEBUG:A 4-vertices shape was found
+17:33:34.423 DEBUG:Getting the shapes' vertices in the image
+17:33:34.424 DEBUG:A 4-vertices shape was found
+17:33:34.449 DEBUG:Getting the shapes' vertices in the image
+17:33:34.450 DEBUG:A 4-vertices shape was found
+17:33:34.474 DEBUG:Getting the shapes' vertices in the image
+17:33:34.475 DEBUG:A 4-vertices shape was found
+17:33:34.500 DEBUG:Getting the shapes' vertices in the image
+17:33:34.501 DEBUG:A 3-vertices shape was found
+17:33:34.525 DEBUG:Getting the shapes' vertices in the image
+17:33:34.526 DEBUG:A 4-vertices shape was found
+17:33:34.550 DEBUG:Getting the shapes' vertices in the image
+17:33:34.551 DEBUG:A 4-vertices shape was found
+17:33:34.576 DEBUG:Getting the shapes' vertices in the image
+17:33:34.577 DEBUG:A 4-vertices shape was found
+17:33:34.601 DEBUG:Getting the shapes' vertices in the image
+17:33:34.602 DEBUG:A 4-vertices shape was found
+17:33:34.627 DEBUG:Getting the shapes' vertices in the image
+17:33:34.628 DEBUG:A 4-vertices shape was found
+17:33:34.652 DEBUG:Getting the shapes' vertices in the image
+17:33:34.653 DEBUG:A 3-vertices shape was found
+17:33:34.678 DEBUG:Getting the shapes' vertices in the image
+17:33:34.679 DEBUG:A 4-vertices shape was found
+17:33:34.703 DEBUG:Getting the shapes' vertices in the image
+17:33:34.704 DEBUG:A 4-vertices shape was found
+17:33:34.729 DEBUG:Getting the shapes' vertices in the image
+17:33:34.730 DEBUG:A 4-vertices shape was found
+17:33:34.754 DEBUG:Getting the shapes' vertices in the image
+17:33:34.755 DEBUG:A 4-vertices shape was found
+17:33:34.780 DEBUG:Getting the shapes' vertices in the image
+17:33:34.781 DEBUG:A 4-vertices shape was found
+17:33:34.805 DEBUG:Getting the shapes' vertices in the image
+17:33:34.806 DEBUG:A 4-vertices shape was found
+17:33:34.831 DEBUG:Getting the shapes' vertices in the image
+17:33:34.832 DEBUG:A 4-vertices shape was found
+17:33:34.856 DEBUG:Getting the shapes' vertices in the image
+17:33:34.857 DEBUG:A 4-vertices shape was found
+17:33:34.882 DEBUG:Getting the shapes' vertices in the image
+17:33:34.883 DEBUG:A 4-vertices shape was found
+17:33:34.907 DEBUG:Getting the shapes' vertices in the image
+17:33:34.908 DEBUG:A 4-vertices shape was found
+17:33:34.933 DEBUG:Getting the shapes' vertices in the image
+17:33:34.934 DEBUG:A 4-vertices shape was found
+17:33:34.958 DEBUG:Getting the shapes' vertices in the image
+17:33:34.959 DEBUG:A 3-vertices shape was found
+17:33:34.984 DEBUG:Getting the shapes' vertices in the image
+17:33:34.985 DEBUG:A 3-vertices shape was found
+17:33:35.009 DEBUG:Getting the shapes' vertices in the image
+17:33:35.010 DEBUG:A 4-vertices shape was found
+17:33:35.035 DEBUG:Getting the shapes' vertices in the image
+17:33:35.036 DEBUG:A 3-vertices shape was found
+17:33:35.060 DEBUG:Getting the shapes' vertices in the image
+17:33:35.061 DEBUG:A 4-vertices shape was found
+17:33:35.086 DEBUG:Getting the shapes' vertices in the image
+17:33:35.087 DEBUG:A 4-vertices shape was found
+17:33:35.111 DEBUG:Getting the shapes' vertices in the image
+17:33:35.112 DEBUG:A 3-vertices shape was found
+17:33:35.137 DEBUG:Getting the shapes' vertices in the image
+17:33:35.138 DEBUG:A 4-vertices shape was found
+17:33:35.162 DEBUG:Getting the shapes' vertices in the image
+17:33:35.164 DEBUG:A 4-vertices shape was found
+17:33:35.188 DEBUG:Getting the shapes' vertices in the image
+17:33:35.189 DEBUG:A 4-vertices shape was found
+17:33:35.213 DEBUG:Getting the shapes' vertices in the image
+17:33:35.214 DEBUG:A 4-vertices shape was found
+17:33:35.239 DEBUG:Getting the shapes' vertices in the image
+17:33:35.240 DEBUG:A 4-vertices shape was found
+17:33:35.264 DEBUG:Getting the shapes' vertices in the image
+17:33:35.265 DEBUG:A 4-vertices shape was found
+17:33:35.290 DEBUG:Getting the shapes' vertices in the image
+17:33:35.291 DEBUG:A 4-vertices shape was found
+17:33:35.315 DEBUG:Getting the shapes' vertices in the image
+17:33:35.316 DEBUG:A 4-vertices shape was found
+17:33:35.341 DEBUG:Getting the shapes' vertices in the image
+17:33:35.342 DEBUG:A 4-vertices shape was found
+17:33:35.366 DEBUG:Getting the shapes' vertices in the image
+17:33:35.367 DEBUG:A 4-vertices shape was found
+17:33:35.391 DEBUG:Getting the shapes' vertices in the image
+17:33:35.392 DEBUG:A 4-vertices shape was found
+17:33:35.417 DEBUG:Getting the shapes' vertices in the image
+17:33:35.418 DEBUG:A 4-vertices shape was found
+17:33:35.442 DEBUG:Getting the shapes' vertices in the image
+17:33:35.443 DEBUG:A 3-vertices shape was found
+17:33:35.468 DEBUG:Getting the shapes' vertices in the image
+17:33:35.469 DEBUG:A 4-vertices shape was found
+17:33:35.493 DEBUG:Getting the shapes' vertices in the image
+17:33:35.494 DEBUG:A 4-vertices shape was found
+17:33:35.519 DEBUG:Getting the shapes' vertices in the image
+17:33:35.520 DEBUG:A 4-vertices shape was found
+17:33:35.544 DEBUG:Getting the shapes' vertices in the image
+17:33:35.545 DEBUG:A 4-vertices shape was found
+17:33:35.570 DEBUG:Getting the shapes' vertices in the image
+17:33:35.571 DEBUG:A 4-vertices shape was found
+17:33:35.595 DEBUG:Getting the shapes' vertices in the image
+17:33:35.596 DEBUG:A 3-vertices shape was found
+17:33:35.621 DEBUG:Getting the shapes' vertices in the image
+17:33:35.622 DEBUG:A 4-vertices shape was found
+17:33:35.646 DEBUG:Getting the shapes' vertices in the image
+17:33:35.647 DEBUG:A 4-vertices shape was found
+17:33:35.672 DEBUG:Getting the shapes' vertices in the image
+17:33:35.674 DEBUG:A 4-vertices shape was found
+17:33:35.697 DEBUG:Getting the shapes' vertices in the image
+17:33:35.699 DEBUG:A 4-vertices shape was found
+17:33:35.723 DEBUG:Getting the shapes' vertices in the image
+17:33:35.724 DEBUG:A 3-vertices shape was found
+17:33:35.748 DEBUG:Getting the shapes' vertices in the image
+17:33:35.749 DEBUG:A 4-vertices shape was found
+17:33:35.774 DEBUG:Getting the shapes' vertices in the image
+17:33:35.775 DEBUG:A 3-vertices shape was found
+17:33:35.799 DEBUG:Getting the shapes' vertices in the image
+17:33:35.800 DEBUG:A 4-vertices shape was found
+17:33:35.825 DEBUG:Getting the shapes' vertices in the image
+17:33:35.826 DEBUG:A 4-vertices shape was found
+17:33:35.850 DEBUG:Getting the shapes' vertices in the image
+17:33:35.851 DEBUG:A 4-vertices shape was found
+17:33:35.876 DEBUG:Getting the shapes' vertices in the image
+17:33:35.877 DEBUG:A 4-vertices shape was found
+17:33:35.901 DEBUG:Getting the shapes' vertices in the image
+17:33:35.902 DEBUG:A 4-vertices shape was found
+17:33:35.927 DEBUG:Getting the shapes' vertices in the image
+17:33:35.928 DEBUG:A 4-vertices shape was found
+17:33:35.952 DEBUG:Getting the shapes' vertices in the image
+17:33:35.953 DEBUG:A 4-vertices shape was found
+17:33:35.978 DEBUG:Getting the shapes' vertices in the image
+17:33:35.979 DEBUG:A 4-vertices shape was found
+17:33:36.003 DEBUG:Getting the shapes' vertices in the image
+17:33:36.004 DEBUG:A 3-vertices shape was found
+17:33:36.028 DEBUG:Getting the shapes' vertices in the image
+17:33:36.029 DEBUG:A 4-vertices shape was found
+17:33:36.054 DEBUG:Getting the shapes' vertices in the image
+17:33:36.055 DEBUG:A 4-vertices shape was found
+17:33:36.079 DEBUG:Getting the shapes' vertices in the image
+17:33:36.080 DEBUG:A 4-vertices shape was found
+17:33:36.105 DEBUG:Getting the shapes' vertices in the image
+17:33:36.106 DEBUG:A 4-vertices shape was found
+17:33:36.130 DEBUG:Getting the shapes' vertices in the image
+17:33:36.131 DEBUG:A 4-vertices shape was found
+17:33:36.156 DEBUG:Getting the shapes' vertices in the image
+17:33:36.157 DEBUG:A 4-vertices shape was found
+17:33:36.181 DEBUG:Getting the shapes' vertices in the image
+17:33:36.182 DEBUG:A 4-vertices shape was found
+17:33:36.207 DEBUG:Getting the shapes' vertices in the image
+17:33:36.208 DEBUG:A 4-vertices shape was found
+17:33:36.232 DEBUG:Getting the shapes' vertices in the image
+17:33:36.233 DEBUG:A 3-vertices shape was found
+17:33:36.258 DEBUG:Getting the shapes' vertices in the image
+17:33:36.259 DEBUG:A 4-vertices shape was found
+17:33:36.283 DEBUG:Getting the shapes' vertices in the image
+17:33:36.284 DEBUG:A 4-vertices shape was found
+17:33:36.309 DEBUG:Getting the shapes' vertices in the image
+17:33:36.310 DEBUG:A 4-vertices shape was found
+17:33:36.334 DEBUG:Getting the shapes' vertices in the image
+17:33:36.335 DEBUG:A 4-vertices shape was found
+17:33:36.360 DEBUG:Getting the shapes' vertices in the image
+17:33:36.361 DEBUG:A 3-vertices shape was found
+17:33:36.385 DEBUG:Getting the shapes' vertices in the image
+17:33:36.387 DEBUG:A 4-vertices shape was found
+17:33:36.411 DEBUG:Getting the shapes' vertices in the image
+17:33:36.412 DEBUG:A 4-vertices shape was found
+17:33:36.436 DEBUG:Getting the shapes' vertices in the image
+17:33:36.437 DEBUG:A 4-vertices shape was found
+17:33:36.462 DEBUG:Getting the shapes' vertices in the image
+17:33:36.463 DEBUG:A 4-vertices shape was found
+17:33:36.487 DEBUG:Getting the shapes' vertices in the image
+17:33:36.488 DEBUG:A 4-vertices shape was found
+17:33:36.513 DEBUG:Getting the shapes' vertices in the image
+17:33:36.514 DEBUG:A 4-vertices shape was found
+17:33:36.538 DEBUG:Getting the shapes' vertices in the image
+17:33:36.539 DEBUG:A 4-vertices shape was found
+17:33:36.564 DEBUG:Getting the shapes' vertices in the image
+17:33:36.565 DEBUG:A 4-vertices shape was found
+17:33:36.589 DEBUG:Getting the shapes' vertices in the image
+17:33:36.590 DEBUG:A 4-vertices shape was found
+17:33:36.615 DEBUG:Getting the shapes' vertices in the image
+17:33:36.616 DEBUG:A 4-vertices shape was found
+17:33:36.640 DEBUG:Getting the shapes' vertices in the image
+17:33:36.641 DEBUG:A 4-vertices shape was found
+17:33:36.666 DEBUG:Getting the shapes' vertices in the image
+17:33:36.667 DEBUG:A 4-vertices shape was found
+17:33:36.691 DEBUG:Getting the shapes' vertices in the image
+17:33:36.692 DEBUG:A 4-vertices shape was found
+17:33:36.717 DEBUG:Getting the shapes' vertices in the image
+17:33:36.718 DEBUG:A 4-vertices shape was found
+17:33:36.742 DEBUG:Getting the shapes' vertices in the image
+17:33:36.743 DEBUG:A 4-vertices shape was found
+17:33:36.768 DEBUG:Getting the shapes' vertices in the image
+17:33:36.769 DEBUG:A 4-vertices shape was found
+17:33:36.793 DEBUG:Getting the shapes' vertices in the image
+17:33:36.794 DEBUG:A 4-vertices shape was found
+17:33:36.818 DEBUG:Getting the shapes' vertices in the image
+17:33:36.820 DEBUG:A 4-vertices shape was found
+17:33:36.844 DEBUG:Getting the shapes' vertices in the image
+17:33:36.845 DEBUG:A 4-vertices shape was found
+17:33:36.869 DEBUG:Getting the shapes' vertices in the image
+17:33:36.870 DEBUG:A 4-vertices shape was found
+17:33:36.895 DEBUG:Getting the shapes' vertices in the image
+17:33:36.896 DEBUG:A 4-vertices shape was found
+17:33:36.920 DEBUG:Getting the shapes' vertices in the image
+17:33:36.921 DEBUG:A 4-vertices shape was found
+17:33:36.946 DEBUG:Getting the shapes' vertices in the image
+17:33:36.947 DEBUG:A 4-vertices shape was found
+17:33:36.971 DEBUG:Getting the shapes' vertices in the image
+17:33:36.972 DEBUG:A 4-vertices shape was found
+17:33:36.997 DEBUG:Getting the shapes' vertices in the image
+17:33:36.999 DEBUG:A 5-vertices shape was found
+17:33:37.022 DEBUG:Getting the shapes' vertices in the image
+17:33:37.023 DEBUG:A 4-vertices shape was found
+17:33:37.048 DEBUG:Getting the shapes' vertices in the image
+17:33:37.049 DEBUG:A 4-vertices shape was found
+17:33:37.073 DEBUG:Getting the shapes' vertices in the image
+17:33:37.074 DEBUG:A 4-vertices shape was found
+17:33:37.099 DEBUG:Getting the shapes' vertices in the image
+17:33:37.100 DEBUG:A 3-vertices shape was found
+17:33:37.124 DEBUG:Getting the shapes' vertices in the image
+17:33:37.125 DEBUG:A 4-vertices shape was found
+17:33:37.150 DEBUG:Getting the shapes' vertices in the image
+17:33:37.151 DEBUG:A 4-vertices shape was found
+17:33:37.175 DEBUG:Getting the shapes' vertices in the image
+17:33:37.176 DEBUG:A 4-vertices shape was found
+17:33:37.201 DEBUG:Getting the shapes' vertices in the image
+17:33:37.202 DEBUG:A 4-vertices shape was found
+17:33:37.226 DEBUG:Getting the shapes' vertices in the image
+17:33:37.227 DEBUG:A 4-vertices shape was found
+17:33:37.252 DEBUG:Getting the shapes' vertices in the image
+17:33:37.253 DEBUG:A 4-vertices shape was found
+17:33:37.277 DEBUG:Getting the shapes' vertices in the image
+17:33:37.278 DEBUG:A 4-vertices shape was found
+17:33:37.303 DEBUG:Getting the shapes' vertices in the image
+17:33:37.305 DEBUG:A 4-vertices shape was found
+17:33:37.328 DEBUG:Getting the shapes' vertices in the image
+17:33:37.329 DEBUG:A 4-vertices shape was found
+17:33:37.354 DEBUG:Getting the shapes' vertices in the image
+17:33:37.355 DEBUG:A 4-vertices shape was found
+17:33:37.379 DEBUG:Getting the shapes' vertices in the image
+17:33:37.380 DEBUG:A 4-vertices shape was found
+17:33:37.405 DEBUG:Getting the shapes' vertices in the image
+17:33:37.406 DEBUG:A 4-vertices shape was found
+17:33:37.430 DEBUG:Getting the shapes' vertices in the image
+17:33:37.432 DEBUG:A 4-vertices shape was found
+17:33:37.456 DEBUG:Getting the shapes' vertices in the image
+17:33:37.457 DEBUG:A 4-vertices shape was found
+17:33:37.481 DEBUG:Getting the shapes' vertices in the image
+17:33:37.482 DEBUG:A 3-vertices shape was found
+17:33:37.506 DEBUG:Getting the shapes' vertices in the image
+17:33:37.507 DEBUG:A 4-vertices shape was found
+17:33:37.532 DEBUG:Getting the shapes' vertices in the image
+17:33:37.534 DEBUG:A 4-vertices shape was found
+17:33:37.557 DEBUG:Getting the shapes' vertices in the image
+17:33:37.558 DEBUG:A 4-vertices shape was found
+17:33:37.583 DEBUG:Getting the shapes' vertices in the image
+17:33:37.584 DEBUG:A 4-vertices shape was found
+17:33:37.608 DEBUG:Getting the shapes' vertices in the image
+17:33:37.610 DEBUG:A 4-vertices shape was found
+17:33:37.634 DEBUG:Getting the shapes' vertices in the image
+17:33:37.636 DEBUG:A 4-vertices shape was found
+17:33:37.659 DEBUG:Getting the shapes' vertices in the image
+17:33:37.660 DEBUG:A 4-vertices shape was found
+17:33:37.685 DEBUG:Getting the shapes' vertices in the image
+17:33:37.686 DEBUG:A 4-vertices shape was found
+17:33:37.710 DEBUG:Getting the shapes' vertices in the image
+17:33:37.711 DEBUG:A 4-vertices shape was found
+17:33:37.736 DEBUG:Getting the shapes' vertices in the image
+17:33:37.737 DEBUG:A 4-vertices shape was found
+17:33:37.761 DEBUG:Getting the shapes' vertices in the image
+17:33:37.762 DEBUG:A 4-vertices shape was found
+17:33:37.787 DEBUG:Getting the shapes' vertices in the image
+17:33:37.788 DEBUG:A 4-vertices shape was found
+17:33:37.812 DEBUG:Getting the shapes' vertices in the image
+17:33:37.813 DEBUG:A 4-vertices shape was found
+17:33:37.838 DEBUG:Getting the shapes' vertices in the image
+17:33:37.839 DEBUG:A 4-vertices shape was found
+17:33:37.863 DEBUG:Getting the shapes' vertices in the image
+17:33:37.864 DEBUG:A 4-vertices shape was found
+17:33:37.889 DEBUG:Getting the shapes' vertices in the image
+17:33:37.890 DEBUG:A 4-vertices shape was found
+17:33:37.914 DEBUG:Getting the shapes' vertices in the image
+17:33:37.915 DEBUG:A 4-vertices shape was found
+17:33:37.940 DEBUG:Getting the shapes' vertices in the image
+17:33:37.941 DEBUG:A 4-vertices shape was found
+17:33:37.965 DEBUG:Getting the shapes' vertices in the image
+17:33:37.966 DEBUG:A 4-vertices shape was found
+17:33:37.991 DEBUG:Getting the shapes' vertices in the image
+17:33:37.992 DEBUG:A 4-vertices shape was found
+17:33:38.016 DEBUG:Getting the shapes' vertices in the image
+17:33:38.017 DEBUG:A 4-vertices shape was found
+17:33:38.042 DEBUG:Getting the shapes' vertices in the image
+17:33:38.043 DEBUG:A 4-vertices shape was found
+17:33:38.067 DEBUG:Getting the shapes' vertices in the image
+17:33:38.068 DEBUG:A 4-vertices shape was found
+17:33:38.093 DEBUG:Getting the shapes' vertices in the image
+17:33:38.094 DEBUG:A 4-vertices shape was found
+17:33:38.118 DEBUG:Getting the shapes' vertices in the image
+17:33:38.120 DEBUG:A 4-vertices shape was found
+17:33:38.144 DEBUG:Getting the shapes' vertices in the image
+17:33:38.145 DEBUG:A 4-vertices shape was found
+17:33:38.169 DEBUG:Getting the shapes' vertices in the image
+17:33:38.170 DEBUG:A 4-vertices shape was found
+17:33:38.195 DEBUG:Getting the shapes' vertices in the image
+17:33:38.196 DEBUG:A 4-vertices shape was found
+17:33:38.220 DEBUG:Getting the shapes' vertices in the image
+17:33:38.221 DEBUG:A 4-vertices shape was found
+17:33:38.246 DEBUG:Getting the shapes' vertices in the image
+17:33:38.247 DEBUG:A 4-vertices shape was found
+17:33:38.271 DEBUG:Getting the shapes' vertices in the image
+17:33:38.272 DEBUG:A 4-vertices shape was found
+17:33:38.296 DEBUG:Getting the shapes' vertices in the image
+17:33:38.298 DEBUG:A 4-vertices shape was found
+17:33:38.322 DEBUG:Getting the shapes' vertices in the image
+17:33:38.323 DEBUG:A 3-vertices shape was found
+17:33:38.347 DEBUG:Getting the shapes' vertices in the image
+17:33:38.348 DEBUG:A 3-vertices shape was found
+17:33:38.373 DEBUG:Getting the shapes' vertices in the image
+17:33:38.374 DEBUG:A 4-vertices shape was found
+17:33:38.398 DEBUG:Getting the shapes' vertices in the image
+17:33:38.399 DEBUG:A 4-vertices shape was found
+17:33:38.424 DEBUG:Getting the shapes' vertices in the image
+17:33:38.425 DEBUG:A 4-vertices shape was found
+17:33:38.449 DEBUG:Getting the shapes' vertices in the image
+17:33:38.450 DEBUG:A 4-vertices shape was found
+17:33:38.475 DEBUG:Getting the shapes' vertices in the image
+17:33:38.476 DEBUG:A 4-vertices shape was found
+17:33:38.500 DEBUG:Getting the shapes' vertices in the image
+17:33:38.501 DEBUG:A 4-vertices shape was found
+17:33:38.526 DEBUG:Getting the shapes' vertices in the image
+17:33:38.527 DEBUG:A 4-vertices shape was found
+17:33:38.551 DEBUG:Getting the shapes' vertices in the image
+17:33:38.552 DEBUG:A 4-vertices shape was found
+17:33:38.577 DEBUG:Getting the shapes' vertices in the image
+17:33:38.578 DEBUG:A 4-vertices shape was found
+17:33:38.602 DEBUG:Getting the shapes' vertices in the image
+17:33:38.603 DEBUG:A 4-vertices shape was found
+17:33:38.628 DEBUG:Getting the shapes' vertices in the image
+17:33:38.629 DEBUG:A 4-vertices shape was found
+17:33:38.653 DEBUG:Getting the shapes' vertices in the image
+17:33:38.654 DEBUG:A 4-vertices shape was found
+17:33:38.679 DEBUG:Getting the shapes' vertices in the image
+17:33:38.681 DEBUG:A 4-vertices shape was found
+17:33:38.704 DEBUG:Getting the shapes' vertices in the image
+17:33:38.705 DEBUG:A 3-vertices shape was found
+17:33:38.730 DEBUG:Getting the shapes' vertices in the image
+17:33:38.731 DEBUG:A 4-vertices shape was found
+17:33:38.755 DEBUG:Getting the shapes' vertices in the image
+17:33:38.756 DEBUG:A 3-vertices shape was found
+17:33:38.781 DEBUG:Getting the shapes' vertices in the image
+17:33:38.782 DEBUG:A 4-vertices shape was found
+17:33:38.806 DEBUG:Getting the shapes' vertices in the image
+17:33:38.807 DEBUG:A 4-vertices shape was found
+17:33:38.832 DEBUG:Getting the shapes' vertices in the image
+17:33:38.833 DEBUG:A 4-vertices shape was found
+17:33:38.857 DEBUG:Getting the shapes' vertices in the image
+17:33:38.858 DEBUG:A 4-vertices shape was found
+17:33:38.883 DEBUG:Getting the shapes' vertices in the image
+17:33:38.884 DEBUG:A 4-vertices shape was found
+17:33:38.908 DEBUG:Getting the shapes' vertices in the image
+17:33:38.909 DEBUG:A 4-vertices shape was found
+17:33:38.934 DEBUG:Getting the shapes' vertices in the image
+17:33:38.935 DEBUG:A 4-vertices shape was found
+17:33:38.959 DEBUG:Getting the shapes' vertices in the image
+17:33:38.960 DEBUG:A 4-vertices shape was found
+17:33:38.984 DEBUG:Getting the shapes' vertices in the image
+17:33:38.985 DEBUG:A 4-vertices shape was found
+17:33:39.010 DEBUG:Getting the shapes' vertices in the image
+17:33:39.011 DEBUG:A 4-vertices shape was found
+17:33:39.035 DEBUG:Getting the shapes' vertices in the image
+17:33:39.036 DEBUG:A 4-vertices shape was found
+17:33:39.061 DEBUG:Getting the shapes' vertices in the image
+17:33:39.062 DEBUG:A 4-vertices shape was found
+17:33:39.086 DEBUG:Getting the shapes' vertices in the image
+17:33:39.088 DEBUG:A 4-vertices shape was found
+17:33:39.112 DEBUG:Getting the shapes' vertices in the image
+17:33:39.113 DEBUG:A 4-vertices shape was found
+17:33:39.137 DEBUG:Getting the shapes' vertices in the image
+17:33:39.138 DEBUG:A 4-vertices shape was found
+17:33:39.163 DEBUG:Getting the shapes' vertices in the image
+17:33:39.165 DEBUG:A 4-vertices shape was found
+17:33:39.188 DEBUG:Getting the shapes' vertices in the image
+17:33:39.189 DEBUG:A 4-vertices shape was found
+17:33:39.214 DEBUG:Getting the shapes' vertices in the image
+17:33:39.215 DEBUG:A 4-vertices shape was found
+17:33:39.239 DEBUG:Getting the shapes' vertices in the image
+17:33:39.240 DEBUG:A 3-vertices shape was found
+17:33:39.265 DEBUG:Getting the shapes' vertices in the image
+17:33:39.266 DEBUG:A 4-vertices shape was found
+17:33:39.290 DEBUG:Getting the shapes' vertices in the image
+17:33:39.291 DEBUG:A 4-vertices shape was found
+17:33:39.316 DEBUG:Getting the shapes' vertices in the image
+17:33:39.318 DEBUG:A 4-vertices shape was found
+17:33:39.341 DEBUG:Getting the shapes' vertices in the image
+17:33:39.342 DEBUG:A 4-vertices shape was found
+17:33:39.367 DEBUG:Getting the shapes' vertices in the image
+17:33:39.368 DEBUG:A 4-vertices shape was found
+17:33:39.392 DEBUG:Getting the shapes' vertices in the image
+17:33:39.393 DEBUG:A 4-vertices shape was found
+17:33:39.418 DEBUG:Getting the shapes' vertices in the image
+17:33:39.419 DEBUG:A 4-vertices shape was found
+17:33:39.443 DEBUG:Getting the shapes' vertices in the image
+17:33:39.444 DEBUG:A 4-vertices shape was found
+17:33:39.469 DEBUG:Getting the shapes' vertices in the image
+17:33:39.470 DEBUG:A 4-vertices shape was found
+17:33:39.494 DEBUG:Getting the shapes' vertices in the image
+17:33:39.495 DEBUG:A 4-vertices shape was found
+17:33:39.520 DEBUG:Getting the shapes' vertices in the image
+17:33:39.521 DEBUG:A 4-vertices shape was found
+17:33:39.545 DEBUG:Getting the shapes' vertices in the image
+17:33:39.546 DEBUG:A 4-vertices shape was found
+17:33:39.571 DEBUG:Getting the shapes' vertices in the image
+17:33:39.572 DEBUG:A 4-vertices shape was found
+17:33:39.596 DEBUG:Getting the shapes' vertices in the image
+17:33:39.597 DEBUG:A 4-vertices shape was found
+17:33:39.622 DEBUG:Getting the shapes' vertices in the image
+17:33:39.623 DEBUG:A 4-vertices shape was found
+17:33:39.647 DEBUG:Getting the shapes' vertices in the image
+17:33:39.648 DEBUG:A 4-vertices shape was found
+17:33:39.673 DEBUG:Getting the shapes' vertices in the image
+17:33:39.675 DEBUG:A 4-vertices shape was found
+17:33:39.698 DEBUG:Getting the shapes' vertices in the image
+17:33:39.699 DEBUG:A 4-vertices shape was found
+17:33:39.724 DEBUG:Getting the shapes' vertices in the image
+17:33:39.726 DEBUG:A 4-vertices shape was found
+17:33:39.749 DEBUG:Getting the shapes' vertices in the image
+17:33:39.750 DEBUG:A 4-vertices shape was found
+17:33:39.774 DEBUG:Getting the shapes' vertices in the image
+17:33:39.775 DEBUG:A 4-vertices shape was found
+17:33:39.800 DEBUG:Getting the shapes' vertices in the image
+17:33:39.802 DEBUG:A 4-vertices shape was found
+17:33:39.825 DEBUG:Getting the shapes' vertices in the image
+17:33:39.826 DEBUG:A 4-vertices shape was found
+17:33:39.851 DEBUG:Getting the shapes' vertices in the image
+17:33:39.853 DEBUG:A 4-vertices shape was found
+17:33:39.876 DEBUG:Getting the shapes' vertices in the image
+17:33:39.877 DEBUG:A 4-vertices shape was found
+17:33:39.902 DEBUG:Getting the shapes' vertices in the image
+17:33:39.903 DEBUG:A 4-vertices shape was found
+17:33:39.927 DEBUG:Getting the shapes' vertices in the image
+17:33:39.928 DEBUG:A 4-vertices shape was found
+17:33:39.953 DEBUG:Getting the shapes' vertices in the image
+17:33:39.954 DEBUG:A 3-vertices shape was found
+17:33:39.978 DEBUG:Getting the shapes' vertices in the image
+17:33:39.979 DEBUG:A 4-vertices shape was found
+17:33:40.004 DEBUG:Getting the shapes' vertices in the image
+17:33:40.006 DEBUG:A 4-vertices shape was found
+17:33:40.029 DEBUG:Getting the shapes' vertices in the image
+17:33:40.030 DEBUG:A 4-vertices shape was found
+17:33:40.055 DEBUG:Getting the shapes' vertices in the image
+17:33:40.057 DEBUG:A 4-vertices shape was found
+17:33:40.080 DEBUG:Getting the shapes' vertices in the image
+17:33:40.082 DEBUG:A 4-vertices shape was found
+17:33:40.106 DEBUG:Getting the shapes' vertices in the image
+17:33:40.107 DEBUG:A 4-vertices shape was found
+17:33:40.131 DEBUG:Getting the shapes' vertices in the image
+17:33:40.132 DEBUG:A 4-vertices shape was found
+17:33:40.157 DEBUG:Getting the shapes' vertices in the image
+17:33:40.158 DEBUG:A 4-vertices shape was found
+17:33:40.182 DEBUG:Getting the shapes' vertices in the image
+17:33:40.183 DEBUG:A 4-vertices shape was found
+17:33:40.208 DEBUG:Getting the shapes' vertices in the image
+17:33:40.210 DEBUG:A 4-vertices shape was found
+17:33:40.233 DEBUG:Getting the shapes' vertices in the image
+17:33:40.234 DEBUG:A 3-vertices shape was found
+17:33:40.259 DEBUG:Getting the shapes' vertices in the image
+17:33:40.260 DEBUG:A 3-vertices shape was found
+17:33:40.284 DEBUG:Getting the shapes' vertices in the image
+17:33:40.286 DEBUG:A 4-vertices shape was found
+17:33:40.310 DEBUG:Getting the shapes' vertices in the image
+17:33:40.312 DEBUG:A 4-vertices shape was found
+17:33:40.335 DEBUG:Getting the shapes' vertices in the image
+17:33:40.336 DEBUG:A 4-vertices shape was found
+17:33:40.361 DEBUG:Getting the shapes' vertices in the image
+17:33:40.362 DEBUG:A 4-vertices shape was found
+17:33:40.386 DEBUG:Getting the shapes' vertices in the image
+17:33:40.388 DEBUG:A 4-vertices shape was found
+17:33:40.412 DEBUG:Getting the shapes' vertices in the image
+17:33:40.414 DEBUG:A 4-vertices shape was found
+17:33:40.437 DEBUG:Getting the shapes' vertices in the image
+17:33:40.438 DEBUG:A 4-vertices shape was found
+17:33:40.462 DEBUG:Getting the shapes' vertices in the image
+17:33:40.464 DEBUG:A 4-vertices shape was found
+17:33:40.488 DEBUG:Getting the shapes' vertices in the image
+17:33:40.489 DEBUG:A 4-vertices shape was found
+17:33:40.513 DEBUG:Getting the shapes' vertices in the image
+17:33:40.514 DEBUG:A 3-vertices shape was found
+17:33:40.539 DEBUG:Getting the shapes' vertices in the image
+17:33:40.540 DEBUG:A 4-vertices shape was found
+17:33:40.564 DEBUG:Getting the shapes' vertices in the image
+17:33:40.565 DEBUG:A 4-vertices shape was found
+17:33:40.590 DEBUG:Getting the shapes' vertices in the image
+17:33:40.591 DEBUG:A 4-vertices shape was found
+17:33:40.615 DEBUG:Getting the shapes' vertices in the image
+17:33:40.616 DEBUG:A 4-vertices shape was found
+17:33:40.641 DEBUG:Getting the shapes' vertices in the image
+17:33:40.642 DEBUG:A 4-vertices shape was found
+17:33:40.666 DEBUG:Getting the shapes' vertices in the image
+17:33:40.667 DEBUG:A 4-vertices shape was found
+17:33:40.692 DEBUG:Getting the shapes' vertices in the image
+17:33:40.694 DEBUG:A 4-vertices shape was found
+17:33:40.717 DEBUG:Getting the shapes' vertices in the image
+17:33:40.718 DEBUG:A 4-vertices shape was found
+17:33:40.743 DEBUG:Getting the shapes' vertices in the image
+17:33:40.745 DEBUG:A 4-vertices shape was found
+17:33:40.768 DEBUG:Getting the shapes' vertices in the image
+17:33:40.769 DEBUG:A 4-vertices shape was found
+17:33:40.794 DEBUG:Getting the shapes' vertices in the image
+17:33:40.795 DEBUG:A 4-vertices shape was found
+17:33:40.819 DEBUG:Getting the shapes' vertices in the image
+17:33:40.820 DEBUG:A 3-vertices shape was found
+17:33:40.845 DEBUG:Getting the shapes' vertices in the image
+17:33:40.846 DEBUG:A 4-vertices shape was found
+17:33:40.870 DEBUG:Getting the shapes' vertices in the image
+17:33:40.871 DEBUG:A 4-vertices shape was found
+17:33:40.896 DEBUG:Getting the shapes' vertices in the image
+17:33:40.898 DEBUG:A 4-vertices shape was found
+17:33:40.921 DEBUG:Getting the shapes' vertices in the image
+17:33:40.922 DEBUG:A 3-vertices shape was found
+17:33:40.947 DEBUG:Getting the shapes' vertices in the image
+17:33:40.949 DEBUG:A 4-vertices shape was found
+17:33:40.972 DEBUG:Getting the shapes' vertices in the image
+17:33:40.973 DEBUG:A 4-vertices shape was found
+17:33:40.998 DEBUG:Getting the shapes' vertices in the image
+17:33:40.999 DEBUG:A 4-vertices shape was found
+17:33:41.023 DEBUG:Getting the shapes' vertices in the image
+17:33:41.024 DEBUG:A 4-vertices shape was found
+17:33:41.049 DEBUG:Getting the shapes' vertices in the image
+17:33:41.050 DEBUG:A 4-vertices shape was found
+17:33:41.074 DEBUG:Getting the shapes' vertices in the image
+17:33:41.076 DEBUG:A 4-vertices shape was found
+17:33:41.100 DEBUG:Getting the shapes' vertices in the image
+17:33:41.102 DEBUG:A 4-vertices shape was found
+17:33:41.125 DEBUG:Getting the shapes' vertices in the image
+17:33:41.126 DEBUG:A 4-vertices shape was found
+17:33:41.151 DEBUG:Getting the shapes' vertices in the image
+17:33:41.152 DEBUG:A 4-vertices shape was found
+17:33:41.176 DEBUG:Getting the shapes' vertices in the image
+17:33:41.177 DEBUG:A 4-vertices shape was found
+17:33:41.202 DEBUG:Getting the shapes' vertices in the image
+17:33:41.203 DEBUG:A 4-vertices shape was found
+17:33:41.227 DEBUG:Getting the shapes' vertices in the image
+17:33:41.228 DEBUG:A 4-vertices shape was found
+17:33:41.252 DEBUG:Getting the shapes' vertices in the image
+17:33:41.253 DEBUG:A 4-vertices shape was found
+17:33:41.278 DEBUG:Getting the shapes' vertices in the image
+17:33:41.279 DEBUG:A 4-vertices shape was found
+17:33:41.303 DEBUG:Getting the shapes' vertices in the image
+17:33:41.305 DEBUG:A 4-vertices shape was found
+17:33:41.329 DEBUG:Getting the shapes' vertices in the image
+17:33:41.331 DEBUG:A 4-vertices shape was found
+17:33:41.354 DEBUG:Getting the shapes' vertices in the image
+17:33:41.356 DEBUG:A 4-vertices shape was found
+17:33:41.380 DEBUG:Getting the shapes' vertices in the image
+17:33:41.382 DEBUG:A 4-vertices shape was found
+17:33:41.405 DEBUG:Getting the shapes' vertices in the image
+17:33:41.407 DEBUG:A 4-vertices shape was found
+17:33:41.431 DEBUG:Getting the shapes' vertices in the image
+17:33:41.433 DEBUG:A 4-vertices shape was found
+17:33:41.456 DEBUG:Getting the shapes' vertices in the image
+17:33:41.457 DEBUG:A 4-vertices shape was found
+17:33:41.482 DEBUG:Getting the shapes' vertices in the image
+17:33:41.483 DEBUG:A 4-vertices shape was found
+17:33:41.507 DEBUG:Getting the shapes' vertices in the image
+17:33:41.508 DEBUG:A 4-vertices shape was found
+17:33:41.533 DEBUG:Getting the shapes' vertices in the image
+17:33:41.534 DEBUG:A 4-vertices shape was found
+17:33:41.558 DEBUG:Getting the shapes' vertices in the image
+17:33:41.559 DEBUG:A 4-vertices shape was found
+17:33:41.584 DEBUG:Getting the shapes' vertices in the image
+17:33:41.586 DEBUG:A 4-vertices shape was found
+17:33:41.609 DEBUG:Getting the shapes' vertices in the image
+17:33:41.610 DEBUG:A 4-vertices shape was found
+17:33:41.635 DEBUG:Getting the shapes' vertices in the image
+17:33:41.636 DEBUG:A 4-vertices shape was found
+17:33:41.660 DEBUG:Getting the shapes' vertices in the image
+17:33:41.661 DEBUG:A 4-vertices shape was found
+17:33:41.686 DEBUG:Getting the shapes' vertices in the image
+17:33:41.687 DEBUG:A 4-vertices shape was found
+17:33:41.711 DEBUG:Getting the shapes' vertices in the image
+17:33:41.712 DEBUG:A 4-vertices shape was found
+17:33:41.737 DEBUG:Getting the shapes' vertices in the image
+17:33:41.738 DEBUG:A 4-vertices shape was found
+17:33:41.762 DEBUG:Getting the shapes' vertices in the image
+17:33:41.764 DEBUG:A 4-vertices shape was found
+17:33:41.788 DEBUG:Getting the shapes' vertices in the image
+17:33:41.790 DEBUG:A 4-vertices shape was found
+17:33:41.813 DEBUG:Getting the shapes' vertices in the image
+17:33:41.815 DEBUG:A 4-vertices shape was found
+17:33:41.839 DEBUG:Getting the shapes' vertices in the image
+17:33:41.840 DEBUG:A 4-vertices shape was found
+17:33:41.864 DEBUG:Getting the shapes' vertices in the image
+17:33:41.865 DEBUG:A 4-vertices shape was found
+17:33:41.890 DEBUG:Getting the shapes' vertices in the image
+17:33:41.891 DEBUG:A 4-vertices shape was found
+17:33:41.915 DEBUG:Getting the shapes' vertices in the image
+17:33:41.916 DEBUG:A 3-vertices shape was found
+17:33:41.940 DEBUG:Getting the shapes' vertices in the image
+17:33:41.941 DEBUG:A 4-vertices shape was found
+17:33:41.966 DEBUG:Getting the shapes' vertices in the image
+17:33:41.968 DEBUG:A 4-vertices shape was found
+17:33:41.991 DEBUG:Getting the shapes' vertices in the image
+17:33:41.993 DEBUG:A 4-vertices shape was found
+17:33:42.017 DEBUG:Getting the shapes' vertices in the image
+17:33:42.018 DEBUG:A 4-vertices shape was found
+17:33:42.042 DEBUG:Getting the shapes' vertices in the image
+17:33:42.044 DEBUG:A 4-vertices shape was found
+17:33:42.068 DEBUG:Getting the shapes' vertices in the image
+17:33:42.070 DEBUG:A 4-vertices shape was found
+17:33:42.093 DEBUG:Getting the shapes' vertices in the image
+17:33:42.095 DEBUG:A 4-vertices shape was found
+17:33:42.119 DEBUG:Getting the shapes' vertices in the image
+17:33:42.121 DEBUG:A 4-vertices shape was found
+17:33:42.144 DEBUG:Getting the shapes' vertices in the image
+17:33:42.146 DEBUG:A 4-vertices shape was found
+17:33:42.170 DEBUG:Getting the shapes' vertices in the image
+17:33:42.172 DEBUG:A 4-vertices shape was found
+17:33:42.195 DEBUG:Getting the shapes' vertices in the image
+17:33:42.197 DEBUG:A 4-vertices shape was found
+17:33:42.221 DEBUG:Getting the shapes' vertices in the image
+17:33:42.222 DEBUG:A 3-vertices shape was found
+17:33:42.246 DEBUG:Getting the shapes' vertices in the image
+17:33:42.247 DEBUG:A 3-vertices shape was found
+17:33:42.272 DEBUG:Getting the shapes' vertices in the image
+17:33:42.274 DEBUG:A 4-vertices shape was found
+17:33:42.297 DEBUG:Getting the shapes' vertices in the image
+17:33:42.299 DEBUG:A 4-vertices shape was found
+17:33:42.323 DEBUG:Getting the shapes' vertices in the image
+17:33:42.325 DEBUG:A 4-vertices shape was found
+17:33:42.348 DEBUG:Getting the shapes' vertices in the image
+17:33:42.349 DEBUG:A 4-vertices shape was found
+17:33:42.374 DEBUG:Getting the shapes' vertices in the image
+17:33:42.375 DEBUG:A 4-vertices shape was found
+17:33:42.399 DEBUG:Getting the shapes' vertices in the image
+17:33:42.400 DEBUG:A 4-vertices shape was found
+17:33:42.425 DEBUG:Getting the shapes' vertices in the image
+17:33:42.426 DEBUG:A 4-vertices shape was found
+17:33:42.450 DEBUG:Getting the shapes' vertices in the image
+17:33:42.451 DEBUG:A 4-vertices shape was found
+17:33:42.476 DEBUG:Getting the shapes' vertices in the image
+17:33:42.477 DEBUG:A 4-vertices shape was found
+17:33:42.501 DEBUG:Getting the shapes' vertices in the image
+17:33:42.502 DEBUG:A 4-vertices shape was found
+17:33:42.527 DEBUG:Getting the shapes' vertices in the image
+17:33:42.528 DEBUG:A 4-vertices shape was found
+17:33:42.552 DEBUG:Getting the shapes' vertices in the image
+17:33:42.554 DEBUG:A 4-vertices shape was found
+17:33:42.578 DEBUG:Getting the shapes' vertices in the image
+17:33:42.580 DEBUG:A 4-vertices shape was found
+17:33:42.603 DEBUG:Getting the shapes' vertices in the image
+17:33:42.604 DEBUG:A 4-vertices shape was found
+17:33:42.629 DEBUG:Getting the shapes' vertices in the image
+17:33:42.630 DEBUG:A 4-vertices shape was found
+17:33:42.654 DEBUG:Getting the shapes' vertices in the image
+17:33:42.655 DEBUG:A 3-vertices shape was found
+17:33:42.680 DEBUG:Getting the shapes' vertices in the image
+17:33:42.682 DEBUG:A 4-vertices shape was found
+17:33:42.705 DEBUG:Getting the shapes' vertices in the image
+17:33:42.706 DEBUG:A 4-vertices shape was found
+17:33:42.730 DEBUG:Getting the shapes' vertices in the image
+17:33:42.732 DEBUG:A 4-vertices shape was found
+17:33:42.756 DEBUG:Getting the shapes' vertices in the image
+17:33:42.758 DEBUG:A 4-vertices shape was found
+17:33:42.781 DEBUG:Getting the shapes' vertices in the image
+17:33:42.782 DEBUG:A 4-vertices shape was found
+17:33:42.807 DEBUG:Getting the shapes' vertices in the image
+17:33:42.809 DEBUG:A 4-vertices shape was found
+17:33:42.832 DEBUG:Getting the shapes' vertices in the image
+17:33:42.833 DEBUG:A 4-vertices shape was found
+17:33:42.858 DEBUG:Getting the shapes' vertices in the image
+17:33:42.859 DEBUG:A 4-vertices shape was found
+17:33:42.883 DEBUG:Getting the shapes' vertices in the image
+17:33:42.885 DEBUG:A 4-vertices shape was found
+17:33:42.909 DEBUG:Getting the shapes' vertices in the image
+17:33:42.911 DEBUG:A 4-vertices shape was found
+17:33:42.934 DEBUG:Getting the shapes' vertices in the image
+17:33:42.935 DEBUG:A 4-vertices shape was found
+17:33:42.960 DEBUG:Getting the shapes' vertices in the image
+17:33:42.962 DEBUG:A 4-vertices shape was found
+17:33:42.985 DEBUG:Getting the shapes' vertices in the image
+17:33:42.986 DEBUG:A 4-vertices shape was found
+17:33:43.011 DEBUG:Getting the shapes' vertices in the image
+17:33:43.012 DEBUG:A 4-vertices shape was found
+17:33:43.036 DEBUG:Getting the shapes' vertices in the image
+17:33:43.037 DEBUG:A 4-vertices shape was found
+17:33:43.062 DEBUG:Getting the shapes' vertices in the image
+17:33:43.063 DEBUG:A 4-vertices shape was found
+17:33:43.087 DEBUG:Getting the shapes' vertices in the image
+17:33:43.088 DEBUG:A 4-vertices shape was found
+17:33:43.113 DEBUG:Getting the shapes' vertices in the image
+17:33:43.115 DEBUG:A 4-vertices shape was found
+17:33:43.138 DEBUG:Getting the shapes' vertices in the image
+17:33:43.140 DEBUG:A 4-vertices shape was found
+17:33:43.164 DEBUG:Getting the shapes' vertices in the image
+17:33:43.165 DEBUG:A 4-vertices shape was found
+17:33:43.189 DEBUG:Getting the shapes' vertices in the image
+17:33:43.190 DEBUG:A 4-vertices shape was found
+17:33:43.215 DEBUG:Getting the shapes' vertices in the image
+17:33:43.216 DEBUG:A 4-vertices shape was found
+17:33:43.240 DEBUG:Getting the shapes' vertices in the image
+17:33:43.241 DEBUG:A 4-vertices shape was found
+17:33:43.266 DEBUG:Getting the shapes' vertices in the image
+17:33:43.267 DEBUG:A 4-vertices shape was found
+17:33:43.291 DEBUG:Getting the shapes' vertices in the image
+17:33:43.292 DEBUG:A 4-vertices shape was found
+17:33:43.317 DEBUG:Getting the shapes' vertices in the image
+17:33:43.319 DEBUG:A 4-vertices shape was found
+17:33:43.342 DEBUG:Getting the shapes' vertices in the image
+17:33:43.343 DEBUG:A 4-vertices shape was found
+17:33:43.368 DEBUG:Getting the shapes' vertices in the image
+17:33:43.370 DEBUG:A 4-vertices shape was found
+17:33:43.393 DEBUG:Getting the shapes' vertices in the image
+17:33:43.394 DEBUG:A 4-vertices shape was found
+17:33:43.418 DEBUG:Getting the shapes' vertices in the image
+17:33:43.420 DEBUG:A 4-vertices shape was found
+17:33:43.444 DEBUG:Getting the shapes' vertices in the image
+17:33:43.445 DEBUG:A 3-vertices shape was found
+17:33:43.469 DEBUG:Getting the shapes' vertices in the image
+17:33:43.470 DEBUG:A 4-vertices shape was found
+17:33:43.495 DEBUG:Getting the shapes' vertices in the image
+17:33:43.496 DEBUG:A 4-vertices shape was found
+17:33:43.520 DEBUG:Getting the shapes' vertices in the image
+17:33:43.521 DEBUG:A 4-vertices shape was found
+17:33:43.546 DEBUG:Getting the shapes' vertices in the image
+17:33:43.547 DEBUG:A 4-vertices shape was found
+17:33:43.571 DEBUG:Getting the shapes' vertices in the image
+17:33:43.572 DEBUG:A 4-vertices shape was found
+17:33:43.597 DEBUG:Getting the shapes' vertices in the image
+17:33:43.598 DEBUG:A 4-vertices shape was found
+17:33:43.622 DEBUG:Getting the shapes' vertices in the image
+17:33:43.624 DEBUG:A 4-vertices shape was found
+17:33:43.648 DEBUG:Getting the shapes' vertices in the image
+17:33:43.650 DEBUG:A 4-vertices shape was found
+17:33:43.673 DEBUG:Getting the shapes' vertices in the image
+17:33:43.675 DEBUG:A 4-vertices shape was found
+17:33:43.699 DEBUG:Getting the shapes' vertices in the image
+17:33:43.701 DEBUG:A 4-vertices shape was found
+17:33:43.724 DEBUG:Getting the shapes' vertices in the image
+17:33:43.725 DEBUG:A 3-vertices shape was found
+17:33:43.750 DEBUG:Getting the shapes' vertices in the image
+17:33:43.751 DEBUG:A 4-vertices shape was found
+17:33:43.775 DEBUG:Getting the shapes' vertices in the image
+17:33:43.777 DEBUG:A 4-vertices shape was found
+17:33:43.801 DEBUG:Getting the shapes' vertices in the image
+17:33:43.803 DEBUG:A 4-vertices shape was found
+17:33:43.826 DEBUG:Getting the shapes' vertices in the image
+17:33:43.828 DEBUG:A 4-vertices shape was found
+17:33:43.852 DEBUG:Getting the shapes' vertices in the image
+17:33:43.854 DEBUG:A 4-vertices shape was found
+17:33:43.877 DEBUG:Getting the shapes' vertices in the image
+17:33:43.879 DEBUG:A 4-vertices shape was found
+17:33:43.903 DEBUG:Getting the shapes' vertices in the image
+17:33:43.905 DEBUG:A 4-vertices shape was found
+17:33:43.928 DEBUG:Getting the shapes' vertices in the image
+17:33:43.929 DEBUG:A 4-vertices shape was found
+17:33:43.954 DEBUG:Getting the shapes' vertices in the image
+17:33:43.955 DEBUG:A 4-vertices shape was found
+17:33:43.979 DEBUG:Getting the shapes' vertices in the image
+17:33:43.980 DEBUG:A 4-vertices shape was found
+17:33:44.005 DEBUG:Getting the shapes' vertices in the image
+17:33:44.007 DEBUG:A 4-vertices shape was found
+17:33:44.030 DEBUG:Getting the shapes' vertices in the image
+17:33:44.031 DEBUG:A 4-vertices shape was found
+17:33:44.056 DEBUG:Getting the shapes' vertices in the image
+17:33:44.058 DEBUG:A 4-vertices shape was found
+17:33:44.081 DEBUG:Getting the shapes' vertices in the image
+17:33:44.082 DEBUG:A 4-vertices shape was found
+17:33:44.107 DEBUG:Getting the shapes' vertices in the image
+17:33:44.108 DEBUG:A 4-vertices shape was found
+17:33:44.132 DEBUG:Getting the shapes' vertices in the image
+17:33:44.133 DEBUG:A 4-vertices shape was found
+17:33:44.158 DEBUG:Getting the shapes' vertices in the image
+17:33:44.159 DEBUG:A 4-vertices shape was found
+17:33:44.183 DEBUG:Getting the shapes' vertices in the image
+17:33:44.184 DEBUG:A 4-vertices shape was found
+17:33:44.208 DEBUG:Getting the shapes' vertices in the image
+17:33:44.210 DEBUG:A 4-vertices shape was found
+17:33:44.234 DEBUG:Getting the shapes' vertices in the image
+17:33:44.235 DEBUG:A 4-vertices shape was found
+17:33:44.259 DEBUG:Getting the shapes' vertices in the image
+17:33:44.261 DEBUG:A 4-vertices shape was found
+17:33:44.285 DEBUG:Getting the shapes' vertices in the image
+17:33:44.287 DEBUG:A 4-vertices shape was found
+17:33:44.310 DEBUG:Getting the shapes' vertices in the image
+17:33:44.312 DEBUG:A 4-vertices shape was found
+17:33:44.336 DEBUG:Getting the shapes' vertices in the image
+17:33:44.338 DEBUG:A 4-vertices shape was found
+17:33:44.361 DEBUG:Getting the shapes' vertices in the image
+17:33:44.363 DEBUG:A 4-vertices shape was found
+17:33:44.387 DEBUG:Getting the shapes' vertices in the image
+17:33:44.389 DEBUG:A 4-vertices shape was found
+17:33:44.412 DEBUG:Getting the shapes' vertices in the image
+17:33:44.413 DEBUG:A 4-vertices shape was found
+17:33:44.438 DEBUG:Getting the shapes' vertices in the image
+17:33:44.439 DEBUG:A 4-vertices shape was found
+17:33:44.463 DEBUG:Getting the shapes' vertices in the image
+17:33:44.465 DEBUG:A 4-vertices shape was found
+17:33:44.489 DEBUG:Getting the shapes' vertices in the image
+17:33:44.491 DEBUG:A 4-vertices shape was found
+17:33:44.514 DEBUG:Getting the shapes' vertices in the image
+17:33:44.516 DEBUG:A 4-vertices shape was found
+17:33:44.540 DEBUG:Getting the shapes' vertices in the image
+17:33:44.542 DEBUG:A 4-vertices shape was found
+17:33:44.565 DEBUG:Getting the shapes' vertices in the image
+17:33:44.567 DEBUG:A 4-vertices shape was found
+17:33:44.591 DEBUG:Getting the shapes' vertices in the image
+17:33:44.593 DEBUG:A 4-vertices shape was found
+17:33:44.616 DEBUG:Getting the shapes' vertices in the image
+17:33:44.618 DEBUG:A 4-vertices shape was found
+17:33:44.642 DEBUG:Getting the shapes' vertices in the image
+17:33:44.643 DEBUG:A 4-vertices shape was found
+17:33:44.667 DEBUG:Getting the shapes' vertices in the image
+17:33:44.669 DEBUG:A 4-vertices shape was found
+17:33:44.693 DEBUG:Getting the shapes' vertices in the image
+17:33:44.695 DEBUG:A 4-vertices shape was found
+17:33:44.718 DEBUG:Getting the shapes' vertices in the image
+17:33:44.719 DEBUG:A 3-vertices shape was found
+17:33:44.744 DEBUG:Getting the shapes' vertices in the image
+17:33:44.746 DEBUG:A 4-vertices shape was found
+17:33:44.769 DEBUG:Getting the shapes' vertices in the image
+17:33:44.771 DEBUG:A 4-vertices shape was found
+17:33:44.795 DEBUG:Getting the shapes' vertices in the image
+17:33:44.797 DEBUG:A 4-vertices shape was found
+17:33:44.820 DEBUG:Getting the shapes' vertices in the image
+17:33:44.822 DEBUG:A 4-vertices shape was found
+17:33:44.846 DEBUG:Getting the shapes' vertices in the image
+17:33:44.848 DEBUG:A 4-vertices shape was found
+17:33:44.871 DEBUG:Getting the shapes' vertices in the image
+17:33:44.872 DEBUG:A 4-vertices shape was found
+17:33:44.896 DEBUG:Getting the shapes' vertices in the image
+17:33:44.898 DEBUG:A 4-vertices shape was found
+17:33:44.922 DEBUG:Getting the shapes' vertices in the image
+17:33:44.923 DEBUG:A 4-vertices shape was found
+17:33:44.947 DEBUG:Getting the shapes' vertices in the image
+17:33:44.949 DEBUG:A 4-vertices shape was found
+17:33:44.973 DEBUG:Getting the shapes' vertices in the image
+17:33:44.975 DEBUG:A 4-vertices shape was found
+17:33:44.998 DEBUG:Getting the shapes' vertices in the image
+17:33:45.000 DEBUG:A 4-vertices shape was found
+17:33:45.024 DEBUG:Getting the shapes' vertices in the image
+17:33:45.026 DEBUG:A 4-vertices shape was found
+17:33:45.049 DEBUG:Getting the shapes' vertices in the image
+17:33:45.051 DEBUG:A 4-vertices shape was found
+17:33:45.075 DEBUG:Getting the shapes' vertices in the image
+17:33:45.077 DEBUG:A 4-vertices shape was found
+17:33:45.100 DEBUG:Getting the shapes' vertices in the image
+17:33:45.101 DEBUG:A 4-vertices shape was found
+17:33:45.126 DEBUG:Getting the shapes' vertices in the image
+17:33:45.127 DEBUG:A 4-vertices shape was found
+17:33:45.151 DEBUG:Getting the shapes' vertices in the image
+17:33:45.153 DEBUG:A 4-vertices shape was found
+17:33:45.177 DEBUG:Getting the shapes' vertices in the image
+17:33:45.179 DEBUG:A 4-vertices shape was found
+17:33:45.202 DEBUG:Getting the shapes' vertices in the image
+17:33:45.204 DEBUG:A 4-vertices shape was found
+17:33:45.228 DEBUG:Getting the shapes' vertices in the image
+17:33:45.230 DEBUG:A 4-vertices shape was found
+17:33:45.253 DEBUG:Getting the shapes' vertices in the image
+17:33:45.255 DEBUG:A 4-vertices shape was found
+17:33:45.279 DEBUG:Getting the shapes' vertices in the image
+17:33:45.281 DEBUG:A 4-vertices shape was found
+17:33:45.304 DEBUG:Getting the shapes' vertices in the image
+17:33:45.306 DEBUG:A 4-vertices shape was found
+17:33:45.330 DEBUG:Getting the shapes' vertices in the image
+17:33:45.332 DEBUG:A 4-vertices shape was found
+17:33:45.355 DEBUG:Getting the shapes' vertices in the image
+17:33:45.357 DEBUG:A 4-vertices shape was found
+17:33:45.381 DEBUG:Getting the shapes' vertices in the image
+17:33:45.383 DEBUG:A 4-vertices shape was found
+17:33:45.406 DEBUG:Getting the shapes' vertices in the image
+17:33:45.407 DEBUG:A 4-vertices shape was found
+17:33:45.432 DEBUG:Getting the shapes' vertices in the image
+17:33:45.433 DEBUG:A 4-vertices shape was found
+17:33:45.457 DEBUG:Getting the shapes' vertices in the image
+17:33:45.458 DEBUG:A 4-vertices shape was found
+17:33:45.483 DEBUG:Getting the shapes' vertices in the image
+17:33:45.484 DEBUG:A 4-vertices shape was found
+17:33:45.508 DEBUG:Getting the shapes' vertices in the image
+17:33:45.509 DEBUG:A 3-vertices shape was found
+17:33:45.534 DEBUG:Getting the shapes' vertices in the image
+17:33:45.535 DEBUG:A 4-vertices shape was found
+17:33:45.559 DEBUG:Getting the shapes' vertices in the image
+17:33:45.560 DEBUG:A 4-vertices shape was found
+17:33:45.585 DEBUG:Getting the shapes' vertices in the image
+17:33:45.587 DEBUG:A 4-vertices shape was found
+17:33:45.610 DEBUG:Getting the shapes' vertices in the image
+17:33:45.612 DEBUG:A 4-vertices shape was found
+17:33:45.636 DEBUG:Getting the shapes' vertices in the image
+17:33:45.638 DEBUG:A 4-vertices shape was found
+17:33:45.661 DEBUG:Getting the shapes' vertices in the image
+17:33:45.662 DEBUG:A 4-vertices shape was found
+17:33:45.686 DEBUG:Getting the shapes' vertices in the image
+17:33:45.688 DEBUG:A 4-vertices shape was found
+17:33:45.712 DEBUG:Getting the shapes' vertices in the image
+17:33:45.714 DEBUG:A 4-vertices shape was found
+17:33:45.737 DEBUG:Getting the shapes' vertices in the image
+17:33:45.739 DEBUG:A 4-vertices shape was found
+17:33:45.763 DEBUG:Getting the shapes' vertices in the image
+17:33:45.765 DEBUG:A 4-vertices shape was found
+17:33:45.788 DEBUG:Getting the shapes' vertices in the image
+17:33:45.789 DEBUG:A 3-vertices shape was found
+17:33:45.814 DEBUG:Getting the shapes' vertices in the image
+17:33:45.815 DEBUG:A 4-vertices shape was found
+17:33:45.839 DEBUG:Getting the shapes' vertices in the image
+17:33:45.841 DEBUG:A 4-vertices shape was found
+17:33:45.865 DEBUG:Getting the shapes' vertices in the image
+17:33:45.867 DEBUG:A 4-vertices shape was found
+17:33:45.890 DEBUG:Getting the shapes' vertices in the image
+17:33:45.892 DEBUG:A 4-vertices shape was found
+17:33:45.916 DEBUG:Getting the shapes' vertices in the image
+17:33:45.918 DEBUG:A 4-vertices shape was found
+17:33:45.941 DEBUG:Getting the shapes' vertices in the image
+17:33:45.943 DEBUG:A 4-vertices shape was found
+17:33:45.967 DEBUG:Getting the shapes' vertices in the image
+17:33:45.969 DEBUG:A 4-vertices shape was found
+17:33:45.992 DEBUG:Getting the shapes' vertices in the image
+17:33:45.994 DEBUG:A 4-vertices shape was found
+17:33:46.018 DEBUG:Getting the shapes' vertices in the image
+17:33:46.019 DEBUG:A 4-vertices shape was found
+17:33:46.043 DEBUG:Getting the shapes' vertices in the image
+17:33:46.045 DEBUG:A 4-vertices shape was found
+17:33:46.069 DEBUG:Getting the shapes' vertices in the image
+17:33:46.071 DEBUG:A 4-vertices shape was found
+17:33:46.094 DEBUG:Getting the shapes' vertices in the image
+17:33:46.096 DEBUG:A 4-vertices shape was found
+17:33:46.120 DEBUG:Getting the shapes' vertices in the image
+17:33:46.122 DEBUG:A 4-vertices shape was found
+17:33:46.145 DEBUG:Getting the shapes' vertices in the image
+17:33:46.147 DEBUG:A 4-vertices shape was found
+17:33:46.171 DEBUG:Getting the shapes' vertices in the image
+17:33:46.173 DEBUG:A 4-vertices shape was found
+17:33:46.196 DEBUG:Getting the shapes' vertices in the image
+17:33:46.198 DEBUG:A 4-vertices shape was found
+17:33:46.222 DEBUG:Getting the shapes' vertices in the image
+17:33:46.223 DEBUG:A 4-vertices shape was found
+17:33:46.247 DEBUG:Getting the shapes' vertices in the image
+17:33:46.249 DEBUG:A 4-vertices shape was found
+17:33:46.273 DEBUG:Getting the shapes' vertices in the image
+17:33:46.275 DEBUG:A 4-vertices shape was found
+17:33:46.298 DEBUG:Getting the shapes' vertices in the image
+17:33:46.300 DEBUG:A 4-vertices shape was found
+17:33:46.324 DEBUG:Getting the shapes' vertices in the image
+17:33:46.326 DEBUG:A 4-vertices shape was found
+17:33:46.349 DEBUG:Getting the shapes' vertices in the image
+17:33:46.350 DEBUG:A 3-vertices shape was found
+17:33:46.374 DEBUG:Getting the shapes' vertices in the image
+17:33:46.375 DEBUG:A 3-vertices shape was found
+17:33:46.400 DEBUG:Getting the shapes' vertices in the image
+17:33:46.402 DEBUG:A 4-vertices shape was found
+17:33:46.425 DEBUG:Getting the shapes' vertices in the image
+17:33:46.427 DEBUG:A 4-vertices shape was found
+17:33:46.451 DEBUG:Getting the shapes' vertices in the image
+17:33:46.453 DEBUG:A 4-vertices shape was found
+17:33:46.476 DEBUG:Getting the shapes' vertices in the image
+17:33:46.478 DEBUG:A 4-vertices shape was found
+17:33:46.502 DEBUG:Getting the shapes' vertices in the image
+17:33:46.503 DEBUG:A 4-vertices shape was found
+17:33:46.527 DEBUG:Getting the shapes' vertices in the image
+17:33:46.528 DEBUG:A 4-vertices shape was found
+17:33:46.553 DEBUG:Getting the shapes' vertices in the image
+17:33:46.554 DEBUG:A 4-vertices shape was found
+17:33:46.578 DEBUG:Getting the shapes' vertices in the image
+17:33:46.580 DEBUG:A 4-vertices shape was found
+17:33:46.604 DEBUG:Getting the shapes' vertices in the image
+17:33:46.606 DEBUG:A 4-vertices shape was found
+17:33:46.629 DEBUG:Getting the shapes' vertices in the image
+17:33:46.631 DEBUG:A 4-vertices shape was found
+17:33:46.655 DEBUG:Getting the shapes' vertices in the image
+17:33:46.657 DEBUG:A 4-vertices shape was found
+17:33:46.680 DEBUG:Getting the shapes' vertices in the image
+17:33:46.682 DEBUG:A 4-vertices shape was found
+17:33:46.706 DEBUG:Getting the shapes' vertices in the image
+17:33:46.707 DEBUG:A 4-vertices shape was found
+17:33:46.731 DEBUG:Getting the shapes' vertices in the image
+17:33:46.733 DEBUG:A 4-vertices shape was found
+17:33:46.757 DEBUG:Getting the shapes' vertices in the image
+17:33:46.759 DEBUG:A 4-vertices shape was found
+17:33:46.782 DEBUG:Getting the shapes' vertices in the image
+17:33:46.784 DEBUG:A 4-vertices shape was found
+17:33:46.808 DEBUG:Getting the shapes' vertices in the image
+17:33:46.810 DEBUG:A 4-vertices shape was found
+17:33:46.833 DEBUG:Getting the shapes' vertices in the image
+17:33:46.835 DEBUG:A 4-vertices shape was found
+17:33:46.859 DEBUG:Getting the shapes' vertices in the image
+17:33:46.861 DEBUG:A 4-vertices shape was found
+17:33:46.884 DEBUG:Getting the shapes' vertices in the image
+17:33:46.885 DEBUG:A 4-vertices shape was found
+17:33:46.910 DEBUG:Getting the shapes' vertices in the image
+17:33:46.911 DEBUG:A 4-vertices shape was found
+17:33:46.935 DEBUG:Getting the shapes' vertices in the image
+17:33:46.936 DEBUG:A 4-vertices shape was found
+17:33:46.961 DEBUG:Getting the shapes' vertices in the image
+17:33:46.963 DEBUG:A 4-vertices shape was found
+17:33:46.986 DEBUG:Getting the shapes' vertices in the image
+17:33:46.988 DEBUG:A 4-vertices shape was found
+17:33:47.012 DEBUG:Getting the shapes' vertices in the image
+17:33:47.014 DEBUG:A 4-vertices shape was found
+17:33:47.037 DEBUG:Getting the shapes' vertices in the image
+17:33:47.039 DEBUG:A 4-vertices shape was found
+17:33:47.063 DEBUG:Getting the shapes' vertices in the image
+17:33:47.065 DEBUG:A 4-vertices shape was found
+17:33:47.088 DEBUG:Getting the shapes' vertices in the image
+17:33:47.090 DEBUG:A 4-vertices shape was found
+17:33:47.114 DEBUG:Getting the shapes' vertices in the image
+17:33:47.115 DEBUG:A 4-vertices shape was found
+17:33:47.139 DEBUG:Getting the shapes' vertices in the image
+17:33:47.140 DEBUG:A 3-vertices shape was found
+17:33:47.164 DEBUG:Getting the shapes' vertices in the image
+17:33:47.166 DEBUG:A 4-vertices shape was found
+17:33:47.190 DEBUG:Getting the shapes' vertices in the image
+17:33:47.192 DEBUG:A 4-vertices shape was found
+17:33:47.215 DEBUG:Getting the shapes' vertices in the image
+17:33:47.217 DEBUG:A 4-vertices shape was found
+17:33:47.241 DEBUG:Getting the shapes' vertices in the image
+17:33:47.243 DEBUG:A 4-vertices shape was found
+17:33:47.266 DEBUG:Getting the shapes' vertices in the image
+17:33:47.268 DEBUG:A 4-vertices shape was found
+17:33:47.292 DEBUG:Getting the shapes' vertices in the image
+17:33:47.294 DEBUG:A 4-vertices shape was found
+17:33:47.317 DEBUG:Getting the shapes' vertices in the image
+17:33:47.318 DEBUG:A 3-vertices shape was found
+17:33:47.343 DEBUG:Getting the shapes' vertices in the image
+17:33:47.344 DEBUG:A 4-vertices shape was found
+17:33:47.368 DEBUG:Getting the shapes' vertices in the image
+17:33:47.369 DEBUG:A 4-vertices shape was found
+17:33:47.394 DEBUG:Getting the shapes' vertices in the image
+17:33:47.395 DEBUG:A 4-vertices shape was found
+17:33:47.419 DEBUG:Getting the shapes' vertices in the image
+17:33:47.420 DEBUG:A 4-vertices shape was found
+17:33:47.445 DEBUG:Getting the shapes' vertices in the image
+17:33:47.447 DEBUG:A 4-vertices shape was found
+17:33:47.470 DEBUG:Getting the shapes' vertices in the image
+17:33:47.472 DEBUG:A 4-vertices shape was found
+17:33:47.496 DEBUG:Getting the shapes' vertices in the image
+17:33:47.498 DEBUG:A 4-vertices shape was found
+17:33:47.521 DEBUG:Getting the shapes' vertices in the image
+17:33:47.522 DEBUG:A 4-vertices shape was found
+17:33:47.547 DEBUG:Getting the shapes' vertices in the image
+17:33:47.549 DEBUG:A 4-vertices shape was found
+17:33:47.572 DEBUG:Getting the shapes' vertices in the image
+17:33:47.574 DEBUG:A 4-vertices shape was found
+17:33:47.598 DEBUG:Getting the shapes' vertices in the image
+17:33:47.599 DEBUG:A 4-vertices shape was found
+17:33:47.623 DEBUG:Getting the shapes' vertices in the image
+17:33:47.624 DEBUG:A 4-vertices shape was found
+17:33:47.649 DEBUG:Getting the shapes' vertices in the image
+17:33:47.651 DEBUG:A 4-vertices shape was found
+17:33:47.674 DEBUG:Getting the shapes' vertices in the image
+17:33:47.676 DEBUG:A 4-vertices shape was found
+17:33:47.700 DEBUG:Getting the shapes' vertices in the image
+17:33:47.702 DEBUG:A 4-vertices shape was found
+17:33:47.725 DEBUG:Getting the shapes' vertices in the image
+17:33:47.727 DEBUG:A 4-vertices shape was found
+17:33:47.751 DEBUG:Getting the shapes' vertices in the image
+17:33:47.753 DEBUG:A 4-vertices shape was found
+17:33:47.776 DEBUG:Getting the shapes' vertices in the image
+17:33:47.778 DEBUG:A 4-vertices shape was found
+17:33:47.802 DEBUG:Getting the shapes' vertices in the image
+17:33:47.804 DEBUG:A 4-vertices shape was found
+17:33:47.827 DEBUG:Getting the shapes' vertices in the image
+17:33:47.829 DEBUG:A 4-vertices shape was found
+17:33:47.852 DEBUG:Getting the shapes' vertices in the image
+17:33:47.853 DEBUG:A 4-vertices shape was found
+17:33:47.878 DEBUG:Getting the shapes' vertices in the image
+17:33:47.879 DEBUG:A 4-vertices shape was found
+17:33:47.903 DEBUG:Getting the shapes' vertices in the image
+17:33:47.904 DEBUG:A 4-vertices shape was found
+17:33:47.929 DEBUG:Getting the shapes' vertices in the image
+17:33:47.931 DEBUG:A 4-vertices shape was found
+17:33:47.954 DEBUG:Getting the shapes' vertices in the image
+17:33:47.956 DEBUG:A 4-vertices shape was found
+17:33:47.980 DEBUG:Getting the shapes' vertices in the image
+17:33:47.982 DEBUG:A 4-vertices shape was found
+17:33:48.005 DEBUG:Getting the shapes' vertices in the image
+17:33:48.007 DEBUG:A 4-vertices shape was found
+17:33:48.031 DEBUG:Getting the shapes' vertices in the image
+17:33:48.032 DEBUG:A 3-vertices shape was found
+17:33:48.056 DEBUG:Getting the shapes' vertices in the image
+17:33:48.058 DEBUG:A 4-vertices shape was found
+17:33:48.082 DEBUG:Getting the shapes' vertices in the image
+17:33:48.083 DEBUG:A 4-vertices shape was found
+17:33:48.107 DEBUG:Getting the shapes' vertices in the image
+17:33:48.109 DEBUG:A 4-vertices shape was found
+17:33:48.133 DEBUG:Getting the shapes' vertices in the image
+17:33:48.135 DEBUG:A 4-vertices shape was found
+17:33:48.158 DEBUG:Getting the shapes' vertices in the image
+17:33:48.159 DEBUG:A 4-vertices shape was found
+17:33:48.184 DEBUG:Getting the shapes' vertices in the image
+17:33:48.185 DEBUG:A 3-vertices shape was found
+17:33:48.209 DEBUG:Getting the shapes' vertices in the image
+17:33:48.211 DEBUG:A 4-vertices shape was found
+17:33:48.235 DEBUG:Getting the shapes' vertices in the image
+17:33:48.237 DEBUG:A 4-vertices shape was found
+17:33:48.260 DEBUG:Getting the shapes' vertices in the image
+17:33:48.262 DEBUG:A 4-vertices shape was found
+17:33:48.286 DEBUG:Getting the shapes' vertices in the image
+17:33:48.287 DEBUG:A 4-vertices shape was found
+17:33:48.311 DEBUG:Getting the shapes' vertices in the image
+17:33:48.313 DEBUG:A 4-vertices shape was found
+17:33:48.337 DEBUG:Getting the shapes' vertices in the image
+17:33:48.338 DEBUG:A 3-vertices shape was found
+17:33:48.362 DEBUG:Getting the shapes' vertices in the image
+17:33:48.364 DEBUG:A 4-vertices shape was found
+17:33:48.388 DEBUG:Getting the shapes' vertices in the image
+17:33:48.390 DEBUG:A 4-vertices shape was found
+17:33:48.413 DEBUG:Getting the shapes' vertices in the image
+17:33:48.415 DEBUG:A 4-vertices shape was found
+17:33:48.439 DEBUG:Getting the shapes' vertices in the image
+17:33:48.441 DEBUG:A 4-vertices shape was found
+17:33:48.464 DEBUG:Getting the shapes' vertices in the image
+17:33:48.465 DEBUG:A 3-vertices shape was found
+17:33:48.490 DEBUG:Getting the shapes' vertices in the image
+17:33:48.492 DEBUG:A 4-vertices shape was found
+17:33:48.515 DEBUG:Getting the shapes' vertices in the image
+17:33:48.517 DEBUG:A 4-vertices shape was found
+17:33:48.541 DEBUG:Getting the shapes' vertices in the image
+17:33:48.542 DEBUG:A 3-vertices shape was found
+17:33:48.566 DEBUG:Getting the shapes' vertices in the image
+17:33:48.567 DEBUG:A 4-vertices shape was found
+17:33:48.591 DEBUG:Getting the shapes' vertices in the image
+17:33:48.592 DEBUG:A 4-vertices shape was found
+17:33:48.617 DEBUG:Getting the shapes' vertices in the image
+17:33:48.618 DEBUG:A 3-vertices shape was found
+17:33:48.642 DEBUG:Getting the shapes' vertices in the image
+17:33:48.643 DEBUG:A 4-vertices shape was found
+17:33:48.668 DEBUG:Getting the shapes' vertices in the image
+17:33:48.670 DEBUG:A 4-vertices shape was found
+17:33:48.693 DEBUG:Getting the shapes' vertices in the image
+17:33:48.694 DEBUG:A 4-vertices shape was found
+17:33:48.719 DEBUG:Getting the shapes' vertices in the image
+17:33:48.720 DEBUG:A 4-vertices shape was found
+17:33:48.744 DEBUG:Getting the shapes' vertices in the image
+17:33:48.745 DEBUG:A 4-vertices shape was found
+17:33:48.770 DEBUG:Getting the shapes' vertices in the image
+17:33:48.771 DEBUG:A 3-vertices shape was found
+17:33:48.795 DEBUG:Getting the shapes' vertices in the image
+17:33:48.796 DEBUG:A 4-vertices shape was found
+17:33:48.821 DEBUG:Getting the shapes' vertices in the image
+17:33:48.822 DEBUG:A 4-vertices shape was found
+17:33:48.846 DEBUG:Getting the shapes' vertices in the image
+17:33:48.847 DEBUG:A 4-vertices shape was found
+17:33:48.872 DEBUG:Getting the shapes' vertices in the image
+17:33:48.873 DEBUG:A 4-vertices shape was found
+17:33:48.897 DEBUG:Getting the shapes' vertices in the image
+17:33:48.898 DEBUG:A 4-vertices shape was found
+17:33:48.923 DEBUG:Getting the shapes' vertices in the image
+17:33:48.924 DEBUG:A 3-vertices shape was found
+17:33:48.948 DEBUG:Getting the shapes' vertices in the image
+17:33:48.949 DEBUG:A 4-vertices shape was found
+17:33:48.974 DEBUG:Getting the shapes' vertices in the image
+17:33:48.975 DEBUG:A 4-vertices shape was found
+17:33:48.999 DEBUG:Getting the shapes' vertices in the image
+17:33:49.000 DEBUG:A 4-vertices shape was found
+17:33:49.025 DEBUG:Getting the shapes' vertices in the image
+17:33:49.026 DEBUG:A 4-vertices shape was found
+17:33:49.050 DEBUG:Getting the shapes' vertices in the image
+17:33:49.051 DEBUG:A 4-vertices shape was found
+17:33:49.076 DEBUG:Getting the shapes' vertices in the image
+17:33:49.077 DEBUG:A 4-vertices shape was found
+17:33:49.101 DEBUG:Getting the shapes' vertices in the image
+17:33:49.102 DEBUG:A 4-vertices shape was found
+17:33:49.127 DEBUG:Getting the shapes' vertices in the image
+17:33:49.128 DEBUG:A 4-vertices shape was found
+17:33:49.152 DEBUG:Getting the shapes' vertices in the image
+17:33:49.153 DEBUG:A 4-vertices shape was found
+17:33:49.178 DEBUG:Getting the shapes' vertices in the image
+17:33:49.179 DEBUG:A 4-vertices shape was found
+17:33:49.203 DEBUG:Getting the shapes' vertices in the image
+17:33:49.204 DEBUG:A 4-vertices shape was found
+17:33:49.229 DEBUG:Getting the shapes' vertices in the image
+17:33:49.231 DEBUG:A 4-vertices shape was found
+17:33:49.254 DEBUG:Getting the shapes' vertices in the image
+17:33:49.255 DEBUG:A 4-vertices shape was found
+17:33:49.280 DEBUG:Getting the shapes' vertices in the image
+17:33:49.282 DEBUG:A 4-vertices shape was found
+17:33:49.305 DEBUG:Getting the shapes' vertices in the image
+17:33:49.307 DEBUG:A 4-vertices shape was found
+17:33:49.331 DEBUG:Getting the shapes' vertices in the image
+17:33:49.332 DEBUG:A 4-vertices shape was found
+17:33:49.356 DEBUG:Getting the shapes' vertices in the image
+17:33:49.358 DEBUG:A 5-vertices shape was found
+17:33:49.381 DEBUG:Getting the shapes' vertices in the image
+17:33:49.382 DEBUG:A 4-vertices shape was found
+17:33:49.407 DEBUG:Getting the shapes' vertices in the image
+17:33:49.408 DEBUG:A 4-vertices shape was found
+17:33:49.432 DEBUG:Getting the shapes' vertices in the image
+17:33:49.433 DEBUG:A 3-vertices shape was found
+17:33:49.458 DEBUG:Getting the shapes' vertices in the image
+17:33:49.459 DEBUG:A 3-vertices shape was found
+17:33:49.483 DEBUG:Getting the shapes' vertices in the image
+17:33:49.484 DEBUG:A 4-vertices shape was found
+17:33:49.509 DEBUG:Getting the shapes' vertices in the image
+17:33:49.510 DEBUG:A 4-vertices shape was found
+17:33:49.534 DEBUG:Getting the shapes' vertices in the image
+17:33:49.535 DEBUG:A 4-vertices shape was found
+17:33:49.560 DEBUG:Getting the shapes' vertices in the image
+17:33:49.562 DEBUG:A 4-vertices shape was found
+17:33:49.585 DEBUG:Getting the shapes' vertices in the image
+17:33:49.587 DEBUG:A 4-vertices shape was found
+17:33:49.611 DEBUG:Getting the shapes' vertices in the image
+17:33:49.613 DEBUG:A 4-vertices shape was found
+17:33:49.636 DEBUG:Getting the shapes' vertices in the image
+17:33:49.638 DEBUG:A 4-vertices shape was found
+17:33:49.662 DEBUG:Getting the shapes' vertices in the image
+17:33:49.664 DEBUG:A 4-vertices shape was found
+17:33:49.687 DEBUG:Getting the shapes' vertices in the image
+17:33:49.689 DEBUG:A 4-vertices shape was found
+17:33:49.713 DEBUG:Getting the shapes' vertices in the image
+17:33:49.715 DEBUG:A 4-vertices shape was found
+17:33:49.738 DEBUG:Getting the shapes' vertices in the image
+17:33:49.740 DEBUG:A 4-vertices shape was found
+17:33:49.764 DEBUG:Getting the shapes' vertices in the image
+17:33:49.766 DEBUG:A 4-vertices shape was found
+17:33:49.789 DEBUG:Getting the shapes' vertices in the image
+17:33:49.791 DEBUG:A 4-vertices shape was found
+17:33:49.815 DEBUG:Getting the shapes' vertices in the image
+17:33:49.817 DEBUG:A 4-vertices shape was found
+17:33:49.840 DEBUG:Getting the shapes' vertices in the image
+17:33:49.842 DEBUG:A 4-vertices shape was found
+17:33:49.866 DEBUG:Getting the shapes' vertices in the image
+17:33:49.868 DEBUG:A 4-vertices shape was found
+17:33:49.891 DEBUG:Getting the shapes' vertices in the image
+17:33:49.893 DEBUG:A 4-vertices shape was found
+17:33:49.917 DEBUG:Getting the shapes' vertices in the image
+17:33:49.919 DEBUG:A 4-vertices shape was found
+17:33:49.942 DEBUG:Getting the shapes' vertices in the image
+17:33:49.944 DEBUG:A 4-vertices shape was found
+17:33:49.968 DEBUG:Getting the shapes' vertices in the image
+17:33:49.970 DEBUG:A 4-vertices shape was found
+17:33:49.993 DEBUG:Getting the shapes' vertices in the image
+17:33:49.995 DEBUG:A 4-vertices shape was found
+17:33:50.019 DEBUG:Getting the shapes' vertices in the image
+17:33:50.021 DEBUG:A 4-vertices shape was found
+17:33:50.044 DEBUG:Getting the shapes' vertices in the image
+17:33:50.046 DEBUG:A 4-vertices shape was found
+17:33:50.069 DEBUG:Getting the shapes' vertices in the image
+17:33:50.071 DEBUG:A 4-vertices shape was found
+17:33:50.095 DEBUG:Getting the shapes' vertices in the image
+17:33:50.097 DEBUG:A 4-vertices shape was found
+17:33:50.120 DEBUG:Getting the shapes' vertices in the image
+17:33:50.121 DEBUG:A 3-vertices shape was found
+17:33:50.146 DEBUG:Getting the shapes' vertices in the image
+17:33:50.148 DEBUG:A 4-vertices shape was found
+17:33:50.171 DEBUG:Getting the shapes' vertices in the image
+17:33:50.172 DEBUG:A 4-vertices shape was found
+17:33:50.197 DEBUG:Getting the shapes' vertices in the image
+17:33:50.198 DEBUG:A 4-vertices shape was found
+17:33:50.222 DEBUG:Getting the shapes' vertices in the image
+17:33:50.223 DEBUG:A 4-vertices shape was found
+17:33:50.248 DEBUG:Getting the shapes' vertices in the image
+17:33:50.250 DEBUG:A 4-vertices shape was found
+17:33:50.273 DEBUG:Getting the shapes' vertices in the image
+17:33:50.275 DEBUG:A 4-vertices shape was found
+17:33:50.299 DEBUG:Getting the shapes' vertices in the image
+17:33:50.301 DEBUG:A 4-vertices shape was found
+17:33:50.324 DEBUG:Getting the shapes' vertices in the image
+17:33:50.326 DEBUG:A 4-vertices shape was found
+17:33:50.350 DEBUG:Getting the shapes' vertices in the image
+17:33:50.351 DEBUG:A 4-vertices shape was found
+17:33:50.375 DEBUG:Getting the shapes' vertices in the image
+17:33:50.377 DEBUG:A 4-vertices shape was found
+17:33:50.401 DEBUG:Getting the shapes' vertices in the image
+17:33:50.403 DEBUG:A 4-vertices shape was found
+17:33:50.426 DEBUG:Getting the shapes' vertices in the image
+17:33:50.428 DEBUG:A 4-vertices shape was found
+17:33:50.452 DEBUG:Getting the shapes' vertices in the image
+17:33:50.454 DEBUG:A 4-vertices shape was found
+17:33:50.477 DEBUG:Getting the shapes' vertices in the image
+17:33:50.479 DEBUG:A 4-vertices shape was found
+17:33:50.503 DEBUG:Getting the shapes' vertices in the image
+17:33:50.505 DEBUG:A 4-vertices shape was found
+17:33:50.528 DEBUG:Getting the shapes' vertices in the image
+17:33:50.530 DEBUG:A 4-vertices shape was found
+17:33:50.554 DEBUG:Getting the shapes' vertices in the image
+17:33:50.556 DEBUG:A 4-vertices shape was found
+17:33:50.579 DEBUG:Getting the shapes' vertices in the image
+17:33:50.581 DEBUG:A 4-vertices shape was found
+17:33:50.605 DEBUG:Getting the shapes' vertices in the image
+17:33:50.607 DEBUG:A 4-vertices shape was found
+17:33:50.630 DEBUG:Getting the shapes' vertices in the image
+17:33:50.632 DEBUG:A 4-vertices shape was found
+17:33:50.656 DEBUG:Getting the shapes' vertices in the image
+17:33:50.658 DEBUG:A 4-vertices shape was found
+17:33:50.681 DEBUG:Getting the shapes' vertices in the image
+17:33:50.683 DEBUG:A 4-vertices shape was found
+17:33:50.707 DEBUG:Getting the shapes' vertices in the image
+17:33:50.708 DEBUG:A 3-vertices shape was found
+17:33:50.732 DEBUG:Getting the shapes' vertices in the image
+17:33:50.733 DEBUG:A 3-vertices shape was found
+17:33:50.758 DEBUG:Getting the shapes' vertices in the image
+17:33:50.759 DEBUG:A 4-vertices shape was found
+17:33:50.783 DEBUG:Getting the shapes' vertices in the image
+17:33:50.784 DEBUG:A 3-vertices shape was found
+17:33:50.809 DEBUG:Getting the shapes' vertices in the image
+17:33:50.811 DEBUG:A 4-vertices shape was found
+17:33:50.834 DEBUG:Getting the shapes' vertices in the image
+17:33:50.836 DEBUG:A 4-vertices shape was found
+17:33:50.859 DEBUG:Getting the shapes' vertices in the image
+17:33:50.861 DEBUG:A 4-vertices shape was found
+17:33:50.885 DEBUG:Getting the shapes' vertices in the image
+17:33:50.887 DEBUG:A 4-vertices shape was found
+17:33:50.910 DEBUG:Getting the shapes' vertices in the image
+17:33:50.912 DEBUG:A 4-vertices shape was found
+17:33:50.936 DEBUG:Getting the shapes' vertices in the image
+17:33:50.938 DEBUG:A 4-vertices shape was found
+17:33:50.961 DEBUG:Getting the shapes' vertices in the image
+17:33:50.963 DEBUG:A 4-vertices shape was found
+17:33:50.987 DEBUG:Getting the shapes' vertices in the image
+17:33:50.989 DEBUG:A 4-vertices shape was found
+17:33:51.012 DEBUG:Getting the shapes' vertices in the image
+17:33:51.014 DEBUG:A 4-vertices shape was found
+17:33:51.038 DEBUG:Getting the shapes' vertices in the image
+17:33:51.040 DEBUG:A 4-vertices shape was found
+17:33:51.063 DEBUG:Getting the shapes' vertices in the image
+17:33:51.065 DEBUG:A 4-vertices shape was found
+17:33:51.089 DEBUG:Getting the shapes' vertices in the image
+17:33:51.091 DEBUG:A 4-vertices shape was found
+17:33:51.114 DEBUG:Getting the shapes' vertices in the image
+17:33:51.116 DEBUG:A 4-vertices shape was found
+17:33:51.140 DEBUG:Getting the shapes' vertices in the image
+17:33:51.142 DEBUG:A 4-vertices shape was found
+17:33:51.165 DEBUG:Getting the shapes' vertices in the image
+17:33:51.166 DEBUG:A 3-vertices shape was found
+17:33:51.191 DEBUG:Getting the shapes' vertices in the image
+17:33:51.193 DEBUG:A 4-vertices shape was found
+17:33:51.216 DEBUG:Getting the shapes' vertices in the image
+17:33:51.218 DEBUG:A 4-vertices shape was found
+17:33:51.242 DEBUG:Getting the shapes' vertices in the image
+17:33:51.244 DEBUG:A 4-vertices shape was found
+17:33:51.267 DEBUG:Getting the shapes' vertices in the image
+17:33:51.269 DEBUG:A 4-vertices shape was found
+17:33:51.293 DEBUG:Getting the shapes' vertices in the image
+17:33:51.295 DEBUG:A 4-vertices shape was found
+17:33:51.318 DEBUG:Getting the shapes' vertices in the image
+17:33:51.320 DEBUG:A 4-vertices shape was found
+17:33:51.344 DEBUG:Getting the shapes' vertices in the image
+17:33:51.346 DEBUG:A 4-vertices shape was found
+17:33:51.369 DEBUG:Getting the shapes' vertices in the image
+17:33:51.371 DEBUG:A 4-vertices shape was found
+17:33:51.395 DEBUG:Getting the shapes' vertices in the image
+17:33:51.397 DEBUG:A 4-vertices shape was found
+17:33:51.420 DEBUG:Getting the shapes' vertices in the image
+17:33:51.422 DEBUG:A 4-vertices shape was found
+17:33:51.446 DEBUG:Getting the shapes' vertices in the image
+17:33:51.448 DEBUG:A 4-vertices shape was found
+17:34:34.565 DEBUG:"Obtained '{'1':((671,341),(671,328),(673,306),(674,306),(718,328),(718,329),(672,341),(671,341))}\n' after writing 0 on SYSTEM_OUTPUT register."
+17:34:34.565 INFO:Closed the TCP client
+
+---------------------------------------------------------------------------

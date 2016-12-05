@@ -1,5 +1,24 @@
 #!/usr/bin/env python
-"""This module contain a class with image processing methods."""
+"""This module contain classes with image processing methods.
+
+Notes
+-----
+A point array is written by convention in the form 
+[row, column]. In a cartesian system, the points are expressed
+as (x,y). Finally, in an image representation (viewer), the typical is 
+to display points coordinates as  (x', y'). They equivalences are the 
+following:
+
+* x = x' = column
+* y = -y' = -row
+
+Thus, special care has to be taken when dealing with operations in 
+different scopes e.g. trigonometric operations will be handled with the 
+cartesian values, while image operations are normally performed with the
+array convention. Finally, when sending the array values to a viewer or 
+to an external device, the image representation mentioned above is 
+the typical coordinates system used.
+"""
 #Standard libraries
 import cv2
 import logging
@@ -18,6 +37,7 @@ class Triangle(object):
         self.midpoint = np.array([])
         self.angle = None
         self.window = np.array([])
+        self.contours = []
 
     def get_pose(self):
         """
@@ -52,9 +72,9 @@ class Triangle(object):
         self.base_index = np.argmin(self.sides)
         self.midpoint = (vertices[self.base_index-1]
                          + vertices[self.base_index-2]) / 2
-        x, y = vertices[self.base_index] - self.midpoint
-        #The array 'y'(rows) counts downwards, contrary to the coordinate system.
-        self.angle = np.arctan2(-y, x)
+        row, col = vertices[self.base_index] - self.midpoint
+        #The array 'y'(rows) counts downwards, contrary to cartesian system.
+        self.angle = np.arctan2(-row, col)
         return self.midpoint[0], self.midpoint[1], self.angle
 
     def get_window(self, k=1.25):
@@ -80,12 +100,14 @@ class Triangle(object):
         return self.window
 
 
+
 class Image(object):
     """Class with image processing methods oriented to UGV detection."""
-    def __init__(self, image):
+    def __init__(self, image=None, contours=None):
         self.image = image
         self._binarized = None
         self.triangles = []
+        self.contours = contours
 
     def binarize(self, thresholds):
         """Get a binarized image from a grey image given the thresholds.
@@ -127,8 +149,8 @@ class Image(object):
         logging.debug("Thresholding between {} and {}".format(thr_min, thr_max))
         #The first binary approach is obtained evaluating 2 thresholds
         raw_binarized = cv2.inRange(self.image, thr_min, thr_max)
-        #A simple erosion gets rid of the whole noise. Dilating the eroded image 
-        #several times provides an acceptable ROI for the binary mask.
+        #A simple erosion gets rid of the whole noise. Dilating the eroded  
+        #image several times provides an acceptable ROI for the binary mask.
         kernel = np.ones((5,5),np.uint8)
         erosion = cv2.erode(raw_binarized, kernel, iterations=1)
         kernel = np.ones((5,5),np.uint8)
@@ -145,7 +167,7 @@ class Image(object):
         logging.debug("Image binarization finished")
         return self._binarized
 
-    def get_shapes(self, tolerance=5):
+    def get_shapes(self, tolerance=5, get_contours=True):
         """
         For each shape on the binarized image, returns its vertices.
 
@@ -153,6 +175,10 @@ class Image(object):
         Once obtained, the vertices are calculated using the 
         Ramer-Douglas-Peucker algorithm. Both are implemented on the 
         skimage library, and there is more information on its docs.
+        
+        if the kwarg get_contours if False, it is assumed that the 
+        contours are already known (stored in variable self.contours). 
+        If this is the case, the marching cubes algorithm is omitted.
 
         Parameters
         ----------
@@ -160,6 +186,12 @@ class Image(object):
             minimum distance between an observed pixel and the previous
             contour pixels required to add the first one to the vertices
             list.
+        
+        get_contours : bool, True as default
+            Specify if the marching cubes algorithm is applied to the 
+            binarized image. Specifically set to False when the 
+            binarization algorithm is implemented in the external 
+            device (e.g. an FPGA).
 
         Returns
         -------
@@ -171,9 +203,11 @@ class Image(object):
         logging.debug("Getting the shapes' vertices in the image")
         #Obtain a list with all the contours in the image, separating each
         #shape in a different element of the list
-        contours_list = skimage.measure.find_contours(self._binarized, 200)
+        if get_contours:
+            self.contours = skimage.measure.find_contours(self._binarized, 200)
+        self.triangles = []
         #Get the vertices of each shape in the image.
-        for cnt in contours_list:
+        for cnt in self.contours:
             coords = skimage.measure.approximate_polygon(cnt, tolerance)
             #The initial vertex is repeatead at the end. Thus, if len is 2
             #it implies a single point polygon. If len is 3 implies a line.

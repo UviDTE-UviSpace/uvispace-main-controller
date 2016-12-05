@@ -137,6 +137,19 @@ class VideoSensor(object):
         logging.debug(repr("Obtained '{}' "
                            "after 'CONFIGURE_CAMERA'".format(conf)))
 
+    def get_register(self, register):
+        """Read the content of the specified register.
+        
+        Parameters
+        ----------
+        register : string
+            key identifier of valid register name of the FPGA. The full
+            list of valid keys and their associated name can be found on
+            the documentation of the client.Client class.
+        """
+        value = self._client.read_register(register)
+        return value
+        
     def set_register(self, register, value):
         """
         Write the desired value into an FPGA register.
@@ -148,7 +161,7 @@ class VideoSensor(object):
             list of valid keys and their associated name can be found on
             the documentation of the client.Client class.
         
-        value : int or 2-element tuple/list
+        value : int or N-element tuple/list
             the value that will be written to the register. It is 
             mandatory to send it as string type. Thus, the value has to
             be converted. For tupples or lists, brackets or parenthesis
@@ -175,13 +188,29 @@ class VideoSensor(object):
         message = self._client.write_register(register, formatted_value)
         self._logger.debug(repr("Obtained '{}' after writing {} on {} register."
                                 "".format(message, formatted_value, register)))
-    def configure_tracker(self):
-        self.write_register('sw', '%s,%i,%i,%i,%i' %(tracker_id, x, y, width, height))
-        for i, box in enumerate(windows):
-            target_id, box = i + start_id + 1, box * 2
-            targets[str(target_id)] = [box[1,0] - box[0,0], box[1,1] - box[0,1]]
-            print video_sensor.configure_tracker(str(target_id), [box[0,0], box[0,1], box[1,0] - box[0,0], box[1,1] - box[0,1]])
-        video_sensor.read_register('al')
+        return message
+
+    def configure_tracker(self, tracker_id, min_x, min_y, width, height):
+        """Send to FPGA rectangle parameters for defining a tracker.
+        
+        Parameters
+        ----------
+        tracker_id : integer
+            identifier of the detected object.
+
+        min_x, min_y : integer
+            value of the X and Y cartesian coordinates, respectively, 
+            of the tracker window.
+
+        width, height : integer
+            value of the width (X axis) and height (Y axis) of the 
+            tracker window.
+        """
+        self._logger.debug('Configurating tracker {}'.format(tracker_id))
+        self.set_register('SET_WINDOW', '{},{},{},{},{}'
+                          ''.format(tracker_id, min_x, min_y, width, height))
+        location = self.get_register('ACTUAL_LOCATION')
+        return location
 
     def capture_frame(self, gray=True, tries=20, output_file=''):
         """
