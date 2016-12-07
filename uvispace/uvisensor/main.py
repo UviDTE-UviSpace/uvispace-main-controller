@@ -5,6 +5,7 @@ import numpy as np
 import signal
 import sys
 import time
+from threading import Thread
 #Local libraries
 import imgprocessing
 import videosensor
@@ -44,7 +45,7 @@ def get_image(cam):
     
     it can be saved to a local file (optional).
     """
-    screenshot = cam.capture_frame(gray=True, output_file='test.png')
+    screenshot = cam.capture_frame(gray=True, output_file='')
     image = imgprocessing.Image(screenshot)
     image.binarize(cam._params['red_thresholds'])
     image.get_shapes()
@@ -66,6 +67,7 @@ def set_tracker(camera, K=2):
     """
     #Get an Image object with triangle shapes in it already segregated.
     image = get_image(camera)
+    tracker = {}
     for triangle in image.triangles:
         triangle.get_pose()
         triangle.get_window()
@@ -75,7 +77,16 @@ def set_tracker(camera, K=2):
         height = K * int(triangle.window[1,0]) - min_y
         tracker = camera.configure_tracker(1, min_x, min_y, width, height)
     return tracker
-    
+
+def safe_quit():
+    global interupted
+    a = None
+    # To use specific exit keyword, change to `while a != "example"`     
+    while a != 'Q':
+        a = raw_input("Press 'Q' for exit\n")
+    print 'interrupting'
+    interupted = True
+        
 def signal_handler(signal, frame):
     """Raises a flag when a keyboard interrupt is raised."""
     global interrupted
@@ -87,14 +98,26 @@ if __name__ == '__main__':
                         level=logging.DEBUG,
                         datefmt='%H:%M:%S',
                         filename='./log/main.log')
+    log = logging.getLogger(__name__)
+    out_hdlr = logging.StreamHandler(sys.stdout)
+    out_hdlr.setFormatter(logging.Formatter('%(asctime)s %(message)s'))
+    out_hdlr.setLevel(logging.INFO)
+    log.addHandler(out_hdlr)
+    log.setLevel(logging.INFO)
     logging.info("BEGINNING MAIN EXECUTION")
-    camera1 = camera_startup('./resources/config/video_sensor1.cfg')
+    camera1 = camera_startup('./resources/config/video_sensor4.cfg')
     location = set_tracker(camera1)
     interrupted = False
+    Thread(target=safe_quit).start()
     signal.signal(signal.SIGINT, signal_handler)
     while not interrupted:
+        time.sleep(1)
+        print 'trying. Interrupted is {}'.format(interrupted)
         #Get the 8 points of the robot 1 and convert them to an array
-        location = camera1.get_register('ACTUAL_LOCATION')['1']
+        try:
+            location = camera1.get_register('ACTUAL_LOCATION')['1']
+        except KeyError:
+            continue
         location_array = [np.array(location)]
         image = imgprocessing.Image(contours=location_array)
         #Obtain 3 vertices from the contours
@@ -102,10 +125,8 @@ if __name__ == '__main__':
         #If no triangles are detected, avoid next instructions.
         if len(image.triangles):
             image.triangles[0].get_pose()
-            image.triangles[0].get_window()
             logging.debug("detected triangle with vertices at {}"
                           "".format(image.triangles[0].vertices))
-        time.sleep(0.01)
     camera_shutdown(camera1)
 
 

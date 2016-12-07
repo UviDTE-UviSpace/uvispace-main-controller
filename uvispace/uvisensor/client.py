@@ -11,6 +11,7 @@ https://github.com/biosbits/bits/blob/master/python/_socket.py
 """
 # Standard libraries
 import ast
+import errno
 import logging
 import socket
 from socket import socket as Socket
@@ -163,7 +164,11 @@ class Client(Socket):
         """Read the value of a register."""
         reg = self._REGISTERS[regkey]
         self.send('r,{}\n'.format(reg))
-        result = self.recv(self.buffer_size)
+        try:
+           result = self.recv(self.buffer_size)
+        except socket.error as (code, msg):
+            if code != errno.EINTR:
+                raise
         #Convert the string input into a valid value e.g. list or int
         formatted_result = ast.literal_eval(result)
         return formatted_result
