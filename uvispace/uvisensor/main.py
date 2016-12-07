@@ -4,11 +4,12 @@ import logging
 import numpy as np
 import signal
 import sys
+import time
 #Local libraries
 import imgprocessing
 import videosensor
 """
-
+Main routine for controlling the external FPGAs.
 """
 def camera_startup(filename):
     """Bring up connection with camera and set up its configuration.
@@ -98,8 +99,13 @@ if __name__ == '__main__':
         image = imgprocessing.Image(contours=location_array)
         #Obtain 3 vertices from the contours
         image.get_shapes(get_contours=False)
-        image.triangles[0].get_pose()
-        image.triangles[0].get_window()
+        #If no triangles are detected, avoid next instructions.
+        if len(image.triangles):
+            image.triangles[0].get_pose()
+            image.triangles[0].get_window()
+            logging.debug("detected triangle with vertices at {}"
+                          "".format(image.triangles[0].vertices))
+        time.sleep(0.01)
     camera_shutdown(camera1)
 
 
