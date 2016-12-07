@@ -38,7 +38,7 @@ class VideoSensor(object):
         """
         Initialize attributes. If filename is passed, open connection.
         """
-        self.filename = filename
+        self.filename = None
         self._ip = ''
         self._port = None
         #Dictionary variable where camera parameters are stored.
@@ -50,7 +50,7 @@ class VideoSensor(object):
         self._logger = logging.getLogger(__name__)
         #Instantiate a configuration class and read input filename.
         self.conf = ConfigParser.RawConfigParser()
-        self.conf.read(filename)
+        self.read_conffile(filename)
         #Open connection if a filename is given
         if self.conf.sections():
             self.connect_client()
@@ -89,6 +89,10 @@ class VideoSensor(object):
         registers by calling set_resgister() method. Finally, send 
         'CONFIGURE_CAMERA' command to FPGA.
         """
+        #Check that the filename is correct
+        if not self.conf.sections():
+            self._logger.ERROR('Missing config file: {}'.format(self.filename))
+            return
         #Sensor color thresholds parameters
         self._params['red_thresholds'] = ast.literal_eval(
                                 self.conf.get('Sensor', 'red_thresholds'))
@@ -136,6 +140,16 @@ class VideoSensor(object):
         conf = self._client.write_command('CONFIGURE_CAMERA', True)
         logging.debug(repr("Obtained '{}' "
                            "after 'CONFIGURE_CAMERA'".format(conf)))
+
+    def read_conffile(self, filename):
+        """
+        Look for a configuration file on the given path and read it.
+        """
+        self.filename = filename
+        self.conf.read(self.filename)
+        if not self.conf.sections():
+            self._logger.ERROR('Missing file at {}'.format(self.filename))
+        return
 
     def get_register(self, register):
         """Read the content of the specified register.
