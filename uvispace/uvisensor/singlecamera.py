@@ -33,9 +33,15 @@ def input_task(begin_event, end_event):
 def cam_task(begin_loop, end_loop, conf_file):
     """Initialize and request UGV position until program exit."""
     camera = videosensor.camera_startup(conf_file)
-    location = videosensor.set_tracker(camera)
+    try:
+        #Check that camera is a valid type
+        location = videosensor.set_tracker(camera)
+    except AttributeError:
+        end_loop.set()
+        return
+    finally:
+        begin_loop.set()
     print 'entering loop'
-    begin_loop.set()
     while not end_loop.isSet():
         #Get the 8 points of the robot 1 and convert them to an array
         try:
@@ -64,11 +70,11 @@ if __name__ == '__main__':
     log = logging.getLogger(__name__)
     logging.info("BEGINNING MAIN EXECUTION")
     #
-    conf_file = './resources/config/video_sensor1.cfg'
+    conf_file = './resources/config/video_sensor2.cfg'
     begin_event = threading.Event()
     end_event = threading.Event()
     threads = [
-           threading.Thread(target=input_task, args=(begin_event, end_event))
+           threading.Thread(target=input_task, args=(begin_event, end_event)),
            threading.Thread(target=cam_task, 
                             args=(begin_event, end_event, conf_file))
               ]
