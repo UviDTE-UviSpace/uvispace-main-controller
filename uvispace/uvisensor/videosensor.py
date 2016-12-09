@@ -26,7 +26,7 @@ def camera_startup(filename):
     #Instantiate VideoSensor class. The filename contains the configuration
     camera = VideoSensor(filename)
     if not camera._connected:
-        sys.exit('Unable to connect')
+        return
     camera.load_configuration()
     #Reset trackers
     camera.set_register('FREE_ALL', '')
@@ -223,7 +223,7 @@ class VideoSensor(object):
         self.filename = filename
         self.conf.read(self.filename)
         if not self.conf.sections():
-            self._logger.ERROR('Missing file at {}'.format(self.filename))
+            self._logger.error('Missing file at {}'.format(self.filename))
         return
 
     def get_register(self, register):
