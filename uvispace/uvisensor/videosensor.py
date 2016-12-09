@@ -1,5 +1,10 @@
 #!/usr/bin/env python
-"""This module contains the VideoSensor class."""
+"""This module contains the VideoSensor class and related functions.
+
+The functions are calls to the VideoSensor class methods in order to
+capture images and then work with them using the imgprrocessing.Image
+class and its methods.
+"""
 #Standard libraries
 import ast
 import ConfigParser
@@ -7,8 +12,78 @@ import logging
 import pylab
 from scipy import misc
 import socket
+import sys
 #Local libraries
 from client import Client
+import imgprocessing
+
+def camera_startup(filename):
+    """Bring up connection with camera and set up its configuration.
+    
+    Get an instance of the VideoSensor class and return it after doing
+    initialization operations.
+    """
+    #Instantiate VideoSensor class. The filename contains the configuration
+    camera = VideoSensor(filename)
+    if not camera._connected:
+        sys.exit('Unable to connect')
+    camera.load_configuration()
+    #Reset trackers
+    camera.set_register('FREE_ALL', '')
+    #Select output = 4?
+    camera.set_register('SYSTEM_OUTPUT', 4)
+    conf = camera._client.write_command('CONFIGURE_CAMERA', True)
+    return camera
+    
+def camera_shutdown(camera):
+    """
+    End connection to camera. Input is an instance of VideoSensor class.
+    
+    If disconnect_client() function is not called, the socket won't be 
+    able to be reopened.
+    """
+    camera.set_register('SYSTEM_OUTPUT', 0)
+    camera.disconnect_client()
+
+def get_image(camera, filename=''):
+    """Get an image. Input is an instance of VideoSensor class
+    
+    it can be saved to a local file (optional).
+    """
+    screenshot = camera.capture_frame(gray=True, output_file=filename)
+    image = imgprocessing.Image(screenshot)
+    image.binarize(camera._params['red_thresholds'])
+    image.get_shapes()
+    return image
+    
+def set_tracker(camera, K=2):
+    """Configure trackers according to detected triangles.
+    
+    Parameters
+    ----------
+    K : int
+        scale coeficient of the cameras.
+        
+    Returns
+    -------
+    tracker : N-elements dictionary
+        Contains the 8-coordinate points from N triangles. They 
+        correspond with 2.
+    """
+    #Get an Image object with triangle shapes in it already segregated.
+    image = get_image(camera)
+    tracker = {}
+    for triangle in image.triangles:
+        triangle.get_pose()
+        triangle.get_window()
+        min_x = K * int(triangle.window[0,1])
+        min_y = K * int(triangle.window[0,0])
+        width = K * int(triangle.window[1,1]) - min_x
+        height = K * int(triangle.window[1,0]) - min_y
+        tracker = camera.configure_tracker(1, min_x, min_y, width, height)
+    return tracker
+
+
 
 class VideoSensor(object):
     """This class contains methods for dealing with FPGA-camera system
