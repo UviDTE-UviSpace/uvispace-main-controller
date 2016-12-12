@@ -35,7 +35,7 @@ def cam_task(begin_loop, end_loop, conf_file):
     camera = videosensor.camera_startup(conf_file)
     try:
         #Check that camera is connected and set tracker location.
-        location = videosensor.set_tracker(camera)
+        videosensor.set_tracker(camera)
     except AttributeError:
         end_loop.set()
         return
