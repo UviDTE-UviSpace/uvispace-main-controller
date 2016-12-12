@@ -9,7 +9,7 @@ import videosensor
 """
 Main routine for controlling an external FPGA with a camera device.
 
-The main routine initializes 2 thread:
+The main routine initializes 2 threads:
 
 * The first thread interacts with the user through terminal. It reads
 input commands, namely for finishing the program.
@@ -34,7 +34,7 @@ def cam_task(begin_loop, end_loop, conf_file):
     """Initialize and request UGV position until program exit."""
     camera = videosensor.camera_startup(conf_file)
     try:
-        #Check that camera is a valid type
+        #Check that camera is connected and set tracker location.
         location = videosensor.set_tracker(camera)
     except AttributeError:
         end_loop.set()
