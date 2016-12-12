@@ -26,7 +26,7 @@ def camera_startup(filename):
     #Instantiate VideoSensor class. The filename contains the configuration
     camera = VideoSensor(filename)
     if not camera._connected:
-        return
+        raise AttributeError("No connection to specified camera.")
     camera.load_configuration()
     #Reset trackers
     camera.set_register('FREE_ALL', '')
@@ -66,22 +66,24 @@ def set_tracker(camera, K=2):
         
     Returns
     -------
-    tracker : N-elements dictionary
-        Contains the 8-coordinate points from N triangles. They 
-        correspond with 2.
+    tracker_position : 5-elements list
+        Contains the information about the configured tracker. The first
+        element is the tracker id, the 2nd and 3rd are the X,Y initial
+        coordinates and the 4th and 5th are the width and height.
     """
     #Get an Image object with triangle shapes in it already segregated.
     image = get_image(camera)
     tracker = {}
-    for triangle in image.triangles:
+    for index, triangle in enumerate(image.triangles):
         triangle.get_pose()
         triangle.get_window()
         min_x = K * int(triangle.window[0,1])
         min_y = K * int(triangle.window[0,0])
         width = K * int(triangle.window[1,1]) - min_x
         height = K * int(triangle.window[1,0]) - min_y
-        tracker = camera.configure_tracker(1, min_x, min_y, width, height)
-    return tracker
+        camera.configure_tracker(index+1, min_x, min_y, width, height)
+        tracker_position = [index+1, min_x, min_y, width, height]
+    return tracker_position
 
 
 
@@ -298,8 +300,6 @@ class VideoSensor(object):
         self._logger.debug('Configurating tracker {}'.format(tracker_id))
         self.set_register('SET_WINDOW', '{},{},{},{},{}'
                           ''.format(tracker_id, min_x, min_y, width, height))
-        location = self.get_register('ACTUAL_LOCATION')
-        return location
 
     def capture_frame(self, gray=True, tries=20, output_file=''):
         """
