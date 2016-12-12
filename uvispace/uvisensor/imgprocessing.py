@@ -96,7 +96,7 @@ class Image(object):
         logging.debug("Image binarization finished")
         return self._binarized
 
-    def get_shapes(self, tolerance=5, get_contours=True):
+    def get_shapes(self, tolerance=8, get_contours=True):
         """
         For each shape on the binarized image, returns its vertices.
 
