@@ -74,6 +74,7 @@ def set_tracker(camera, K=2):
     #Get an Image object with triangle shapes in it already segregated.
     image = get_image(camera)
     tracker = {}
+    tracker_position = []
     for index, triangle in enumerate(image.triangles):
         triangle.get_pose()
         triangle.get_window()
