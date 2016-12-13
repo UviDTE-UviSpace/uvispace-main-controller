@@ -45,8 +45,8 @@ class CameraThread(threading.Thread):
                 location = self.camera.get_register('ACTUAL_LOCATION')['1']
             except KeyError:
                 continue
-            location_array = [np.array(location)]
-            image = imgprocessing.Image(contours=location_array)
+            location_array = np.array(location)
+            image = imgprocessing.Image(contours=[location_array])
             #Obtain 3 vertices from the contours
             image.get_shapes(get_contours=False)
             #If no triangles are detected, avoid next instructions.
@@ -56,7 +56,6 @@ class CameraThread(threading.Thread):
                               "".format(image.triangles[0].vertices))
         logging.debug('shutting down {}'.format(self.name))
         videosensor.camera_shutdown(self.camera)
-
 
 
 class DataFusionThread(threading.Thread):
@@ -74,7 +73,6 @@ class DataFusionThread(threading.Thread):
     def run(self):
         while not self.end_event.isSet():
             pass
-
 
 
 class UserThread(threading.Thread):

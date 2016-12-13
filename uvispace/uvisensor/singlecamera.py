@@ -48,8 +48,8 @@ def cam_task(begin_loop, end_loop, conf_file):
             location = camera.get_register('ACTUAL_LOCATION')['1']
         except KeyError:
             continue
-        location_array = [np.array(location)]
-        image = imgprocessing.Image(contours=location_array)
+        location_array = np.array(location)
+        image = imgprocessing.Image(contours=[location_array])
         #Obtain 3 vertices from the contours
         image.get_shapes(get_contours=False)
         #If no triangles are detected, avoid next instructions.

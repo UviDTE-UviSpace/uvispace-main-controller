@@ -33,6 +33,15 @@ import geometry
 class Image(object):
     """Class with image processing methods oriented to UGV detection."""
     def __init__(self, image=None, contours=None):
+        """
+        Parameters
+        ----------
+        image : np.array
+        
+        contours : N-length list
+            list containing N elements, where each element is an Mx2
+            array containing M points defining a closed contour.
+        """
         self.image = image
         self._binarized = None
         self.triangles = []
