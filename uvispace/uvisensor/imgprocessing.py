@@ -32,7 +32,7 @@ import geometry
 
 class Image(object):
     """Class with image processing methods oriented to UGV detection."""
-    def __init__(self, image=None, contours=None):
+    def __init__(self, image, contours=[]):
         """
         Parameters
         ----------
@@ -104,6 +104,46 @@ class Image(object):
         self._binarized[labels != background] = 255
         logging.debug("Image binarization finished")
         return self._binarized
+
+    def correct_distortion(self, kx=0.035, ky=0.035, only_contours=True):
+        """
+        Correct barrel distortion on contours or on the whole image.
+        
+        The distortion is corrected using a 2nd polynomial equation for
+        every pixel with coordinates (Xd, Yd). The resulting corrected
+        coordinates (Xu, Yu) are obtained with the following equations:
+        
+        Xu = (Xd - Cx) * (1 + kx * r²) + Cx
+        Yu = (Yd - Cy) * (1 + ky * r²) + Cy
+        r  = (Xd - Cx)² + (Yd - Cy)² / [(Cx² + Cy²) * 2]
+        
+        Paramters
+        ---------
+        kx, ky : float
+            Distortion coefficients of the lens that captured the image.
+
+        only_contours : bool
+            Specify if the correction is to be applied to the whole 
+            image or only to the stored contours values.
+        """
+        #Calculate the image center as the middle point of the width and the
+        #height and then rescale to the FPGA true coordinates values.
+        center = (np.array(self.image.shape)/2)
+        #Change coordinates order to adapt to FPGA system
+        center = np.array([center[1], center[0]])
+        #If contours is an empty list, algorithm is not outperformed.
+        if only_contours and self.contours:
+            for index, cnt in enumerate(self.contours):
+                distance = cnt - center
+                #Calculate the r distance. First numerator and then denominator.
+                r = (distance ** 2).sum(axis=1).astype(np.float)
+                r /= (center ** 2).sum() * 2
+                coeffs = np.array([r*kx, r*ky]).transpose() + 1
+                corrected = distance * coeffs + center
+                self.contours[index] = corrected
+         elif not only_contours:
+            pass
+                
 
     def get_shapes(self, tolerance=8, get_contours=True):
         """
