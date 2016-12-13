@@ -9,16 +9,58 @@ are based on matricial operations and linear algebra.
 """
 
 class Triangle(object):
-    def __init__(self, vertices):
+    def __init__(self, vertices, isglobal=False):
         self.vertices = vertices.astype(np.float32)
-        #The barycenter X is equal to the sum of the X coordinates divided by 3
+        self.isglobal = isglobal
+        #The barycenter X is equal to the sum of the X coordinates divided by 3.
         self.barycenter = self.vertices.sum(axis=0) / 3
         self.sides = np.zeros([3])
+        #base_index is the identifier for the base side.
         self.base_index = None
         self.midpoint = np.array([])
         self.angle = None
         self.window = np.array([])
         self.contours = []
+
+    def get_local2global(self, x_offset, y_offset):
+        """
+        Convert Triangle coordinates to the global coordinates system.
+        
+        Only absolute coordinates shall be transformed. Lengths and 
+        angles are invariant to the coordinate origin.
+        
+        Parameters
+        ----------
+        x_offset, y_offset : integer
+            column and row offsets between the local and the global 
+            systems.
+        """
+        if self.isglobal:
+            return
+        self.vertices += [x_offset, y_offset]
+        self.midpoint += [x_offset, y_offset]
+        self.barycenter += [x_offset, y_offset]
+        self.isglobal = True
+
+    def get_global2local(self, x_offset, y_offset):
+        """
+        Convert Triangle coordinates to the local coordinates system.
+        
+        Only absolute coordinates shall be transformed. Lengths and 
+        angles are invariant to the coordinate origin.
+        
+        Parameters
+        ----------
+        x_offset, y_offset : integer
+            column and row offsets between the local and the global 
+            systems.
+        """
+        if not self.isglobal:
+            return
+        self.vertices -= [x_offset, y_offset]
+        self.midpoint -= [x_offset, y_offset]
+        self.barycenter -= [x_offset, y_offset]
+        self.isglobal = False
 
     def get_pose(self):
         """
