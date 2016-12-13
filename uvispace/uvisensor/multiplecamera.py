@@ -8,52 +8,58 @@ import threading
 import imgprocessing
 import videosensor
 """
-Main routine for controlling an external FPGA with a camera device.
+Main routine for controlling N external FPGAs with a camera device.
 
-The main routine initializes 2 threads:
+The main routine initializes N+2 threads:
 
 * The first thread interacts with the user through terminal. It reads
 input commands, namely for finishing the program.
-* The second thread contains the FGPA initialization process and an
-infinite loop is continually requesting the UGV position to the FPGA.
+* N threads contain the FGPAs initialization processes and infinite 
+loops are continually requesting the UGVs' positions to the FPGA.
+* A final thread is in charge of merging the information obtained from
+each FPGA.
 
 ------------------------
 NOTE: The proper way to end the program is to press 'Q', as the terminal
 prompt indicates during execution. Using the Keyboard Interrupt will 
-probably corrupt the TCP/IP socket and the FPGA will have to be reset.
+probably corrupt the TCP/IP socket and the FPGAs will have to be reset.
 """
 class CameraThread(threading.Thread):
     """
     Create a thread and a VideoSensor object. Capture frames when run.
     """
     def __init__(self, begin_event, end_event, lock,
-                 name=None, cfile=''):
+                 name=None, conf_file=''):
         threading.Thread.__init__(self, name=name)
         #Initialize TCP/IP connection and FPGA operation.
-        self.camera = videosensor.camera_startup(cfile)
+        self.camera = videosensor.camera_startup(conf_file)
         self.triangles = [None]
         self.begin_event = begin_event
         self.end_event = end_event
         self.lock = lock
+        self.image = []
 
     def run(self):
         #Locate shapes in whole image and configure trackers.
-        videosensor.set_tracker(self.camera)
+        self.image, _ = videosensor.set_tracker(self.camera)
         self.begin_event.set()
         while not self.end_event.isSet():
             try:
                 location = self.camera.get_register('ACTUAL_LOCATION')['1']
             except KeyError:
                 continue
-            location_array = np.array(location)
-            image = imgprocessing.Image(contours=[location_array])
+            #Add the obtained scaled location to the image contours.
+            self.image.contours = [np.array(location) / self.camera._scale]
+            #Correct barrel distortion.
+            self.image.correct_distortion()
             #Obtain 3 vertices from the contours
-            image.get_shapes(get_contours=False)
+            self.image.get_shapes(get_contours=False)
             #If no triangles are detected, avoid next instructions.
-            if len(image.triangles):
-                self.triangles[0] = image.triangles[0]
+            if len(self.image.triangles):
+                self.triangles[0] = self.image.triangles[0]
+                self.triangles[0].get_local2global()
                 logging.debug("detected triangle with vertices at {}"
-                              "".format(image.triangles[0].vertices))
+                              "".format(self.triangles[0].vertices))
         logging.debug('shutting down {}'.format(self.name))
         videosensor.camera_shutdown(self.camera)
 

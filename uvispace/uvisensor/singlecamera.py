@@ -34,8 +34,8 @@ def cam_task(begin_loop, end_loop, conf_file):
     """Initialize and request UGV position until program exit."""
     camera = videosensor.camera_startup(conf_file)
     try:
-        #Check that camera is connected and set tracker location.
-        videosensor.set_tracker(camera)
+        #Check that camera is connected and tracker location and get a frame.
+        image, _ = videosensor.set_tracker(camera)
     except AttributeError:
         end_loop.set()
         return
@@ -48,8 +48,8 @@ def cam_task(begin_loop, end_loop, conf_file):
             location = camera.get_register('ACTUAL_LOCATION')['1']
         except KeyError:
             continue
-        location_array = np.array(location)
-        image = imgprocessing.Image(contours=[location_array])
+        image.contours = [np.array(location)/camera._scale]
+        image.correct_distortion()
         #Obtain 3 vertices from the contours
         image.get_shapes(get_contours=False)
         #If no triangles are detected, avoid next instructions.
