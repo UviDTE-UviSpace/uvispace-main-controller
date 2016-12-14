@@ -56,20 +56,25 @@ def get_image(camera, filename=''):
     image.get_shapes()
     return image
     
-def set_tracker(camera, K=2):
+def set_tracker(camera):
     """Configure trackers according to detected triangles.
     
     Parameters
     ----------
-    K : int
-        scale coeficient of the cameras.
-        
+    camera : VideoSensor() object
+        instance of the VideoSensor() class, from whom the initial
+        frame will be obtained, and whose trackers register will be
+        configured.
+    
     Returns
     -------
     tracker_position : 5-elements list
         Contains the information about the configured tracker. The first
         element is the tracker id, the 2nd and 3rd are the X,Y initial
         coordinates and the 4th and 5th are the width and height.
+        
+    image : imgprocessing.Image() object
+        frame captured and obtained from the FPGA.
     """
     #Get an Image object with triangle shapes in it already segregated.
     image = get_image(camera)
@@ -78,23 +83,19 @@ def set_tracker(camera, K=2):
     for index, triangle in enumerate(image.triangles):
         triangle.get_pose()
         triangle.get_window()
-        min_x = K * int(triangle.window[0,1])
-        min_y = K * int(triangle.window[0,0])
-        width = K * int(triangle.window[1,1]) - min_x
-        height = K * int(triangle.window[1,0]) - min_y
+        min_x = int(camera._scale * triangle.window[0,1])
+        min_y = int(camera._scale * triangle.window[0,0])
+        width = int(camera._scale * triangle.window[1,1] - min_x)
+        height = int(camera._scale * triangle.window[1,0] - min_y)
         camera.configure_tracker(index+1, min_x, min_y, width, height)
         tracker_position = [index+1, min_x, min_y, width, height]
-    return tracker_position
+    return image, tracker_position
 
 
 
 class VideoSensor(object):
-    """This class contains methods for dealing with FPGA-camera system
-
-    Parameters
-    ----------
-    filename : str
-        Path of the camera config file.
+    """
+    This class contains methods for dealing with FPGA-camera system.
     """
     #Allowed attribute values.
     PARAMETERS = ('red_thresholds',
@@ -112,13 +113,27 @@ class VideoSensor(object):
                   'skip',
                   'output')
 
-    def __init__(self, filename=''):
+    def __init__(self, filename='', scale=2.0):
         """
         Initialize attributes. If filename is passed, open connection.
+        
+        Parameters
+        ----------
+        filename : string
+            Path to the configuration file of the camera. The path shall
+            be passed relatively to the script directory.
+            
+        K : float
+            scale value of the camera. relationship between the full
+            resolution of the FPGA and the actual resolution that is 
+            used. By, default, the FPGA is scaled with a 2:1 scale 
+            i.e. only half of the pixels are used.
         """
         self.filename = None
+        self.offsets = [0,0]
         self._ip = ''
         self._port = None
+        self._scale = scale
         #Dictionary variable where camera parameters are stored.
         self._params = {}
         #The Client class handles the TCP/IP connection to the device.
@@ -190,6 +205,8 @@ class VideoSensor(object):
         self._params['exposure'] = self.conf.getint('Camera', 'exposure')
         self._params['skip'] = self._params['row_mode']
         self._params['output'] = 0
+        #Read and store the camera offsets
+        self.get_offsets()
         #If the flag is marked as False, the method stops here.
         if not write2fpga:
             logging.debug("Loaded parameters. FPGA wasn't configured")
@@ -228,6 +245,40 @@ class VideoSensor(object):
         if not self.conf.sections():
             self._logger.error('Missing file at {}'.format(self.filename))
         return
+
+    def get_offsets(self):
+        """
+        Get the offset of the sensor respect to the iSpace center.
+        
+        The row offset of the camera images corresponds to the images
+        height and the column offset corresponds to the images width.
+        
+        Returns
+        -------
+        offsets : 2-element list
+            List containing the row and column offset i.e. 
+            [row_offset, col_offset] 
+        """
+        #Get the physical quadrant value
+        quadrant = self.conf.get('Misc', 'quadrant')
+        try:
+            width = self._params['width']
+            height = self._params['height']
+        except KeyError:
+            raise KeyError("VideoSensor parameters were not loaded yet")
+        if quadrant == '1':
+            offsets = [0, 0]
+        elif quadrant == '2':
+            offsets = [0, -width]
+        elif quadrant == '3':
+            offsets = [-height, -width]
+        elif quadrant == '4':
+            offsets = [-height, 0]
+        try:
+            self.offsets = offsets
+        except UnboundLocalError:
+            raise AttributeError("Quadrant not valid: {}".format(quadrant))
+        return offsets
 
     def get_register(self, register):
         """Read the content of the specified register.
@@ -284,7 +335,7 @@ class VideoSensor(object):
 
     def configure_tracker(self, tracker_id, min_x, min_y, width, height):
         """Send to FPGA rectangle parameters for defining a tracker.
-        
+
         Parameters
         ----------
         tracker_id : integer
@@ -297,6 +348,10 @@ class VideoSensor(object):
         width, height : integer
             value of the width (X axis) and height (Y axis) of the 
             tracker window.
+
+        NOTE: It is mandatory that the coordinates and dimensions passed
+        to the FPGA are integers. Other types like float are not valid
+        and the FPGA will not recognize them.
         """
         self._logger.debug('Configurating tracker {}'.format(tracker_id))
         self.set_register('SET_WINDOW', '{},{},{},{},{}'

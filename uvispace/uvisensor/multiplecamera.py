@@ -48,7 +48,7 @@ class CameraThread(threading.Thread):
                 location = self.camera.get_register('ACTUAL_LOCATION')['1']
             except KeyError:
                 continue
-            #Add the obtained scaled location to the image contours.
+            #Add the obtained location to the contours list after scaling it.
             self.image.contours = [np.array(location) / self.camera._scale]
             #Correct barrel distortion.
             self.image.correct_distortion()
@@ -57,7 +57,7 @@ class CameraThread(threading.Thread):
             #If no triangles are detected, avoid next instructions.
             if len(self.image.triangles):
                 self.triangles[0] = self.image.triangles[0]
-                self.triangles[0].get_local2global()
+                self.triangles[0].get_local2global(self.camera.offsets)
                 logging.debug("detected triangle with vertices at {}"
                               "".format(self.triangles[0].vertices))
         logging.debug('shutting down {}'.format(self.name))

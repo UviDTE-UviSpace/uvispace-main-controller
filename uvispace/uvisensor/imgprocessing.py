@@ -113,9 +113,9 @@ class Image(object):
         every pixel with coordinates (Xd, Yd). The resulting corrected
         coordinates (Xu, Yu) are obtained with the following equations:
         
-        Xu = (Xd - Cx) * (1 + kx * r²) + Cx
-        Yu = (Yd - Cy) * (1 + ky * r²) + Cy
-        r  = (Xd - Cx)² + (Yd - Cy)² / [(Cx² + Cy²) * 2]
+        Xu = (Xd - Cx) * (1 + kx * r^2) + Cx
+        Yu = (Yd - Cy) * (1 + ky * r^2) + Cy
+        r  = (Xd - Cx)^2 + (Yd - Cy)^2 / [(Cx^2 + Cy^2) * 2]
         
         Paramters
         ---------
@@ -141,7 +141,7 @@ class Image(object):
                 coeffs = np.array([r*kx, r*ky]).transpose() + 1
                 corrected = distance * coeffs + center
                 self.contours[index] = corrected
-         elif not only_contours:
+        elif not only_contours:
             pass
                 
 

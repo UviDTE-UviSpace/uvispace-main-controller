@@ -22,7 +22,7 @@ class Triangle(object):
         self.window = np.array([])
         self.contours = []
 
-    def get_local2global(self, x_offset, y_offset):
+    def get_local2global(self, offsets):
         """
         Convert Triangle coordinates to the global coordinates system.
         
@@ -31,18 +31,21 @@ class Triangle(object):
         
         Parameters
         ----------
-        x_offset, y_offset : integer
+        offsets[row_offset, col_offset] : 2-integer list
             column and row offsets between the local and the global 
             systems.
         """
         if self.isglobal:
             return
-        self.vertices += [x_offset, y_offset]
-        self.midpoint += [x_offset, y_offset]
-        self.barycenter += [x_offset, y_offset]
+        self.vertices += offsets
+        try:
+            self.midpoint += offsets
+        except ValueError:
+            pass
+        self.barycenter += offsets
         self.isglobal = True
 
-    def get_global2local(self, x_offset, y_offset):
+    def get_global2local(self, offsets):
         """
         Convert Triangle coordinates to the local coordinates system.
         
@@ -51,15 +54,18 @@ class Triangle(object):
         
         Parameters
         ----------
-        x_offset, y_offset : integer
+        offsets[row_offset, col_offset] : 2-integer list
             column and row offsets between the local and the global 
             systems.
         """
         if not self.isglobal:
             return
-        self.vertices -= [x_offset, y_offset]
-        self.midpoint -= [x_offset, y_offset]
-        self.barycenter -= [x_offset, y_offset]
+        self.vertices -= offsets
+        try:
+            self.midpoint -= offsets
+        except ValueError:
+            pass
+        self.barycenter -= offsets
         self.isglobal = False
 
     def get_pose(self):
