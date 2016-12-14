@@ -11,6 +11,7 @@ are based on matricial operations and linear algebra.
 class Triangle(object):
     def __init__(self, vertices, isglobal=False):
         self.vertices = vertices.astype(np.float32)
+        #This flag indicates if the coordinates are given in a 4-quadrant system.
         self.isglobal = isglobal
         #The barycenter X is equal to the sum of the X coordinates divided by 3.
         self.barycenter = self.vertices.sum(axis=0) / 3
@@ -22,27 +23,52 @@ class Triangle(object):
         self.window = np.array([])
         self.contours = []
 
-    def get_local2global(self, offsets):
+    def get_local2global(self, offsets, K=1):
         """
         Convert Triangle coordinates to the global coordinates system.
-        
+
+        The function performs 2 transformations:
+
+        * Obain the 4-quadrant coordinates. The input is a coordinate 
+        for a 1-quadrant system, and the output corresponds to the 
+        4-quadrant system.
+        * Move y-axis origin. Initially, for a given image the origin
+        is placed at its top. However, for the used system the origin 
+        is placed at the middle of the 4 quadrants.
+
         Only absolute coordinates shall be transformed. Lengths and 
         angles are invariant to the coordinate origin.
-        
+
+        Finally, a scale factor will be applied to the coordinates. The 
+        coordinates will be directly multiplied byy the K constant.
+
         Parameters
         ----------
         offsets[row_offset, col_offset] : 2-integer list
             column and row offsets between the local and the global 
             systems.
+
+        K : positive int or float
+            Scale factor that will be applied to the points coordinates.
         """
+        if K <= 0:
+            raise ValueError("The scale factor K must be greater than 0")
         if self.isglobal:
             return
-        self.vertices += offsets
+        self.vertices[:,0] = offsets[0] - self.vertices[:,0]
+        self.vertices[:,1] -= offsets[1]
+        self.vertices *= K
+        self.barycenter[:,0] = offsets[0] - self.barycenter[:,0]
+        self.barycenter[:,1] -= offsets[1]
+        self.barycenter *= K
+        #If the pose was not previously calculated, 
+        #a ValueError is catched and ignored.
         try:
-            self.midpoint += offsets
+            self.midpoint[:,0] = offsets[0] - self.midpoint[:,0]
+            self.midpoint[:,1] -= offsets[1]
+            self.midpoint *= K
         except ValueError:
             pass
-        self.barycenter += offsets
         self.isglobal = True
 
     def get_global2local(self, offsets):
@@ -61,11 +87,11 @@ class Triangle(object):
         if not self.isglobal:
             return
         self.vertices -= offsets
+        self.barycenter -= offsets
         try:
             self.midpoint -= offsets
         except ValueError:
             pass
-        self.barycenter -= offsets
         self.isglobal = False
 
     def get_pose(self):

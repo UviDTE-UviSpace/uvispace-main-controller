@@ -1,0 +1,2032 @@
+13:02:44.049 INFO (MainThread):BEGINNING MAIN EXECUTION
+13:02:44.050 DEBUG (MainThread):Opened configuration file. Connecting to 172.19.5.213
+13:02:44.051 INFO (MainThread):Started TCP client with IP: 172.19.5.213 and PORT:5005.
+13:02:44.056 DEBUG (MainThread):"Obtained '(551040525,784051947)\n' after writing 551040525,784051947 on RED_THRESHOLD register."
+13:02:44.057 DEBUG (MainThread):"Obtained '(4198404,0)\n' after writing 4198404,0 on GREEN_THRESHOLD register."
+13:02:44.059 DEBUG (MainThread):"Obtained '(4198404,0)\n' after writing 4198404,0 on BLUE_THRESHOLD register."
+13:02:44.061 DEBUG (MainThread):"Obtained '(648,486)\n' after writing 648,486 on IMAGE_SHAPE register."
+13:02:44.063 DEBUG (MainThread):"Obtained '1111\n' after writing 1111 on IMAGE_EXPOSURE register."
+13:02:44.065 DEBUG (MainThread):"Obtained '(0,0)\n' after writing 0,0 on SYSTEM_INDEXES register."
+13:02:44.066 DEBUG (MainThread):"Obtained '(2591,1943)\n' after writing 2591,1943 on SYSTEM_SHAPE register."
+13:02:44.068 DEBUG (MainThread):"Obtained '(1,1)\n' after writing 1,1 on SYSTEM_MODES register."
+13:02:44.070 DEBUG (MainThread):"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+13:02:45.283 DEBUG (MainThread):"Obtained 'Camera sensor configured.\n' after 'CONFIGURE_CAMERA'"
+13:02:45.285 DEBUG (MainThread):"Obtained 'All trackers freed.\n' after writing  on FREE_ALL register."
+13:02:45.286 DEBUG (MainThread):"Obtained '4\n' after writing 4 on SYSTEM_OUTPUT register."
+13:02:47.284 DEBUG (MainThread):Opened configuration file. Connecting to 172.19.5.214
+13:02:47.285 INFO (MainThread):Started TCP client with IP: 172.19.5.214 and PORT:5005.
+13:02:47.290 DEBUG (MainThread):"Obtained '(551040525,784051947)\n' after writing 551040525,784051947 on RED_THRESHOLD register."
+13:02:47.292 DEBUG (MainThread):"Obtained '(4198404,0)\n' after writing 4198404,0 on GREEN_THRESHOLD register."
+13:02:47.293 DEBUG (MainThread):"Obtained '(4198404,0)\n' after writing 4198404,0 on BLUE_THRESHOLD register."
+13:02:47.295 DEBUG (MainThread):"Obtained '(648,486)\n' after writing 648,486 on IMAGE_SHAPE register."
+13:02:47.297 DEBUG (MainThread):"Obtained '1111\n' after writing 1111 on IMAGE_EXPOSURE register."
+13:02:47.299 DEBUG (MainThread):"Obtained '(0,0)\n' after writing 0,0 on SYSTEM_INDEXES register."
+13:02:47.301 DEBUG (MainThread):"Obtained '(2591,1943)\n' after writing 2591,1943 on SYSTEM_SHAPE register."
+13:02:47.303 DEBUG (MainThread):"Obtained '(1,1)\n' after writing 1,1 on SYSTEM_MODES register."
+13:02:47.305 DEBUG (MainThread):"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+13:02:49.084 DEBUG (MainThread):"Obtained 'Camera sensor configured.\n' after 'CONFIGURE_CAMERA'"
+13:02:49.086 DEBUG (MainThread):"Obtained 'All trackers freed.\n' after writing  on FREE_ALL register."
+13:02:49.088 DEBUG (MainThread):"Obtained '4\n' after writing 4 on SYSTEM_OUTPUT register."
+13:02:51.085 DEBUG (MainThread):Opened configuration file. Connecting to 172.19.5.215
+13:02:51.086 INFO (MainThread):Started TCP client with IP: 172.19.5.215 and PORT:5005.
+13:02:51.091 DEBUG (MainThread):"Obtained '(551040525,784051947)\n' after writing 551040525,784051947 on RED_THRESHOLD register."
+13:02:51.093 DEBUG (MainThread):"Obtained '(4198404,0)\n' after writing 4198404,0 on GREEN_THRESHOLD register."
+13:02:51.095 DEBUG (MainThread):"Obtained '(4198404,0)\n' after writing 4198404,0 on BLUE_THRESHOLD register."
+13:02:51.096 DEBUG (MainThread):"Obtained '(648,481)\n' after writing 648,481 on IMAGE_SHAPE register."
+13:02:51.098 DEBUG (MainThread):"Obtained '1111\n' after writing 1111 on IMAGE_EXPOSURE register."
+13:02:51.100 DEBUG (MainThread):"Obtained '(0,0)\n' after writing 0,0 on SYSTEM_INDEXES register."
+13:02:51.102 DEBUG (MainThread):"Obtained '(2591,1923)\n' after writing 2591,1923 on SYSTEM_SHAPE register."
+13:02:51.104 DEBUG (MainThread):"Obtained '(1,1)\n' after writing 1,1 on SYSTEM_MODES register."
+13:02:51.106 DEBUG (MainThread):"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+13:02:53.071 DEBUG (MainThread):"Obtained 'Camera sensor configured.\n' after 'CONFIGURE_CAMERA'"
+13:02:53.072 DEBUG (MainThread):"Obtained 'All trackers freed.\n' after writing  on FREE_ALL register."
+13:02:53.074 DEBUG (MainThread):"Obtained '4\n' after writing 4 on SYSTEM_OUTPUT register."
+13:02:55.072 DEBUG (MainThread):Opened configuration file. Connecting to 172.19.5.216
+13:02:55.073 INFO (MainThread):Started TCP client with IP: 172.19.5.216 and PORT:5005.
+13:02:55.077 DEBUG (MainThread):"Obtained '(551040525,784051947)\n' after writing 551040525,784051947 on RED_THRESHOLD register."
+13:02:55.079 DEBUG (MainThread):"Obtained '(4198404,0)\n' after writing 4198404,0 on GREEN_THRESHOLD register."
+13:02:55.081 DEBUG (MainThread):"Obtained '(4198404,0)\n' after writing 4198404,0 on BLUE_THRESHOLD register."
+13:02:55.083 DEBUG (MainThread):"Obtained '(648,486)\n' after writing 648,486 on IMAGE_SHAPE register."
+13:02:55.085 DEBUG (MainThread):"Obtained '1111\n' after writing 1111 on IMAGE_EXPOSURE register."
+13:02:55.087 DEBUG (MainThread):"Obtained '(0,0)\n' after writing 0,0 on SYSTEM_INDEXES register."
+13:02:55.089 DEBUG (MainThread):"Obtained '(2591,1943)\n' after writing 2591,1943 on SYSTEM_SHAPE register."
+13:02:55.091 DEBUG (MainThread):"Obtained '(1,1)\n' after writing 1,1 on SYSTEM_MODES register."
+13:02:55.092 DEBUG (MainThread):"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+13:02:56.319 DEBUG (MainThread):"Obtained 'Camera sensor configured.\n' after 'CONFIGURE_CAMERA'"
+13:02:56.320 DEBUG (MainThread):"Obtained 'All trackers freed.\n' after writing  on FREE_ALL register."
+13:02:56.322 DEBUG (MainThread):"Obtained '4\n' after writing 4 on SYSTEM_OUTPUT register."
+13:02:59.071 DEBUG (Camera2  ):"'Image captured.\n' after 0 tries."
+13:02:59.084 DEBUG (Camera1  ):"'Image captured.\n' after 0 tries."
+13:02:59.094 DEBUG (Camera2  ):'GET_GRAY_IMAGE' command sent.
+13:02:59.116 DEBUG (Camera1  ):'GET_GRAY_IMAGE' command sent.
+13:02:59.283 DEBUG (Camera0  ):"'Image captured.\n' after 0 tries."
+13:02:59.336 DEBUG (Camera0  ):'GET_GRAY_IMAGE' command sent.
+13:03:00.326 DEBUG (Camera3  ):"'Image captured.\n' after 0 tries."
+13:03:00.336 DEBUG (Camera3  ):'GET_GRAY_IMAGE' command sent.
+13:03:02.806 DEBUG (Camera2  ):Received 311688 bytes of 311688 (100.00%)
+13:03:02.836 DEBUG (Camera2  ):Thresholding between 131 and 186
+13:03:02.873 DEBUG (Camera1  ):Received 314928 bytes of 314928 (100.00%)
+13:03:02.873 DEBUG (Camera1  ):Thresholding between 131 and 186
+13:03:02.908 DEBUG (Camera2  ):Image binarization finished
+13:03:02.924 DEBUG (Camera2  ):Getting the shapes' vertices in the image
+13:03:02.939 DEBUG (Camera2  ):A 2-vertices shape was found
+13:03:02.942 DEBUG (Camera2  ):A 2-vertices shape was found
+13:03:02.943 DEBUG (Camera1  ):Image binarization finished
+13:03:02.948 DEBUG (Camera2  ):A 2-vertices shape was found
+13:03:02.952 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:02.956 DEBUG (Camera2  ):A 2-vertices shape was found
+13:03:02.960 DEBUG (Camera1  ):A 2-vertices shape was found
+13:03:02.972 DEBUG (Camera2  ):A 2-vertices shape was found
+13:03:02.989 DEBUG (Camera1  ):A 2-vertices shape was found
+13:03:02.989 DEBUG (Camera2  ):A 2-vertices shape was found
+13:03:02.993 DEBUG (Camera1  ):A 2-vertices shape was found
+13:03:03.006 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:03.007 DEBUG (Camera2  ):A 7-vertices shape was found
+13:03:03.007 DEBUG (Camera1  ):A 2-vertices shape was found
+13:03:03.027 DEBUG (Camera2  ):A 2-vertices shape was found
+13:03:03.028 DEBUG (Camera2  ):A 2-vertices shape was found
+13:03:03.029 DEBUG (Camera2  ):A 2-vertices shape was found
+13:03:03.029 DEBUG (Camera1  ):Configurating tracker 1
+13:03:03.036 DEBUG (Camera2  ):A 2-vertices shape was found
+13:03:03.050 DEBUG (Camera1  ):"Obtained '(636,482,143,143)\n' after writing 1,636,482,143,143 on SET_WINDOW register."
+13:03:03.051 DEBUG (Camera2  ):A 2-vertices shape was found
+13:03:03.072 DEBUG (Camera2  ):A 2-vertices shape was found
+13:03:03.072 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:03.072 DEBUG (Camera1  ):A 2-vertices shape was found
+13:03:03.112 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:03.129 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:03.132 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:03.132 DEBUG (Camera2  ):A 11-vertices shape was found
+13:03:03.153 DEBUG (Camera0  ):Received 314928 bytes of 314928 (100.00%)
+13:03:03.162 DEBUG (Camera2  ):A 2-vertices shape was found
+13:03:03.163 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:03.186 DEBUG (Camera0  ):Thresholding between 131 and 186
+13:03:03.188 DEBUG (Camera2  ):A 2-vertices shape was found
+13:03:03.196 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:03.200 DEBUG (Camera2  ):A 2-vertices shape was found
+13:03:03.201 DEBUG (Camera2  ):A 2-vertices shape was found
+13:03:03.202 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:03.208 DEBUG (Camera2  ):A 2-vertices shape was found
+13:03:03.215 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:03.215 DEBUG (Camera2  ):A 2-vertices shape was found
+13:03:03.231 DEBUG (Camera0  ):Image binarization finished
+13:03:03.234 DEBUG (Camera2  ):A 2-vertices shape was found
+13:03:03.244 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:03.244 DEBUG (Camera0  ):Getting the shapes' vertices in the image
+13:03:03.250 DEBUG (Camera2  ):A 2-vertices shape was found
+13:03:03.268 DEBUG (Camera2  ):A 2-vertices shape was found
+13:03:03.268 DEBUG (Camera2  ):A 2-vertices shape was found
+13:03:03.272 DEBUG (Camera2  ):A 2-vertices shape was found
+13:03:03.273 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:03.273 DEBUG (Camera2  ):A 2-vertices shape was found
+13:03:03.316 DEBUG (Camera2  ):A 2-vertices shape was found
+13:03:03.316 DEBUG (Camera2  ):A 2-vertices shape was found
+13:03:03.316 DEBUG (Camera2  ):A 2-vertices shape was found
+13:03:03.320 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:03.322 DEBUG (Camera2  ):A 2-vertices shape was found
+13:03:03.324 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:03.325 DEBUG (Camera2  ):A 2-vertices shape was found
+13:03:03.340 DEBUG (Camera2  ):A 2-vertices shape was found
+13:03:03.346 DEBUG (Camera2  ):A 2-vertices shape was found
+13:03:03.350 DEBUG (Camera2  ):A 2-vertices shape was found
+13:03:03.350 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:03.351 DEBUG (Camera2  ):A 2-vertices shape was found
+13:03:03.356 DEBUG (Camera2  ):A 2-vertices shape was found
+13:03:03.362 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:03.363 DEBUG (Camera2  ):A 2-vertices shape was found
+13:03:03.368 DEBUG (Camera2  ):A 2-vertices shape was found
+13:03:03.369 DEBUG (Camera2  ):A 2-vertices shape was found
+13:03:03.369 DEBUG (Camera2  ):A 2-vertices shape was found
+13:03:03.369 DEBUG (Camera2  ):A 2-vertices shape was found
+13:03:03.372 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:03.372 DEBUG (Camera2  ):A 2-vertices shape was found
+13:03:03.396 DEBUG (Camera2  ):A 2-vertices shape was found
+13:03:03.397 DEBUG (Camera2  ):A 2-vertices shape was found
+13:03:03.397 DEBUG (Camera2  ):A 2-vertices shape was found
+13:03:03.398 DEBUG (Camera2  ):A 2-vertices shape was found
+13:03:03.400 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:03.422 DEBUG (Camera2  ):A 2-vertices shape was found
+13:03:03.436 DEBUG (Camera2  ):A 2-vertices shape was found
+13:03:03.436 DEBUG (Camera2  ):A 2-vertices shape was found
+13:03:03.439 DEBUG (Camera2  ):A 2-vertices shape was found
+13:03:03.439 DEBUG (Camera2  ):A 2-vertices shape was found
+13:03:03.441 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:03.441 DEBUG (Camera2  ):A 2-vertices shape was found
+13:03:03.444 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:03.456 DEBUG (Camera2  ):A 2-vertices shape was found
+13:03:03.478 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:03.505 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:03.528 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:03.548 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:03.574 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:03.580 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:03.592 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:03.626 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:03.627 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:03.641 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:03.657 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:03.659 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:03.691 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 365.01226807 -371.48999023]
+ [ 346.50686646 -356.48519897]]
+13:03:03.740 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:03.741 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:03.744 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:03.822 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:03.834 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:03.836 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:03.880 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:03.896 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:03.932 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:03.996 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:04.008 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:04.110 DEBUG (Camera3  ):Received 314928 bytes of 314928 (100.00%)
+13:03:04.110 DEBUG (Camera3  ):Thresholding between 131 and 186
+13:03:04.114 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:04.117 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:04.118 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:04.139 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:04.174 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:04.185 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:04.187 DEBUG (Camera3  ):Image binarization finished
+13:03:04.216 DEBUG (Camera3  ):Getting the shapes' vertices in the image
+13:03:04.227 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:04.237 INFO (User Thread):All cameras were initialized
+13:03:04.243 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:04.260 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:04.314 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:04.324 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:04.336 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:04.376 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:04.396 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:04.412 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:04.432 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:04.492 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:04.496 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:04.524 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:04.572 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:04.586 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:04.645 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:04.650 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:04.667 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:04.684 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:04.692 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:04.698 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:04.715 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:04.724 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:04.742 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:04.781 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:04.852 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:04.853 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:04.854 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:04.888 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:04.896 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:04.980 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 365.01226807 -371.48999023]
+ [ 346.50686646 -356.48519897]]
+13:03:05.012 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:05.028 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:05.076 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:05.100 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:05.124 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:05.136 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 365.01226807 -371.48999023]
+ [ 346.50686646 -356.48519897]]
+13:03:05.205 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:05.205 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:05.232 DEBUG (Camera1  ):detected triangle with vertices at [[ 350.50360107 -380.99673462]
+ [ 366.01278687 -371.98995972]
+ [ 346.50662231 -357.48599243]]
+13:03:05.237 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:05.238 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:05.256 DEBUG (Camera1  ):detected triangle with vertices at [[ 351.00375366 -380.99667358]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:05.277 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:05.336 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:05.400 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:05.445 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:05.457 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:05.467 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 365.51260376 -371.48983765]
+ [ 346.50662231 -357.48599243]]
+13:03:05.488 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:05.537 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:05.544 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:05.584 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:05.617 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:05.704 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:05.712 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:05.720 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:05.764 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:05.799 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:05.805 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:05.812 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:05.821 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:05.822 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:05.839 DEBUG (Camera1  ):detected triangle with vertices at [[ 350.50360107 -380.99673462]
+ [ 366.01278687 -371.98995972]
+ [ 346.50662231 -357.48599243]]
+13:03:05.852 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:05.853 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:05.868 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:05.904 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:05.923 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:05.972 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 365.01226807 -371.48999023]
+ [ 346.50686646 -356.48519897]]
+13:03:06.042 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:06.046 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:06.057 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:06.072 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:06.077 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:06.116 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 365.01226807 -371.48999023]
+ [ 346.50686646 -356.48519897]]
+13:03:06.151 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:06.152 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:06.239 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:06.246 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:06.264 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:06.392 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:06.429 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:06.430 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:06.456 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:06.500 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:06.501 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:06.512 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:06.556 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:06.557 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:06.584 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:06.602 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:06.607 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:06.657 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:06.660 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:06.662 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:06.716 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:06.724 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:06.740 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:06.816 DEBUG (Camera1  ):detected triangle with vertices at [[ 351.00375366 -380.99667358]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:06.832 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:06.833 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:06.889 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:06.913 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:06.985 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:06.996 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:07.028 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:07.058 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:07.073 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:07.107 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:07.108 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:07.157 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:07.166 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:07.184 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:07.223 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 365.01226807 -371.48999023]
+ [ 346.50686646 -356.48519897]]
+13:03:07.239 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:07.244 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:07.248 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 365.01226807 -371.48999023]
+ [ 346.50686646 -356.48519897]]
+13:03:07.306 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:07.340 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:07.384 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:07.401 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:07.432 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:07.453 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:07.456 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:07.474 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:07.487 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:07.503 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:07.521 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:07.544 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 365.01226807 -371.48999023]
+ [ 346.50686646 -356.48519897]]
+13:03:07.580 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:07.592 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:07.628 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:07.640 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:07.648 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:07.680 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:07.690 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:07.691 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:07.706 DEBUG (Camera1  ):detected triangle with vertices at [[ 350.50360107 -380.99673462]
+ [ 366.01278687 -371.98995972]
+ [ 346.50662231 -357.48599243]]
+13:03:07.724 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:07.768 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:07.810 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:07.814 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:07.831 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:07.851 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:07.862 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:07.863 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:07.885 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:07.924 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:07.924 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:07.925 DEBUG (Camera1  ):detected triangle with vertices at [[ 350.50360107 -380.99673462]
+ [ 366.01278687 -371.98995972]
+ [ 346.50662231 -357.48599243]]
+13:03:07.968 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:07.973 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:07.990 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:08.013 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:08.029 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:08.064 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:08.088 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:08.122 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:08.188 DEBUG (Camera1  ):detected triangle with vertices at [[ 351.00375366 -380.99667358]
+ [ 365.01226807 -371.48999023]
+ [ 346.50686646 -356.48519897]]
+13:03:08.201 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:08.209 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:08.228 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 365.01226807 -371.48999023]
+ [ 346.50686646 -356.48519897]]
+13:03:08.238 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:08.240 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:08.259 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:08.272 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:08.284 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:08.312 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:08.344 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:08.408 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:08.496 DEBUG (Camera1  ):detected triangle with vertices at [[ 350.50360107 -380.99673462]
+ [ 366.01278687 -371.98995972]
+ [ 346.50662231 -357.48599243]]
+13:03:08.524 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:08.544 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:08.596 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 365.01226807 -371.48999023]
+ [ 346.50686646 -356.48519897]]
+13:03:08.606 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:08.607 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:08.632 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:08.672 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:08.673 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:08.676 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:08.726 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:08.756 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:08.796 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 365.01226807 -371.48999023]
+ [ 346.50686646 -356.48519897]]
+13:03:08.805 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:08.839 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:08.854 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 365.01226807 -371.48999023]
+ [ 346.50686646 -356.48519897]]
+13:03:08.857 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:08.905 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:08.934 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:08.953 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:08.976 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:08.981 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:09.006 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:09.028 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:09.050 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:09.068 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:09.104 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:09.109 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:09.134 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:09.189 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:09.210 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:09.232 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:09.233 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:09.242 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 365.01226807 -371.48999023]
+ [ 346.50686646 -356.48519897]]
+13:03:09.275 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:09.276 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:09.303 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:09.312 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:09.354 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:09.361 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 365.51260376 -371.48983765]
+ [ 346.50686646 -356.48519897]]
+13:03:09.376 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:09.386 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:09.406 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:09.444 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:09.488 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:09.516 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:09.525 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:09.525 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:09.548 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:09.563 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:09.572 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:09.624 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:09.660 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:09.669 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:09.695 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 365.01226807 -371.48999023]
+ [ 346.50662231 -357.48599243]]
+13:03:09.728 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:09.732 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:09.752 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:09.763 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:09.789 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:09.800 DEBUG (Camera1  ):detected triangle with vertices at [[ 351.00375366 -380.99667358]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:09.802 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:09.803 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:09.816 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:09.839 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:09.840 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:09.912 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:09.922 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:09.941 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:09.992 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:10.008 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:10.016 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:10.024 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:10.043 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:10.099 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:10.130 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:10.155 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:10.160 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:10.223 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:10.238 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:10.239 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:10.252 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 365.01226807 -371.48999023]
+ [ 346.50686646 -356.48519897]]
+13:03:10.281 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:10.303 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:10.348 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:10.375 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:10.388 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:10.431 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 365.01226807 -371.48999023]
+ [ 346.50686646 -356.48519897]]
+13:03:10.464 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:10.480 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:10.510 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:10.536 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:10.548 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:10.578 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:10.596 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:10.597 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:10.625 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:10.664 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:10.739 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:10.772 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 365.01226807 -371.48999023]
+ [ 346.50686646 -356.48519897]]
+13:03:10.784 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:10.791 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:10.824 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:10.856 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:10.864 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:10.907 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:10.916 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:10.968 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:11.002 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:11.016 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:11.042 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:11.060 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 365.01226807 -371.48999023]
+ [ 346.50686646 -356.48519897]]
+13:03:11.064 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:11.087 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:11.097 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:11.140 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:11.156 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:11.197 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:11.199 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:11.234 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:11.292 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:11.298 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:11.301 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:11.323 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:11.364 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:11.377 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:11.387 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:11.402 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:11.444 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:11.500 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:11.536 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:11.537 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:11.556 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:11.573 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:11.612 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:11.623 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:11.673 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:11.682 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:11.701 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 365.01257324 -370.48944092]
+ [ 346.50686646 -356.48519897]]
+13:03:11.718 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:11.724 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:11.725 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:11.750 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:11.751 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:11.781 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:11.801 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:11.811 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:11.832 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 366.01293945 -371.48968506]
+ [ 346.50686646 -356.48519897]]
+13:03:11.836 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+13:03:11.837 DEBUG (Camera1  ):A 4-vertices shape was found
+13:03:11.858 DEBUG (Camera1  ):detected triangle with vertices at [[ 352.00405884 -380.996521  ]
+ [ 365.51260376 -371.48983765]
+ [ 346.50686646 -356.48519897]]
+13:03:11.858 DEBUG (Camera1  ):shutting down Camera1
+13:03:11.860 DEBUG (Camera1  ):"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+13:03:11.860 INFO (Camera1  ):Closed the TCP client
+
+---------------------------------------------------------------------------
+13:03:11.861 DEBUG (Camera2  ):shutting down Camera2
+13:03:11.862 DEBUG (Camera2  ):"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+13:03:11.863 INFO (Camera2  ):Closed the TCP client
+
+---------------------------------------------------------------------------
+13:03:11.877 DEBUG (Camera3  ):shutting down Camera3
+13:03:11.879 DEBUG (Camera3  ):"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+13:03:11.879 INFO (Camera3  ):Closed the TCP client
+
+---------------------------------------------------------------------------
+13:03:11.882 DEBUG (Camera0  ):shutting down Camera0
+13:03:11.884 DEBUG (Camera0  ):"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+13:03:11.884 INFO (Camera0  ):Closed the TCP client
+
+---------------------------------------------------------------------------
+14:00:32.334 INFO (MainThread):BEGINNING MAIN EXECUTION
+14:00:32.335 DEBUG (MainThread):Opened configuration file. Connecting to 172.19.5.213
+14:00:32.337 INFO (MainThread):Started TCP client with IP: 172.19.5.213 and PORT:5005.
+14:00:32.341 DEBUG (MainThread):"Obtained '(551040525,784051947)\n' after writing 551040525,784051947 on RED_THRESHOLD register."
+14:00:32.343 DEBUG (MainThread):"Obtained '(4198404,0)\n' after writing 4198404,0 on GREEN_THRESHOLD register."
+14:00:32.345 DEBUG (MainThread):"Obtained '(4198404,0)\n' after writing 4198404,0 on BLUE_THRESHOLD register."
+14:00:32.347 DEBUG (MainThread):"Obtained '(648,486)\n' after writing 648,486 on IMAGE_SHAPE register."
+14:00:32.348 DEBUG (MainThread):"Obtained '1111\n' after writing 1111 on IMAGE_EXPOSURE register."
+14:00:32.350 DEBUG (MainThread):"Obtained '(0,0)\n' after writing 0,0 on SYSTEM_INDEXES register."
+14:00:32.352 DEBUG (MainThread):"Obtained '(2591,1943)\n' after writing 2591,1943 on SYSTEM_SHAPE register."
+14:00:32.354 DEBUG (MainThread):"Obtained '(1,1)\n' after writing 1,1 on SYSTEM_MODES register."
+14:00:32.356 DEBUG (MainThread):"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+14:00:32.466 DEBUG (MainThread):"Obtained 'Camera sensor configured.\n' after 'CONFIGURE_CAMERA'"
+14:00:32.468 DEBUG (MainThread):"Obtained 'All trackers freed.\n' after writing  on FREE_ALL register."
+14:00:32.469 DEBUG (MainThread):"Obtained '4\n' after writing 4 on SYSTEM_OUTPUT register."
+14:00:32.580 DEBUG (MainThread):Opened configuration file. Connecting to 172.19.5.214
+14:00:32.582 INFO (MainThread):Started TCP client with IP: 172.19.5.214 and PORT:5005.
+14:00:32.586 DEBUG (MainThread):"Obtained '(551040525,784051947)\n' after writing 551040525,784051947 on RED_THRESHOLD register."
+14:00:32.588 DEBUG (MainThread):"Obtained '(4198404,0)\n' after writing 4198404,0 on GREEN_THRESHOLD register."
+14:00:32.590 DEBUG (MainThread):"Obtained '(4198404,0)\n' after writing 4198404,0 on BLUE_THRESHOLD register."
+14:00:32.592 DEBUG (MainThread):"Obtained '(648,486)\n' after writing 648,486 on IMAGE_SHAPE register."
+14:00:32.594 DEBUG (MainThread):"Obtained '1111\n' after writing 1111 on IMAGE_EXPOSURE register."
+14:00:32.596 DEBUG (MainThread):"Obtained '(0,0)\n' after writing 0,0 on SYSTEM_INDEXES register."
+14:00:32.598 DEBUG (MainThread):"Obtained '(2591,1943)\n' after writing 2591,1943 on SYSTEM_SHAPE register."
+14:00:32.599 DEBUG (MainThread):"Obtained '(1,1)\n' after writing 1,1 on SYSTEM_MODES register."
+14:00:32.601 DEBUG (MainThread):"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+14:00:32.711 DEBUG (MainThread):"Obtained 'Camera sensor configured.\n' after 'CONFIGURE_CAMERA'"
+14:00:32.713 DEBUG (MainThread):"Obtained 'All trackers freed.\n' after writing  on FREE_ALL register."
+14:00:32.715 DEBUG (MainThread):"Obtained '4\n' after writing 4 on SYSTEM_OUTPUT register."
+14:00:32.826 DEBUG (MainThread):Opened configuration file. Connecting to 172.19.5.215
+14:00:32.828 INFO (MainThread):Started TCP client with IP: 172.19.5.215 and PORT:5005.
+14:00:32.832 DEBUG (MainThread):"Obtained '(551040525,784051947)\n' after writing 551040525,784051947 on RED_THRESHOLD register."
+14:00:32.834 DEBUG (MainThread):"Obtained '(4198404,0)\n' after writing 4198404,0 on GREEN_THRESHOLD register."
+14:00:32.836 DEBUG (MainThread):"Obtained '(4198404,0)\n' after writing 4198404,0 on BLUE_THRESHOLD register."
+14:00:32.838 DEBUG (MainThread):"Obtained '(648,481)\n' after writing 648,481 on IMAGE_SHAPE register."
+14:00:32.840 DEBUG (MainThread):"Obtained '1111\n' after writing 1111 on IMAGE_EXPOSURE register."
+14:00:32.842 DEBUG (MainThread):"Obtained '(0,0)\n' after writing 0,0 on SYSTEM_INDEXES register."
+14:00:32.843 DEBUG (MainThread):"Obtained '(2591,1923)\n' after writing 2591,1923 on SYSTEM_SHAPE register."
+14:00:32.845 DEBUG (MainThread):"Obtained '(1,1)\n' after writing 1,1 on SYSTEM_MODES register."
+14:00:32.847 DEBUG (MainThread):"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+14:00:32.957 DEBUG (MainThread):"Obtained 'Camera sensor configured.\n' after 'CONFIGURE_CAMERA'"
+14:00:32.959 DEBUG (MainThread):"Obtained 'All trackers freed.\n' after writing  on FREE_ALL register."
+14:00:32.961 DEBUG (MainThread):"Obtained '4\n' after writing 4 on SYSTEM_OUTPUT register."
+14:00:33.072 DEBUG (MainThread):Opened configuration file. Connecting to 172.19.5.216
+14:00:33.074 INFO (MainThread):Started TCP client with IP: 172.19.5.216 and PORT:5005.
+14:00:33.078 DEBUG (MainThread):"Obtained '(551040525,784051947)\n' after writing 551040525,784051947 on RED_THRESHOLD register."
+14:00:33.080 DEBUG (MainThread):"Obtained '(4198404,0)\n' after writing 4198404,0 on GREEN_THRESHOLD register."
+14:00:33.082 DEBUG (MainThread):"Obtained '(4198404,0)\n' after writing 4198404,0 on BLUE_THRESHOLD register."
+14:00:33.084 DEBUG (MainThread):"Obtained '(648,486)\n' after writing 648,486 on IMAGE_SHAPE register."
+14:00:33.085 DEBUG (MainThread):"Obtained '1111\n' after writing 1111 on IMAGE_EXPOSURE register."
+14:00:33.087 DEBUG (MainThread):"Obtained '(0,0)\n' after writing 0,0 on SYSTEM_INDEXES register."
+14:00:33.089 DEBUG (MainThread):"Obtained '(2591,1943)\n' after writing 2591,1943 on SYSTEM_SHAPE register."
+14:00:33.091 DEBUG (MainThread):"Obtained '(1,1)\n' after writing 1,1 on SYSTEM_MODES register."
+14:00:33.093 DEBUG (MainThread):"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+14:00:33.203 DEBUG (MainThread):"Obtained 'Camera sensor configured.\n' after 'CONFIGURE_CAMERA'"
+14:00:33.205 DEBUG (MainThread):"Obtained 'All trackers freed.\n' after writing  on FREE_ALL register."
+14:00:33.206 DEBUG (MainThread):"Obtained '4\n' after writing 4 on SYSTEM_OUTPUT register."
+14:00:33.318 DEBUG (Camera0  ):"'Image captured.\n' after 0 tries."
+14:00:33.319 DEBUG (Camera1  ):"'Image captured.\n' after 0 tries."
+14:00:33.319 DEBUG (Camera2  ):"'Image captured.\n' after 0 tries."
+14:00:33.335 DEBUG (Camera0  ):'GET_GRAY_IMAGE' command sent.
+14:00:33.336 DEBUG (Camera3  ):"'Image captured.\n' after 0 tries."
+14:00:33.336 DEBUG (Camera1  ):'GET_GRAY_IMAGE' command sent.
+14:00:33.342 DEBUG (Camera2  ):'GET_GRAY_IMAGE' command sent.
+14:00:33.360 DEBUG (Camera3  ):'GET_GRAY_IMAGE' command sent.
+14:00:36.092 DEBUG (Camera2  ):Received 311688 bytes of 311688 (100.00%)
+14:00:36.103 DEBUG (Camera2  ):Thresholding between 131 and 186
+14:00:36.137 DEBUG (Camera1  ):Received 314928 bytes of 314928 (100.00%)
+14:00:36.138 DEBUG (Camera1  ):Thresholding between 131 and 186
+14:00:36.159 DEBUG (Camera2  ):Image binarization finished
+14:00:36.168 DEBUG (Camera0  ):Received 314928 bytes of 314928 (100.00%)
+14:00:36.169 DEBUG (Camera2  ):Getting the shapes' vertices in the image
+14:00:36.170 DEBUG (Camera0  ):Thresholding between 131 and 186
+14:00:36.178 DEBUG (Camera2  ):A 3-vertices shape was found
+14:00:36.187 DEBUG (Camera2  ):A 2-vertices shape was found
+14:00:36.188 DEBUG (Camera2  ):A 2-vertices shape was found
+14:00:36.188 DEBUG (Camera1  ):Image binarization finished
+14:00:36.193 DEBUG (Camera2  ):A 2-vertices shape was found
+14:00:36.205 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:36.205 DEBUG (Camera0  ):Image binarization finished
+14:00:36.219 DEBUG (Camera2  ):A 2-vertices shape was found
+14:00:36.229 DEBUG (Camera3  ):Received 314928 bytes of 314928 (100.00%)
+14:00:36.256 DEBUG (Camera0  ):Getting the shapes' vertices in the image
+14:00:36.261 DEBUG (Camera1  ):A 2-vertices shape was found
+14:00:36.261 DEBUG (Camera3  ):Thresholding between 131 and 186
+14:00:36.271 DEBUG (Camera1  ):A 2-vertices shape was found
+14:00:36.273 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:36.273 DEBUG (Camera1  ):A 2-vertices shape was found
+14:00:36.285 DEBUG (Camera1  ):A 2-vertices shape was found
+14:00:36.291 DEBUG (Camera1  ):A 2-vertices shape was found
+14:00:36.297 DEBUG (Camera1  ):Configurating tracker 1
+14:00:36.297 DEBUG (Camera2  ):A 12-vertices shape was found
+14:00:36.317 DEBUG (Camera1  ):"Obtained '(509,783,140,139)\n' after writing 1,509,783,140,139 on SET_WINDOW register."
+14:00:36.326 DEBUG (Camera2  ):A 2-vertices shape was found
+14:00:36.336 DEBUG (Camera2  ):A 2-vertices shape was found
+14:00:36.348 DEBUG (Camera3  ):Image binarization finished
+14:00:36.348 DEBUG (Camera2  ):A 2-vertices shape was found
+14:00:36.349 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:36.388 DEBUG (Camera2  ):A 2-vertices shape was found
+14:00:36.388 DEBUG (Camera3  ):Getting the shapes' vertices in the image
+14:00:36.389 DEBUG (Camera1  ):A 2-vertices shape was found
+14:00:36.401 DEBUG (Camera2  ):A 2-vertices shape was found
+14:00:36.460 DEBUG (Camera2  ):A 2-vertices shape was found
+14:00:36.461 DEBUG (Camera2  ):A 2-vertices shape was found
+14:00:36.463 DEBUG (Camera2  ):A 2-vertices shape was found
+14:00:36.463 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:36.471 DEBUG (Camera2  ):A 2-vertices shape was found
+14:00:36.526 DEBUG (Camera1  ):A 2-vertices shape was found
+14:00:36.526 DEBUG (Camera2  ):A 2-vertices shape was found
+14:00:36.555 DEBUG (Camera2  ):A 2-vertices shape was found
+14:00:36.556 DEBUG (Camera2  ):A 2-vertices shape was found
+14:00:36.556 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:36.556 DEBUG (Camera2  ):A 2-vertices shape was found
+14:00:36.577 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:36.577 DEBUG (Camera2  ):A 2-vertices shape was found
+14:00:36.578 DEBUG (Camera2  ):A 2-vertices shape was found
+14:00:36.578 DEBUG (Camera2  ):A 2-vertices shape was found
+14:00:36.579 DEBUG (Camera2  ):A 2-vertices shape was found
+14:00:36.579 DEBUG (Camera2  ):A 2-vertices shape was found
+14:00:36.579 DEBUG (Camera1  ):detected triangle with vertices at [[  -5.67000008 -652.25250244]
+ [ 300.91470337 -219.31402588]
+ [ 277.30352783 -210.68237305]]
+14:00:36.579 DEBUG (Camera2  ):A 2-vertices shape was found
+14:00:36.598 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:36.619 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:36.604 DEBUG (Camera2  ):A 2-vertices shape was found
+14:00:36.620 DEBUG (Camera2  ):A 2-vertices shape was found
+14:00:36.628 DEBUG (Camera2  ):A 2-vertices shape was found
+14:00:36.629 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:36.630 DEBUG (Camera2  ):A 2-vertices shape was found
+14:00:36.635 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:36.644 DEBUG (Camera2  ):A 2-vertices shape was found
+14:00:36.645 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:36.645 DEBUG (Camera2  ):A 2-vertices shape was found
+14:00:36.653 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:36.654 DEBUG (Camera2  ):A 2-vertices shape was found
+14:00:36.654 DEBUG (Camera2  ):A 2-vertices shape was found
+14:00:36.654 DEBUG (Camera2  ):A 2-vertices shape was found
+14:00:36.654 DEBUG (Camera2  ):A 2-vertices shape was found
+14:00:36.654 DEBUG (Camera2  ):A 2-vertices shape was found
+14:00:36.655 DEBUG (Camera2  ):A 6-vertices shape was found
+14:00:36.668 DEBUG (Camera2  ):A 2-vertices shape was found
+14:00:36.669 DEBUG (Camera2  ):A 2-vertices shape was found
+14:00:36.671 DEBUG (Camera2  ):A 2-vertices shape was found
+14:00:36.682 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:36.692 DEBUG (Camera2  ):A 2-vertices shape was found
+14:00:36.693 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:36.702 DEBUG (Camera2  ):A 2-vertices shape was found
+14:00:36.746 DEBUG (Camera2  ):A 2-vertices shape was found
+14:00:36.746 DEBUG (Camera2  ):A 2-vertices shape was found
+14:00:36.747 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:36.747 DEBUG (Camera2  ):A 2-vertices shape was found
+14:00:36.750 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:36.750 DEBUG (Camera2  ):A 2-vertices shape was found
+14:00:36.757 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:36.783 DEBUG (Camera2  ):A 2-vertices shape was found
+14:00:36.823 DEBUG (Camera2  ):A 2-vertices shape was found
+14:00:36.824 DEBUG (Camera2  ):A 2-vertices shape was found
+14:00:36.824 DEBUG (Camera2  ):A 2-vertices shape was found
+14:00:36.834 DEBUG (Camera2  ):A 2-vertices shape was found
+14:00:36.842 DEBUG (Camera2  ):A 2-vertices shape was found
+14:00:36.842 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:36.851 INFO (User Thread):All cameras were initialized
+14:00:36.856 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:36.875 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:36.894 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:36.900 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:36.925 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:36.966 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:36.977 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:36.979 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:36.985 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:37.035 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:37.036 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:37.038 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:37.048 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:37.048 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:37.049 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:37.104 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:37.104 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:37.156 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:37.185 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:37.206 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:37.236 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:37.250 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:37.253 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:37.316 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:37.331 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:37.336 DEBUG (Camera1  ):A 3-vertices shape was found
+14:00:37.376 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:37.380 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:37.432 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:37.444 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:37.449 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:37.458 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:37.474 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:37.507 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:37.527 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.38900757 -231.42687988]
+ [ 300.91381836 -218.302948  ]
+ [ 277.30352783 -210.68237305]]
+14:00:37.549 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:37.553 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:37.580 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:37.589 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:37.590 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:37.619 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:37.641 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:37.644 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:37.656 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.38900757 -231.42687988]
+ [ 300.91470337 -219.31402588]
+ [ 277.30352783 -210.68237305]]
+14:00:37.687 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:37.725 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:37.748 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:37.760 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:37.761 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:37.775 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:37.778 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:37.778 DEBUG (Camera1  ):A 3-vertices shape was found
+14:00:37.836 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:37.837 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:37.904 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:37.921 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:37.941 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:37.979 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:37.988 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:37.992 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:38.012 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:38.056 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:38.064 DEBUG (Camera1  ):A 3-vertices shape was found
+14:00:38.133 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:38.140 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:38.149 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.38900757 -231.42687988]
+ [ 300.91470337 -219.31402588]
+ [ 277.30352783 -210.68237305]]
+14:00:38.170 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:38.171 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:38.200 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:38.224 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:38.225 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:38.226 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:38.269 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:38.280 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:38.289 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:38.292 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:38.293 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:38.304 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:38.352 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:38.360 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:38.371 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:38.379 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:38.381 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:38.401 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:38.415 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:38.425 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:38.459 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:38.465 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:38.467 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:38.486 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:38.500 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:38.507 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:38.527 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:38.532 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:38.540 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:38.552 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:38.571 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:38.578 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:38.584 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.38900757 -231.42687988]
+ [ 300.91470337 -219.31402588]
+ [ 277.30352783 -210.68237305]]
+14:00:38.639 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:38.680 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:38.702 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:38.724 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:38.734 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:38.746 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:38.759 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:38.760 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:38.780 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.38900757 -231.42687988]
+ [ 300.91381836 -218.302948  ]
+ [ 277.30352783 -210.68237305]]
+14:00:38.797 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:38.830 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:38.836 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:38.874 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:38.876 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:38.921 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:38.930 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:38.935 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:38.960 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:38.992 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:38.993 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:39.024 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:39.044 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:39.053 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:39.103 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:39.125 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:39.137 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:39.179 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.38900757 -231.42687988]
+ [ 300.91381836 -218.302948  ]
+ [ 277.30352783 -210.68237305]]
+14:00:39.202 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:39.260 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:39.288 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:39.293 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:39.294 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:39.305 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.38900757 -231.42687988]
+ [ 300.91470337 -219.31402588]
+ [ 277.30352783 -210.68237305]]
+14:00:39.335 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:39.336 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:39.376 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:39.396 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:39.407 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:39.419 DEBUG (Camera1  ):detected triangle with vertices at [[ 291.89312744 -230.41894531]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:39.456 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:39.473 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:39.474 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.38900757 -231.42687988]
+ [ 300.91470337 -219.31402588]
+ [ 277.30352783 -210.68237305]]
+14:00:39.476 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:39.477 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:39.490 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.38900757 -231.42687988]
+ [ 300.91470337 -219.31402588]
+ [ 277.30352783 -210.68237305]]
+14:00:39.511 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:39.520 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:39.546 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:39.549 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:39.576 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:39.595 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:39.623 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:39.632 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:39.652 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:39.702 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:39.710 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:39.732 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.38900757 -231.42687988]
+ [ 300.91470337 -219.31402588]
+ [ 277.30352783 -210.68237305]]
+14:00:39.752 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:39.761 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:39.762 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:39.801 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:39.802 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:39.808 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.38900757 -231.42687988]
+ [ 300.91381836 -218.302948  ]
+ [ 277.30352783 -210.68237305]]
+14:00:39.836 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:39.837 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:39.873 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:39.895 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:39.906 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:39.932 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:39.934 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:39.946 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:39.966 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:39.970 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:39.971 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:39.980 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:40.004 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:40.009 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:40.032 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:40.045 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:40.055 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:40.080 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:40.106 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:40.108 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:40.132 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:40.144 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:40.146 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:40.157 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:40.173 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:40.174 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:40.186 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:40.202 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:40.203 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:40.234 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:40.260 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:40.268 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:40.291 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.38900757 -231.42687988]
+ [ 300.91381836 -218.302948  ]
+ [ 277.30352783 -210.68237305]]
+14:00:40.314 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:40.315 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:40.328 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:40.335 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:40.344 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:40.376 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:40.390 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:40.395 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:40.418 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:40.432 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:40.436 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:40.502 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:40.518 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:40.525 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:40.544 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:40.556 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:40.557 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:40.570 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:40.581 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:40.581 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:40.592 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:40.620 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:40.652 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:40.676 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:40.696 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:40.724 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:40.732 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:40.747 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:40.748 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:40.770 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:40.794 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:40.795 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:40.810 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:40.852 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:40.863 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:40.876 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:40.890 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:40.892 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:40.902 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:40.935 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:40.946 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:40.966 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:40.969 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:40.973 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:41.036 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:41.043 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:41.044 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:41.059 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.91470337 -219.31402588]
+ [ 296.3621521  -188.92230225]]
+14:00:41.096 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:41.101 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:41.130 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:41.175 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:41.177 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:41.208 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.38900757 -231.42687988]
+ [ 300.91470337 -219.31402588]
+ [ 277.30352783 -210.68237305]]
+14:00:41.240 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:41.244 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:41.268 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:41.286 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:41.286 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:41.309 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:41.328 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:41.331 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:41.339 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:41.348 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:41.363 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:41.364 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:41.403 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:41.410 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:41.414 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.38900757 -231.42687988]
+ [ 300.91470337 -219.31402588]
+ [ 277.30352783 -210.68237305]]
+14:00:41.445 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:41.462 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:41.469 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:41.501 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:41.533 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:41.560 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:41.580 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:41.614 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:41.676 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:41.709 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:41.786 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:41.824 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:41.858 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:41.869 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:41.884 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:41.920 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:41.929 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:41.967 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:41.971 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:41.992 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:42.022 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:42.052 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:42.076 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:42.092 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:42.096 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:42.096 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:42.097 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.38900757 -231.42687988]
+ [ 300.91470337 -219.31402588]
+ [ 277.30352783 -210.68237305]]
+14:00:42.136 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:42.137 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:42.152 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:42.170 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:42.184 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:42.276 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:42.302 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:42.313 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:42.336 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:42.356 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:42.360 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:42.375 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:42.408 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:42.410 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:42.426 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.38900757 -231.42687988]
+ [ 300.91381836 -218.302948  ]
+ [ 277.30352783 -210.68237305]]
+14:00:42.438 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:42.454 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:42.488 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:42.502 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:42.508 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:42.536 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:42.544 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:42.553 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:42.660 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.38900757 -231.42687988]
+ [ 300.91381836 -218.302948  ]
+ [ 277.30352783 -210.68237305]]
+14:00:42.692 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:42.707 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:42.736 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:42.765 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:42.780 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:42.804 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:42.832 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:42.835 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:42.872 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.38900757 -231.42687988]
+ [ 300.91381836 -218.302948  ]
+ [ 277.30352783 -210.68237305]]
+14:00:42.902 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:42.912 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:42.936 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:42.990 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:42.991 DEBUG (Camera1  ):A 3-vertices shape was found
+14:00:43.002 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:43.008 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:43.020 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.38900757 -231.42687988]
+ [ 300.91381836 -218.302948  ]
+ [ 277.30352783 -210.68237305]]
+14:00:43.041 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:43.056 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:43.098 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.38900757 -231.42687988]
+ [ 300.91381836 -218.302948  ]
+ [ 277.30352783 -210.68237305]]
+14:00:43.108 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:43.126 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:43.152 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:43.165 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:43.169 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:43.246 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:43.260 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:43.262 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:43.269 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:43.284 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:43.286 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:43.297 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:43.308 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:43.311 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:43.348 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:43.350 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:43.359 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:43.369 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:43.396 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:43.403 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:43.424 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:43.435 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:43.436 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:43.452 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.38900757 -231.42687988]
+ [ 300.91381836 -218.302948  ]
+ [ 277.30352783 -210.68237305]]
+14:00:43.461 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:43.464 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:43.472 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:43.499 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:43.500 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:43.511 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:43.524 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:43.541 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:43.548 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:43.551 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:43.552 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:43.568 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:43.612 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:43.619 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:43.668 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.38900757 -231.42687988]
+ [ 301.91766357 -218.30386353]
+ [ 277.30352783 -210.68237305]]
+14:00:43.678 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:43.679 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:43.686 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:43.718 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:43.725 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:43.753 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:43.763 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:43.764 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:43.776 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:43.799 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:43.803 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:43.806 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:43.817 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:43.824 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:43.841 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:43.848 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:43.860 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:43.889 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.38900757 -231.42687988]
+ [ 300.91381836 -218.302948  ]
+ [ 277.30352783 -210.68237305]]
+14:00:43.898 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:43.899 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:43.924 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:43.945 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:43.946 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:43.969 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:43.999 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:44.010 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:44.061 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.38900757 -231.42687988]
+ [ 300.91381836 -218.302948  ]
+ [ 277.30352783 -210.68237305]]
+14:00:44.069 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:44.070 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:44.094 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:44.116 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:44.121 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:44.144 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:44.153 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:44.186 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:44.253 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:44.268 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:44.284 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:44.308 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:44.339 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:44.350 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:44.371 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:44.378 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:44.380 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:44.388 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:44.418 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:44.438 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:44.469 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.38900757 -231.42687988]
+ [ 300.91381836 -218.302948  ]
+ [ 277.30352783 -210.68237305]]
+14:00:44.496 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:44.501 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:44.512 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:44.536 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:44.547 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:44.566 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:44.592 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:44.612 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:44.624 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:44.633 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:44.635 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:44.668 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:44.688 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:44.689 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:44.719 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:44.736 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:44.739 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:44.753 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:44.770 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:44.774 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:44.804 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:44.821 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:44.822 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:44.830 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:44.862 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:44.863 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:44.876 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:44.940 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:44.948 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:44.963 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:44.985 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:44.987 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:44.996 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.38900757 -231.42687988]
+ [ 300.91381836 -218.302948  ]
+ [ 277.30352783 -210.68237305]]
+14:00:45.020 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:45.025 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:45.058 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.38900757 -231.42687988]
+ [ 300.91470337 -219.31402588]
+ [ 277.30352783 -210.68237305]]
+14:00:45.092 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:45.100 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:45.114 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.38900757 -231.42687988]
+ [ 300.91470337 -219.31402588]
+ [ 277.30352783 -210.68237305]]
+14:00:45.134 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:45.135 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:45.140 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:45.185 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:45.200 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:45.223 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:45.236 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:45.250 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:45.255 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.38900757 -231.42687988]
+ [ 300.91381836 -218.302948  ]
+ [ 277.30352783 -210.68237305]]
+14:00:45.271 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:45.276 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:45.289 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:45.313 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:45.320 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:45.336 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:45.355 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:45.360 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:45.382 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.38900757 -231.42687988]
+ [ 300.91470337 -219.31402588]
+ [ 277.30352783 -210.68237305]]
+14:00:45.397 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:45.398 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:45.404 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:45.441 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:45.442 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:45.471 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.38900757 -231.42687988]
+ [ 300.91470337 -219.31402588]
+ [ 277.30352783 -210.68237305]]
+14:00:45.474 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:45.513 DEBUG (Camera1  ):A 3-vertices shape was found
+14:00:45.563 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:45.570 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:45.596 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:45.598 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:45.599 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:45.662 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:45.691 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:45.703 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:45.719 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:45.728 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:45.732 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:45.756 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:45.776 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:45.787 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:45.828 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:45.830 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:45.838 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:45.884 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:45.900 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:45.908 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:45.930 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:45.944 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:45.967 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:45.980 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:45.988 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:45.996 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:46.004 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:46.038 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:46.048 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:46.071 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:46.084 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:46.092 DEBUG (Camera1  ):A 3-vertices shape was found
+14:00:46.111 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:46.112 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:46.125 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.38900757 -231.42687988]
+ [ 300.91381836 -218.302948  ]
+ [ 277.30352783 -210.68237305]]
+14:00:46.152 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:46.156 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:46.202 DEBUG (Camera1  ):detected triangle with vertices at [[ 291.89312744 -230.41894531]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:46.256 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:46.263 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:46.274 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.38900757 -231.42687988]
+ [ 300.91381836 -218.302948  ]
+ [ 277.30352783 -210.68237305]]
+14:00:46.276 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:46.288 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:46.300 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:46.315 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:46.316 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:46.320 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.38900757 -231.42687988]
+ [ 300.91381836 -218.302948  ]
+ [ 277.30352783 -210.68237305]]
+14:00:46.362 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:46.398 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:46.402 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:46.406 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:46.407 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:46.431 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:46.476 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:46.481 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:46.482 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:46.508 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:46.519 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:46.569 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:46.593 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:46.608 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:46.659 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:46.703 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:46.711 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:46.745 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:46.764 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:46.771 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:46.809 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:46.816 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:46.817 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:46.859 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:46.887 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:46.888 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:46.940 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:46.972 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:46.996 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:47.003 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:47.042 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:47.043 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:47.050 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:47.068 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:47.078 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:47.081 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:47.115 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:47.119 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:47.148 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.38900757 -231.42687988]
+ [ 300.91470337 -219.31402588]
+ [ 277.30352783 -210.68237305]]
+14:00:47.161 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:47.166 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:47.234 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:47.264 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:47.270 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:47.311 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:47.344 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:47.352 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:47.369 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:47.376 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:47.388 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:47.432 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:47.460 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:47.484 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:47.504 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:47.535 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:47.536 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:47.552 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:47.612 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:47.652 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:47.669 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:47.672 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:47.679 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:47.701 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:47.724 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:47.725 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:47.748 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:47.816 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:47.816 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:47.828 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:47.838 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:47.841 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:47.870 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:47.879 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:47.908 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:47.931 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:47.952 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:47.960 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:48.011 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:48.036 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:48.044 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:48.057 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:48.064 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:48.094 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:48.126 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:48.134 DEBUG (Camera1  ):Getting the shapes' vertices in the image
+14:00:48.134 DEBUG (Camera1  ):A 4-vertices shape was found
+14:00:48.135 DEBUG (Camera1  ):detected triangle with vertices at [[ 290.89077759 -231.42749023]
+ [ 300.9133606  -217.7973938 ]
+ [ 278.30819702 -210.68426514]]
+14:00:48.135 DEBUG (Camera1  ):shutting down Camera1
+14:00:48.136 DEBUG (Camera1  ):"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+14:00:48.137 INFO (Camera1  ):Closed the TCP client
+
+---------------------------------------------------------------------------
+14:00:48.137 DEBUG (Camera3  ):shutting down Camera3
+14:00:48.139 DEBUG (Camera3  ):"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+14:00:48.139 INFO (Camera3  ):Closed the TCP client
+
+---------------------------------------------------------------------------
+14:00:48.146 DEBUG (Camera0  ):shutting down Camera0
+14:00:48.148 DEBUG (Camera0  ):"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+14:00:48.148 INFO (Camera0  ):Closed the TCP client
+
+---------------------------------------------------------------------------
+14:00:48.158 DEBUG (Camera2  ):shutting down Camera2
+14:00:48.160 DEBUG (Camera2  ):"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+14:00:48.160 INFO (Camera2  ):Closed the TCP client
+
+---------------------------------------------------------------------------
+14:02:23.860 DEBUG (MainThread):Opened configuration file. Connecting to 172.19.5.214
+14:02:23.862 INFO (MainThread):Started TCP client with IP: 172.19.5.214 and PORT:5005.
+14:02:23.866 DEBUG (MainThread):"Obtained '(551040525,784051947)\n' after writing 551040525,784051947 on RED_THRESHOLD register."
+14:02:23.868 DEBUG (MainThread):"Obtained '(4198404,0)\n' after writing 4198404,0 on GREEN_THRESHOLD register."
+14:02:23.870 DEBUG (MainThread):"Obtained '(4198404,0)\n' after writing 4198404,0 on BLUE_THRESHOLD register."
+14:02:23.872 DEBUG (MainThread):"Obtained '(648,486)\n' after writing 648,486 on IMAGE_SHAPE register."
+14:02:23.873 DEBUG (MainThread):"Obtained '1111\n' after writing 1111 on IMAGE_EXPOSURE register."
+14:02:23.875 DEBUG (MainThread):"Obtained '(0,0)\n' after writing 0,0 on SYSTEM_INDEXES register."
+14:02:23.877 DEBUG (MainThread):"Obtained '(2591,1943)\n' after writing 2591,1943 on SYSTEM_SHAPE register."
+14:02:23.879 DEBUG (MainThread):"Obtained '(1,1)\n' after writing 1,1 on SYSTEM_MODES register."
+14:02:23.880 DEBUG (MainThread):"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+14:02:25.055 DEBUG (MainThread):"Obtained 'Camera sensor configured.\n' after 'CONFIGURE_CAMERA'"
+14:02:25.057 DEBUG (MainThread):"Obtained 'All trackers freed.\n' after writing  on FREE_ALL register."
+14:02:25.059 DEBUG (MainThread):"Obtained '4\n' after writing 4 on SYSTEM_OUTPUT register."
+14:02:30.055 DEBUG (MainThread):"'Image captured.\n' after 0 tries."
+14:02:30.056 DEBUG (MainThread):'GET_GRAY_IMAGE' command sent.
+14:02:33.845 DEBUG (MainThread):Received 314928 bytes of 314928 (100.00%)
+14:02:33.846 DEBUG (MainThread):Thresholding between 131 and 186
+14:02:33.874 DEBUG (MainThread):Image binarization finished
+14:02:33.874 DEBUG (MainThread):Getting the shapes' vertices in the image
+14:02:33.880 DEBUG (MainThread):A 2-vertices shape was found
+14:02:33.881 DEBUG (MainThread):A 4-vertices shape was found
+14:02:33.882 DEBUG (MainThread):A 2-vertices shape was found
+14:02:33.882 DEBUG (MainThread):Configurating tracker 1
+14:02:33.884 DEBUG (MainThread):"Obtained '(509,783,140,139)\n' after writing 1,509,783,140,139 on SET_WINDOW register."
+14:06:31.954 DEBUG (MainThread):Getting the shapes' vertices in the image
+14:06:31.955 DEBUG (MainThread):A 4-vertices shape was found
+14:08:27.818 DEBUG (MainThread):"Obtained '0\n' after writing 0 on SYSTEM_OUTPUT register."
+14:08:27.818 INFO (MainThread):Closed the TCP client
+
+---------------------------------------------------------------------------
+18:29:22.870 INFO (MainThread):BEGINNING MAIN EXECUTION
+18:29:22.871 DEBUG (MainThread):Opened configuration file. Connecting to 172.19.5.213
+18:29:22.873 INFO (MainThread):Started TCP client with IP: 172.19.5.213 and PORT:5005.
+18:29:24.875 WARNING (MainThread):Unable to connect to port. Timeout

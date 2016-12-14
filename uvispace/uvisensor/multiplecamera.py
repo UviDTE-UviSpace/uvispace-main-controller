@@ -57,7 +57,7 @@ class CameraThread(threading.Thread):
             #If no triangles are detected, avoid next instructions.
             if len(self.image.triangles):
                 self.triangles[0] = self.image.triangles[0]
-                self.triangles[0].get_local2global(self.camera.offsets)
+                self.triangles[0].get_local2global(self.camera.offsets, K=4)
                 logging.debug("detected triangle with vertices at {}"
                               "".format(self.triangles[0].vertices))
         logging.debug('shutting down {}'.format(self.name))

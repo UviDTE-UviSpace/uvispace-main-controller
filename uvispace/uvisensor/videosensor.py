@@ -269,11 +269,11 @@ class VideoSensor(object):
         if quadrant == '1':
             offsets = [0, 0]
         elif quadrant == '2':
-            offsets = [0, -width]
+            offsets = [0, width]
         elif quadrant == '3':
-            offsets = [-height, -width]
+            offsets = [height, width]
         elif quadrant == '4':
-            offsets = [-height, 0]
+            offsets = [height, 0]
         try:
             self.offsets = offsets
         except UnboundLocalError:
@@ -353,7 +353,7 @@ class VideoSensor(object):
         to the FPGA are integers. Other types like float are not valid
         and the FPGA will not recognize them.
         """
-        self._logger.debug('Configurating tracker {}'.format(tracker_id))
+        self._logger.debug('Configuring tracker {}'.format(tracker_id))
         self.set_register('SET_WINDOW', '{},{},{},{},{}'
                           ''.format(tracker_id, min_x, min_y, width, height))
 
