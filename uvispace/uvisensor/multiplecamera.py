@@ -45,11 +45,17 @@ class CameraThread(threading.Thread):
         self.begin_event.set()
         while not self.end_event.isSet():
             try:
+                #Get CARTESIAN coordinates of the 8 points of shape in tracker.
                 location = self.camera.get_register('ACTUAL_LOCATION')['1']
             except KeyError:
                 continue
-            #Add the obtained location to the contours list after scaling it.
-            self.image.contours = [np.array(location) / self.camera._scale]
+            #Scale the contours obtained according to the FPGA to image ratio.
+            contours = [np.array(location) / self.camera._scale]
+            #Convert from Cartesian to Image coordinates
+            tmp = np.copy(contours[:,0])
+            contours[:,0] = contours[:,1]
+            contours[:,1] = tmp
+            self.image.contours = [contours]
             #Correct barrel distortion.
             self.image.correct_distortion()
             #Obtain 3 vertices from the contours
