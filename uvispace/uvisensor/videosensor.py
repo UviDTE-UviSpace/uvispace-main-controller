@@ -267,13 +267,13 @@ class VideoSensor(object):
         except KeyError:
             raise KeyError("VideoSensor parameters were not loaded yet")
         if quadrant == '1':
-            offsets = [0, 0]
-        elif quadrant == '2':
-            offsets = [0, width]
-        elif quadrant == '3':
-            offsets = [height, width]
-        elif quadrant == '4':
             offsets = [height, 0]
+        elif quadrant == '2':
+            offsets = [height, width]
+        elif quadrant == '3':
+            offsets = [0, width]
+        elif quadrant == '4':
+            offsets = [0, 0]
         try:
             self.offsets = offsets
         except UnboundLocalError:
