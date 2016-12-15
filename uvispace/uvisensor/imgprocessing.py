@@ -188,7 +188,6 @@ class Image(object):
             self.contours = skimage.measure.find_contours(self._binarized, 200)
         self.triangles = []
         #Get the vertices of each shape in the image.
-        import pdb; pdb.set_trace()
         for cnt in self.contours:
             coords = skimage.measure.approximate_polygon(cnt, tolerance)
             #The initial vertex is repeatead at the end. Thus, if len is 2
