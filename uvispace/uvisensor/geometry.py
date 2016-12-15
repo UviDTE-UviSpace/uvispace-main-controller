@@ -9,21 +9,47 @@ are based on matricial operations and linear algebra.
 """
 
 class Triangle(object):
+    """
+    Class for dealing with geometric operations refered to a triangle.
+    """
     def __init__(self, vertices, isglobal=False):
+        """
+        Triangle class constructor.
+
+        Parameters
+        ----------
+        vertices : 3x2 array
+            Array containing the vertices coordinates of the triangle 
+            object.
+
+        isglobal : boolean
+            Flag that indicates if the coordinate system refers to the 
+            4-quadrant system (global) or to a single quadrant system.
+        """
+        if len(vertices) is not 3:
+            raise ValueError("Expected an array containing 3 vertices")
         self.vertices = vertices.astype(np.float32)
         #This flag indicates if the coordinates are given in a 4-quadrant system.
         self.isglobal = isglobal
         #The barycenter X is equal to the sum of the X coordinates divided by 3.
         self.barycenter = self.vertices.sum(axis=0) / 3
         self.sides = np.zeros([3])
-        #base_index is the identifier for the base side.
+        #base_index is the identifier for the base side in 'sides' array.
         self.base_index = None
         self.midpoint = np.array([])
         self.angle = None
         self.window = np.array([])
         self.contours = []
+        #Scale ratio for converting pixel coordinates to millimetres.
+        self._scale = 1
 
-    def get_local2global(self, offsets, K=1):
+    def __str__(self):
+        return ("Triangle\n{}".format(self.vertices))
+
+    def __repr__(self):
+        return ("Triangle\n{}".format(self.vertices))
+
+    def get_local2global(self, offsets, K=None):
         """
         Convert Triangle coordinates to the global coordinates system.
 
@@ -39,7 +65,7 @@ class Triangle(object):
         Only absolute coordinates shall be transformed. Lengths and 
         angles are invariant to the coordinate origin.
 
-        Finally, a scale factor will be applied to the coordinates. The 
+        Finally, a scale ratio will be applied to the coordinates. The 
         coordinates will be directly multiplied byy the K constant.
 
         Parameters
@@ -49,25 +75,30 @@ class Triangle(object):
             systems.
 
         K : positive int or float
-            Scale factor that will be applied to the points coordinates.
+            Scale ratio that will be applied to the points coordinates.
         """
-        if K <= 0:
-            raise ValueError("The scale factor K must be greater than 0")
         if self.isglobal:
             return
+        #Assess K and assign value to 'scale' attribute if it is valid.
+        if K is None:
+            K = self._scale
+        elif K <= 0:
+            raise ValueError("The scale ratio K must be greater than 0")
+        else:
+            self._scale = K
         self.vertices[:,0] = offsets[0] - self.vertices[:,0]
         self.vertices[:,1] -= offsets[1]
-        self.vertices *= K
-        self.barycenter[:,0] = offsets[0] - self.barycenter[:,0]
-        self.barycenter[:,1] -= offsets[1]
-        self.barycenter *= K
+        self.vertices *= self._scale
+        self.barycenter[0] = offsets[0] - self.barycenter[0]
+        self.barycenter[1] -= offsets[1]
+        self.barycenter *= self._scale
         #If the pose was not previously calculated, 
         #a ValueError is catched and ignored.
         try:
-            self.midpoint[:,0] = offsets[0] - self.midpoint[:,0]
-            self.midpoint[:,1] -= offsets[1]
-            self.midpoint *= K
-        except ValueError:
+            self.midpoint[0] = offsets[0] - self.midpoint[0]
+            self.midpoint[1] -= offsets[1]
+            self.midpoint *= self._scale
+        except IndexError:
             pass
         self.isglobal = True
 
@@ -153,6 +184,7 @@ class Triangle(object):
         self.window = np.array([self.barycenter - distance, 
                                 self.barycenter + distance])
         return self.window
+
 
 
 
