@@ -12,7 +12,7 @@ class Triangle(object):
     """
     Class for dealing with geometric operations refered to a triangle.
     """
-    def __init__(self, vertices, isglobal=False):
+    def __init__(self, vertices, isglobal=False, cartesian=False):
         """
         Triangle class constructor.
 
@@ -29,8 +29,9 @@ class Triangle(object):
         if len(vertices) is not 3:
             raise ValueError("Expected an array containing 3 vertices")
         self.vertices = vertices.astype(np.float32)
-        #This flag indicates if the coordinates are given in a 4-quadrant system.
+        #These flags indicate the coordinates system that is being used
         self.isglobal = isglobal
+        self.cartesian = cartesian
         #The barycenter X is equal to the sum of the X coordinates divided by 3.
         self.barycenter = self.vertices.sum(axis=0) / 3
         self.sides = np.zeros([3])
@@ -49,7 +50,7 @@ class Triangle(object):
     def __repr__(self):
         return ("Triangle\n{}".format(self.vertices))
 
-    def get_local2global(self, offsets, K=None):
+    def get_local2global(self, offsets, K=None, image2cartesian=True):
         """
         Convert Triangle coordinates to the global coordinates system.
 
@@ -61,6 +62,10 @@ class Triangle(object):
         * Move y-axis origin. Initially, for a given image the origin
         is placed at its top. However, for the used system the origin 
         is placed at the middle of the 4 quadrants.
+
+        If indicated, the coordinates system will be transformed to the
+        cartesian one. This is recommended, as the image system does not
+        make sense for a space with origin in the middle.
 
         Only absolute coordinates shall be transformed. Lengths and 
         angles are invariant to the coordinate origin.
@@ -76,6 +81,12 @@ class Triangle(object):
 
         K : positive int or float
             Scale ratio that will be applied to the points coordinates.
+
+        image2cartesian : boolean
+            If this flag is set to True, a conversion from image 
+            coordinate system to cartesian system is performed. Thus, 
+            the output will be of the form of [x,y] instead of 
+            [row,column]
         """
         if self.isglobal:
             return
@@ -100,6 +111,23 @@ class Triangle(object):
             self.midpoint *= self._scale
         except IndexError:
             pass
+        if image2cartesian:
+            #Convert the vertices coordinates
+            tmp = np.copy(self.vertices[:,0])
+            self.vertices[:,0] = self.vertices[:,1]
+            self.vertices[:,1] = tmp
+            #Convert the barycenter coordinates
+            tmp = np.copy(self.barycenter[0])
+            self.barycenter[0] = self.barycenter[1]
+            self.barycenter[1] = tmp
+            #Convert the midpoint coordinates
+            try:
+                tmp = np.copy(self.midpoint[0])
+                self.midpoint[0] = self.midpoint[1]
+                self.midpoint[1] = tmp
+            except IndexError:
+                pass
+            self.cartesian = True
         self.isglobal = True
 
     def get_global2local(self, offsets):
