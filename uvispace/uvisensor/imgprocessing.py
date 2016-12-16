@@ -131,9 +131,7 @@ class Image(object):
         """
         #Calculate the image center as the middle point of the width and the
         #height and then rescale to the FPGA true coordinates values.
-        center = (np.array(self.image.shape)/2)
-        #Change coordinates order to adapt to FPGA system
-        center = np.array([center[1], center[0]])
+        center = np.array(self.image.shape)/2
         #If contours is an empty list, algorithm is not outperformed.
         if only_contours and self.contours:
             for index, cnt in enumerate(self.contours):
