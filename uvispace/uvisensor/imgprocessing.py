@@ -129,8 +129,7 @@ class Image(object):
             Specify if the correction is to be applied to the whole 
             image or only to the stored contours values.
         """
-        #Calculate the image center as the middle point of the width and the
-        #height and then rescale to the FPGA true coordinates values.
+        #Calculate the image center as the middle point of the width and height.
         center = np.array(self.image.shape)/2
         #If contours is an empty list, algorithm is not outperformed.
         if only_contours and self.contours:
@@ -139,7 +138,7 @@ class Image(object):
                 #Calculate the r distance. First numerator and then denominator.
                 r = (distance ** 2).sum(axis=1).astype(np.float)
                 r /= (center ** 2).sum() * 2
-                coeffs = np.array([r*kx, r*ky]).transpose() + 1
+                coeffs = np.array([r*ky, r*kx]).transpose() + 1
                 corrected = distance * coeffs + center
                 self.contours[index] = corrected
         elif not only_contours:
