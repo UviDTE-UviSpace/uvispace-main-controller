@@ -9,6 +9,7 @@ class and its methods.
 import ast
 import ConfigParser
 import logging
+import numpy as np
 import pylab
 from scipy import misc
 import socket
@@ -134,6 +135,7 @@ class VideoSensor(object):
         self._ip = ''
         self._port = None
         self._scale = scale
+        self._H = None
         #Dictionary variable where camera parameters are stored.
         self._params = {}
         #The Client class handles the TCP/IP connection to the device.
@@ -207,6 +209,7 @@ class VideoSensor(object):
         self._params['output'] = 0
         #Read and store the camera offsets
         self.get_offsets()
+        self.get_homography_array()
         #If the flag is marked as False, the method stops here.
         if not write2fpga:
             logging.debug("Loaded parameters. FPGA wasn't configured")
@@ -242,9 +245,22 @@ class VideoSensor(object):
         """
         self.filename = filename
         self.conf.read(self.filename)
-        if not self.conf.sections():
-            self._logger.error('Missing file at {}'.format(self.filename))
         return
+
+    def get_homography_array(self):
+        """
+        Get an homography array from the configuration file.
+        """
+        try:
+            #Read the value of H as is written on file.
+            raw_H = self.conf.get('Misc', 'H')
+        except NoSectionError:
+            raise AttributeError("There is no 'H' section in the conf file")
+        #Format the value in order to get a 3x3 array.
+        tuple_format = ','.join(raw_H.split('\n'))
+        array_format = ast.literal_eval(tuple_format)
+        self._H = np.array(array_format)
+        return self._H
 
     def get_offsets(self):
         """
