@@ -195,7 +195,7 @@ class Triangle(object):
                          + vertices[self.base_index-2]) / 2
         #Calculus of the x and y distance between the midpoint and the vertex
         #opposite to the base side.
-        if cartesian:
+        if self.cartesian:
             x, y = vertices[self.base_index] - self.midpoint
         else:
             #The array 'y'(rows) counts downwards, contrary to cartesian system.
@@ -226,6 +226,28 @@ class Triangle(object):
                                 self.barycenter + distance])
         return self.window
 
+    def homography(self, H):
+        """
+        Perform an homography operation to the Triangle vertices.
+
+        The homography is a geometrical tranformation that obtains the 
+        projection of certain points from a plain to another.
+
+        Parameters
+        ----------
+        H : 3x3 np.array
+            Homography matrix
+        """
+        points = np.copy(self.vertices)
+        #Loop for performing the homography to very 2-D vertex' coordinates.
+        for index, row in enumerate(points):
+            #Append '1' to the point vector and perform a matrix product with H.
+            operand = np.hstack([row, 1])
+            product = np.dot(H , operand)
+            new_point = product[0:2] / product[2]
+            points[index] = new_point
+        self.vertices = np.copy(points)
+        return self.vertices   
 
 
 
