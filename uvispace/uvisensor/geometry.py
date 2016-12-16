@@ -161,7 +161,14 @@ class Triangle(object):
         packed in a single 3x2 array. This method asumes that the
         triangle is isosceles and the 2 equal sides are bigger than 
         the different one, called base.
-        
+
+        The following attributes are updated:
+
+        * self.sides : array containing the lengths of the 3 sides.
+        * self.base_index : array index of the minor side. This is also
+        the index of the vertex between the 2 mayor sides, as vertices
+        indexes are the indexes of their opposite sides.
+
         Returns
         -------
         midpoint[0] : float32
@@ -186,9 +193,15 @@ class Triangle(object):
         self.base_index = np.argmin(self.sides)
         self.midpoint = (vertices[self.base_index-1]
                          + vertices[self.base_index-2]) / 2
-        row, col = vertices[self.base_index] - self.midpoint
-        #The array 'y'(rows) counts downwards, contrary to cartesian system.
-        self.angle = np.arctan2(-row, col)
+        #Calculus of the x and y distance between the midpoint and the vertex
+        #opposite to the base side.
+        if cartesian:
+            x, y = vertices[self.base_index] - self.midpoint
+        else:
+            #The array 'y'(rows) counts downwards, contrary to cartesian system.
+            row, col = vertices[self.base_index] - self.midpoint
+            x, y = col, -row
+        self.angle = np.arctan2(y, x)
         return self.midpoint[0], self.midpoint[1], self.angle
 
     def get_window(self, k=1.25):
