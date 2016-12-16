@@ -50,7 +50,7 @@ class CameraThread(threading.Thread):
             except KeyError:
                 continue
             #Scale the contours obtained according to the FPGA to image ratio.
-            contours = [np.array(location) / self.camera._scale]
+            contours = np.array(location) / self.camera._scale
             #Convert from Cartesian to Image coordinates
             tmp = np.copy(contours[:,0])
             contours[:,0] = contours[:,1]
@@ -63,6 +63,7 @@ class CameraThread(threading.Thread):
             #If no triangles are detected, avoid next instructions.
             if len(self.image.triangles):
                 self.triangles[0] = self.image.triangles[0]
+                #Obtain global cartesian coordinates with a scale ratio 4:1.
                 self.triangles[0].get_local2global(self.camera.offsets, K=4)
                 logging.debug("detected triangle with vertices at {}"
                               "".format(self.triangles[0].vertices))
