@@ -65,8 +65,10 @@ class CameraThread(threading.Thread):
                 self.triangles[0] = self.image.triangles[0]
                 #Obtain global cartesian coordinates with a scale ratio 4:1.
                 self.triangles[0].get_local2global(self.camera.offsets, K=4)
-                logging.debug("detected triangle with vertices at {}"
-                              "".format(self.triangles[0].vertices))
+                self.triangles[0].homography(self.camera._H)
+                pose = self.triangles[0].get_pose()
+                logging.debug("detected triangle at {}mm and {} radians."
+                              "".format(pose[0:2], pose[2]))
         logging.debug('shutting down {}'.format(self.name))
         videosensor.camera_shutdown(self.camera)
 
