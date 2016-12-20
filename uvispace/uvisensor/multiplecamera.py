@@ -96,17 +96,21 @@ class DataFusionThread(threading.Thread):
 
     def run(self):
         while not self.end_event.isSet():
-            for condition in conditions:
-                self.condition.acquire()
+            cycle_start_time = time.time()
+            for condition in self.conditions:
+                condition.acquire()
                 while True:
                     if self.vehicles:
                         triangle = self.vehicles['1']
                         break
-                    self.condition.wait()
-                self.condition.release()
+                    condition.wait()
+                condition.release()
             pose = triangle.get_pose()
             logging.debug("detected triangle at {}mm and {} radians."
                           "".format(pose[0:2], pose[2]))
+            #Sleep the rest of the cycle
+            while (time.time() - cycle_start_time < 0.02):
+                pass
 
 
 class UserThread(threading.Thread):
