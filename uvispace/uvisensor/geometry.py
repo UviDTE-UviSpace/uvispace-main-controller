@@ -204,7 +204,7 @@ class Triangle(object):
         self.angle = np.arctan2(y, x)
         return self.midpoint[0], self.midpoint[1], self.angle
 
-    def get_window(self, k=1.25):
+    def get_window(self, min_value, max_value, k=1.25):
         """
         Get the coordinates of a rectangle window around the triangle.
         
@@ -220,10 +220,17 @@ class Triangle(object):
             coordinates axe. The first row contains the X and Y minimum
             values of the square, and the second row contains the X and 
             Y maximum values of the square.
+
+        min_value : integer or 2x1 array
+            value or values of the minimum allowed coordinates.
+            
+        max_value : integer or 2x1 array
+            value or values of the maximum allowed coordinates.
         """
         distance = self.sides.max() * k
-        self.window = np.array([self.barycenter - distance, 
-                                self.barycenter + distance])
+        window = np.array([self.barycenter - distance, 
+                           self.barycenter + distance])
+        self.window = np.clip(window, min_value, max_value)
         return self.window
 
     def homography(self, H):
