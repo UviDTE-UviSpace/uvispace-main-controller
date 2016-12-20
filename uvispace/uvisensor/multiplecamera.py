@@ -5,6 +5,9 @@ import logging
 import numpy as np
 import threading
 import time
+#ROS libraries
+from geometry_msgs.msg import Pose2D
+import rospy
 #Local libraries
 import imgprocessing
 import videosensor
@@ -93,6 +96,7 @@ class DataFusionThread(threading.Thread):
         self.vehicles = vehicles
         self.conditions = conditions
         self.end_event = end_event
+        self.publisher = rospy.Publisher('/robot_1/pose2d', Pose2D, queue_size=1)
 
     def run(self):
         while not self.end_event.isSet():
@@ -109,6 +113,7 @@ class DataFusionThread(threading.Thread):
             logging.debug("detected triangle at {}mm and {} radians."
                           "".format(pose[0:2], pose[2]))
             #Sleep the rest of the cycle
+            self.publish(Pose2D(pose[0]/1000, pose[1]/1000, pose[2]))
             while (time.time() - cycle_start_time < 0.02):
                 pass
 
@@ -157,6 +162,7 @@ if __name__ == '__main__':
     log = logging.getLogger(__name__)
     logging.info("BEGINNING MAIN EXECUTION")
     #Get the relative path to all the config files stored in /config folder.
+    rospy.init_node('uvisensor')
     conf_files = glob.glob("./resources/config/*.cfg")
     conf_files.sort()
     threads = []
