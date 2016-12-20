@@ -83,7 +83,7 @@ def set_tracker(camera):
     tracker_position = []
     for index, triangle in enumerate(image.triangles):
         triangle.get_pose()
-        triangle.get_window()
+        triangle.get_window(min_value=0, max_value=image.image.shape)
         min_x = int(camera._scale * triangle.window[0,1])
         min_y = int(camera._scale * triangle.window[0,0])
         width = int(camera._scale * triangle.window[1,1] - min_x)
