@@ -4,6 +4,7 @@ import glob
 import logging
 import numpy as np
 import threading
+import time
 #Local libraries
 import imgprocessing
 import videosensor
@@ -28,15 +29,17 @@ class CameraThread(threading.Thread):
     """
     Create a thread and a VideoSensor object. Capture frames when run.
     """
-    def __init__(self, begin_event, end_event, lock,
+    def __init__(self, vehicles, begin_event, end_event, condition,
                  name=None, conf_file=''):
         threading.Thread.__init__(self, name=name)
         #Initialize TCP/IP connection and FPGA operation.
         self.camera = videosensor.camera_startup(conf_file)
         self.triangles = [None]
+        #Dictionary containing the contours of detected vehicles.
+        self.vehicles = vehicles
         self.begin_event = begin_event
         self.end_event = end_event
-        self.lock = lock
+        self.condition = condition
         self.image = []
 
     def run(self):
@@ -44,10 +47,24 @@ class CameraThread(threading.Thread):
         self.image, _ = videosensor.set_tracker(self.camera)
         self.begin_event.set()
         while not self.end_event.isSet():
+            #If no triangles are detected, avoid coordinates calculation.
+            if len(self.image.triangles):
+                self.triangles[0] = self.image.triangles[0]
+                #Obtain global cartesian coordinates with a scale ratio 4:1.
+                self.triangles[0].get_local2global(self.camera.offsets, K=4)
+                self.triangles[0].homography(self.camera._H)
+                #Block the lock object until the pose is written to dictionary.
+            self.condition.acquire()
+            if len(self.image.triangles):
+                self.vehicles['1'] = self.triangles[0]
+            self.condition.notify()
+            self.condition.release()
+            #Get CARTESIAN coordinates of the 8 points of shape in tracker.
+            #The code ONLY tracks one UGV with id=1.
             try:
-                #Get CARTESIAN coordinates of the 8 points of shape in tracker.
                 location = self.camera.get_register('ACTUAL_LOCATION')['1']
             except KeyError:
+                self.triangles = []
                 continue
             #Scale the contours obtained according to the FPGA to image ratio.
             contours = np.array(location) / self.camera._scale
@@ -60,15 +77,6 @@ class CameraThread(threading.Thread):
             self.image.correct_distortion()
             #Obtain 3 vertices from the contours
             self.image.get_shapes(get_contours=False)
-            #If no triangles are detected, avoid next instructions.
-            if len(self.image.triangles):
-                self.triangles[0] = self.image.triangles[0]
-                #Obtain global cartesian coordinates with a scale ratio 4:1.
-                self.triangles[0].get_local2global(self.camera.offsets, K=4)
-                self.triangles[0].homography(self.camera._H)
-                pose = self.triangles[0].get_pose()
-                logging.debug("detected triangle at {}mm and {} radians."
-                              "".format(pose[0:2], pose[2]))
         logging.debug('shutting down {}'.format(self.name))
         videosensor.camera_shutdown(self.camera)
 
@@ -80,14 +88,25 @@ class DataFusionThread(threading.Thread):
     Merge the shapes obtained by each CameraThread and stored in a 
     global variable.
     """
-    def __init__(self, lock, end_event, name='Fusion Thread'):
+    def __init__(self, vehicles, conditions, end_event, name='Fusion Thread'):
         threading.Thread.__init__(self, name=name)
-        self.lock = lock
+        self.vehicles = vehicles
+        self.conditions = conditions
         self.end_event = end_event
 
     def run(self):
         while not self.end_event.isSet():
-            pass
+            for condition in conditions:
+                self.condition.acquire()
+                while True:
+                    if self.vehicles:
+                        triangle = self.vehicles['1']
+                        break
+                    self.condition.wait()
+                self.condition.release()
+            pose = triangle.get_pose()
+            logging.debug("detected triangle at {}mm and {} radians."
+                          "".format(pose[0:2], pose[2]))
 
 
 class UserThread(threading.Thread):
@@ -105,13 +124,14 @@ class UserThread(threading.Thread):
         number of Camera threads started. Until the set up of every 
         camera is finished, the user can not interact with this thread.
         
-        end_event is an event that indicates the end of the program.
+        end_event indicates the end of the program.
         """
         threading.Thread.__init__(self, name=name)
         self.begin_events = begin_events
         self.end_event = end_event
 
     def run(self):
+        #Wait until all camera threads start.
         for event in self.begin_events:
             event.wait()
         logging.info("All cameras were initialized")
@@ -121,7 +141,8 @@ class UserThread(threading.Thread):
                 self.end_event.set()
 
 
-#Main routine
+###Main routine.###
+#Create logger, read configuration files, prepare variables and create threads.
 if __name__ == '__main__':
     logging.basicConfig(format=('%(asctime)s.%(msecs)03d '
                                '%(levelname)s (%(threadName)-9s):'
@@ -135,18 +156,23 @@ if __name__ == '__main__':
     conf_files = glob.glob("./resources/config/*.cfg")
     conf_files.sort()
     threads = []
-    lock = threading.Lock()
+    #A condition for each camera thread execution.
+    conditions = []
+    #Shared variable where cartesian coordinates of found vehicles are stored.
+    vehicles = {}
     #A begin event for each camera will be created
     begin_events = []
     end_event = threading.Event()
     #New thread instantiation for each configuration file.
     for index, fname in enumerate(conf_files):
+        conditions.append(threading.Condition())
         begin_events.append(threading.Event())
-        threads.append(CameraThread(begin_events[index], end_event, lock,
+        threads.append(CameraThread(vehicles, begin_events[index], 
+                                    end_event, conditions[index], 
                                     'Camera{}'.format(index), fname))
     #Thread for getting user input
     threads.append(UserThread(begin_events, end_event))
-    threads.append(DataFusionThread(lock, end_event))
+    threads.append(DataFusionThread(vehicles, conditions, end_event))
     # start threads
     for thread in threads:
         thread.start()
