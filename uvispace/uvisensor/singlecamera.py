@@ -33,6 +33,7 @@ def input_task(begin_event, end_event):
 def cam_task(begin_loop, end_loop, conf_file):
     """Initialize and request UGV position until program exit."""
     camera = videosensor.camera_startup(conf_file)
+    triangles = [None]
     try:
         #Check that camera is connected and tracker location and get a frame.
         image, _ = videosensor.set_tracker(camera)
@@ -47,16 +48,30 @@ def cam_task(begin_loop, end_loop, conf_file):
         try:
             location = camera.get_register('ACTUAL_LOCATION')['1']
         except KeyError:
+            triangles = [None]
             continue
-        image.contours = [np.array(location)/camera._scale]
+        #Scale the contours obtained according to the FPGA to image ratio.
+        contours = np.array(location) / camera._scale
+        #Convert from Cartesian to Image coordinates
+        tmp = np.copy(contours[:,0])
+        contours[:,0] = contours[:,1]
+        contours[:,1] = tmp
+        image.contours = [contours]
+        #Correct barrel distortion.
         image.correct_distortion()
         #Obtain 3 vertices from the contours
         image.get_shapes(get_contours=False)
         #If no triangles are detected, avoid next instructions.
         if len(image.triangles):
+            triangles[0] = image.triangles[0]
+            #Obtain global cartesian coordinates with a scale ratio 4:1.
+            triangles[0].get_local2global(camera.offsets, K=4)
+            triangles[0].homography(camera._H)
+            #Block the lock object until the pose is written to dictionary.
             image.triangles[0].get_pose()
             logging.debug("detected triangle with vertices at {}"
-                          "".format(image.triangles[0].vertices))
+                          "".format(image.triangles[0].get_pose()))
+            print image.triangles[0].get_pose()
     print 'exiting camera thread'
     videosensor.camera_shutdown(camera)
 
