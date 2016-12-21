@@ -68,7 +68,7 @@ class CameraThread(threading.Thread):
             try:
                 location = self.camera.get_register('ACTUAL_LOCATION')['1']
             except KeyError:
-                self.triangles = []
+                self.triangles = [None]
                 continue
             #Scale the contours obtained according to the FPGA to image ratio.
             contours = np.array(location) / self.camera._scale
