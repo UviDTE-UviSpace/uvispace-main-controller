@@ -8,12 +8,14 @@ class and its methods.
 #Standard libraries
 import ast
 import ConfigParser
-import logging
+#import logging
 import numpy as np
 import pylab
 from scipy import misc
 import socket
 import sys
+#ROS libraries
+import rospy
 #Local libraries
 from client import Client
 import imgprocessing
@@ -142,7 +144,7 @@ class VideoSensor(object):
         self._client = Client()
         self._connected = False
         #Begin a logger, and associate it to the module __name__
-        self._logger = logging.getLogger(__name__)
+#        self._logger = logging.getLogger(__name__)
         #Instantiate a configuration class and read input filename.
         self.conf = ConfigParser.RawConfigParser()
         self.read_conffile(filename)
@@ -159,7 +161,8 @@ class VideoSensor(object):
             self._ip = self.conf.get('VideoSensor', 'IP')
             self._port = int(self.conf.get('VideoSensor', 'PORT'))
         except NoSectionError:
-            self._logger.ERROR('Missing config file: {}'.format(self.filename))
+            rospy.logerr('Missing config file: {}'.format(self.filename))
+#            self._logger.ERROR('Missing config file: {}'.format(self.filename))
             return
         self._logger.debug('Opened configuration file. '
                            'Connecting to {}'.format(self._ip))
@@ -167,7 +170,8 @@ class VideoSensor(object):
             self._client.open_connection(self._ip, self._port)
             self._connected = True
         except socket.timeout:
-            self._logger.warning('Unable to connect to port. Timeout')
+            rospy.logwarn('Unable to connect to port. Timeout')
+#            self._logger.warning('Unable to connect to port. Timeout')
 
     def disconnect_client(self):
         """Close TCP/IP connection with the device."""
@@ -186,7 +190,8 @@ class VideoSensor(object):
         """
         #Check that the filename is correct
         if not self.conf.sections():
-            self._logger.ERROR('Missing config file: {}'.format(self.filename))
+            rospy.logerr('Missing config file: {}'.format(self.filename))
+#            self._logger.ERROR('Missing config file: {}'.format(self.filename))
             return
         #Sensor color thresholds parameters
         self._params['red_thresholds'] = ast.literal_eval(
@@ -345,8 +350,10 @@ class VideoSensor(object):
         else:
             logging.warning("Not valid value type for {}".format(value))
         message = self._client.write_register(register, formatted_value)
-        self._logger.debug(repr("Obtained '{}' after writing {} on {} register."
-                                "".format(message, formatted_value, register)))
+        rospy.logdebug(repr("Obtained '{}' after writing {} on {} register."
+                                "".format(message, formatted_value, register))))
+#        self._logger.debug(repr("Obtained '{}' after writing {} on {} register."
+#                                "".format(message, formatted_value, register)))
         return message
 
     def configure_tracker(self, tracker_id, min_x, min_y, width, height):
@@ -369,7 +376,8 @@ class VideoSensor(object):
         to the FPGA are integers. Other types like float are not valid
         and the FPGA will not recognize them.
         """
-        self._logger.debug('Configuring tracker {}'.format(tracker_id))
+        rospy.logdebug('Configuring tracker {}'.format(tracker_id))
+#        self._logger.debug('Configuring tracker {}'.format(tracker_id))
         self.set_register('SET_WINDOW', '{},{},{},{},{}'
                           ''.format(tracker_id, min_x, min_y, width, height))
 

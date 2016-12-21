@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 #Standard libraries
 import glob
-import logging
+#import logging
 import numpy as np
 import threading
 import time
+import os
 #ROS libraries
 from geometry_msgs.msg import Pose2D
 import rospy
@@ -91,12 +92,13 @@ class DataFusionThread(threading.Thread):
     Merge the shapes obtained by each CameraThread and stored in a 
     global variable.
     """
-    def __init__(self, vehicles, conditions, end_event, name='Fusion Thread'):
+    def __init__(self, vehicles, conditions, end_event, 
+                 publisher, name='Fusion Thread'):
         threading.Thread.__init__(self, name=name)
         self.vehicles = vehicles
         self.conditions = conditions
         self.end_event = end_event
-        self.publisher = rospy.Publisher('/robot_1/pose2d', Pose2D, queue_size=1)
+        self.publisher = publisher
 
     def run(self):
         while not self.end_event.isSet():
@@ -110,10 +112,12 @@ class DataFusionThread(threading.Thread):
                     condition.wait()
                 condition.release()
             pose = triangle.get_pose()
-            logging.debug("detected triangle at {}mm and {} radians."
+            rospy.logdebug("detected triangle at {}mm and {} radians."
                           "".format(pose[0:2], pose[2]))
+#            logging.debug("detected triangle at {}mm and {} radians."
+#                          "".format(pose[0:2], pose[2]))
             #Sleep the rest of the cycle
-            self.publish(Pose2D(pose[0]/1000, pose[1]/1000, pose[2]))
+            self.publisher.publish(Pose2D(pose[0]/1000, pose[1]/1000, pose[2]))
             while (time.time() - cycle_start_time < 0.02):
                 pass
 
@@ -143,9 +147,10 @@ class UserThread(threading.Thread):
         #Wait until all camera threads start.
         for event in self.begin_events:
             event.wait()
-        logging.info("All cameras were initialized")
+        rospy.loginfo("All cameras were initialized")
+#        logging.info("All cameras were initialized")
         while not self.end_event.isSet():
-            i = raw_input("Press 'Q' to stop the script...")
+            i = raw_input("Press 'Q' to stop the script... ")
             if i == 'Q':
                 self.end_event.set()
 
@@ -153,16 +158,18 @@ class UserThread(threading.Thread):
 ###Main routine.###
 #Create logger, read configuration files, prepare variables and create threads.
 if __name__ == '__main__':
-    logging.basicConfig(format=('%(asctime)s.%(msecs)03d '
-                               '%(levelname)s (%(threadName)-9s):'
-                               '%(message)s'), 
-                        level=logging.DEBUG,
-                        datefmt='%H:%M:%S',
-                        filename='./log/main.log')
-    log = logging.getLogger(__name__)
-    logging.info("BEGINNING MAIN EXECUTION")
-    #Get the relative path to all the config files stored in /config folder.
     rospy.init_node('uvisensor')
+    publisher = rospy.Publisher('/robot_1/pose2d', Pose2D, queue_size=1)
+#    logging.basicConfig(format=('%(asctime)s.%(msecs)03d '
+#                               '%(levelname)s (%(threadName)-9s):'
+#                               '%(message)s'), 
+#                        level=logging.DEBUG,
+#                        datefmt='%H:%M:%S',
+#                        filename='./log/main.log')
+#    log = logging.getLogger(__name__)
+    rospy.loginfo("BEGINNING MAIN EXECUTION")
+#    logging.info("BEGINNING MAIN EXECUTION")
+    #Get the relative path to all the config files stored in /config folder.
     conf_files = glob.glob("./resources/config/*.cfg")
     conf_files.sort()
     threads = []
@@ -182,7 +189,7 @@ if __name__ == '__main__':
                                     'Camera{}'.format(index), fname))
     #Thread for getting user input
     threads.append(UserThread(begin_events, end_event))
-    threads.append(DataFusionThread(vehicles, conditions, end_event))
+    threads.append(DataFusionThread(vehicles, conditions, end_event, publisher))
     # start threads
     for thread in threads:
         thread.start()

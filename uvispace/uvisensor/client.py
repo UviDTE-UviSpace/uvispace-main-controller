@@ -12,9 +12,11 @@ https://github.com/biosbits/bits/blob/master/python/_socket.py
 # Standard libraries
 import ast
 import errno
-import logging
+#import logging
 import socket
 from socket import socket as Socket
+#ROS libraries
+import rospy
 
 class Client(Socket):
     """Child class of socket.socket which includes register operations.
@@ -76,7 +78,7 @@ class Client(Socket):
         self.ip = ''
         self.port = None
         self.buffer_size = buffer_size
-        self._logger = logging.getLogger(__name__)
+#        self._logger = logging.getLogger(__name__)
         #Call parent method for setting the timeout
         self.settimeout(timeout)
 
@@ -96,8 +98,10 @@ class Client(Socket):
         self.ip = ip
         self.port = port
         self.connect((self.ip, self.port))
-        self._logger.info('Started TCP client with IP: {} '
+        rospy .loginfo('Started TCP client with IP: {} '
                           'and PORT:{}.'.format(self.ip, self.port))
+#        self._logger.info('Started TCP client with IP: {} '
+#                          'and PORT:{}.'.format(self.ip, self.port))
         #Empty the data buffer, as it contains the 'welcome message'.
         self.recv(self.buffer_size)
         
@@ -112,9 +116,11 @@ class Client(Socket):
         if not isinstance(self._sock, socket._closedsocket):
             self.write_command('CLOSE_CONNECTION')
             self.close()
-            self._logger.info('Closed the TCP client\n\n{}'.format(75*'-'))
+            rospy.loginfo('Closed the TCP client\n\n{}'.format(75*'-'))
+#            self._logger.info('Closed the TCP client\n\n{}'.format(75*'-'))
         else:
-            self._logger.debug('Unable to close TCP client. Already closed')
+            rospy.logdebug('Unable to close TCP client. Already closed')
+#            self._logger.debug('Unable to close TCP client. Already closed')
         
     def read_data(self, size):
         """Read N packages and return a cocatenation of all of them.
@@ -132,13 +138,17 @@ class Client(Socket):
                 received_package = self.recv(self.buffer_size)
             except socket.timeout:
                 amount = 100 * float(bytes)/size
-                self._logger.warning('Stopped data acquisition with {:.2f}% '
+                rospy.logwarn('Stopped data acquisition with {:.2f}% '
                                      'of the data acquired'.format(amount))
+#                self._logger.warning('Stopped data acquisition with {:.2f}% '
+#                                     'of the data acquired'.format(amount))
                 break
             bytes += len(received_package)
             packages.append(received_package)
-        self._logger.debug('Received {} bytes of {} ({:.2f}%)\r'.format(
+        rospy.logdebug'Received {} bytes of {} ({:.2f}%)\r'.format(
                            bytes, size, (100 * float(bytes)/size)))
+#        self._logger.debug('Received {} bytes of {} ({:.2f}%)\r'.format(
+#                           bytes, size, (100 * float(bytes)/size)))
         #Cocatenate all the packages in a unique variable
         data = ''.join(packages)
         return data
