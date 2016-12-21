@@ -187,9 +187,13 @@ class Image(object):
         #Get the vertices of each shape in the image.
         for cnt in self.contours:
             coords = skimage.measure.approximate_polygon(cnt, tolerance)
-            #The initial vertex is repeatead at the end. Thus, if len is 2
-            #it implies a single point polygon. If len is 3 implies a line.
-            if len(coords) == 4:
+            #Sometimes, the initial vertex is repeatead at the end. 
+            #Thus, if len is 3 and vertex is NOT repeated, it is a triangle
+            if len(coords) == 3 and (not np.array_equal(coords[0], coords[-1])):
+                triangle = geometry.Triangle(coords)
+                self.triangles.append(triangle)
+            #If len is 4 and vertex IS repeated, it is a triangle
+            if len(coords) == 4 and  np.array_equal(coords[0], coords[-1]):
                 triangle = geometry.Triangle(coords[1:])
                 self.triangles.append(triangle)
             logging.debug("A {}-vertices shape was found".format(len(coords)))
