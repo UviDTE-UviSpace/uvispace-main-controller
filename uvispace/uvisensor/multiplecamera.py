@@ -81,7 +81,8 @@ class CameraThread(threading.Thread):
             self.image.correct_distortion()
             #Obtain 3 vertices from the contours
             self.image.get_shapes(get_contours=False)
-        logging.debug('shutting down {}'.format(self.name))
+        rospy.logdebug('shutting down {}'.format(self.name))
+#        logging.debug('shutting down {}'.format(self.name))
         videosensor.camera_shutdown(self.camera)
 
 

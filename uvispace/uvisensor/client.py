@@ -145,7 +145,7 @@ class Client(Socket):
                 break
             bytes += len(received_package)
             packages.append(received_package)
-        rospy.logdebug'Received {} bytes of {} ({:.2f}%)\r'.format(
+        rospy.logdebug('Received {} bytes of {} ({:.2f}%)\r'.format(
                            bytes, size, (100 * float(bytes)/size)))
 #        self._logger.debug('Received {} bytes of {} ({:.2f}%)\r'.format(
 #                           bytes, size, (100 * float(bytes)/size)))

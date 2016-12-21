@@ -164,8 +164,10 @@ class VideoSensor(object):
             rospy.logerr('Missing config file: {}'.format(self.filename))
 #            self._logger.ERROR('Missing config file: {}'.format(self.filename))
             return
-        self._logger.debug('Opened configuration file. '
+        rospy.logdebug('Opened configuration file. '
                            'Connecting to {}'.format(self._ip))
+#        self._logger.debug('Opened configuration file. '
+#                           'Connecting to {}'.format(self._ip))
         try:
             self._client.open_connection(self._ip, self._port)
             self._connected = True
@@ -217,7 +219,8 @@ class VideoSensor(object):
         self.get_homography_array()
         #If the flag is marked as False, the method stops here.
         if not write2fpga:
-            logging.debug("Loaded parameters. FPGA wasn't configured")
+            rospy.logdebug("Loaded parameters. FPGA wasn't configured")
+#            logging.debug("Loaded parameters. FPGA wasn't configured")
             return
         #--------------------------------------------------------------#
         ###Write to the FPGA registers the loaded configuration.###
@@ -241,8 +244,10 @@ class VideoSensor(object):
         self.set_register('SYSTEM_OUTPUT', self._params['output'])
         #Send the configuration command to the FPGA
         conf = self._client.write_command('CONFIGURE_CAMERA', True)
-        logging.debug(repr("Obtained '{}' "
+        rospy.logdebug(repr("Obtained '{}' "
                            "after 'CONFIGURE_CAMERA'".format(conf)))
+#        logging.debug(repr("Obtained '{}' "
+#                           "after 'CONFIGURE_CAMERA'".format(conf)))
 
     def read_conffile(self, filename):
         """
@@ -348,10 +353,11 @@ class VideoSensor(object):
             for item in value[1:]:
                 formatted_value = "{},{}".format(formatted_value, item)
         else:
-            logging.warning("Not valid value type for {}".format(value))
+            rospy.logwarn("Not valid value type for {}".format(value))
+#            logging.warning("Not valid value type for {}".format(value))
         message = self._client.write_register(register, formatted_value)
         rospy.logdebug(repr("Obtained '{}' after writing {} on {} register."
-                                "".format(message, formatted_value, register))))
+                                "".format(message, formatted_value, register)))
 #        self._logger.debug(repr("Obtained '{}' after writing {} on {} register."
 #                                "".format(message, formatted_value, register)))
         return message
@@ -411,7 +417,8 @@ class VideoSensor(object):
         message = self._client.write_command('GET_NEW_FRAME', True)
         while message != "Image captured.\n":
             if not tries:
-                logging.warning("Stop waiting for a frame after 20 tries")
+                rospy.logwarn("Stop waiting for a frame after 20 tries")
+#                logging.warning("Stop waiting for a frame after 20 tries")
                 sys.exit()
             tries -= 1
             #Timeout error means that the FPGA buffer is empty. If this
@@ -420,7 +427,8 @@ class VideoSensor(object):
                 message = self._client.recv(self._client.buffer_size)
             except socket.timeout:
                 pass
-        logging.debug(repr("'{}' after {} tries.".format(message, 20 - tries)))
+        rospy.logdebug(repr("'{}' after {} tries.".format(message, 20 - tries)))
+#        logging.debug(repr("'{}' after {} tries.".format(message, 20 - tries)))
         #dim (dimensions) is the number of components per pixel.
         if gray:
             command = 'GET_GRAY_IMAGE'
@@ -431,7 +439,8 @@ class VideoSensor(object):
             dim = 3
             shape = (self._params['height'], self._params['width'], dim)
         self._client.write_command(command)
-        logging.debug("'{}' command sent.".format(command))
+        rospy.logdebug("'{}' command sent.".format(command))
+#        logging.debug("'{}' command sent.".format(command))
         #SIZE = Width x Height x Dimensions
         img_size = self._params['width'] * self._params['height'] * dim
         data = self._client.read_data(img_size)
