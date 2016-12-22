@@ -235,7 +235,7 @@ class VideoSensor(object):
                                           self._params['height']))
         self.set_register('IMAGE_EXPOSURE', self._params['exposure'])
         #Why is adding 15 and 53??
-        self.set_register('SYSTEM_INDEXES', (self._params['start_col'],
+        self.set_register('START_INDEXES', (self._params['start_col'],
                                              self._params['start_row']))
         self.set_register('SYSTEM_SHAPE', (self._params['col_size'], 
                                            self._params['row_size']))
