@@ -39,7 +39,7 @@ class Client(Socket):
                   'BLUE_THRESHOLD': 'bt',
                   'IMAGE_SHAPE': 'is',
                   'IMAGE_EXPOSURE': 'ie',
-                  'SYSTEM_INDEXES': 'si',
+                  'START_INDEXES': 'si',
                   'SYSTEM_SHAPE': 'ss',
                   'SYSTEM_MODES': 'sm',
                   'SYSTEM_OUTPUT': 'so',
