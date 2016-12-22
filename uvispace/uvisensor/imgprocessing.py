@@ -51,6 +51,8 @@ class Image(object):
         self._binarized = None
         self.triangles = []
         self.contours = contours
+        self.borders = []
+        self.set_borders_region()
 
     def binarize(self, thresholds):
         """Get a binarized image from a grey image given the thresholds.
@@ -205,7 +207,19 @@ class Image(object):
 #            logging.debug("A {}-vertices shape was found".format(len(coords)))
         return self.triangles
 
+    def set_borders_region(self, thickness=50):
+        """
+        Set a mask for assessing if coordinates are in borders region.
 
+        Parameters
+        ----------
+        thickness : integer
+            thickness of the borders region, in number of pixels.
+        """
+        #Set the whole array to 1s, and then set to 0 the central pixels.
+        self.borders = np.ones(self.image.shape)
+        self.borders[thickness:-thickness, thickness:-thickness] = 0
+        return self.borders
         
 
 
