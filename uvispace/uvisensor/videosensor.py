@@ -138,6 +138,7 @@ class VideoSensor(object):
         self._port = None
         self._scale = scale
         self._H = None
+        self._limits = None
         #Dictionary variable where camera parameters are stored.
         self._params = {}
         #The Client class handles the TCP/IP connection to the device.
@@ -217,6 +218,7 @@ class VideoSensor(object):
         #Read and store the camera offsets
         self.get_offsets()
         self.get_homography_array()
+        self.get_limits_array()
         #If the flag is marked as False, the method stops here.
         if not write2fpga:
             rospy.logdebug("Loaded parameters. FPGA wasn't configured")
@@ -270,6 +272,21 @@ class VideoSensor(object):
         tuple_format = ','.join(raw_H.split('\n'))
         array_format = ast.literal_eval(tuple_format)
         self._H = np.array(array_format)
+        return self._H
+
+    def get_limits_array(self):
+        """
+        Get the limits array from the configuration file.
+        """
+        try:
+            #Read the value of H as is written on file.
+            raw_L = self.conf.get('Misc', 'limits')
+        except NoSectionError:
+            raise AttributeError("There is no 'H' section in the conf file")
+        #Format the value in order to get a 3x3 array.
+        tuple_format = ','.join(raw_L.split('\n'))
+        array_format = ast.literal_eval(tuple_format)
+        self._limits = np.array(array_format)
         return self._H
 
     def get_offsets(self):
