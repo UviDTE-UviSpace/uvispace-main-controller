@@ -27,7 +27,7 @@ class Triangle(object):
             4-quadrant system (global) or to a single quadrant system.
         """
         if len(vertices) is not 3:
-            raise ValueError("Expected an array containing 3 vertices")
+            raise ValueError("Expected an array with 3 vertices")
         self.vertices = vertices.astype(np.float32)
         #These flags indicate the coordinates system that is being used
         self.isglobal = isglobal
