@@ -287,7 +287,7 @@ class VideoSensor(object):
         tuple_format = ','.join(raw_L.split('\n'))
         array_format = ast.literal_eval(tuple_format)
         self._limits = np.array(array_format)
-        return self._H
+        return self._limits
 
     def get_offsets(self):
         """
