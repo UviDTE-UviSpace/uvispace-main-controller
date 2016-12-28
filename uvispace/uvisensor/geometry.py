@@ -257,5 +257,56 @@ class Triangle(object):
         return self.vertices   
 
 
+class Segment(object):
+    """
+    This class contains methods for dealing with 2D segments operations.
+    """
+    def __init__(self, pointA, pointB):
+        """Define the segment basic attributes.
+
+        Parameters
+        ----------
+        pointA, pointB : 2 elements tuple or list
+            X and Y coordinates of the initial and end points defining
+            the segment.
+        """
+        self.pointA = np.array(pointA)
+        self.pointB = np.array(pointB)
+        #Get the segment modulus for further operations.
+        self.modulus = np.linalg.norm(self.pointA - self.pointB)
+
+    def distance2point(self, point):
+        """
+        Return the distance of a point to the nearest segment point.
+
+        The calculus is based on the dot (scalar) product. The dot 
+        product of 2 vectors is the perpendicular projection of the
+        first vector on the second one.
+
+        Finally, the the distance to the segment is obtained and 
+        returned using the Pitagoras' theorem.
+
+        Parameters
+        ----------
+        point : 2-elements tuple or list
+        """
+        #target point and Segment's final point coordinates referred to the
+        #initial point. Needed for the dot product.
+        vector1 = self.pointB - self.pointA
+        vector2 = point - self.pointA
+        #Distance from pointA to the projection of vector2 on vector1
+        projection = np.dot(vector1, vector2) / self.modulus
+        #Case that target point is minor that pointA
+        if projection <= 0:
+            distance = np.linalg.norm(vector2)
+        #Case that target point is greater that pointB
+        elif projection >= 1:
+            distance = np.linalg.norm(point - self.pointB)
+        else:
+            distance = np.hypot(np.linalg.norm(vector2), projection)
+        return distance
+
+
+
 
 
