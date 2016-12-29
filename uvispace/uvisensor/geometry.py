@@ -256,6 +256,21 @@ class Triangle(object):
         self.vertices = np.copy(points)
         return self.vertices   
 
+    def in_borders(self, limits, tolerance=150):
+        """Return True if the vertices are near a 4-sides polygon."""
+        for index in range(len(limits)):
+            #Define a segment with 2 limit points of the quadrant.
+            seg = geometry.Segment(limits[index], limits[index-1])
+            #Evaluate each vertex of the triangle.
+            for vertex in self.vertices
+                #Get the distance in mm to the segment.
+                dist = seg.distance2point(vertex)
+                #Evaluate if the vertex is closer than the tolerance.
+                if dist < tolerance:
+                    return True
+        #If any of the vertices was near to any of the segments return False.
+        return False
+
 
 class Segment(object):
     """
@@ -279,9 +294,19 @@ class Segment(object):
         """
         Return the distance of a point to the nearest segment point.
 
-        The calculus is based on the dot (scalar) product. The dot 
-        product of 2 vectors is the perpendicular projection of the
-        first vector on the second one.
+        The calculus is based on the dot (scalar) product. The
+        perpendicular projection of a first vector on a second one is
+        the dot product the 2 vectors divided by the modulus of the 
+        second:
+            A.B = |A||B|cos(alpha)
+            being |A|cos(alpha) the projection of A on B
+
+        If the projection is less than 0, it implies that the point is
+        left to the first point (as cos(alphha) is negative), being this
+        first point the nearest one to the target point. 
+        Moreover, if the projection is greter than the modulus of the
+        segment, it implies that the target point is is right to the end
+        point, being this the nearest one.
 
         Finally, the the distance to the segment is obtained and 
         returned using the Pitagoras' theorem.
@@ -294,16 +319,18 @@ class Segment(object):
         #initial point. Needed for the dot product.
         vector1 = self.pointB - self.pointA
         vector2 = point - self.pointA
-        #Distance from pointA to the projection of vector2 on vector1
+        #Distance from pointA to the projection of vector2 on vector1.
         projection = np.dot(vector1, vector2) / self.modulus
         #Case that target point is minor that pointA
         if projection <= 0:
             distance = np.linalg.norm(vector2)
         #Case that target point is greater that pointB
-        elif projection >= 1:
+        elif projection >= self.modulus:
             distance = np.linalg.norm(point - self.pointB)
+        #Case that target point is between pointA and pointB
         else:
-            distance = np.hypot(np.linalg.norm(vector2), projection)
+            #Pithagoras theorem for getting the leg of a right-angled triangle.
+            distance = np.sqrt((vector2**2).sum() - projection**2)
         return distance
 
 
