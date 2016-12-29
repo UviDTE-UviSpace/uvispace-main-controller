@@ -66,7 +66,7 @@ class CameraThread(threading.Thread):
             #Activate a new tracker when triangle in other camera is
             #detected to be in current camera.
             #
-            if not(self._triangles) and self._inborders:
+            if (not self._triangles) and self._inborders['1']:
                 import pdb; pdb.set_trace()
                 pass
             #Get global to local
@@ -114,7 +114,7 @@ class DataFusionThread(threading.Thread):
     global variable.
     """
     def __init__(self, triangles, conditions, inborders, quadrant_limits,
-                 end_event, publisher, name='Fusion Thread'):
+                 begin_events, end_event, publisher, name='Fusion Thread'):
         """
         Thread class constructor
 
@@ -154,6 +154,7 @@ class DataFusionThread(threading.Thread):
         """
         threading.Thread.__init__(self, name=name)
         self.conditions = conditions
+        self.begin_events = begin_events
         self.end_event = end_event
         self.publisher = publisher
         self.cycletime = 0.02
@@ -166,6 +167,10 @@ class DataFusionThread(threading.Thread):
         self._inborders = copy.copy(self.inborders)
 
     def run(self):
+        #Wait until all cameras are initialized
+        for event in self.begin_events:
+            event.wait()
+        triangle = []
         while not self.end_event.isSet():
             #Start the cycle timer
             cycle_start_time = time.time()
@@ -188,23 +193,29 @@ class DataFusionThread(threading.Thread):
                 #Check in the other quadrants if the triangle is in borders.
                 #
                 if self._inborders[index]:
+                    import pdb; pdb.set_trace()
                     for index2, quadrant in enumerate(self.quadrant_limits):
                         #Do not repeat the function for the current quadrant.
                         if index2 == index:
                             continue
-                        bord = triangle.in_borders(self.quadrant_limits[index2])
+                        try:
+                            triangle = self._triangles[index]['1']
+                        except KeyError: 
+                            bord = False
+                        else:
+                            bord = triangle.in_borders(self.quadrant_limits[index2])
                         self._inborders[index2] = bord
             ###Pending: merge the containt of every dictionary in triangle
-            if self.triangles[index]:
+            if triangle:
                 pose = triangle.get_pose()
-#                rospy.logdebug("detected triangle at {}mm and {} radians."
-#                              "".format(pose[0:2], pose[2]))
+                rospy.logdebug("detected triangle at {}mm and {} radians."
+                              "".format(pose[0:2], pose[2]))
     #            logging.debug("detected triangle at {}mm and {} radians."
     #                          "".format(pose[0:2], pose[2]))
                 self.publisher.publish(Pose2D(pose[0]/1000, pose[1]/1000,
                                               pose[2]))
-            rospy.loginfo("{}".format(self.triangles))
-            rospy.loginfo("{}".format(self.inborders))
+#            rospy.loginfo("{}".format(self.triangles))
+#            rospy.loginfo("{}".format(self.inborders))
             #Sleep the rest of the cycle
             while (time.time() - cycle_start_time < self.cycletime):
                 pass
@@ -287,8 +298,7 @@ if __name__ == '__main__':
     threads.append(UserThread(begin_events, end_event))
     #Thread for merging the data obtained at every CameraThread.
     threads.append(DataFusionThread(triangles, conditions, inborders,
-                                    quadrant_limits, end_event, publisher))
-    import pdb; pdb.set_trace()
+                                    quadrant_limits, begin_events, end_event, publisher))
     # start threads
     for thread in threads:
         thread.start()
