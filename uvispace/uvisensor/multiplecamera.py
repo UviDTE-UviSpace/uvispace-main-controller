@@ -66,8 +66,9 @@ class CameraThread(threading.Thread):
             #Activate a new tracker when triangle in other camera is
             #detected to be in current camera.
             #
-            elif not(self._triangles) and self._inborders:
+            if not(self._triangles) and self._inborders:
                 import pdb; pdb.set_trace()
+                pass
             #Get global to local
             #get window
             #set_tracker
