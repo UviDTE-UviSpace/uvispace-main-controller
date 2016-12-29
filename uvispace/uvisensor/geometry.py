@@ -260,9 +260,9 @@ class Triangle(object):
         """Return True if the vertices are near a 4-sides polygon."""
         for index in range(len(limits)):
             #Define a segment with 2 limit points of the quadrant.
-            seg = geometry.Segment(limits[index], limits[index-1])
+            seg = Segment(limits[index], limits[index-1])
             #Evaluate each vertex of the triangle.
-            for vertex in self.vertices
+            for vertex in self.vertices:
                 #Get the distance in mm to the segment.
                 dist = seg.distance2point(vertex)
                 #Evaluate if the vertex is closer than the tolerance.
