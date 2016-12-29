@@ -57,6 +57,20 @@ class CameraThread(threading.Thread):
         self.image, _ = videosensor.set_tracker(self.camera)
         self.begin_event.set()
         while not self.end_event.isSet():
+            #Get the inborders global flag.
+            self.condition.acquire()
+            self._inborders = copy.copy(self.inborders)
+            self.condition.notify()
+            self.condition.release()
+            #
+            #Activate a new tracker when triangle in other camera is
+            #detected to be in current camera.
+            #
+            elif not(self._triangles) and self._inborders:
+                import pdb; pdb.set_trace()
+            #Get global to local
+            #get window
+            #set_tracker
             #Get CARTESIAN coordinates of the 8 points of shape in tracker.
             #The code ONLY tracks one UGV with id=1.
             try:
@@ -64,10 +78,6 @@ class CameraThread(threading.Thread):
             except KeyError:
                 self._triangles = [None]
                 continue
-            self.condition.acquire()
-            self._inborders = copy.copy(self.inborders)
-            self.condition.notify()
-            self.condition.release()
             #Scale the contours obtained according to the FPGA to image ratio.
             contours = np.array(locations) / self.camera._scale
             #Convert from Cartesian to Image coordinates
@@ -81,12 +91,6 @@ class CameraThread(threading.Thread):
             self._triangles = self.image.get_shapes(get_contours=False)
             #If no triangles are detected, avoid coordinates calculation.
             if len(self._triangles):
-                #Evaluate if all triangle vertices are inside image borders.
-                vertices = self._triangles[0].vertices.astype(np.int)
-                if all(self.image.borders[row, col] for row, col in vertices):
-                    self._inborders['1'] = True
-                else:
-                    self._inborders['1'] = False
                 #Obtain global cartesian coordinates with a scale ratio 4:1.
                 self._triangles[0].get_local2global(self.camera.offsets, K=4)
                 self._triangles[0].homography(self.camera._H)
@@ -94,7 +98,6 @@ class CameraThread(threading.Thread):
             self.condition.acquire()
             if len(self._triangles):
                 self.triangles['1'] = self._triangles[0]
-                self.inborders = copy.copy(self._inborders)
             self.condition.notify()
             self.condition.release()
         rospy.logdebug('shutting down {}'.format(self.name))
@@ -109,8 +112,8 @@ class DataFusionThread(threading.Thread):
     Merge the shapes obtained by each CameraThread and stored in a 
     global variable.
     """
-    def __init__(self, triangles, conditions, inborders, end_event, 
-                 publisher, name='Fusion Thread'):
+    def __init__(self, triangles, conditions, inborders, quadrant_limits,
+                 end_event, publisher, name='Fusion Thread'):
         """
         Thread class constructor
 
@@ -132,6 +135,11 @@ class DataFusionThread(threading.Thread):
             is a flag raised to True when the UGV is in the Nth borders
             region.
 
+        quadrant_limits : N-len list
+            list containing N 4-len arrays. Each one of the sublists 
+            contain the 4 points defining the working space of the 
+            camera N.
+
         end_event : threading.Event
             Event object that is set to True when the UserThread detects
             an 'end program' order from the user.
@@ -148,6 +156,7 @@ class DataFusionThread(threading.Thread):
         self.end_event = end_event
         self.publisher = publisher
         self.cycletime = 0.02
+        self.quadrant_limits = quadrant_limits
         #Shared lists. Can be written by other threads.
         self.triangles = triangles
         self.inborders = inborders
@@ -159,21 +168,36 @@ class DataFusionThread(threading.Thread):
         while not self.end_event.isSet():
             #Start the cycle timer
             cycle_start_time = time.time()
+            #Loop with N iterations, being N the number of camera threads.
             for index, condition in enumerate(self.conditions):
                 #Threads synchronized instructions.
                 condition.acquire()
                 #Read shared variables and store in local lists
                 self._triangles[index] = copy.copy(self.triangles[index])
-                self._inborders[index] = copy.copy(self.inborders[index])
-                #Read the global triangles coordinates at every camera thread.
-                if self.triangles[index]:
-                    triangle = self.triangles[index]['1']
                 condition.release()
+                #
+                #Evaluate if the triangle is in the borders regions.
+                #
+                if self._triangles[index]:
+                    triangle = self._triangles[index]['1']
+                    #Evaluate if triangle is in borders region.
+                    bord = triangle.in_borders(self.quadrant_limits[index])
+                    self._inborders[index] = bord
+                #
+                #Check in the other quadrants if the triangle is in borders.
+                #
+                if self._inborders[index]:
+                    for index2, quadrant in enumerate(self.quadrant_limits):
+                        #Do not repeat the function for the current quadrant.
+                        if index2 == index:
+                            continue
+                        bord = triangle.in_borders(self.quadrant_limits[index2])
+                        self._inborders[index2] = bord
             ###Pending: merge the containt of every dictionary in triangle
             if self.triangles[index]:
                 pose = triangle.get_pose()
-                rospy.logdebug("detected triangle at {}mm and {} radians."
-                              "".format(pose[0:2], pose[2]))
+#                rospy.logdebug("detected triangle at {}mm and {} radians."
+#                              "".format(pose[0:2], pose[2]))
     #            logging.debug("detected triangle at {}mm and {} radians."
     #                          "".format(pose[0:2], pose[2]))
                 self.publisher.publish(Pose2D(pose[0]/1000, pose[1]/1000,
@@ -254,11 +278,16 @@ if __name__ == '__main__':
                                     end_event, conditions[index], 
                                     inborders[index],
                                     'Camera{}'.format(index), fname))
+    #List containing the points defining the space limits of each camera.
+    quadrant_limits = []
+    for camera_thread in threads:
+        quadrant_limits.append(camera_thread.camera._limits)
     #Thread for getting user input.
     threads.append(UserThread(begin_events, end_event))
     #Thread for merging the data obtained at every CameraThread.
     threads.append(DataFusionThread(triangles, conditions, inborders,
-                                    end_event, publisher))
+                                    quadrant_limits, end_event, publisher))
+    import pdb; pdb.set_trace()
     # start threads
     for thread in threads:
         thread.start()
