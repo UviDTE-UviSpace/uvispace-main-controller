@@ -257,7 +257,18 @@ class Triangle(object):
         return self.vertices   
 
     def in_borders(self, limits, tolerance=150):
-        """Return True if the vertices are near a 4-sides polygon."""
+        """Evaluate if vertices are near a 4-sides polygon perimeter.
+
+        Parameters
+        ----------
+        limits : iterable of length 4
+            Array containing the coordinates of the 4 points defining 
+            the borders of the working space.
+
+        tolerance : int or float
+            Maximum allowed distance (mm) to the limits to be considered 
+            within the borders region.
+        """
         for index in range(len(limits)):
             #Define a segment with 2 limit points of the quadrant.
             seg = Segment(limits[index], limits[index-1])
@@ -268,7 +279,7 @@ class Triangle(object):
                 #Evaluate if the vertex is closer than the tolerance.
                 if dist < tolerance:
                     return True
-        #If any of the vertices was near to any of the segments return False.
+        #If any of the vertices wasn't near to any of the segments return False.
         return False
 
 
