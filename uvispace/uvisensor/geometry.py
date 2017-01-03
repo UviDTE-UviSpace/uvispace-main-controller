@@ -130,7 +130,7 @@ class Triangle(object):
             self.cartesian = True
         self.isglobal = True
 
-    def get_global2local(self, offsets):
+    def get_global2local(self, offsets, K=None, cartesian2image=True):
         """
         Convert Triangle coordinates to the local coordinates system.
         
@@ -142,14 +142,55 @@ class Triangle(object):
         offsets[row_offset, col_offset] : 2-integer list
             column and row offsets between the local and the global 
             systems.
+
+        K : positive int or float
+            Scale ratio that will be applied to the points coordinates.
+
+        cartesian2image : boolean
+            If this flag is set to True, a conversion from cartesian 
+            coordinate system to image system is performed. Thus, 
+            the output will be of the form of [row,column] instead of 
+            [x,y]
         """
         if not self.isglobal:
             return
-        self.vertices -= offsets
-        self.barycenter -= offsets
+        #Assess K and assign value to 'scale' attribute if it is valid.
+        if K is None:
+            K = self._scale
+        elif K <= 0:
+            raise ValueError("The scale ratio K must be greater than 0")
+        else:
+            self._scale = K
+        if cartesian2image:
+            #Convert the vertices coordinates
+            tmp = np.copy(self.vertices[:,0])
+            self.vertices[:,0] = self.vertices[:,1]
+            self.vertices[:,1] = tmp
+            #Convert the barycenter coordinates
+            tmp = np.copy(self.barycenter[0])
+            self.barycenter[0] = self.barycenter[1]
+            self.barycenter[1] = tmp
+            #Convert the midpoint coordinates
+            try:
+                tmp = np.copy(self.midpoint[0])
+                self.midpoint[0] = self.midpoint[1]
+                self.midpoint[1] = tmp
+            except IndexError:
+                pass
+            self.cartesian = False
+        self.vertices /= self._scale
+        self.vertices[:,0] = offsets[0] - self.vertices[:,0]
+        self.vertices[:,1] += offsets[1]
+        self.barycenter /= self._scale
+        self.barycenter[0] = offsets[0] - self.barycenter[0]
+        self.barycenter[1] += offsets[1]
+        #If the pose was not previously calculated, 
+        #a ValueError is catched and ignored.
         try:
-            self.midpoint -= offsets
-        except ValueError:
+            self.midpoint /= self._scale
+            self.midpoint[0] = offsets[0] - self.midpoint[0]
+            self.midpoint[1] += offsets[1]
+        except IndexError:
             pass
         self.isglobal = False
 
@@ -254,7 +295,33 @@ class Triangle(object):
             new_point = product[0:2] / product[2]
             points[index] = new_point
         self.vertices = np.copy(points)
-        return self.vertices   
+        return self.vertices
+
+    def inverse_homography(self, H):
+        """
+        Revert the homography operation and return new vertices.
+        
+        It gets Xu from the equation (w.X) = H.Y
+        First of all, get (1/w.Y) using least squares method. Then, 
+        extract 1/w from the column matrix, with the hypothesis that 
+        (Y11) = 1.
+
+        Parameters
+        ----------
+        H : 3x3 np.array
+            Homography matrix
+        """
+        points = np.copy(self.vertices)
+        #Loop for performing the homography to very 2-D vertex' coordinates.
+        for index, row in enumerate(points):
+            #Append '1' to the point vector and perform a matrix product with H.
+            operand = np.hstack([row, 1])
+            #Use least squares method to get Y from X=H.Y
+            product = np.linalg.lstsq(H , operand)[0]
+            new_point = product[0:2] / product[2]
+            points[index] = new_point
+        self.vertices = np.copy(points)
+        return self.vertices
 
     def in_borders(self, limits, tolerance=150):
         """Evaluate if vertices are near a 4-sides polygon perimeter.
