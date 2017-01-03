@@ -59,15 +59,20 @@ def get_image(camera, filename=''):
     image.get_shapes()
     return image
     
-def set_tracker(camera):
+def set_tracker(camera, image=[]):
     """Configure trackers according to detected triangles.
     
     Parameters
     ----------
     camera : VideoSensor() object
-        instance of the VideoSensor() class, from whom the initial
+        Instance of the VideoSensor() class, from whom the initial
         frame will be obtained, and whose trackers register will be
         configured.
+
+    triangles : iterable
+        This variable contains a Triangle object from which the ROI 
+        tracker will be initialized. If it is empty, a new image is 
+        captured and obtained the triangles from it.
     
     Returns
     -------
@@ -80,7 +85,9 @@ def set_tracker(camera):
         frame captured and obtained from the FPGA.
     """
     #Get an Image object with triangle shapes in it already segregated.
-    image = get_image(camera)
+    if not image:
+        image = get_image(camera)
+        triangles = image.triangles
     tracker = {}
     tracker_position = []
     for index, triangle in enumerate(image.triangles):
