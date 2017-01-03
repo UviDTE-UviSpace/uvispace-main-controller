@@ -67,7 +67,6 @@ class CameraThread(threading.Thread):
             #detected to be in current camera.
             #
             if (not self._triangles) and self._inborders['1']:
-                import pdb; pdb.set_trace()
                 pass
             #Get global to local
             #get window
@@ -187,13 +186,12 @@ class DataFusionThread(threading.Thread):
                 if self._triangles[index]:
                     triangle = self._triangles[index]['1']
                     #Evaluate if triangle is in borders region.
-                    bord = triangle.in_borders(self.quadrant_limits[index])
-                    self._inborders[index] = bord
+                    self._inborders[index]['1'] = triangle.in_borders(
+                                                self.quadrant_limits[index])
                 #
                 #Check in the other quadrants if the triangle is in borders.
                 #
-                if self._inborders[index]:
-                    import pdb; pdb.set_trace()
+                if self._inborders[index]['1']:
                     for index2, quadrant in enumerate(self.quadrant_limits):
                         #Do not repeat the function for the current quadrant.
                         if index2 == index:
@@ -201,10 +199,10 @@ class DataFusionThread(threading.Thread):
                         try:
                             triangle = self._triangles[index]['1']
                         except KeyError: 
-                            bord = False
+                            pass
                         else:
-                            bord = triangle.in_borders(self.quadrant_limits[index2])
-                        self._inborders[index2] = bord
+                            self._inborders[index2]['1'] = triangle.in_borders(
+                                                self.quadrant_limits[index2])
             ###Pending: merge the containt of every dictionary in triangle
             if triangle:
                 pose = triangle.get_pose()
@@ -298,7 +296,8 @@ if __name__ == '__main__':
     threads.append(UserThread(begin_events, end_event))
     #Thread for merging the data obtained at every CameraThread.
     threads.append(DataFusionThread(triangles, conditions, inborders,
-                                    quadrant_limits, begin_events, end_event, publisher))
+                                    quadrant_limits, begin_events, end_event, 
+                                    publisher))
     # start threads
     for thread in threads:
         thread.start()
