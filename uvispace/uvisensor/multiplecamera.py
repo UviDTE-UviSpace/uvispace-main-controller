@@ -60,6 +60,7 @@ class CameraThread(threading.Thread):
             #Get the inborders global flag.
             self.condition.acquire()
             self._inborders = copy.copy(self.inborders)
+            self._triangles = copy.copy(self.triangles)
             self.condition.notify()
             self.condition.release()
             #
@@ -68,15 +69,21 @@ class CameraThread(threading.Thread):
             #
             if (not self._triangles) and self._inborders['1']:
                 pass
-            #Get global to local
-            #get window
-            #set_tracker
             #Get CARTESIAN coordinates of the 8 points of shape in tracker.
             #The code ONLY tracks one UGV with id=1.
             try:
                 locations = self.camera.get_register('ACTUAL_LOCATION')['1']
             except KeyError:
-                self._triangles = [None]
+                #Set a new tracker if the inborders flag is raised
+                if self._inborders['1']:
+                    #Apply inverse homography and transform global to local.
+                    t.inverse_homography(self.camera._H)
+                    t.get_global2local(self.camera.offsets, K=4)
+                    #get window
+                    #set_tracker
+                    videosensor.set_tracker(self.camera, self._triangles)
+                else:
+                    self._triangles = [None]
                 continue
             #Scale the contours obtained according to the FPGA to image ratio.
             contours = np.array(locations) / self.camera._scale
@@ -191,18 +198,30 @@ class DataFusionThread(threading.Thread):
                 #
                 #Check in the other quadrants if the triangle is in borders.
                 #
-                if self._inborders[index]['1']:
+                try:
+                    triangle = self._triangles[index]['1']
+                except KeyError: 
+                    triangle = None
+                if self._inborders[index]['1'] and triangle:
                     for index2, quadrant in enumerate(self.quadrant_limits):
                         #Do not repeat the function for the current quadrant.
                         if index2 == index:
                             continue
-                        try:
-                            triangle = self._triangles[index]['1']
-                        except KeyError: 
-                            pass
-                        else:
-                            self._inborders[index2]['1'] = triangle.in_borders(
-                                                self.quadrant_limits[index2])
+                        #If the triangle is detected, the flag is not updated.
+                        self._inborders[index2]['1'] = triangle.in_borders(
+                                            self.quadrant_limits[index2])
+                        #Update triangles[index2] if there is not any tracker
+                        #already initialized and UGV is in borders[index2].
+                        if self._inborders[index2]['1'] and 
+                                              not self._triangles[index2]['1']:
+                            self._triangles[index2]['1'] = triangle
+                        #Write the calculated values to the shared variables
+                        self.conditions[index2].acquire()
+                        self.triangles[index2] = copy.copy(
+                                                    self._triangles[index2]
+                        self.inborders[index2] = copy.copy(
+                                                    self._inborders[index2]
+                        self.conditions[index2].release()
             ###Pending: merge the containt of every dictionary in triangle
             if triangle:
                 pose = triangle.get_pose()
