@@ -61,6 +61,9 @@ class CameraThread(threading.Thread):
             self.condition.acquire()
             self._inborders = copy.copy(self.inborders)
             self._triangles = copy.copy(self.triangles)
+#            if self.name == "Camera1":
+#                rospy.loginfo("{}".format(self.triangles))
+#                rospy.loginfo("{}".format(self._inborders))
             self.condition.notify()
             self.condition.release()
             #
@@ -75,16 +78,17 @@ class CameraThread(threading.Thread):
                 locations = self.camera.get_register('ACTUAL_LOCATION')['1']
             except KeyError:
                 #Set a new tracker if the inborders flag is raised
-                if self._inborders['1']:
+#                if self._inborders['1']:
                     #Apply inverse homography and transform global to local.
-                    self._triangles['1'].inverse_homography(self.camera._H)
-                    self._triangles['1'].get_global2local(self.camera.offsets,
-                                                          K=4)
-                    #get window and set tracker
-                    videosensor.set_tracker(self.camera, self._triangles)
-                else:
-                    self._triangles = [None]
-                    continue
+#                    self._triangles['1'].inverse_homography(self.camera._H)
+#                    self._triangles['1'].get_global2local(self.camera.offsets,
+#                                                          K=4)
+#                    #get window and set tracker
+#                    self.image.triangles = [self._triangles['1']]
+#                    videosensor.set_tracker(self.camera, self.image)
+#                else:
+#                    self._triangles = [None]
+                continue
             #Scale the contours obtained according to the FPGA to image ratio.
             contours = np.array(locations) / self.camera._scale
             #Convert from Cartesian to Image coordinates
@@ -210,16 +214,14 @@ class DataFusionThread(threading.Thread):
                                             self.quadrant_limits[index2])
                         #Update triangles[index2] if there is not any tracker
                         #already initialized and UGV is in borders[index2].
-                        if (self._inborders[index2]['1'] and 
-                                              not self._triangles[index2]):
-                            self._triangles[index2]['1'] = triangle
-                        #Write the calculated values to the shared variables
-                        self.conditions[index2].acquire()
-                        self.triangles[index2] = copy.copy(
-                                                    self._triangles[index2])
-                        self.inborders[index2] = copy.copy(
-                                                    self._inborders[index2])
-                        self.conditions[index2].release()
+                        if (self._inborders[index2]['1'] and not self._triangles[index2]):
+                            self._triangles[index2]['1'] = copy.copy(triangle)
+                            #Write the calculated values to the shared variables
+                            self.conditions[index2].acquire()
+                            self.triangles[index2] = copy.copy(self._triangles[index2])
+                            self.inborders[index2] = copy.copy(self._inborders[index2])
+                            rospy.loginfo("Set triangles to {}".format(self.triangles))
+                            self.conditions[index2].release()
             ###Pending: merge the containt of every dictionary in triangle
             for element in self._triangles:
                 if element.has_key('1'):
@@ -233,7 +235,7 @@ class DataFusionThread(threading.Thread):
                 self.publisher.publish(Pose2D(pose[0]/1000, pose[1]/1000,
                                               pose[2]))
 #            rospy.loginfo("{}".format(self._triangles))
-            rospy.loginfo("{}".format(self.inborders))
+#            rospy.loginfo("{}".format(self.inborders))
             #Sleep the rest of the cycle
             while (time.time() - cycle_start_time < self.cycletime):
                 pass
