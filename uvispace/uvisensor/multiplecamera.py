@@ -77,8 +77,8 @@ class CameraThread(threading.Thread):
                 #Set a new tracker if the inborders flag is raised
                 if self._inborders['1']:
                     #Apply inverse homography and transform global to local.
-                    t.inverse_homography(self.camera._H)
-                    t.get_global2local(self.camera.offsets, K=4)
+                    self._triangles['1'].inverse_homography(self.camera._H)
+                    self._triangles['1'].get_global2local(self.camera.offsets, K=4)
                     #get window and set tracker
                     videosensor.set_tracker(self.camera, self._triangles)
                 else:
@@ -183,7 +183,7 @@ class DataFusionThread(threading.Thread):
             for index, condition in enumerate(self.conditions):
                 #Threads synchronized instructions.
                 condition.acquire()
-                #Read shared variables and store in local lists
+                #Read shared variables and store in local ones
                 self._triangles[index] = copy.copy(self.triangles[index])
                 condition.release()
                 #
@@ -194,13 +194,11 @@ class DataFusionThread(threading.Thread):
                     #Evaluate if triangle is in borders region.
                     self._inborders[index]['1'] = triangle.in_borders(
                                                 self.quadrant_limits[index])
+                else:
+                    triangle = None
                 #
                 #Check in the other quadrants if the triangle is in borders.
                 #
-                try:
-                    triangle = self._triangles[index]['1']
-                except KeyError: 
-                    triangle = None
                 if self._inborders[index]['1'] and triangle:
                     for index2, quadrant in enumerate(self.quadrant_limits):
                         #Do not repeat the function for the current quadrant.
@@ -211,17 +209,20 @@ class DataFusionThread(threading.Thread):
                                             self.quadrant_limits[index2])
                         #Update triangles[index2] if there is not any tracker
                         #already initialized and UGV is in borders[index2].
-                        if self._inborders[index2]['1'] and 
-                                              not self._triangles[index2]['1']:
+                        if (self._inborders[index2]['1'] and 
+                                              not self._triangles[index2]):
                             self._triangles[index2]['1'] = triangle
                         #Write the calculated values to the shared variables
                         self.conditions[index2].acquire()
                         self.triangles[index2] = copy.copy(
-                                                    self._triangles[index2]
+                                                    self._triangles[index2])
                         self.inborders[index2] = copy.copy(
-                                                    self._inborders[index2]
+                                                    self._inborders[index2])
                         self.conditions[index2].release()
             ###Pending: merge the containt of every dictionary in triangle
+            for element in self._triangles:
+                if element.has_key('1'):
+                    triangle = copy.copy(element['1'])
             if triangle:
                 pose = triangle.get_pose()
                 rospy.logdebug("detected triangle at {}mm and {} radians."
@@ -230,8 +231,8 @@ class DataFusionThread(threading.Thread):
     #                          "".format(pose[0:2], pose[2]))
                 self.publisher.publish(Pose2D(pose[0]/1000, pose[1]/1000,
                                               pose[2]))
-#            rospy.loginfo("{}".format(self.triangles))
-#            rospy.loginfo("{}".format(self.inborders))
+#            rospy.loginfo("{}".format(self._triangles))
+            rospy.loginfo("{}".format(self.inborders))
             #Sleep the rest of the cycle
             while (time.time() - cycle_start_time < self.cycletime):
                 pass
