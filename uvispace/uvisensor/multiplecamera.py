@@ -14,7 +14,7 @@ import rospy
 import imgprocessing
 import videosensor
 """
-Main routine for controlling N external FPGAs with a camera device.
+Multithreading routine for controlling N external FPGAs with cameras.
 
 The main routine initializes N+2 threads:
 
@@ -57,7 +57,7 @@ class CameraThread(threading.Thread):
         self.image, _ = videosensor.set_tracker(self.camera)
         self.begin_event.set()
         while not self.end_event.isSet():
-            #Get the inborders global flag.
+            #Copy the global shared variables to the local ones.
             self.condition.acquire()
             self._inborders = copy.copy(self.inborders)
             self._triangles = copy.copy(self.triangles)
@@ -79,12 +79,11 @@ class CameraThread(threading.Thread):
                     #Apply inverse homography and transform global to local.
                     t.inverse_homography(self.camera._H)
                     t.get_global2local(self.camera.offsets, K=4)
-                    #get window
-                    #set_tracker
+                    #get window and set tracker
                     videosensor.set_tracker(self.camera, self._triangles)
                 else:
                     self._triangles = [None]
-                continue
+                    continue
             #Scale the contours obtained according to the FPGA to image ratio.
             contours = np.array(locations) / self.camera._scale
             #Convert from Cartesian to Image coordinates
