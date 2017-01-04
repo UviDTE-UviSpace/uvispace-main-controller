@@ -78,7 +78,8 @@ class CameraThread(threading.Thread):
                 if self._inborders['1']:
                     #Apply inverse homography and transform global to local.
                     self._triangles['1'].inverse_homography(self.camera._H)
-                    self._triangles['1'].get_global2local(self.camera.offsets, K=4)
+                    self._triangles['1'].get_global2local(self.camera.offsets,
+                                                          K=4)
                     #get window and set tracker
                     videosensor.set_tracker(self.camera, self._triangles)
                 else:
@@ -195,11 +196,11 @@ class DataFusionThread(threading.Thread):
                     self._inborders[index]['1'] = triangle.in_borders(
                                                 self.quadrant_limits[index])
                 else:
-                    triangle = None
+                    continue
                 #
                 #Check in the other quadrants if the triangle is in borders.
                 #
-                if self._inborders[index]['1'] and triangle:
+                if self._inborders[index]['1']:
                     for index2, quadrant in enumerate(self.quadrant_limits):
                         #Do not repeat the function for the current quadrant.
                         if index2 == index:
