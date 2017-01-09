@@ -42,7 +42,7 @@ class CameraThread(threading.Thread):
         self.camera = videosensor.camera_startup(conf_file)
         #Dictionary containing the contours of detected triangles.
         self.triangles = triangles
-        self._triangles = [None]
+        self._triangles = copy.copy(triangles)
         #Synchronization variables
         self.begin_event = begin_event
         self.end_event = end_event
@@ -60,7 +60,8 @@ class CameraThread(threading.Thread):
             #Copy the global shared variables to the local ones.
             self.condition.acquire()
             self._inborders = copy.copy(self.inborders)
-            self._triangles = copy.copy(self.triangles)
+            self._triangles.update(self.triangles)
+#            self._triangles = copy.copy(self.triangles)
 #            if self.name == "Camera1":
 #                rospy.loginfo("{}".format(self.triangles))
 #                rospy.loginfo("{}".format(self._inborders))
@@ -78,7 +79,8 @@ class CameraThread(threading.Thread):
                 locations = self.camera.get_register('ACTUAL_LOCATION')['1']
             except KeyError:
                 #Set a new tracker if the inborders flag is raised
-#                if self._inborders['1']:
+                if self._inborders['1']:
+                    rospy.info("Triangle: {}".format(self._triangles))
                     #Apply inverse homography and transform global to local.
 #                    self._triangles['1'].inverse_homography(self.camera._H)
 #                    self._triangles['1'].get_global2local(self.camera.offsets,
@@ -189,7 +191,8 @@ class DataFusionThread(threading.Thread):
                 #Threads synchronized instructions.
                 condition.acquire()
                 #Read shared variables and store in local ones
-                self._triangles[index] = copy.copy(self.triangles[index])
+                self._triangles[index].update(self.triangles[index])
+#                self._triangles[index] = copy.copy(self.triangles[index])
                 condition.release()
                 #
                 #Evaluate if the triangle is in the borders regions.
@@ -218,7 +221,8 @@ class DataFusionThread(threading.Thread):
                             self._triangles[index2]['1'] = copy.copy(triangle)
                             #Write the calculated values to the shared variables
                             self.conditions[index2].acquire()
-                            self.triangles[index2] = copy.copy(self._triangles[index2])
+                            self.triangles[index2].update(self._triangles[index2])
+#                            self.triangles[index2] = copy.copy(self._triangles[index2])
                             self.inborders[index2] = copy.copy(self._inborders[index2])
                             rospy.loginfo("Set triangles to {}".format(self.triangles))
                             self.conditions[index2].release()
