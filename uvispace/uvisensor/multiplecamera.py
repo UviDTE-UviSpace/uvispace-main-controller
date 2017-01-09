@@ -60,8 +60,8 @@ class CameraThread(threading.Thread):
             #Copy the global shared variables to the local ones.
             self.condition.acquire()
             self._inborders = copy.copy(self.inborders)
-            self._triangles.update(self.triangles)
-#            self._triangles = copy.copy(self.triangles)
+#            self._triangles.update(self.triangles)
+            self._triangles = copy.copy(self.triangles)
 #            if self.name == "Camera1":
 #                rospy.loginfo("{}".format(self.triangles))
 #                rospy.loginfo("{}".format(self._inborders))
@@ -80,16 +80,17 @@ class CameraThread(threading.Thread):
             except KeyError:
                 #Set a new tracker if the inborders flag is raised
                 if self._inborders['1']:
-                    rospy.info("Triangle: {}".format(self._triangles))
+#                    rospy.loginfo("Triangle: {}".format(self._triangles))
                     #Apply inverse homography and transform global to local.
-#                    self._triangles['1'].inverse_homography(self.camera._H)
-#                    self._triangles['1'].get_global2local(self.camera.offsets,
-#                                                          K=4)
-#                    #get window and set tracker
-#                    self.image.triangles = [self._triangles['1']]
-#                    videosensor.set_tracker(self.camera, self.image)
-#                else:
-#                    self._triangles = [None]
+                    self._triangles['1'].inverse_homography(self.camera._H)
+                    self._triangles['1'].get_global2local(self.camera.offsets,
+                                                          K=4)
+                    #get window and set tracker
+                    self.image.triangles = [self._triangles['1']]
+                    _, tracker = videosensor.set_tracker(self.camera, self.image)
+                    print "TRACKER: {}".format(tracker)
+                else:
+                    self._triangles = [None]
                 continue
             #Scale the contours obtained according to the FPGA to image ratio.
             contours = np.array(locations) / self.camera._scale
