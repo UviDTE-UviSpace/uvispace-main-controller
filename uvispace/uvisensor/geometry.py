@@ -267,11 +267,32 @@ class Triangle(object):
             
         max_value : integer or 2x1 array
             value or values of the maximum allowed coordinates.
+
+        k : int or float
+            relative size between the window and the triangle base. It 
+            should be bigger than 1. As bigger as it gets, the bigger 
+            the window will be
         """
         distance = self.sides.max() * k
         window = np.array([self.barycenter - distance, 
                            self.barycenter + distance])
-        self.window = np.clip(window, min_value, max_value)
+        #Create 2 arrays of booleans: the first indicating if any value in each
+        #axis is greater than max_value, and the second if any value in each
+        #axis is lower than min_value. 
+        outbounds = [np.any(window - max_value > 0, axis=0),
+                    np.any(window - min_value < 0, axis=0)]
+        #Third condition array, when none of the previous ones is fullfilled.
+        inbounds = np.all(np.invert(outbounds), axis=0)
+        condlist = np.vstack([outbounds, inbounds])
+        #Subtract to each axis the greatest distance from one of it pixels 
+        #to the maximum allowed. Idem for the minimum values.
+        max_clipped = window - np.max(window - max_value, axis=0)
+        min_clipped = window + np.max(min_value - window, axis=0)
+        choicelist = [max_clipped, min_clipped, window]
+
+        #Obtain the final array getting elements from each of the 3 values 
+        #arrays, depending on the conditions values.
+        self.window = np.select(condlist, choicelist)
         return self.window
 
     def homography(self, H):
