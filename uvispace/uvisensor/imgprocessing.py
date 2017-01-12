@@ -22,7 +22,6 @@ the typical coordinates system used.
 """
 #Standard libraries
 import cv2
-#import logging
 import numpy as np
 from scipy import ndimage
 import skimage.measure
@@ -91,8 +90,8 @@ class Image(object):
         #Why is it neccesary to divide by 4??
         thr_min = int(red_c[0], 2) / 4
         thr_max = int(red_c[1], 2) / 4
-        rospy.logdebug("Thresholding between {} and {}".format(thr_min, thr_max))
-#        logging.debug("Thresholding between {} and {}".format(thr_min, thr_max))
+        rospy.logdebug("Thresholding between {} and {}".format(thr_min,
+                                                               thr_max))
         #The first binary approach is obtained evaluating 2 thresholds
         raw_binarized = cv2.inRange(self.image, thr_min, thr_max)
         #A simple erosion gets rid of the whole noise. Dilating the eroded  
@@ -111,7 +110,6 @@ class Image(object):
         self._binarized = filtered
         self._binarized[labels != background] = 255
         rospy.logdebug("Image binarization finished")
-#        logging.debug("Image binarization finished")
         return self._binarized
 
     def correct_distortion(self, kx=0.035, ky=0.035, only_contours=True):
@@ -185,7 +183,6 @@ class Image(object):
             coordinates of the M vertices of the shape.
         """
         rospy.logdebug("Getting the shapes' vertices in the image")
-#        logging.debug("Getting the shapes' vertices in the image")
         #Obtain a list with all the contours in the image, separating each
         #shape in a different element of the list
         if get_contours:
@@ -206,22 +203,8 @@ class Image(object):
                                                     [0,0], max_coords))
                 self.triangles.append(triangle)
             rospy.logdebug("A {}-vertices shape was found".format(len(coords)))
-#            logging.debug("A {}-vertices shape was found".format(len(coords)))
         return self.triangles
 
-    def set_borders_region(self, thickness=50):
-        """
-        Set a mask for assessing if coordinates are in borders region.
-
-        Parameters
-        ----------
-        thickness : integer
-            thickness of the borders region, in number of pixels.
-        """
-        #Set the whole array to 1s, and then set to 0 the central pixels.
-        self.borders = np.ones(self.image.shape)
-        self.borders[thickness:-thickness, thickness:-thickness] = 0
-        return self.borders
         
 
 

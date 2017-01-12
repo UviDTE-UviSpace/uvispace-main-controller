@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 #Standard libraries
 import glob
-#import logging
 import copy
 import numpy as np
 import threading
@@ -34,63 +33,88 @@ probably corrupt the TCP/IP socket and the FPGAs will have to be reset.
 class CameraThread(threading.Thread):
     """
     Create a thread and a VideoSensor object. Capture frames when run.
+
+    Parameters
+    ----------
+    triangles : dictionary
+        Each element of the dictionary is a geometry.Triangle() object.
+        It is a global variable for sharing the information of the 
+        different triangles detected in the camera space. Each triangle
+        has a UNIQUE key identifier.
+
+    begin_event : threading.Event() object
+        Synchronization variable that is set to True when the current 
+        thread begins the main loop.
+
+    end_event : threading.Event() object
+        Synchronization variable that is set to True when the whole 
+        system shall stop the execution of the main loop.
+
+    condition : threading.Condition() object
+        Synchronization variable for R/W operations on the shared 
+        variables i.e. triangles and inborders.
+
+    inborders : dictionary
+        Each element indicates if the corresponding triangle is located
+        in the borders region of current camera space. The UNIQUE key 
+        identifiers have a univocal correspondence with the key 
+        identifiers of triangles dictionary.
+
+    name : string
+        Name of the current camera thread.
+
+    conf_file : string
+        Relative path to the configuration file of the current camera.
     """
     def __init__(self, triangles, begin_event, end_event, condition,
                  inborders, name=None, conf_file=''):
         threading.Thread.__init__(self, name=name)
-        #Initialize TCP/IP connection and FPGA operation.
+        self.image = []
+        self.cycletime = 0.02
+        #Initialize TCP/IP connection and start FPGA operation.
         self.camera = videosensor.camera_startup(conf_file)
-        #Dictionary containing the contours of detected triangles.
-        self.triangles = triangles
-        self._triangles = copy.copy(triangles)
         #Synchronization variables
         self.begin_event = begin_event
         self.end_event = end_event
         self.condition = condition
-        self.image = []
-        #Flags for indicating if the UGVs are in borders region.
+        #Global and local dictionary containing the detected triangles.
+        self.triangles = triangles
+        self._triangles = copy.copy(triangles)
+        #Global and local flags indicating if the UGVs are in borders region.
         self.inborders = inborders
         self._inborders = copy.copy(inborders)
 
     def run(self):
-        #Locate shapes in whole image and configure trackers.
+        """Main routine of the CameraThread."""
+        #Look for shapes in whole image and configure trackers.
         self.image, _ = videosensor.set_tracker(self.camera)
         self.begin_event.set()
         while not self.end_event.isSet():
-            #Copy the global shared variables to the local ones.
+            #Start the cycle timer
+            cycle_start_time = time.time()
+            #Update local variables with the global shared ones. Sync required.
             self.condition.acquire()
-            self._inborders = copy.copy(self.inborders)
-#            self._triangles.update(self.triangles)
-            self._triangles = copy.copy(self.triangles)
-#            if self.name == "Camera1":
-#                rospy.loginfo("{}".format(self.triangles))
-#                rospy.loginfo("{}".format(self._inborders))
-            self.condition.notify()
+            self._inborders.update(self.inborders)
+            self._triangles.update(self.triangles)
             self.condition.release()
             #
-            #Activate a new tracker when triangle in other camera is
-            #detected to be in current camera.
+            #Get CARTESIAN coordinates of the 8 contour points in tracker.
+            #The code ONLY tracks the UGV with id=1.
             #
-            if (not self._triangles) and self._inborders['1']:
-                pass
-            #Get CARTESIAN coordinates of the 8 points of shape in tracker.
-            #The code ONLY tracks one UGV with id=1.
             try:
                 locations = self.camera.get_register('ACTUAL_LOCATION')['1']
             except KeyError:
-                #Set a new tracker if the inborders flag is raised
+                #
+                #Set a new tracker if the inborders flag is raised and
+                #The corresponding tracker is empty (if KeyError).
+                #
                 if self._inborders['1']:
-#                    rospy.loginfo("Triangle: {}".format(self._triangles))
                     #Apply inverse homography and transform global to local.
                     self._triangles['1'].inverse_homography(self.camera._H)
-                    self._triangles['1'].get_global2local(self.camera.offsets,
-                                                          K=4)
+                    self._triangles['1'].global2local(self.camera.offsets, K=4)
                     #get window and set tracker
                     self.image.triangles = [self._triangles['1']]
-                    _, tracker = videosensor.set_tracker(self.camera, self.image)
-                    print "TRACKER: {}".format(tracker)
-                else:
-                    self._triangles = [None]
+                    videosensor.set_tracker(self.camera, self.image)
                 continue
             #Scale the contours obtained according to the FPGA to image ratio.
             contours = np.array(locations) / self.camera._scale
@@ -102,21 +126,23 @@ class CameraThread(threading.Thread):
             #Correct barrel distortion.
             self.image.correct_distortion()
             #Obtain 3 vertices from the contours
-            self._triangles = self.image.get_shapes(get_contours=False)
-            #If no triangles are detected, avoid coordinates calculation.
-            if len(self._triangles):
-                #Obtain global cartesian coordinates with a scale ratio 4:1.
-                self._triangles[0].get_local2global(self.camera.offsets, K=4)
-                self._triangles[0].homography(self.camera._H)
-            #Block the lock object until the pose is written to dictionary.
+            shapes = self.image.get_shapes(get_contours=False)
+            #If no triangles are detected, do not calculate coordinates.
+            if len(shapes):
+                self._triangles['1'] = shapes[0]
+            #Obtain global cartesian coordinates with a scale ratio 4:1.
+            self._triangles['1'].local2global(self.camera.offsets, K=4)
+            self._triangles['1'].homography(self.camera._H)
+            #Lock until the triangle is written to dictionary.
             self.condition.acquire()
             if len(self._triangles):
-                self.triangles['1'] = self._triangles[0]
-            self.condition.notify()
+                self.triangles.update(self._triangles)
             self.condition.release()
+            #Sleep the rest of the cycle
+            while (time.time() - cycle_start_time < self.cycletime):
+                pass
         rospy.logdebug('shutting down {}'.format(self.name))
-#        logging.debug('shutting down {}'.format(self.name))
-        videosensor.camera_shutdown(self.camera)
+        self.camera.disconnect_client()
 
 
 class DataFusionThread(threading.Thread):
@@ -166,13 +192,14 @@ class DataFusionThread(threading.Thread):
             name of the thread.
         """
         threading.Thread.__init__(self, name=name)
-        self.conditions = conditions
-        self.begin_events = begin_events
-        self.end_event = end_event
         self.publisher = publisher
         self.cycletime = 0.02
         self.quadrant_limits = quadrant_limits
-        #Shared lists. Can be written by other threads.
+        #Synchronization variables
+        self.conditions = conditions
+        self.begin_events = begin_events
+        self.end_event = end_event
+        #Shared lists. Can be accessed by other threads.
         self.triangles = triangles
         self.inborders = inborders
         #Local lists. Can only be R/W by this thread.
@@ -180,6 +207,7 @@ class DataFusionThread(threading.Thread):
         self._inborders = copy.copy(self.inborders)
 
     def run(self):
+        """Main routine of the DataFusionThread."""
         #Wait until all cameras are initialized
         for event in self.begin_events:
             event.wait()
@@ -193,7 +221,6 @@ class DataFusionThread(threading.Thread):
                 condition.acquire()
                 #Read shared variables and store in local ones
                 self._triangles[index].update(self.triangles[index])
-#                self._triangles[index] = copy.copy(self.triangles[index])
                 condition.release()
                 #
                 #Evaluate if the triangle is in the borders regions.
@@ -218,29 +245,31 @@ class DataFusionThread(threading.Thread):
                                             self.quadrant_limits[index2])
                         #Update triangles[index2] if there is not any tracker
                         #already initialized and UGV is in borders[index2].
-                        if (self._inborders[index2]['1'] and not self._triangles[index2]):
+                        if (self._inborders[index2]['1'] and not 
+                                                    self._triangles[index2]):
                             self._triangles[index2]['1'] = copy.copy(triangle)
                             #Write the calculated values to the shared variables
                             self.conditions[index2].acquire()
-                            self.triangles[index2].update(self._triangles[index2])
-#                            self.triangles[index2] = copy.copy(self._triangles[index2])
-                            self.inborders[index2] = copy.copy(self._inborders[index2])
-                            rospy.loginfo("Set triangles to {}".format(self.triangles))
+                            self.triangles[index2].update(
+                                                    self._triangles[index2])
+                            self.inborders[index2] = copy.copy(
+                                                    self._inborders[index2])
+                            rospy.loginfo("New triangle in Camera{}".format(
+                                                    index2+1))
                             self.conditions[index2].release()
             ###Pending: merge the containt of every dictionary in triangle
+            #
+            #Scan for detected triangle and publish it.
+            #
             for element in self._triangles:
                 if element.has_key('1'):
                     triangle = copy.copy(element['1'])
             if triangle:
                 pose = triangle.get_pose()
+                inmeters_pose = [pose[0]/1000, pose[1]/1000, pose[2]]
                 rospy.logdebug("detected triangle at {}mm and {} radians."
                               "".format(pose[0:2], pose[2]))
-    #            logging.debug("detected triangle at {}mm and {} radians."
-    #                          "".format(pose[0:2], pose[2]))
-                self.publisher.publish(Pose2D(pose[0]/1000, pose[1]/1000,
-                                              pose[2]))
-#            rospy.loginfo("{}".format(self._triangles))
-#            rospy.loginfo("{}".format(self.inborders))
+                self.publisher.publish(Pose2D(inmeters_pose)
             #Sleep the rest of the cycle
             while (time.time() - cycle_start_time < self.cycletime):
                 pass
@@ -266,38 +295,35 @@ class UserThread(threading.Thread):
         threading.Thread.__init__(self, name=name)
         self.begin_events = begin_events
         self.end_event = end_event
+        self.cycletime = 0.5
 
     def run(self):
+        """Main routine of the UserThread."""
         #Wait until all camera threads start.
         for event in self.begin_events:
             event.wait()
         rospy.loginfo("All cameras were initialized")
-#        logging.info("All cameras were initialized")
         while not self.end_event.isSet():
+            #Start the cycle timer
+            cycle_start_time = time.time()
             i = raw_input("Press 'Q' to stop the script... ")
             if i == 'Q':
                 self.end_event.set()
-
+            #Sleep the rest of the cycle
+            while (time.time() - cycle_start_time < self.cycletime):
+                pass
 
 ###Main routine.###
-#Create logger, read configuration files, prepare variables and create threads.
+#Read configuration files, initialize variables and set up threads.
 if __name__ == '__main__':
     rospy.init_node('uvisensor')
     publisher = rospy.Publisher('/robot_1/pose2d', Pose2D, queue_size=1)
-#    logging.basicConfig(format=('%(asctime)s.%(msecs)03d '
-#                               '%(levelname)s (%(threadName)-9s):'
-#                               '%(message)s'), 
-#                        level=logging.DEBUG,
-#                        datefmt='%H:%M:%S',
-#                        filename='./log/main.log')
-#    log = logging.getLogger(__name__)
     rospy.loginfo("BEGINNING MAIN EXECUTION")
-#    logging.info("BEGINNING MAIN EXECUTION")
     #Get the relative path to all the config files stored in /config folder.
     conf_files = glob.glob("./resources/config/*.cfg")
     conf_files.sort()
     threads = []
-    #A condition for each camera thread execution.
+    #A Condition object for each camera thread execution.
     conditions = []
     #Shared variable for storing coordinates of found triangles.
     #There is a dictionary in the list for each camera.

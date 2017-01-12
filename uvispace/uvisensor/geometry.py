@@ -50,7 +50,7 @@ class Triangle(object):
     def __repr__(self):
         return ("Triangle\n{}".format(self.vertices))
 
-    def get_local2global(self, offsets, K=None, image2cartesian=True):
+    def local2global(self, offsets, K=None, image2cartesian=True):
         """
         Convert Triangle coordinates to the global coordinates system.
 
@@ -130,7 +130,7 @@ class Triangle(object):
             self.cartesian = True
         self.isglobal = True
 
-    def get_global2local(self, offsets, K=None, cartesian2image=True):
+    def global2local(self, offsets, K=None, cartesian2image=True):
         """
         Convert Triangle coordinates to the local coordinates system.
         
@@ -250,10 +250,10 @@ class Triangle(object):
         Get the coordinates of a rectangle window around the triangle.
         
         At first, the barycenter of the triangle is calculated. Then, 
-        the window is calculated as a rectangle with its sides k times
-        the longest side further from the 
-        barycenter.
-        
+        the window is calculated as a square, being its sides k times
+        the triangle's longest side length and being its center the 
+        triangle's barycenter.
+
         Returns
         -------
         self.window : 2x2 NumPy array
@@ -284,12 +284,11 @@ class Triangle(object):
         #Third condition array, when none of the previous ones is fullfilled.
         inbounds = np.all(np.invert(outbounds), axis=0)
         condlist = np.vstack([outbounds, inbounds])
-        #Subtract to each axis the greatest distance from one of it pixels 
+        #Subtract to each axis the greatest distance from one of its pixels 
         #to the maximum allowed. Idem for the minimum values.
         max_clipped = window - np.max(window - max_value, axis=0)
         min_clipped = window + np.max(min_value - window, axis=0)
         choicelist = [max_clipped, min_clipped, window]
-
         #Obtain the final array getting elements from each of the 3 values 
         #arrays, depending on the conditions values.
         self.window = np.select(condlist, choicelist)

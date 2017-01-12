@@ -73,7 +73,7 @@ def cam_task(begin_loop, end_loop, conf_file):
                           "".format(image.triangles[0].get_pose()))
             print image.triangles[0].get_pose()
     print 'exiting camera thread'
-    videosensor.camera_shutdown(camera)
+    camera.disconnect_client()
 
 
 if __name__ == '__main__':
