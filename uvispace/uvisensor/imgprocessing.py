@@ -50,8 +50,6 @@ class Image(object):
         self._binarized = None
         self.triangles = []
         self.contours = contours
-        self.borders = []
-        self.set_borders_region()
 
     def binarize(self, thresholds):
         """Get a binarized image from a grey image given the thresholds.

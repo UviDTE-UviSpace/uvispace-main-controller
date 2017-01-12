@@ -130,9 +130,9 @@ class CameraThread(threading.Thread):
             #If no triangles are detected, do not calculate coordinates.
             if len(shapes):
                 self._triangles['1'] = shapes[0]
-            #Obtain global cartesian coordinates with a scale ratio 4:1.
-            self._triangles['1'].local2global(self.camera.offsets, K=4)
-            self._triangles['1'].homography(self.camera._H)
+                #Obtain global cartesian coordinates with a scale ratio 4:1.
+                self._triangles['1'].local2global(self.camera.offsets, K=4)
+                self._triangles['1'].homography(self.camera._H)
             #Lock until the triangle is written to dictionary.
             self.condition.acquire()
             if len(self._triangles):
@@ -266,10 +266,11 @@ class DataFusionThread(threading.Thread):
                     triangle = copy.copy(element['1'])
             if triangle:
                 pose = triangle.get_pose()
-                inmeters_pose = [pose[0]/1000, pose[1]/1000, pose[2]]
+                met_pose = [pose[0]/1000, pose[1]/1000, pose[2]]
                 rospy.logdebug("detected triangle at {}mm and {} radians."
                               "".format(pose[0:2], pose[2]))
-                self.publisher.publish(Pose2D(inmeters_pose)
+                self.publisher.publish(Pose2D(met_pose[0], met_pose[1], met_pose[2]))
+            rospy.loginfo("Triangles at: {}".format(self._triangles))
             #Sleep the rest of the cycle
             while (time.time() - cycle_start_time < self.cycletime):
                 pass

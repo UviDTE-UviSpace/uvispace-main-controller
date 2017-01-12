@@ -40,7 +40,7 @@ def make_a_rectangle():
     pointC = Pose2D(x=-1.0, y=-1.0)
     pointD = Pose2D(x=1.0, y=-1.0)
     pointE = Pose2D(x=1.0, y=0.0)
-    my_robot.new_goal(pointA)
+#    my_robot.new_goal(pointA)
     my_robot.new_goal(pointB)
     my_robot.new_goal(pointC)
     my_robot.new_goal(pointD)
@@ -78,6 +78,7 @@ if __name__ == "__main__":
     #This function sends 4 rectangle points to the robot path.
     if rectangle_path:
         make_a_rectangle()
+    my_robot.new_goal(point)
     rospy.spin()
     
     ###############################################################
