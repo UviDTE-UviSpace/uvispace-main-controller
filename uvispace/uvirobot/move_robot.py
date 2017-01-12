@@ -40,7 +40,7 @@ def make_a_rectangle():
     pointC = Pose2D(x=-1.0, y=-1.0)
     pointD = Pose2D(x=1.0, y=-1.0)
     pointE = Pose2D(x=1.0, y=0.0)
-#    my_robot.new_goal(pointA)
+    my_robot.new_goal(pointA)
     my_robot.new_goal(pointB)
     my_robot.new_goal(pointC)
     my_robot.new_goal(pointD)
@@ -48,12 +48,12 @@ def make_a_rectangle():
     
 if __name__ == "__main__":
     #This exception forces to give the robot_id argument within run command.
-    #import pdb; pdb.set_trace()
     rectangle_path = False
     help_msg = ('Usage: move_robot.py [-r <robot_id>], [--robotid=<robot_id>], '
                             '[--rectangle]')
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "hr:", ["robotid=", "rectangle"])
+        opts, args = getopt.getopt(sys.argv[1:], "hr:", ["robotid=", 
+                                                         "rectangle"])
     except getopt.GetoptError:
         print help_msg
         sys.exit()
