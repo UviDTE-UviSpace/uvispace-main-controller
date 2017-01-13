@@ -78,7 +78,6 @@ if __name__ == "__main__":
     #This function sends 4 rectangle points to the robot path.
     if rectangle_path:
         make_a_rectangle()
-    my_robot.new_goal(point)
     rospy.spin()
     
     ###############################################################
