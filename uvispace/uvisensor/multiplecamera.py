@@ -127,16 +127,18 @@ class CameraThread(threading.Thread):
             self.image.correct_distortion()
             #Obtain 3 vertices from the contours
             shapes = self.image.get_shapes(get_contours=False)
-            #If no triangles are detected, do not calculate coordinates.
+            #If triangles are detected, calculate coordinates.
             if len(shapes):
                 self._triangles['1'] = shapes[0]
                 #Obtain global cartesian coordinates with a scale ratio 4:1.
                 self._triangles['1'].local2global(self.camera.offsets, K=4)
                 self._triangles['1'].homography(self.camera._H)
+            #If any triangle is detected, indicate it writing a None variable.
+            else :
+                self._triangles['1'] = None
             #Lock until the triangle is written to dictionary.
             self.condition.acquire()
-            if len(self._triangles):
-                self.triangles.update(self._triangles)
+            self.triangles.update(self._triangles)
             self.condition.release()
             #Sleep the rest of the cycle
             while (time.time() - cycle_start_time < self.cycletime):
