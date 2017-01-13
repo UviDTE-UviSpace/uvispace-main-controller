@@ -143,10 +143,10 @@ class CameraThread(threading.Thread):
             #Free the ROI tracker if corresponding flag was raised
             if self.reset_flag['1']:
                 self.camera.set_register('FREE_TRACKER', '1')
+                rospy.loginfo('{} TRACKER FREED'.format(self.name))
                 self.reset_flag.update({'1':False})
-                self.triangles.pop('1', None)
-            else:
-                self.triangles.update(self._triangles)
+                self._triangles.pop('1', None)
+            self.triangles.update(self._triangles)
             self.condition.release()
             #Sleep the rest of the cycle
             while (time.time() - cycle_start_time < self.cycletime):
@@ -282,8 +282,8 @@ class DataFusionThread(threading.Thread):
                         self.conditions[index2].release()
                     #If the UGV is not in borders, but a tracker is set and is
                     #returning None values, it has to be reset.
-                    elif (not self._inborders[index2]['1'] and 
-                                            self._triangles[index2]) is None):
+                    elif (not self._inborders[index2]['1'] and
+                                            self._triangles[index2]):
                         self.conditions[index2].acquire()
                         self.reset_flags[index2]['1'] = True
                         rospy.loginfo("Set reset_flag for Camera{}".format(
@@ -304,8 +304,8 @@ class DataFusionThread(threading.Thread):
                 rospy.logdebug("detected triangle at {}mm and {} radians."
                               "".format(pose[0:2], pose[2]))
                 self.publisher.publish(Pose2D(mpose[0], mpose[1], mpose[2]))
-            rospy.loginfo("Triangles at: {}".format(self._triangles))
-            rospy.loginfo("Borders: {}".format(self._inborders))
+#            rospy.loginfo("Triangles at: {}".format(self._triangles))
+#            rospy.loginfo("Borders: {}".format(self._inborders))
             #Sleep the rest of the cycle
             while (time.time() - cycle_start_time < self.cycletime):
                 pass
@@ -377,7 +377,7 @@ if __name__ == '__main__':
         begin_events.append(threading.Event())
         threads.append(CameraThread(triangles[index], begin_events[index], 
                                     end_event, conditions[index], 
-                                    inborders[index], reset_flags[index]
+                                    inborders[index], reset_flags[index],
                                     'Camera{}'.format(index), fname))
     #List containing the points defining the space limits of each camera.
     quadrant_limits = []
