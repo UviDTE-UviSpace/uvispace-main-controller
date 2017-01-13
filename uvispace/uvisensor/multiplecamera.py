@@ -228,10 +228,12 @@ class DataFusionThread(threading.Thread):
                 #Evaluate if the triangle is in the borders regions.
                 #
                 if self._triangles[index]:
-                    triangle = self._triangles[index]['1']
-                    #Evaluate if triangle is in borders region.
-                    self._inborders[index]['1'] = triangle.in_borders(
-                                                self.quadrant_limits[index])
+                    #Check that the element is not of None type.
+                    if self._triangles[index]['1']:
+                        triangle = self._triangles[index]['1']
+                        #Evaluate if triangle is in borders region.
+                        self._inborders[index]['1'] = triangle.in_borders(
+                                                    self.quadrant_limits[index])
                 else:
                     continue
                 #
@@ -275,6 +277,7 @@ class DataFusionThread(threading.Thread):
                               "".format(pose[0:2], pose[2]))
                 self.publisher.publish(Pose2D(mpose[0], mpose[1], mpose[2]))
             rospy.loginfo("Triangles at: {}".format(self._triangles))
+            rospy.loginfo("Borders: {}".format(self._inborders))
             #Sleep the rest of the cycle
             while (time.time() - cycle_start_time < self.cycletime):
                 pass
