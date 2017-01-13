@@ -67,7 +67,7 @@ class CameraThread(threading.Thread):
         Relative path to the configuration file of the current camera.
     """
     def __init__(self, triangles, begin_event, end_event, condition,
-                 inborders, name=None, conf_file=''):
+                 inborders, reset_flag, name=None, conf_file=''):
         threading.Thread.__init__(self, name=name)
         self.image = []
         self.cycletime = 0.02
@@ -83,6 +83,8 @@ class CameraThread(threading.Thread):
         #Global and local flags indicating if the UGVs are in borders region.
         self.inborders = inborders
         self._inborders = copy.copy(inborders)
+        #Global flag indicating if ROI tracker has to be reset.
+        self.reset_flag = reset_flag
 
     def run(self):
         """Main routine of the CameraThread."""
@@ -136,9 +138,15 @@ class CameraThread(threading.Thread):
             #If any triangle is detected, indicate it writing a None variable.
             else :
                 self._triangles['1'] = None
-            #Lock until the triangle is written to dictionary.
+            #Lock until the shared variables are written.
             self.condition.acquire()
-            self.triangles.update(self._triangles)
+            #Free the ROI tracker if corresponding flag was raised
+            if self.reset_flag['1']:
+                self.camera.set_register('FREE_TRACKER', '1')
+                self.reset_flag.update({'1':False})
+                self.triangles.pop('1', None)
+            else:
+                self.triangles.update(self._triangles)
             self.condition.release()
             #Sleep the rest of the cycle
             while (time.time() - cycle_start_time < self.cycletime):
@@ -155,7 +163,8 @@ class DataFusionThread(threading.Thread):
     global variable.
     """
     def __init__(self, triangles, conditions, inborders, quadrant_limits,
-                 begin_events, end_event, publisher, name='Fusion Thread'):
+                 begin_events, end_event, reset_flags, publisher,
+                 name='Fusion Thread'):
         """
         Thread class constructor
 
@@ -190,6 +199,11 @@ class DataFusionThread(threading.Thread):
             object for publishing pose values to a ROS topic that will 
             be read by other ROS nodes.
 
+        reset_flags : N-len list
+            list containing N dictionaries. Each dictionary entry is a 
+            flag raised to True when a ROI tracker in specified FPGA 
+            has to be reset.
+
         name : string
             name of the thread.
         """
@@ -204,6 +218,7 @@ class DataFusionThread(threading.Thread):
         #Shared lists. Can be accessed by other threads.
         self.triangles = triangles
         self.inborders = inborders
+        self.reset_flags = reset_flags
         #Local lists. Can only be R/W by this thread.
         self._triangles = copy.copy(self.triangles) 
         self._inborders = copy.copy(self.inborders)
@@ -234,33 +249,46 @@ class DataFusionThread(threading.Thread):
                         #Evaluate if triangle is in borders region.
                         self._inborders[index]['1'] = triangle.in_borders(
                                                     self.quadrant_limits[index])
+                    #If dictionary element is None, skip to next camera.
+                    else:
+                        continue
+                #If the element is void, skip to next camera.
                 else:
                     continue
                 #
+                #The following instructions will only be executed if a triangle
+                #is detected in the scanned CameraThread (with id 'index').
+                #
                 #Check in the other quadrants if the triangle is in borders.
                 #
-                if self._inborders[index]['1']:
-                    for index2, quadrant in enumerate(self.quadrant_limits):
-                        #Do not repeat the function for the current quadrant.
-                        if index2 == index:
-                            continue
-                        #If the triangle is detected, the flag is not updated.
-                        self._inborders[index2]['1'] = triangle.in_borders(
-                                            self.quadrant_limits[index2])
-                        #Update triangles[index2] if there is not any tracker
-                        #already initialized and UGV is in borders[index2].
-                        if (self._inborders[index2]['1'] and not 
-                                                    self._triangles[index2]):
-                            self._triangles[index2]['1'] = copy.copy(triangle)
-                            #Write the calculated values to the shared variables
-                            self.conditions[index2].acquire()
-                            self.triangles[index2].update(
-                                                    self._triangles[index2])
-                            self.inborders[index2] = copy.copy(
-                                                    self._inborders[index2])
-                            rospy.loginfo("New triangle in Camera{}".format(
-                                                    index2+1))
-                            self.conditions[index2].release()
+                for index2, quadrant in enumerate(self.quadrant_limits):
+                    #Do not run the function for the current quadrant.
+                    if index2 == index:
+                        continue
+                    self._inborders[index2]['1'] = triangle.in_borders(
+                                        self.quadrant_limits[index2])
+                    #Update triangles[index2] if there is not any tracker
+                    #initialized and UGV is within borders of the Camera.
+                    if (self._inborders[index2]['1'] and not 
+                                            self._triangles[index2]):
+                        self._triangles[index2]['1'] = copy.copy(triangle)
+                        #Write the calculated values to the shared variables
+                        self.conditions[index2].acquire()
+                        self.triangles[index2].update(self._triangles[index2])
+                        self.inborders[index2].update(self._inborders[index2])
+                        self.reset_flags[index2]['1'] = False
+                        rospy.loginfo("New triangle in Camera{}".format(
+                                                index2+1))
+                        self.conditions[index2].release()
+                    #If the UGV is not in borders, but a tracker is set and is
+                    #returning None values, it has to be reset.
+                    elif (not self._inborders[index2]['1'] and 
+                                            self._triangles[index2]) is None):
+                        self.conditions[index2].acquire()
+                        self.reset_flags[index2]['1'] = True
+                        rospy.loginfo("Set reset_flag for Camera{}".format(
+                                                index2+1))
+                        self.conditions[index2].release()
             ###Pending: merge the containt of every dictionary in triangle
             #
             #Scan for detected triangle and publish it.
@@ -338,6 +366,8 @@ if __name__ == '__main__':
     triangles = [{}, {}, {}, {}]
     #Shared variable for storing the presence of UGVs in borders regions.
     inborders = [{'1':False}, {'1':False}, {'1':False}, {'1':False}]
+    #Shared variable flags indicating ROI trackers reset orders.
+    reset_flags = [{'1':False}, {'1':False}, {'1':False}, {'1':False}]
     #A begin event for each camera will be created
     begin_events = []
     end_event = threading.Event()
@@ -347,7 +377,7 @@ if __name__ == '__main__':
         begin_events.append(threading.Event())
         threads.append(CameraThread(triangles[index], begin_events[index], 
                                     end_event, conditions[index], 
-                                    inborders[index],
+                                    inborders[index], reset_flags[index]
                                     'Camera{}'.format(index), fname))
     #List containing the points defining the space limits of each camera.
     quadrant_limits = []
@@ -358,7 +388,7 @@ if __name__ == '__main__':
     #Thread for merging the data obtained at every CameraThread.
     threads.append(DataFusionThread(triangles, conditions, inborders,
                                     quadrant_limits, begin_events, end_event, 
-                                    publisher))
+                                    reset_flags, publisher))
     # start threads
     for thread in threads:
         thread.start()
