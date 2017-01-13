@@ -265,13 +265,15 @@ class DataFusionThread(threading.Thread):
             #
             for element in self._triangles:
                 if element.has_key('1'):
-                    triangle = copy.copy(element['1'])
+                    if element['1'] is not None:
+                        triangle = copy.copy(element['1'])
             if triangle:
                 pose = triangle.get_pose()
-                met_pose = [pose[0]/1000, pose[1]/1000, pose[2]]
+                #Convert coordinates to meters.
+                mpose = [pose[0]/1000, pose[1]/1000, pose[2]]
                 rospy.logdebug("detected triangle at {}mm and {} radians."
                               "".format(pose[0:2], pose[2]))
-                self.publisher.publish(Pose2D(met_pose[0], met_pose[1], met_pose[2]))
+                self.publisher.publish(Pose2D(mpose[0], mpose[1], mpose[2]))
             rospy.loginfo("Triangles at: {}".format(self._triangles))
             #Sleep the rest of the cycle
             while (time.time() - cycle_start_time < self.cycletime):
