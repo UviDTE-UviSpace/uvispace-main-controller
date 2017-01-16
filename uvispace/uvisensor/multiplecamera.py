@@ -79,12 +79,13 @@ class CameraThread(threading.Thread):
         self.condition = condition
         #Global and local dictionary containing the detected triangles.
         self.triangles = triangles
-        self._triangles = copy.copy(triangles)
+        self._triangles = copy.copy(self.triangles)
         #Global and local flags indicating if the UGVs are in borders region.
         self.inborders = inborders
-        self._inborders = copy.copy(inborders)
+        self._inborders = copy.copy(self.inborders)
         #Global flag indicating if ROI tracker has to be reset.
         self.reset_flag = reset_flag
+        self._reset_flag = copy.copy(self.reset_flag)
 
     def run(self):
         """Main routine of the CameraThread."""
@@ -94,10 +95,11 @@ class CameraThread(threading.Thread):
         while not self.end_event.isSet():
             #Start the cycle timer
             cycle_start_time = time.time()
-            #Update local variables with the global shared ones. Sync required.
+            #Sync operations. Read global variables and update local ones.
             self.condition.acquire()
             self._inborders.update(self.inborders)
             self._triangles.update(self.triangles)
+            self._reset_flag.update(self.reset_flag)
             self.condition.release()
             #
             #Get CARTESIAN coordinates of the 8 contour points in tracker.
@@ -138,14 +140,15 @@ class CameraThread(threading.Thread):
             #If any triangle is detected, indicate it writing a None variable.
             else :
                 self._triangles['1'] = None
-            #Lock until the shared variables are written.
-            self.condition.acquire()
             #Free the ROI tracker if corresponding flag was raised
-            if self.reset_flag['1']:
+            if self._reset_flag['1']:
                 self.camera.set_register('FREE_TRACKER', '1')
                 rospy.loginfo('{} TRACKER FREED'.format(self.name))
-                self.reset_flag.update({'1':False})
+                self._reset_flag = {'1':False}
                 self._triangles.pop('1', None)
+            #Sync operations. Write to global variables.
+            self.condition.acquire()
+            self.reset_flag.update(self._reset_flag)
             self.triangles.update(self._triangles)
             self.condition.release()
             #Sleep the rest of the cycle
@@ -222,6 +225,7 @@ class DataFusionThread(threading.Thread):
         #Local lists. Can only be R/W by this thread.
         self._triangles = copy.copy(self.triangles) 
         self._inborders = copy.copy(self.inborders)
+        self._reset_flags = copy.copy(self.reset_flags)
 
     def run(self):
         """Main routine of the DataFusionThread."""
@@ -238,6 +242,7 @@ class DataFusionThread(threading.Thread):
                 condition.acquire()
                 #Read shared variables and store in local ones
                 self._triangles[index].update(self.triangles[index])
+                self._reset_flags[index].update(self.reset_flags[index])
                 condition.release()
                 #
                 #Evaluate if the triangle is in the borders regions.
@@ -272,23 +277,22 @@ class DataFusionThread(threading.Thread):
                     if (self._inborders[index2]['1'] and not 
                                             self._triangles[index2]):
                         self._triangles[index2]['1'] = copy.copy(triangle)
-                        #Write the calculated values to the shared variables
-                        self.conditions[index2].acquire()
-                        self.triangles[index2].update(self._triangles[index2])
-                        self.inborders[index2].update(self._inborders[index2])
-                        self.reset_flags[index2]['1'] = False
+                        self._reset_flag[index2]['1'] = False
                         rospy.loginfo("New triangle in Camera{}".format(
                                                 index2+1))
-                        self.conditions[index2].release()
                     #If the UGV is not in borders, but a tracker is set and is
                     #returning None values, it has to be reset.
                     elif (not self._inborders[index2]['1'] and
                                             self._triangles[index2]):
-                        self.conditions[index2].acquire()
-                        self.reset_flags[index2]['1'] = True
+                        self._reset_flags[index2]['1'] = True
                         rospy.loginfo("Set reset_flag for Camera{}".format(
                                                 index2+1))
-                        self.conditions[index2].release()
+                    #Sync operations. Write to global variables
+                    self.conditions[index2].acquire()
+                    self.triangles[index2].update(self._triangles[index2])
+                    self.inborders[index2].update(self._inborders[index2])
+                    self.reset_flags[index2].update(self._reset_flags[index2])
+                    self.conditions[index2].release()
             ###Pending: merge the containt of every dictionary in triangle
             #
             #Scan for detected triangle and publish it.
