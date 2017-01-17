@@ -101,7 +101,7 @@ class CameraThread(threading.Thread):
             self._triangles.update(self.triangles)
             self._reset_flag.update(self.reset_flag)
             self.condition.release()
-            #
+           #
             #Get CARTESIAN coordinates of the 8 contour points in tracker.
             #The code ONLY tracks the UGV with id=1.
             #
@@ -148,7 +148,6 @@ class CameraThread(threading.Thread):
                 self._triangles.pop('1', None)
             #Sync operations. Write to global variables.
             self.condition.acquire()
-            self.reset_flag.update(self._reset_flag)
             self.triangles.update(self._triangles)
             self.condition.release()
             #Sleep the rest of the cycle
@@ -277,16 +276,17 @@ class DataFusionThread(threading.Thread):
                     if (self._inborders[index2]['1'] and not 
                                             self._triangles[index2]):
                         self._triangles[index2]['1'] = copy.copy(triangle)
-                        self._reset_flag[index2]['1'] = False
+                        self._reset_flags[index2]['1'] = False
                         rospy.loginfo("New triangle in Camera{}".format(
-                                                index2+1))
+                                                index2))
                     #If the UGV is not in borders, but a tracker is set and is
                     #returning None values, it has to be reset.
-                    elif (not self._inborders[index2]['1'] and
-                                            self._triangles[index2]):
+                    elif (not self._inborders[index2]['1'] and 
+                                        self._triangles[index2].get('1',False) is None):
                         self._reset_flags[index2]['1'] = True
-                        rospy.loginfo("Set reset_flag for Camera{}".format(
-                                                index2+1))
+                    elif (not self._inborders[index2]['1'] and 
+                                        self._triangles[index2].get('1',False) is False):
+                        self._reset_flags[index2]['1'] = False
                     #Sync operations. Write to global variables
                     self.conditions[index2].acquire()
                     self.triangles[index2].update(self._triangles[index2])
