@@ -33,41 +33,49 @@ probably corrupt the TCP/IP socket and the FPGAs will have to be reset.
 class CameraThread(threading.Thread):
     """
     Create a thread and a VideoSensor object. Capture frames when run.
-
-    Parameters
-    ----------
-    triangles : dictionary
-        Each element of the dictionary is a geometry.Triangle() object.
-        It is a global variable for sharing the information of the 
-        different triangles detected in the camera space. Each triangle
-        has a UNIQUE key identifier.
-
-    begin_event : threading.Event() object
-        Synchronization variable that is set to True when the current 
-        thread begins the main loop.
-
-    end_event : threading.Event() object
-        Synchronization variable that is set to True when the whole 
-        system shall stop the execution of the main loop.
-
-    condition : threading.Condition() object
-        Synchronization variable for R/W operations on the shared 
-        variables i.e. triangles and inborders.
-
-    inborders : dictionary
-        Each element indicates if the corresponding triangle is located
-        in the borders region of current camera space. The UNIQUE key 
-        identifiers have a univocal correspondence with the key 
-        identifiers of triangles dictionary.
-
-    name : string
-        Name of the current camera thread.
-
-    conf_file : string
-        Relative path to the configuration file of the current camera.
     """
-    def __init__(self, triangles, begin_event, end_event, condition,
-                 inborders, reset_flag, name=None, conf_file=''):
+    def __init__(self, triangles, ntriangles, begin_event, end_event, 
+                 condition, inborders, reset_flag, name=None, conf_file=''):
+        """Class constructor.
+
+        Parameters
+        ----------
+        triangles : dictionary
+            Each element of the dictionary is a geometry.Triangle() 
+            object. It is a global variable for sharing the information 
+            of different triangles detected in the camera space. Each
+            triangle has a UNIQUE key identifier. This variable is for
+            writing and sending to other threads the triangle elements.
+
+        ntriangles : dictionary
+            variable of the shame type and shape as triangles. However, 
+            this is a read only variable for getting triangles detected 
+            by other cameras.
+
+        begin_event : threading.Event() object
+            Synchronization variable that is set to True when the 
+            current thread begins the main loop.
+
+        end_event : threading.Event() object
+            Synchronization variable that is set to True when the whole 
+            system shall stop the execution of the main loop.
+
+        condition : threading.Condition() object
+            Synchronization variable for R/W operations on the shared 
+            variables i.e. triangles and inborders.
+
+        inborders : dictionary
+            Each element indicates if the corresponding triangle is
+            located in the borders region of current camera space. The 
+            UNIQUE key identifiers have a univocal correspondence with 
+            the key identifiers of triangles dictionary. READ ONLY
+
+        name : string
+            Name of the current camera thread.
+
+        conf_file : string
+            Relative path to the configuration file of the camera.
+        """
         threading.Thread.__init__(self, name=name)
         self.image = []
         self.cycletime = 0.02
@@ -77,9 +85,12 @@ class CameraThread(threading.Thread):
         self.begin_event = begin_event
         self.end_event = end_event
         self.condition = condition
-        #Global and local dictionary containing the detected triangles.
+        #Global and local dictionaries for writing the detected triangles.
         self.triangles = triangles
         self._triangles = copy.copy(self.triangles)
+        #Global and local dictionaries for reading the new triangles.
+        self.ntriangles = ntriangles
+        self._ntriangles = copy.copy(self.ntriangles)
         #Global and local flags indicating if the UGVs are in borders region.
         self.inborders = inborders
         self._inborders = copy.copy(self.inborders)
@@ -98,7 +109,7 @@ class CameraThread(threading.Thread):
             #Sync operations. Read global variables and update local ones.
             self.condition.acquire()
             self._inborders.update(self.inborders)
-            self._triangles.update(self.triangles)
+            self._ntriangles.update(self.ntriangles)
             self._reset_flag.update(self.reset_flag)
             self.condition.release()
            #
@@ -114,10 +125,10 @@ class CameraThread(threading.Thread):
                 #
                 if self._inborders['1']:
                     #Apply inverse homography and transform global to local.
-                    self._triangles['1'].inverse_homography(self.camera._H)
-                    self._triangles['1'].global2local(self.camera.offsets, K=4)
+                    self._ntriangles['1'].inverse_homography(self.camera._H)
+                    self._ntriangles['1'].global2local(self.camera.offsets, K=4)
                     #get window and set tracker
-                    self.image.triangles = [self._triangles['1']]
+                    self.image.triangles = [self._ntriangles['1']]
                     videosensor.set_tracker(self.camera, self.image)
                 continue
             #Scale the contours obtained according to the FPGA to image ratio.
@@ -164,9 +175,9 @@ class DataFusionThread(threading.Thread):
     Merge the shapes obtained by each CameraThread and stored in a 
     global variable.
     """
-    def __init__(self, triangles, conditions, inborders, quadrant_limits,
-                 begin_events, end_event, reset_flags, publisher,
-                 name='Fusion Thread'):
+    def __init__(self, triangles, ntriangles, conditions, inborders,
+                 quadrant_limits, begin_events, end_event, reset_flags, 
+                 publisher, name='Fusion Thread'):
         """
         Thread class constructor
 
@@ -175,7 +186,13 @@ class DataFusionThread(threading.Thread):
         triangles : N-len list
             List containing N dictionaries inside, where N is the number
             of Camera threads. Each dictionary entry are an UGV 
-            contours' coordinates inside the Nth camera
+            contours' coordinates inside the Nth camera. This variable 
+            is only for reading.
+
+        ntriangles : N-len list
+            Variable of the shame type and shape as triangles. However, 
+            this variable is for writing new triangles and sending them
+            to the CameraThreads
 
         conditions : N-len list
             list containing N threading.Condition objects. This objects
@@ -219,10 +236,12 @@ class DataFusionThread(threading.Thread):
         self.end_event = end_event
         #Shared lists. Can be accessed by other threads.
         self.triangles = triangles
+        self.ntriangles = ntriangles
         self.inborders = inborders
         self.reset_flags = reset_flags
         #Local lists. Can only be R/W by this thread.
         self._triangles = copy.copy(self.triangles) 
+        self._ntriangles = copy.copy(self.ntriangles)
         self._inborders = copy.copy(self.inborders)
         self._reset_flags = copy.copy(self.reset_flags)
 
@@ -275,21 +294,25 @@ class DataFusionThread(threading.Thread):
                     #initialized and UGV is within borders of the Camera.
                     if (self._inborders[index2]['1'] and not 
                                             self._triangles[index2]):
-                        self._triangles[index2]['1'] = copy.copy(triangle)
+                        self._ntriangles[index2]['1'] = copy.copy(triangle)
                         self._reset_flags[index2]['1'] = False
                         rospy.loginfo("New triangle in Camera{}".format(
                                                 index2))
                     #If the UGV is not in borders, but a tracker is set and is
                     #returning None values, it has to be reset.
                     elif (not self._inborders[index2]['1'] and 
-                                        self._triangles[index2].get('1',False) is None):
+                              self._triangles[index2].get('1',False) is None):
                         self._reset_flags[index2]['1'] = True
+                        self._ntriangles[index2].pop('1', None)
+                    #If the UGV is not in borders and any tracker was detected,
+                    #the reset flag has to be cleared.
                     elif (not self._inborders[index2]['1'] and 
-                                        self._triangles[index2].get('1',False) is False):
+                              self._triangles[index2].get('1',False) is False):
                         self._reset_flags[index2]['1'] = False
+                        self._ntriangles[index2].pop('1', None)
                     #Sync operations. Write to global variables
                     self.conditions[index2].acquire()
-                    self.triangles[index2].update(self._triangles[index2])
+                    self.ntriangles[index2].update(self._ntriangles[index2])
                     self.inborders[index2].update(self._inborders[index2])
                     self.reset_flags[index2].update(self._reset_flags[index2])
                     self.conditions[index2].release()
@@ -365,9 +388,10 @@ if __name__ == '__main__':
     threads = []
     #A Condition object for each camera thread execution.
     conditions = []
-    #Shared variable for storing coordinates of found triangles.
-    #There is a dictionary in the list for each camera.
+    #Shared variable for storing triangles. Writable only by CameraThreads.
     triangles = [{}, {}, {}, {}]
+    #Shared variable for storing triangles. Writable only by DataFusionThread.
+    ntriangles = [{}, {}, {}, {}]
     #Shared variable for storing the presence of UGVs in borders regions.
     inborders = [{'1':False}, {'1':False}, {'1':False}, {'1':False}]
     #Shared variable flags indicating ROI trackers reset orders.
@@ -379,9 +403,10 @@ if __name__ == '__main__':
     for index, fname in enumerate(conf_files):
         conditions.append(threading.Condition())
         begin_events.append(threading.Event())
-        threads.append(CameraThread(triangles[index], begin_events[index], 
-                                    end_event, conditions[index], 
-                                    inborders[index], reset_flags[index],
+        threads.append(CameraThread(triangles[index], ntriangles[index], 
+                                    begin_events[index], end_event,
+                                    conditions[index], inborders[index], 
+                                    reset_flags[index],
                                     'Camera{}'.format(index), fname))
     #List containing the points defining the space limits of each camera.
     quadrant_limits = []
@@ -390,9 +415,9 @@ if __name__ == '__main__':
     #Thread for getting user input.
     threads.append(UserThread(begin_events, end_event))
     #Thread for merging the data obtained at every CameraThread.
-    threads.append(DataFusionThread(triangles, conditions, inborders,
-                                    quadrant_limits, begin_events, end_event, 
-                                    reset_flags, publisher))
+    threads.append(DataFusionThread(triangles, ntriangles, conditions,
+                                    inborders, quadrant_limits, begin_events, 
+                                    end_event, reset_flags, publisher))
     # start threads
     for thread in threads:
         thread.start()
