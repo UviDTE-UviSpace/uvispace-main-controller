@@ -61,9 +61,9 @@ def listener(robot_id, robot_speed, serial):
                      move_robot, callback_args=serial,
                      queue_size=1)
     
-def move_robot(data, my_serial):
+def move_robot(data, my_serial, min_speed=70, max_speed=190):
     """Convert Twist msg into 2WD value and send it through port."""
-    #Change proposal. In order to accept all the parameterfs
+    #Change proposal. In order to accept all the parameters
 #    my_serial = args[0]
 #    robot_speed = args[1]
     global t0
@@ -84,10 +84,10 @@ def move_robot(data, my_serial):
     #Get the right and left speeds in case of reverse movement
     else:
         robot_speed.get_2WD_speeds(wheels_modifiers=[1, 1])
-    v_RightWheel, v_LeftWheel = robot_speed.nonlinear_transform(min_A=70,
-                                                                max_B=190)
-    rospy.loginfo('I am sending R: {} L: {}'.format(v_RightWheel, v_LeftWheel))
-    my_serial.move([v_RightWheel, v_LeftWheel])
+    vRight, vLeft = robot_speed.nonlinear_transform(min_A=min_speed,
+                                                    max_B=max_speed)
+    rospy.loginfo('I am sending R: {} L: {}'.format(vRight, vLeft))
+    my_serial.move([vRight, vLeft])
     t0 = time.time()
     xbee_times.append(t0-t2)
     rospy.loginfo('Transmission ended succesfully\n\n')
@@ -143,7 +143,7 @@ if __name__ == "__main__":
     rospy.spin()   
     stop_request(my_serial)
     print_times(wait_times, speed_calc_times, xbee_times)
-    
+
     ###############################################################
     ########## Print the log output to files and plot it ##########
     ###############################################################
@@ -153,8 +153,7 @@ if __name__ == "__main__":
     with open('{}/tmp/comm{}.log'.format(script_path, file_id), 'a') as f:
         for item in xbee_times:
             print>>f, '{0:.5f}'.format(item)
-    with open('{}/tmp/waittimes{}.log'.format(script_path, 
-                                              file_id), 'a') as f:
+    with open('{}/tmp/waittimes{}.log'.format(script_path, file_id), 'a') as f:
         for item in wait_times:
             print>>f, '{0:.5f}'.format(item)
     #Plots the robot ideal path.
