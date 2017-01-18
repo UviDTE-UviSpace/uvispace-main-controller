@@ -159,7 +159,10 @@ class CameraThread(threading.Thread):
                 self._triangles.pop('1', None)
             #Sync operations. Write to global variables.
             self.condition.acquire()
-            self.triangles.update(self._triangles)
+            if self._triangles.has_key('1'):
+                self.triangles.update(self._triangles)
+            else:
+                self.triangles.clear()
             self.condition.release()
             #Sleep the rest of the cycle
             while (time.time() - cycle_start_time < self.cycletime):
@@ -331,7 +334,7 @@ class DataFusionThread(threading.Thread):
                 rospy.logdebug("detected triangle at {}mm and {} radians."
                               "".format(pose[0:2], pose[2]))
                 self.publisher.publish(Pose2D(mpose[0], mpose[1], mpose[2]))
-#            rospy.loginfo("Triangles at: {}".format(self._triangles))
+            rospy.loginfo("Triangles at: {}".format(self._triangles))
 #            rospy.loginfo("Borders: {}".format(self._inborders))
             #Sleep the rest of the cycle
             while (time.time() - cycle_start_time < self.cycletime):
