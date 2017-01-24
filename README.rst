@@ -1,4 +1,4 @@
-========
+﻿========
 UviSpace
 ========
 
@@ -7,7 +7,7 @@ UviSpace
 
     University of Vigo
 
-:Version: 0.1.0 
+:Version: 1.0.0-alpha 
 
 The project contains two main packages:
 
