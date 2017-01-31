@@ -3,20 +3,20 @@
 This module contains the class Client, which inherits from socket.socket
 
 * socket.socket class source code can be found in the folowing link:
-https://hg.python.org/cpython/file/2.7/Lib/socket.py
+  https://hg.python.org/cpython/file/2.7/Lib/socket.py
+* This class is a child of the _socket.socket class. 
+  Its source code can be found in the following link:
+  https://github.com/biosbits/bits/blob/master/python/_socket.py
 
-* This class is a child of the _socket.socket class.
-_socket.socket class source code can be found in the following link:
-https://github.com/biosbits/bits/blob/master/python/_socket.py
 """
 # Standard libraries
 import ast
 import errno
-#import logging
 import socket
 from socket import socket as Socket
 #ROS libraries
 import rospy
+
 
 class Client(Socket):
     """Child class of socket.socket which includes register operations.
@@ -32,6 +32,14 @@ class Client(Socket):
     * send(data) 
     * recv(buflen) : read the specified number of bytes
     * settimeout(timeout)
+
+    :param buffer_size: int containing the size, in bytes, of the buffer
+     for the incomming data.
+        
+    :param timeout: int or float containing the value, in seconds, of 
+     the time that will be waited for reading incoming data. This will 
+     set the object to timeout mode (By default, it is set to blocking 
+     mode)
     """
     #Allowed register values
     _REGISTERS = {'RED_THRESHOLD': 'rt', 
@@ -60,25 +68,13 @@ class Client(Socket):
                  'GET_NEW_FRAME': 'S'}
 
     def __init__(self, buffer_size=2048, timeout=2.0):
-        """Set attributes, inheritance and logger.
-                
-        Parameters
-        ----------
-        buffer_size : int
-            size in bytes of the buffer for the incomming data.
-            
-        timeout : int or float
-            value in seconds of the time that will be waited for reading
-            incoming data. This will set the object to timeout mode. By
-            default, it is set to blocking mode 
-        """
+        """Class constructor. Set attributes, inheritance and logger."""
         #Initializes parent class
         Socket.__init__(self, family=socket.AF_INET, type=socket.SOCK_STREAM)
         #Connection parameters for the client device
         self.ip = ''
         self.port = None
         self.buffer_size = buffer_size
-#        self._logger = logging.getLogger(__name__)
         #Call parent method for setting the timeout
         self.settimeout(timeout)
 
@@ -87,21 +83,15 @@ class Client(Socket):
 
         After connecting, the input buffer is read for emptying it.
 
-        Parameters
-        ----------
-        ip : string
-            IP adress of the device that will be connected.
+        :param ip: String with the IP adress of the device.
 
-        port: int
-            Device port where the connection will be stablished.
+        :param port: int indicating the socket port.
         """
         self.ip = ip
         self.port = port
         self.connect((self.ip, self.port))
         rospy .loginfo('Started TCP client with IP: {} '
                           'and PORT:{}.'.format(self.ip, self.port))
-#        self._logger.info('Started TCP client with IP: {} '
-#                          'and PORT:{}.'.format(self.ip, self.port))
         #Empty the data buffer, as it contains the 'welcome message'.
         self.recv(self.buffer_size)
         
@@ -117,18 +107,14 @@ class Client(Socket):
             self.write_command('CLOSE_CONNECTION')
             self.close()
             rospy.loginfo('Closed the TCP client\n\n{}'.format(75*'-'))
-#            self._logger.info('Closed the TCP client\n\n{}'.format(75*'-'))
         else:
             rospy.logdebug('Unable to close TCP client. Already closed')
 #            self._logger.debug('Unable to close TCP client. Already closed')
         
     def read_data(self, size):
         """Read N packages and return a cocatenation of all of them.
-        
-        Parameters
-        ----------
-        size : int
-            Number of bytes wished to be read.
+
+        :param size: int indicating number of bytes to be read.
         """
         bytes = 0
         packages = []
@@ -140,15 +126,11 @@ class Client(Socket):
                 amount = 100 * float(bytes)/size
                 rospy.logwarn('Stopped data acquisition with {:.2f}% '
                                      'of the data acquired'.format(amount))
-#                self._logger.warning('Stopped data acquisition with {:.2f}% '
-#                                     'of the data acquired'.format(amount))
                 break
             bytes += len(received_package)
             packages.append(received_package)
         rospy.logdebug('Received {} bytes of {} ({:.2f}%)\r'.format(
                            bytes, size, (100 * float(bytes)/size)))
-#        self._logger.debug('Received {} bytes of {} ({:.2f}%)\r'.format(
-#                           bytes, size, (100 * float(bytes)/size)))
         #Cocatenate all the packages in a unique variable
         data = ''.join(packages)
         return data
@@ -194,6 +176,3 @@ class Client(Socket):
         except socket.timeout:
             message = "EMPTY BUFFER"
         return message
-
-
-

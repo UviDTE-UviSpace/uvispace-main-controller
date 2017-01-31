@@ -1,4 +1,24 @@
 #!/usr/bin/env python
+"""
+Multithreading routine for controlling external FPGAs with cameras.
+
+The module creates several parallel threads, in order to optimize the 
+execution time, as it contains several instructions which require 
+waiting for external resources before continuing execution e.g. waiting 
+for the TCP/IP client to deliver FPGA registers information. Namely, 6 
+different threads are started and stored in a list called *threads*:
+
+* 4 threads contain the 4 FGPAs initialization processes and endless 
+  loops are continually requesting the UGVs' positions to the FPGA.
+* Another thread interacts with the user through terminal. It reads
+  input commands, namely for finishing the program.
+* A final thread is in charge of merging the information obtained from
+  each FPGA.
+
+NOTE: The proper way to end the program is to press 'Q', as the terminal
+prompt indicates during execution. Using the Keyboard Interrupt will 
+probably corrupt the TCP/IP socket and the FPGAs will have to be reset.
+"""
 #Standard libraries
 import glob
 import copy
@@ -12,70 +32,53 @@ import rospy
 #Local libraries
 import imgprocessing
 import videosensor
-"""
-Multithreading routine for controlling N external FPGAs with cameras.
 
-The main routine initializes N+2 threads:
-
-* The first thread interacts with the user through terminal. It reads
-input commands, namely for finishing the program.
-* N threads contain the N FGPAs initialization processes and endless 
-loops are continually requesting the UGVs' positions to the FPGA.
-* A final thread is in charge of merging the information obtained from
-each FPGA.
-
-------------------------
-NOTE: The proper way to end the program is to press 'Q', as the terminal
-prompt indicates during execution. Using the Keyboard Interrupt will 
-probably corrupt the TCP/IP socket and the FPGAs will have to be reset.
-"""
 
 class CameraThread(threading.Thread):
     """
-    Create a thread and a VideoSensor object. Capture frames when run.
+    Child class of threading.Thread for capturing frames from a camera.
+
+    Override the *run* method, where it is specified the behavior 
+    when the *start* method is called. At first, initialize the FPGA 
+    configuration. After that, enter an endless loop until *end_event* 
+    flag is raised. At each iteration, if possible, read the FPGA 
+    register containing triangles location. Process the data and write 
+    output in a global variable.
+
+    :param triangles: Dictionary where each element is an instance 
+     of geometry.Triangle(). It is a global variable for sharing the 
+     information of different triangles detected in the camera space. 
+     Each triangle has a UNIQUE key identifier. It is used for 
+     writing and sending to other threads the triangle elements.
+
+    :param ntriangles: Dictionary of the shame type and shape as 
+     triangles. However, this is a read only variable for getting 
+     triangles detected by other cameras.
+
+    :param begin_event: threading.Event() object that is set to True 
+     when the current thread begins the main loop.
+
+    :param end_event: threading.Event() object that is set to True 
+     when the whole system shall stop the main loop.
+
+    :param condition: threading.Condition() object for synchronizing 
+     R/W operations with shared variables i.e. triangles, inborders.
+
+    :param inborders: READ ONLY dictionary where each element 
+     indicates if the corresponding triangle is located in the 
+     borders region of local camera space. The UNIQUE keys 
+     have a univocal correspondence with the key identifiers of 
+     triangles dictionary. 
+
+    :param name: String containing the name of the current thread.
+
+    :param conf_file: String containing the relative path to the 
+     configuration file of the camera.        
     """
+
     def __init__(self, triangles, ntriangles, begin_event, end_event, 
                  condition, inborders, reset_flag, name=None, conf_file=''):
-        """Class constructor.
-
-        Parameters
-        ----------
-        triangles : dictionary
-            Each element of the dictionary is a geometry.Triangle() 
-            object. It is a global variable for sharing the information 
-            of different triangles detected in the camera space. Each
-            triangle has a UNIQUE key identifier. This variable is for
-            writing and sending to other threads the triangle elements.
-
-        ntriangles : dictionary
-            variable of the shame type and shape as triangles. However, 
-            this is a read only variable for getting triangles detected 
-            by other cameras.
-
-        begin_event : threading.Event() object
-            Synchronization variable that is set to True when the 
-            current thread begins the main loop.
-
-        end_event : threading.Event() object
-            Synchronization variable that is set to True when the whole 
-            system shall stop the execution of the main loop.
-
-        condition : threading.Condition() object
-            Synchronization variable for R/W operations on the shared 
-            variables i.e. triangles and inborders.
-
-        inborders : dictionary
-            Each element indicates if the corresponding triangle is
-            located in the borders region of current camera space. The 
-            UNIQUE key identifiers have a univocal correspondence with 
-            the key identifiers of triangles dictionary. READ ONLY
-
-        name : string
-            Name of the current camera thread.
-
-        conf_file : string
-            Relative path to the configuration file of the camera.
-        """
+        """Class constructor method."""
         threading.Thread.__init__(self, name=name)
         self.image = []
         self.cycletime = 0.02
@@ -173,61 +176,56 @@ class CameraThread(threading.Thread):
 
 class DataFusionThread(threading.Thread):
     """
-    Thread for assessing obtained shapes and merging the information.
-    
-    Merge the shapes obtained by each CameraThread and stored in a 
-    global variable.
+    Child class of threading.Thread for merging and processing data.
+
+    Override the *run* method, where it is specified the behavior 
+    when the *start* method is called. At first, wait until all cameras 
+    are initialized. After that, enter an endless loop until *end_event* 
+    flag is raised. At each iteration:
+
+    - Check the triangles stored at each CameraThread.
+    - When a triangle is detected, determine if it is in the borders 
+      region of another camera. If True, prepare a new ROI tracker.
+    - Evaluate if an UGV exits a camera, deleting the ROI tracker if 
+      it is True.
+    - Merge the information obtained in all the cameras and write it in 
+      a ROS topic
+
+    :param triangles: READ ONLY List containing N dictionaries, where
+     N is the number of Camera threads. Each dictionary entry are the
+     coordinates of an UGV inside the Nth camera.
+
+    :param ntriangles: WRITE N-len list of the shame type and shape as
+     triangles, for exchanging triangles information between 
+     CameraThreads.
+
+    :param conditions: List containing N threading.Condition objects. 
+     They are used for synchronizing the CameraThreads and the
+     DataFusionThread when doing R/W operations on shared variables.
+
+    :param inborders: List containing N dictionaries. Each dictionary
+     entry is a flag set to True when the UGV is in the Nth camera 
+     borders region.
+
+    :param quadrant_limits: List containing N 4x2 arrays. Each array 
+     contains the 4 points defining the working space of the Nth camera.
+
+    :param end_event: threading.Event object that is set to True when 
+     the UserThread detects an 'end' order from the user.
+
+    :param publisher: rospy.Publisher object for sending pose values to 
+     a ROS topic, that can be read by other ROS nodes.
+
+    :param reset_flags: List containing N dictionaries whose entries are
+     flags set to True when a ROI tracker in specified FPGA to be reset.
+
+    :param name: String containing the name of the current thread.
     """
     def __init__(self, triangles, ntriangles, conditions, inborders,
                  quadrant_limits, begin_events, end_event, reset_flags, 
                  publisher, name='Fusion Thread'):
         """
-        Thread class constructor
-
-        Parameters
-        ----------
-        triangles : N-len list
-            List containing N dictionaries inside, where N is the number
-            of Camera threads. Each dictionary entry are an UGV 
-            contours' coordinates inside the Nth camera. This variable 
-            is only for reading.
-
-        ntriangles : N-len list
-            Variable of the shame type and shape as triangles. However, 
-            this variable is for writing new triangles and sending them
-            to the CameraThreads
-
-        conditions : N-len list
-            list containing N threading.Condition objects. This objects
-            are used for synchronization between the each CameraThread 
-            and the DataFusionThread when doing R/W operations on shared
-            variables.
-
-        inborders : N-len list
-            list containing N dictionaries. Each dictionary entry 
-            is a flag raised to True when the UGV is in the Nth borders
-            region.
-
-        quadrant_limits : N-len list
-            list containing N 4-len arrays. Each one of the sublists 
-            contain the 4 points defining the working space of the 
-            camera N.
-
-        end_event : threading.Event
-            Event object that is set to True when the UserThread detects
-            an 'end program' order from the user.
-
-        publisher : rospy.Publisher
-            object for publishing pose values to a ROS topic that will 
-            be read by other ROS nodes.
-
-        reset_flags : N-len list
-            list containing N dictionaries. Each dictionary entry is a 
-            flag raised to True when a ROI tracker in specified FPGA 
-            has to be reset.
-
-        name : string
-            name of the thread.
+        Class constructor method
         """
         threading.Thread.__init__(self, name=name)
         self.publisher = publisher
@@ -343,21 +341,21 @@ class DataFusionThread(threading.Thread):
 
 class UserThread(threading.Thread):
     """
-    Thread for assessing obtained shapes and merging the information.
+    Child class of threading.Thread for interacting with user.
+
+    Override the *run* method, where it is specified the behavior 
+    when the *start* method is called. Ask the user for commands through
+    keyboard.
+
+    :param begin_events: List with N Event objects, where N is the 
+     number of Camera threads. Until the set up of every camera is 
+     finished, the user can not interact with this thread.
     
-    Merge the shapes obtained by each CameraThread and stored in a 
-    global variable.
+    :param end_event: threading.Event object that is set to True when 
+     the UserThread detects an 'end' order from the user.
     """
-    def __init__(self, begin_events, end_event, 
-                       name='User Thread', conf_file=''):
-        """Inherit from threading.Thread and read event objects.
-        
-        begin_events is a list with N Event objects, where N is the 
-        number of Camera threads started. Until the set up of every 
-        camera is finished, the user can not interact with this thread.
-        
-        end_event indicates the end of the program.
-        """
+    def __init__(self, begin_events, end_event, name='User Thread'):
+        """Class constructor method."""
         threading.Thread.__init__(self, name=name)
         self.begin_events = begin_events
         self.end_event = end_event
@@ -415,21 +413,15 @@ if __name__ == '__main__':
     quadrant_limits = []
     for camera_thread in threads:
         quadrant_limits.append(camera_thread.camera._limits)
-    #Thread for getting user input.
-    threads.append(UserThread(begin_events, end_event))
     #Thread for merging the data obtained at every CameraThread.
     threads.append(DataFusionThread(triangles, ntriangles, conditions,
                                     inborders, quadrant_limits, begin_events, 
                                     end_event, reset_flags, publisher))
+    #Thread for getting user input.
+    threads.append(UserThread(begin_events, end_event))
     # start threads
     for thread in threads:
         thread.start()
     # wait for threads to end
     for thread in threads:
         thread.join()
-
-
-
-
-
-
