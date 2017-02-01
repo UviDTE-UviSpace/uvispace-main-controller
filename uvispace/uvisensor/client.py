@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-This module contains the class Client, which inherits from socket.socket
+This module contains the Client class, which inherits from socket.socket
 
 * socket.socket class source code can be found in the folowing link:
   https://hg.python.org/cpython/file/2.7/Lib/socket.py

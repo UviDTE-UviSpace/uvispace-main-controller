@@ -6,18 +6,19 @@ The module creates several parallel threads, in order to optimize the
 execution time, as it contains several instructions which require 
 waiting for external resources before continuing execution e.g. waiting 
 for the TCP/IP client to deliver FPGA registers information. Namely, 6 
-different threads are started and stored in a list called *threads*:
+different threads are managed and indexed in a list called *threads*:
 
-* 4 threads contain the 4 FGPAs initialization processes and endless 
-  loops are continually requesting the UGVs' positions to the FPGA.
-* Another thread interacts with the user through terminal. It reads
-  input commands, namely for finishing the program.
-* A final thread is in charge of merging the information obtained from
-  each FPGA.
+* 4 threads that run the 4 FGPAs initialization routines. Afterwards,
+  endless loops continually request the UGVs' positions to each FPGA.
+* Another thread that interacts with the user through keyboard. It reads
+  input commands and performs corresponding actions.
+* A final thread is in charge of merging the information obtained at
+  each FPGA thread and obtain global UGVs' positions.
 
 NOTE: The proper way to end the program is to press 'Q', as the terminal
-prompt indicates during execution. Using the Keyboard Interrupt will 
-probably corrupt the TCP/IP socket and the FPGAs will have to be reset.
+prompt indicates during execution. If the Keyboard Interrupt is used 
+instead, it will probably corrupt the TCP/IP socket and the FPGAs will 
+have to be reset.
 """
 #Standard libraries
 import glob
@@ -38,12 +39,12 @@ class CameraThread(threading.Thread):
     """
     Child class of threading.Thread for capturing frames from a camera.
 
-    Override the *run* method, where it is specified the behavior 
-    when the *start* method is called. At first, initialize the FPGA 
-    configuration. After that, enter an endless loop until *end_event* 
-    flag is raised. At each iteration, if possible, read the FPGA 
-    register containing triangles location. Process the data and write 
-    output in a global variable.
+    The *run* method, where is specified the behavior when the *start* 
+    method is called, is overrided. At first, it loads the FPGA 
+    configuration. Then it enters an endless loop until *end_event* 
+    flag is raised. At each iteration, when possible, reads the FPGA 
+    register containing triangles location, processes the data and 
+    writes it to the global shared variable *triangles*.
 
     :param triangles: Dictionary where each element is an instance 
      of geometry.Triangle(). It is a global variable for sharing the 
@@ -51,26 +52,25 @@ class CameraThread(threading.Thread):
      Each triangle has a UNIQUE key identifier. It is used for 
      writing and sending to other threads the triangle elements.
 
-    :param ntriangles: Dictionary of the shame type and shape as 
-     triangles. However, this is a read only variable for getting 
-     triangles detected by other cameras.
+    :param ntriangles: READ ONLY dictionary of the same type and shape 
+     as *triangles*. It contains the triangles detected by other cameras 
+     that are inside the borders region of the current camera's space.
 
     :param begin_event: threading.Event() object that is set to True 
-     when the current thread begins the main loop.
+     when the FPGA is configured and the thread begins the main loop.
 
     :param end_event: threading.Event() object that is set to True 
-     when the whole system shall stop the main loop.
+     when the execution has to end.
 
     :param condition: threading.Condition() object for synchronizing 
-     R/W operations with shared variables i.e. triangles, inborders.
+     R/W operations on shared variables i.e. triangles, inborders.
 
-    :param inborders: READ ONLY dictionary where each element 
-     indicates if the corresponding triangle is located in the 
-     borders region of local camera space. The UNIQUE keys 
-     have a univocal correspondence with the key identifiers of 
-     triangles dictionary. 
+    :param inborders: READ ONLY dictionary whose elements indicate if 
+     the corresponding triangle is located within the borders region 
+     of current camera's space. Its keys have an univocal correspondence 
+     with the key identifiers of the *triangles* dictionary. 
 
-    :param name: String containing the name of the current thread.
+    :param name: String that provides the name of the thread.
 
     :param conf_file: String containing the relative path to the 
      configuration file of the camera.        
