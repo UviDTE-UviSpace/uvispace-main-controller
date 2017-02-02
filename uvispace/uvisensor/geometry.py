@@ -1,30 +1,34 @@
 #!/usr/bin/env python
-#Standard libraries
-import numpy as np
 """
-This module contain classes and methods focused on geometry operations.
+This module contain classes and methods with geometrical operations.
 
+The operations are done in the 2-D space
 It works with 2-D shapes represented by arrays. Thus, the calculations
 are based on matricial operations and linear algebra. 
 """
+#Standard libraries
+import numpy as np
 
 class Triangle(object):
     """
-    Class for dealing with geometric operations refered to a triangle.
+    Class for dealing with geometric operations refered to triangles.
+
+    An instance of the classrepresents an isosceles triangle in a 
+    2-D space, with the 2 equal sides being bigger than the base one.
+
+    :param np.array vertices: 3x2 array containing the vertices
+     coordinates of the triangle object.
+
+    :param bool isglobal: Flag that indicates if the coordinate system 
+     refers to the 4-quadrant system (global) or to a local quadrant 
+     system.
+    :param bool cartesian: This flag indicates if the coordinates are 
+     referred to a cartesian system [x,y] instead of the images typical 
+     standard [row. column] = [y,x]
     """
     def __init__(self, vertices, isglobal=False, cartesian=False):
         """
         Triangle class constructor.
-
-        Parameters
-        ----------
-        vertices : 3x2 array
-            Array containing the vertices coordinates of the triangle 
-            object.
-
-        isglobal : boolean
-            Flag that indicates if the coordinate system refers to the 
-            4-quadrant system (global) or to a single quadrant system.
         """
         if len(vertices) is not 3:
             raise ValueError("Expected an array with 3 vertices")
@@ -56,37 +60,31 @@ class Triangle(object):
 
         The function performs 2 transformations:
 
-        * Obain the 4-quadrant coordinates. The input is a coordinate 
-        for a 1-quadrant system, and the output corresponds to the 
-        4-quadrant system.
+        * Obtains the 4-quadrant coordinates. The input is a coordinate 
+          for a 1-quadrant system, and the output corresponds to the 
+          4-quadrant system.
         * Move y-axis origin. Initially, for a given image the origin
-        is placed at its top. However, for the used system the origin 
-        is placed at the middle of the 4 quadrants.
+          is placed at its top. However, for the used system the origin 
+          is placed at the middle of the 4 quadrants.
 
         If indicated, the coordinates system will be transformed to the
         cartesian one. This is recommended, as the image system does not
         make sense for a space with origin in the middle.
 
         Only absolute coordinates shall be transformed. Lengths and 
-        angles are invariant to the coordinate origin.
+        angles are invariant to the coordinates origin.
 
-        Finally, a scale ratio will be applied to the coordinates. The 
-        coordinates will be directly multiplied byy the K constant.
+        Finally, a scale ratio *K* will be applied to the coordinates. 
+        The coordinates will be directly multiplied by the ratio.
 
-        Parameters
-        ----------
-        offsets[row_offset, col_offset] : 2-integer list
-            column and row offsets between the local and the global 
-            systems.
-
-        K : positive int or float
-            Scale ratio that will be applied to the points coordinates.
-
-        image2cartesian : boolean
-            If this flag is set to True, a conversion from image 
-            coordinate system to cartesian system is performed. Thus, 
-            the output will be of the form of [x,y] instead of 
-            [row,column]
+        :param list[int, int] offsets: column and row offsets between 
+          the local and the global systems.
+        :param K: Scale ratio to be applied to the points coordinates.
+        :type K: possitive int or float
+        :param bool image2cartesian: If True, a conversion from image 
+         coordinate system to cartesian system is performed. Thus, the 
+         output will be of the form of [x,y] instead of [row,column].
+        :raises ValueError: if the scale ratio is negative.
         """
         if self.isglobal:
             return
@@ -136,21 +134,17 @@ class Triangle(object):
         
         Only absolute coordinates shall be transformed. Lengths and 
         angles are invariant to the coordinate origin.
-        
-        Parameters
-        ----------
-        offsets[row_offset, col_offset] : 2-integer list
-            column and row offsets between the local and the global 
-            systems.
+    
+        :param list[int, int] offsets: column and row offsets between 
+          the local and the global systems.
 
-        K : positive int or float
-            Scale ratio that will be applied to the points coordinates.
-
-        cartesian2image : boolean
-            If this flag is set to True, a conversion from cartesian 
-            coordinate system to image system is performed. Thus, 
-            the output will be of the form of [row,column] instead of 
-            [x,y]
+        :param K: Scale ratio to be applied to the points coordinates.
+        :type K: possitive int or float
+        :param bool cartesian2image: If True, a conversion from 
+         cartesian coordinates system to image system is performed. 
+         Thus, the  output will be of the form of [row,column] instead 
+         of [x,y].
+        :raises ValueError: if the scale ratio is negative.         
         """
         if not self.isglobal:
             return
@@ -207,22 +201,16 @@ class Triangle(object):
 
         * self.sides : array containing the lengths of the 3 sides.
         * self.base_index : array index of the minor side. This is also
-        the index of the vertex between the 2 mayor sides, as vertices
-        indexes are the indexes of their opposite sides.
+          the index of the vertex between the 2 mayor sides, as vertices
+          indexes are the indexes of their opposite sides.
 
-        Returns
-        -------
-        midpoint[0] : float32
-            X coordinate of the midpoint of the triangle's base side.
-
-        midpoint[1] : float32
-            Y coordinate of the midpoint of the triangle's base side.
-
-        angle : float32
-            Orientation angle of the triangle. It is the resulting angle
-            between the horizontal axis and the segment that goes from 
-            the triangle's midpoint to the frontal vertex. It is 
-            expressed in radians, in the range [-pi, pi]
+        :return: [X,Y] coordinate of 
+         the midpoint of the triangle's base side and orientation angle 
+         of the triangle. It is the resulting angle between the 
+         horizontal axis and the segment that goes from the triangle's 
+         midpoint to the frontal vertex. It is expressed in radians, in 
+         the range [-pi, pi].
+        :rtype: [float32, float32, float32]            
         """
         vertices = self.vertices.astype(np.float32)
         #Calculate the length of the sides i.e. the Euclidean distance
@@ -250,28 +238,26 @@ class Triangle(object):
         Get the coordinates of a rectangle window around the triangle.
         
         At first, the barycenter of the triangle is calculated. Then, 
-        the window is calculated as a square, being its sides k times
-        the triangle's longest side length and being its center the 
-        triangle's barycenter.
+        the window is calculated as a square, being its sides' length  
+        *k* times the triangle's longest side length and being its 
+        center the triangle's barycenter. The output is stored in the 
+        *self.window* variable
 
-        Returns
-        -------
-        self.window : 2x2 NumPy array
-            array representing a square parallel to the horizontal 
-            coordinates axe. The first row contains the X and Y minimum
-            values of the square, and the second row contains the X and 
-            Y maximum values of the square.
-
-        min_value : integer or 2x1 array
-            value or values of the minimum allowed coordinates.
-            
-        max_value : integer or 2x1 array
-            value or values of the maximum allowed coordinates.
-
-        k : int or float
-            relative size between the window and the triangle base. It 
-            should be bigger than 1. As bigger as it gets, the bigger 
-            the window will be
+        :param min_value: value or values of the minimum allowed 
+         coordinates.
+        :param max_value: value or values of the maximum allowed 
+         coordinates.
+        :param k: relative size between the window and the triangle 
+         base. It should be bigger than 1. As bigger as it gets, the 
+         bigger the window will be.
+        :type min_value: int or [int,int] np.array
+        :type max_value: int or [int,int] np.array
+        :type k: int or float
+        :return: array representing a square parallel to the horizontal 
+         coordinates axe. The first row contains the X and Y minimum
+         values of the square, and the second row contains its X and Y 
+         maximum values.
+        :rtype: 2x2 np.array
         """
         distance = self.sides.max() * k
         window = np.array([self.barycenter - distance, 
@@ -299,12 +285,12 @@ class Triangle(object):
         Perform an homography operation to the Triangle vertices.
 
         The homography is a geometrical tranformation that obtains the 
-        projection of certain points from a plain to another.
+        projection of certain points from a plain to another. 
+        *self.vertices* variable is updated
 
-        Parameters
-        ----------
-        H : 3x3 np.array
-            Homography matrix
+        :param H: Homography matrix.
+        :type H: 3x3 np.array 
+        :return: the new vertices coordinates values.
         """
         points = np.copy(self.vertices)
         #Loop for performing the homography to very 2-D vertex' coordinates.
@@ -319,17 +305,17 @@ class Triangle(object):
 
     def inverse_homography(self, H):
         """
-        Revert the homography operation and return new vertices.
-        
-        It gets Xu from the equation (w.X) = H.Y
+        Perform an inverse homography operation to the vertices.
+
+        Get Xu from the equation (w.X) = H.Y
+
         First of all, get (1/w.Y) using least squares method. Then, 
-        extract 1/w from the column matrix, with the hypothesis that 
+        extracts 1/w from the column matrix, with the hypothesis that 
         (Y11) = 1.
 
-        Parameters
-        ----------
-        H : 3x3 np.array
-            Homography matrix
+        :param H: Homography matrix.
+        :type H: 3x3 np.array
+        :return: the new vertices coordinates values.
         """
         points = np.copy(self.vertices)
         #Loop for performing the homography to very 2-D vertex' coordinates.
@@ -346,15 +332,19 @@ class Triangle(object):
     def in_borders(self, limits, tolerance=150):
         """Evaluate if vertices are near a 4-sides polygon perimeter.
 
-        Parameters
-        ----------
-        limits : iterable of length 4
-            Array containing the coordinates of the 4 points defining 
-            the borders of the working space.
+        In the real world scenario, this method determines if the UGV, 
+        represented by the *Triangle*, is in the borders region of a 
+        given 2-D space, defined by an irregular 4-sides polygon.
 
-        tolerance : int or float
-            Maximum allowed distance (mm) to the limits to be considered 
-            within the borders region.
+        :param limits: Array containing the coordinates of the 4 points
+         defining the borders of the polygon.
+        :param tolerance: Maximum allowed distance (mm) to the limits 
+         to be considered within the borders region.
+        :type limits: iterable of length 4
+        :type tolerance: int or float
+        :return: flag set to True if the triangle is evaluated to be 
+         inside the given polygon
+        :rtype: bool
         """
         for index in range(len(limits)):
             #Define a segment with 2 limit points of the quadrant.
@@ -373,15 +363,14 @@ class Triangle(object):
 class Segment(object):
     """
     This class contains methods for dealing with 2D segments operations.
+
+    :param pointA: X and Y coordinates of the initial points.
+    :param pointB: X and Y coordinates of the  end points.
+    :type pointA: len-2 tuple or list
+    :type pointB: len-2 tuple or list
     """
     def __init__(self, pointA, pointB):
         """Define the segment basic attributes.
-
-        Parameters
-        ----------
-        pointA, pointB : 2 elements tuple or list
-            X and Y coordinates of the initial and end points defining
-            the segment.
         """
         self.pointA = np.array(pointA)
         self.pointB = np.array(pointB)
@@ -390,18 +379,20 @@ class Segment(object):
 
     def distance2point(self, point):
         """
-        Return the distance of a point to the nearest segment point.
+        Return the distance of a point to the nearest segment's point.
 
         The calculus is based on the dot (scalar) product. The
         perpendicular projection of a first vector on a second one is
         the dot product the 2 vectors divided by the modulus of the 
         second:
-            A.B = |A||B|cos(alpha)
-            being |A|cos(alpha) the projection of A on B
+
+        `A.B = |A||B|cos(alpha)`
+        `being |A|cos(alpha) the projection of A on B`
 
         If the projection is less than 0, it implies that the point is
         left to the first point (as cos(alphha) is negative), being this
         first point the nearest one to the target point. 
+
         Moreover, if the projection is greter than the modulus of the
         segment, it implies that the target point is is right to the end
         point, being this the nearest one.
@@ -409,9 +400,7 @@ class Segment(object):
         Finally, the the distance to the segment is obtained and 
         returned using the Pitagoras' theorem.
 
-        Parameters
-        ----------
-        point : 2-elements tuple or list
+        :return: The distance of the point to the segment
         """
         #target point and Segment's final point coordinates referred to the
         #initial point. Needed for the dot product.

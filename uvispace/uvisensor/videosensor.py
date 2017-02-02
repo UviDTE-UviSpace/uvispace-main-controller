@@ -95,6 +95,14 @@ def set_tracker(camera, image=[]):
 class VideoSensor(object):
     """
     This class contains methods for dealing with FPGA-camera system.
+
+    :param str filename: Path to the configuration file of the camera. 
+     The path shall be passed relatively to the script directory.
+
+    :param float scale: scale ratio of the camera. relationship between the 
+     full resolution of the FPGA and the actual resolution that is being
+     usedd. By, default, the FPGA has a 2:1 scale i.e. only half of the 
+     pixels are being used.
     """
     #Allowed attribute values.
     PARAMETERS = ('red_thresholds',
@@ -115,18 +123,6 @@ class VideoSensor(object):
     def __init__(self, filename='', scale=2.0):
         """
         Initialize attributes. If filename is passed, open connection.
-
-        Parameters
-        ----------
-        filename : string
-            Path to the configuration file of the camera. The path shall
-            be passed relatively to the script directory.
-
-        K : float
-            scale value of the camera. relationship between the full
-            resolution of the FPGA and the actual resolution that is 
-            used. By, default, the FPGA is scaled with a 2:1 scale 
-            i.e. only half of the pixels are used.
         """
         self.filename = None
         self.offsets = [0,0]
@@ -184,10 +180,10 @@ class VideoSensor(object):
         Load the config file and send the configuration to the FPGA.
 
         * Read camera and sensor parameters in self.filename. They are 
-        then stored in the self._params variable. 
+          then stored in the self._params variable. 
         * If write2fpga flag is True, write paramters in the FPGA 
-        registers by calling set_resgister() method. Finally, send 
-        'CONFIGURE_CAMERA' command to FPGA.
+          registers by calling set_resgister() method. Finally, send 
+          'CONFIGURE_CAMERA' command to FPGA.
         """
         #Check that the filename is correct
         if not self.conf.sections():
@@ -290,11 +286,8 @@ class VideoSensor(object):
         The row offset of the camera images corresponds to the images
         height and the column offset corresponds to the images width.
 
-        Returns
-        -------
-        offsets : 2-element list
-            List containing the row and column offset i.e. 
-            [row_offset, col_offset] 
+        :return: row and column offsets i.e. [row_offset, col_offset] 
+        :rtype: list[float, float]
         """
         #Get the physical quadrant value
         quadrant = self.conf.get('Misc', 'quadrant')
@@ -320,37 +313,33 @@ class VideoSensor(object):
     def get_register(self, register):
         """Read the content of the specified register.
 
-        Parameters
-        ----------
-        register : string
-            key identifier of valid register name of the FPGA. The full
-            list of valid keys and their associated name can be found on
-            the documentation of the client.Client class.
+        :param str register: key identifier of a valid register name of 
+         the FPGA. The full list of valid keys and their associated name
+         can be found on the documentation of the *client.Client* class.
+        :return: the data stored in the indicated register.
         """
         value = self._client.read_register(register)
         return value
         
     def set_register(self, register, value):
         """
-        Write the desired value into an FPGA register.
+        Write a value into an FPGA register.
 
-        Parameters
-        ----------
-        register : string
-            key identifier of valid register name of the FPGA. The full
-            list of valid keys and their associated name can be found on
-            the documentation of the client.Client class.
-        
-        value : int or N-element tuple/list
-            the value that will be written to the register. It is 
-            mandatory to send it as string type. Thus, the value has to
-            be converted. For tupples or lists, brackets or parenthesis
-            are not allowed, so they have to be eliminated.
+        :param str register: key identifier of valid register name of 
+         the FPGA. The full list of valid keys and their associated name
+         can be found on the documentation of the *client.Client* class.
+        :param value: the value that will be written to the register. It
+         is mandatory to send it as string type. Thus, the value has to
+         be converted. For tupples or lists, brackets or parenthesis are
+         not allowed, so they have to be eliminated.
+        :type value: int or tuple/list   
+        :return: message obtained back from the FPGA after writing into 
+         the register. 
 
-            examples :
-                sent_value = '6' ---> OK
-                sent_value = '(3.45, 2.21)' ---> No OK
-                sent_value = '3.45, 2.21' ---> OK
+        :examples:
+            sent_value = '6' ---> OK
+            sent_value = '(3.45, 2.21)' ---> No OK
+            sent_value = '3.45, 2.21' ---> OK
         """
         #int values are directly converted to string variables.
         if type(value) in (str, int):
@@ -373,18 +362,16 @@ class VideoSensor(object):
     def configure_tracker(self, tracker_id, min_x, min_y, width, height):
         """Send to FPGA rectangle parameters for defining a tracker.
 
-        Parameters
-        ----------
-        tracker_id : integer
-            identifier of the detected object.
+        :param int tracker_id: identifier of the detected object.
 
-        min_x, min_y : integer
-            value of the X and Y cartesian coordinates, respectively, 
-            of the tracker window.
-
-        width, height : integer
-            value of the width (X axis) and height (Y axis) of the 
-            tracker window.
+        :param int min_x: value of the X cartesian coordinate of the 
+         tracker window.
+        :param int min_y: value of the Y cartesian coordinate of the 
+         tracker window.
+        :param int width: value of the width (X axis) of the tracker 
+         window    
+        :param int height: value of the height (Y axis) of the tracker 
+         window.
 
         NOTE: It is mandatory that the coordinates and dimensions passed
         to the FPGA are integers. Other types like float are not valid
@@ -397,28 +384,20 @@ class VideoSensor(object):
     def capture_frame(self, gray=True, tries=20, output_file=''):
         """
         This method requests a frame to the FPGA.
-        
-        Paramters
-        ---------
-        get_gray : Boolean
-            if true, a gray-scale image will be requested. If false,
-            the requested image will be colored
 
-        tries : int
-            number of times that the system will try to obtain the 
-            requested image. After the last try, the system will exit.
-            
-        output_file : URL str
-            name of the output file were the image will be stored. If 
-            left blank, the image will not be saved.
+        :param bool get_gray: if true, a gray-scale image will be 
+         requested. If false, the requested image will be RGB.
+        :param int tries: number of times that the system will try to 
+         obtain the requested image. After the last try, the system will
+         exit.      
+        :param str output_file: URL name of the output file were the 
+         image will be stored. If left blank, the image won't be saved.
 
-        Returns
-        -------
-        image : MxNxdim numpy.array
-            image contained in an array with dimensions specified in the
-            configuration file. If gray color is True, the dim value 
-            will be 1, and 3 for False (representing color images). dim
-            equals to the number of components per pixel.
+        :return: image contained in an array with dimensions specified 
+         in the configuration file. If gray color is True, the dim value 
+         will be 1, and 3 for False (representing color images). dim
+         equals to the number of components per pixel.
+        :rtype: MxNxdim numpy.array
         """
         #Request a frame capture to the socket client
         message = self._client.write_command('GET_NEW_FRAME', True)
