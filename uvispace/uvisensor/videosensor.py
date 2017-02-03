@@ -337,9 +337,11 @@ class VideoSensor(object):
          the register. 
 
         :examples:
-            sent_value = '6' ---> OK
-            sent_value = '(3.45, 2.21)' ---> No OK
-            sent_value = '3.45, 2.21' ---> OK
+        
+
+           * sent_value = '6' ---> OK
+           * sent_value = '(3.45, 2.21)' ---> No OK
+           * sent_value = '3.45, 2.21' ---> OK
         """
         #int values are directly converted to string variables.
         if type(value) in (str, int):

@@ -16,9 +16,8 @@ class Triangle(object):
     An instance of the classrepresents an isosceles triangle in a 
     2-D space, with the 2 equal sides being bigger than the base one.
 
-    :param np.array vertices: 3x2 array containing the vertices
-     coordinates of the triangle object.
-
+    :param np.array(shape=3x2) vertices: vertices coordinates of the 
+     triangle object.
     :param bool isglobal: Flag that indicates if the coordinate system 
      refers to the 4-quadrant system (global) or to a local quadrant 
      system.
@@ -210,7 +209,7 @@ class Triangle(object):
          horizontal axis and the segment that goes from the triangle's 
          midpoint to the frontal vertex. It is expressed in radians, in 
          the range [-pi, pi].
-        :rtype: [float32, float32, float32]            
+        :rtype: float32, float32, float32
         """
         vertices = self.vertices.astype(np.float32)
         #Calculate the length of the sides i.e. the Euclidean distance
@@ -250,8 +249,8 @@ class Triangle(object):
         :param k: relative size between the window and the triangle 
          base. It should be bigger than 1. As bigger as it gets, the 
          bigger the window will be.
-        :type min_value: int or [int,int] np.array
-        :type max_value: int or [int,int] np.array
+        :type min_value: int or np.array[int,int]
+        :type max_value: int or np.array[int,int]
         :type k: int or float
         :return: array representing a square parallel to the horizontal 
          coordinates axe. The first row contains the X and Y minimum
@@ -289,7 +288,7 @@ class Triangle(object):
         *self.vertices* variable is updated
 
         :param H: Homography matrix.
-        :type H: 3x3 np.array 
+        :type H: np.array(shape=3x3)
         :return: the new vertices coordinates values.
         """
         points = np.copy(self.vertices)
@@ -307,14 +306,15 @@ class Triangle(object):
         """
         Perform an inverse homography operation to the vertices.
 
-        Get Xu from the equation (w.X) = H.Y
+        Get :math:`X_u` from the equation 
+        :math:`(w \\cdot X) = H \\cdot Y`.
 
-        First of all, get (1/w.Y) using least squares method. Then, 
-        extracts 1/w from the column matrix, with the hypothesis that 
-        (Y11) = 1.
+        First of all, get :math:`\\frac{1}{w \\cdot Y}` using least 
+        squares method. Then, extracts :math:`\\frac{1}{w}` from the 
+        column matrix, with the hypothesis that :math:`Y_{11} = 1`.
 
         :param H: Homography matrix.
-        :type H: 3x3 np.array
+        :type H: np.array(shape=3x3)
         :return: the new vertices coordinates values.
         """
         points = np.copy(self.vertices)
@@ -386,8 +386,11 @@ class Segment(object):
         the dot product the 2 vectors divided by the modulus of the 
         second:
 
-        `A.B = |A||B|cos(alpha)`
-        `being |A|cos(alpha) the projection of A on B`
+        .. math::
+
+           A.B = |A| \\cdot |B| \cdot cos(alpha) 
+
+        being :math:`|A| \\cdot cos(alpha)` the projection of A on B
 
         If the projection is less than 0, it implies that the point is
         left to the first point (as cos(alphha) is negative), being this

@@ -47,7 +47,7 @@ class CameraThread(threading.Thread):
     writes it to the global shared variable *triangles*.
 
     :param triangles: Dictionary where each element is an instance 
-     of geometry.Triangle(). It is a global variable for sharing the 
+     of *geometry.Triangle*. It is a global variable for sharing the 
      information of different triangles detected in the camera space. 
      Each triangle has a UNIQUE key identifier. It is used for 
      writing and sending to other threads the triangle elements.
@@ -56,19 +56,23 @@ class CameraThread(threading.Thread):
      as *triangles*. It contains the triangles detected by other cameras 
      that are inside the borders region of the current camera's space.
 
-    :param begin_event: threading.Event() object that is set to True 
+    :param begin_event: *threading.Event* object that is set to True 
      when the FPGA is configured and the thread begins the main loop.
 
-    :param end_event: threading.Event() object that is set to True 
+    :param end_event: *threading.Event* object that is set to True 
      when the execution has to end.
 
-    :param condition: threading.Condition() object for synchronizing 
-     R/W operations on shared variables i.e. triangles, inborders.
+    :param condition: *threading.Condition* object for synchronizing 
+     R/W operations on shared variables i.e. *triangles, inborders*.
 
     :param inborders: READ ONLY dictionary whose elements indicate if 
      the corresponding triangle is located within the borders region 
      of current camera's space. Its keys have an univocal correspondence 
-     with the key identifiers of the *triangles* dictionary. 
+     with the key identifiers of the *triangles* dictionary.
+
+    :param reset_flag: READ ONLY dictionary of boolean elements. They 
+     are set to True when its corresponding triangle exits the current 
+     camera's space.
 
     :param name: String that provides the name of the thread.
 
@@ -115,7 +119,7 @@ class CameraThread(threading.Thread):
             self._ntriangles.update(self.ntriangles)
             self._reset_flag.update(self.reset_flag)
             self.condition.release()
-           #
+            #
             #Get CARTESIAN coordinates of the 8 contour points in tracker.
             #The code ONLY tracks the UGV with id=1.
             #
@@ -178,42 +182,43 @@ class DataFusionThread(threading.Thread):
     """
     Child class of threading.Thread for merging and processing data.
 
-    Override the *run* method, where it is specified the behavior 
-    when the *start* method is called. At first, wait until all cameras 
-    are initialized. After that, enter an endless loop until *end_event* 
-    flag is raised. At each iteration:
+    The *run* method, where is specified the behavior when the *start* 
+    method is called, is overrided. At first, it waits until all cameras 
+    are initialized. Then it enters an endless loop until the 
+    *end_event* flag is raised. At each iteration:
 
-    - Check the triangles stored at each CameraThread.
-    - When a triangle is detected, determine if it is in the borders 
-      region of another camera. If True, prepare a new ROI tracker.
+    - Check the triangles found by each *CameraThread*.
+    - When a camera detects a triangle, it determines if the triangle is
+      in the borders region of another camera. If that is True, orders 
+      the creating of a new ROI tracker in the second camera.
     - Evaluate if an UGV exits a camera, deleting the ROI tracker if 
       it is True.
     - Merge the information obtained in all the cameras and write it in 
       a ROS topic
 
     :param triangles: READ ONLY List containing N dictionaries, where
-     N is the number of Camera threads. Each dictionary entry are the
-     coordinates of an UGV inside the Nth camera.
+     N is the number of Camera threads. Each dictionary element is the
+     set of coordinates of an UGV inside the Nth camera.
 
-    :param ntriangles: WRITE N-len list of the shame type and shape as
-     triangles, for exchanging triangles information between 
-     CameraThreads.
+    :param ntriangles: WRITE N-len list of the same type and shape as
+     *triangles*, for exchanging triangles information between 
+     *CameraThreads*.
 
-    :param conditions: List containing N threading.Condition objects. 
-     They are used for synchronizing the CameraThreads and the
-     DataFusionThread when doing R/W operations on shared variables.
+    :param conditions: List containing N *threading.Condition* objects. 
+     They are used for synchronizing the *CameraThreads* and the
+     *DataFusionThread* when doing R/W operations on shared variables.
 
     :param inborders: List containing N dictionaries. Each dictionary
-     entry is a flag set to True when the UGV is in the Nth camera 
+     element is a flag set to True when the UGV is within the Nth camera
      borders region.
 
     :param quadrant_limits: List containing N 4x2 arrays. Each array 
      contains the 4 points defining the working space of the Nth camera.
 
-    :param end_event: threading.Event object that is set to True when 
-     the UserThread detects an 'end' order from the user.
+    :param end_event: *threading.Event* object that is set to True when 
+     the *UserThread* detects an 'end' order from the user.
 
-    :param publisher: rospy.Publisher object for sending pose values to 
+    :param publisher: *rospy.Publisher* object for sending pose values to 
      a ROS topic, that can be read by other ROS nodes.
 
     :param reset_flags: List containing N dictionaries whose entries are
@@ -343,16 +348,16 @@ class UserThread(threading.Thread):
     """
     Child class of threading.Thread for interacting with user.
 
-    Override the *run* method, where it is specified the behavior 
-    when the *start* method is called. Ask the user for commands through
+    The *run* method, where is specified the behavior when the *start* 
+    method is called, is overrided. Ask the user for commands through
     keyboard.
 
-    :param begin_events: List with N Event objects, where N is the 
-     number of Camera threads. Until the set up of every camera is 
-     finished, the user can not interact with this thread.
+    :param begin_events: List with N *threading.Event* objects, where N 
+     is the number of Camera threads. Until the set up of every camera 
+     is finished, the user can not interact with this thread.
     
-    :param end_event: threading.Event object that is set to True when 
-     the UserThread detects an 'end' order from the user.
+    :param end_event: *threading.Event* object that is set to True when 
+     the *UserThread* detects an 'end' order from the user.
     """
     def __init__(self, begin_events, end_event, name='User Thread'):
         """Class constructor method."""

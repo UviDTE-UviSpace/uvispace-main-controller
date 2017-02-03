@@ -1,24 +1,35 @@
 #!/usr/bin/env python
 """
-This module contain classes with image processing methods.
+This module contains the Image class, for image processing operations.
 
-Notes
------
+The operations implemented in the class methods are focused to the 
+images obtained from the external FPGAs in the UviSpace project. Thus, 
+once obtained a grey scale image, this module provide functions for 
+getting the shapes (triangles) in the image, and then their vertices. 
+Prior to segmentate the image, a binarization has to be applied, as it 
+eases the segmentation process. 
+
+Important note
+--------------
+
 A point array is written by convention in the form 
-[row, column]. In a cartesian system, the points are expressed
-as (x,y). Finally, in an image representation (viewer), the typical is 
-to display points coordinates as  (x', y'). They equivalences are the 
+*[row, column]*. In a cartesian system, the points are expressed
+as *(x,y)*. Finally, in an image representation (viewer), the typical is 
+to display points coordinates as  *(x', y')*. They equivalences are the 
 following:
 
-* x = x' = column
-* y = -y' = -row
+.. math::
+
+ x = x' = column
+
+ y = -y' = -row
 
 Thus, special care has to be taken when dealing with operations in 
 different scopes e.g. trigonometric operations will be handled with the 
 cartesian values, while image operations are normally performed with the
 array convention. Finally, when sending the array values to a viewer or 
 to an external device, the image representation mentioned above is 
-the typical coordinates system used.
+the typical used system.
 """
 #Standard libraries
 import cv2
@@ -32,19 +43,15 @@ import rospy
 import geometry
 
 class Image(object):
-    """Class with image processing methods oriented to UGV detection."""
+    """Class with image processing methods oriented to UGV detection.
+        
+    :param np.array image: original grey scale image.   
+    :param list contours: each element is an Mx2 array containing M 
+     points defining a closed contour.
+    """
     def __init__(self, image, contours=[]):
         """
-        Image class constructor. Set image attribute and set contours if 
-        passed.
-        
-        Parameters
-        ----------
-        image : np.array
-        
-        contours : N-length list
-            list containing N elements, where each element is an Mx2
-            array containing M points defining a closed contour.
+        Image class constructor. Set image and contours attributes.
         """
         self.image = image
         self._binarized = None
@@ -58,28 +65,23 @@ class Image(object):
         intended to work with 3-component threshold values stored in a
         single 30-bit register:
         
-            * register[0 to 10] : red component thresholds
-            * register[10 to 20] : green component thresholds
-            * register[10 to 30] : blue component thresholds
+            * *register[0 to 10]* : red component thresholds
+            * *register[10 to 20]* : green component thresholds
+            * *register[10 to 30]* : blue component thresholds
             
-        The raw binary image contains plenty of noise. As it is very low
-        around the triangle, a mask around it is used to get rid of the 
-        rest of the noise.
+        The raw binary image contains a lot of noise. As it is very low
+        around the triangles, masks around them are used to get rid of 
+        the noise in the rest of the image.
+
+        :param [int or float, int or float] thresholds : minimum and 
+         maximum values betweeen whom the image intensity values will be
+         accepted as 1 (rescaled to 255). Values greater than the 
+         maximum and smaller than the minimum will be truncated to 0.
         
-        Parameters
-        ----------
-        thresholds : 2-element list or tuple
-            minimum and maximum values betweeen whom the image intensity
-            values will be accepted as 1 (or 255). Values greater than 
-            the maximum and smaller than the minimum will be truncated
-            to 0.
-        
-        Returns
-        -------
-        bin_image : binary MxN numpy array
-            Image of the same size as the input image with only 255 or 0
-            values (Equivalent to 1 and 0), according to the input 
-            threshold values.
+        :return bin_image: Image of the same size as the input image 
+         with only 255 or 0 values (Equivalent to 1 and 0), according 
+         to the input threshold values.
+        :rtype: binary numpy.array(shape=MxN)
         """
         #Obtain the thresholds in base 2 and get the red component slice.
         th_min = bin(thresholds[0])
@@ -115,21 +117,22 @@ class Image(object):
         Correct barrel distortion on contours or on the whole image.
         
         The distortion is corrected using a 2nd polynomial equation for
-        every pixel with coordinates (Xd, Yd). The resulting corrected
-        coordinates (Xu, Yu) are obtained with the following equations:
+        every pixel with coordinates :math:`(X_d, Y_d)`. The resulting 
+        corrected coordinates :math:`(X_u, Y_u)` are obtained with the 
+        following equations:
         
-        Xu = (Xd - Cx) * (1 + kx * r^2) + Cx
-        Yu = (Yd - Cy) * (1 + ky * r^2) + Cy
-        r  = (Xd - Cx)^2 + (Yd - Cy)^2 / [(Cx^2 + Cy^2) * 2]
-        
-        Paramters
-        ---------
-        kx, ky : float
-            Distortion coefficients of the lens that captured the image.
+        .. math::
 
-        only_contours : bool
-            Specify if the correction is to be applied to the whole 
-            image or only to the stored contours values.
+           X_u &=(X_d - C_x) * (1 + k_x * r^2) + C_x \\
+
+           Y_u &= (Y_d - C_y) * (1 + k_y * r^2) + C_y \\
+
+           r  &= [(X_d - C_x)^2 + (Y_d - C_y)^2] / [(C_x^2 + C_y^2) * 2]
+        
+        :param float kx: X-Axe Distortion coefficient of the lens.
+        :param float ky: Y-Axe Distortion coefficient of the lens.
+        :param bool only_contours: Specify if the correction is to be 
+         applied to the whole image or only to the contours.
         """
         #Calculate the image center as the middle point of the width and height.
         center = np.array(self.image.shape)/2
@@ -149,36 +152,30 @@ class Image(object):
 
     def get_shapes(self, tolerance=8, get_contours=True):
         """
-        For each shape on the binarized image, returns its vertices.
+        Get the shapes' vertices in the binarized image.
 
-        The shape is obtained using the marching cubes algorithm.
+        Update the *self.triangles* attribute.
+
+        The shape is obtained using the *Marching Cubes Algorithm*.
         Once obtained, the vertices are calculated using the 
-        Ramer-Douglas-Peucker algorithm. Both are implemented on the 
-        skimage library, and there is more information on its docs.
+        *Ramer-Douglas-Peucker Algorithm*. Both are implemented on the 
+        *skimage* library, and there is more information on its docs.
         
-        if the kwarg get_contours if False, it is assumed that the 
-        contours are already known (stored in variable self.contours). 
+        if the kwarg *get_contours* if False, it is assumed that the 
+        contours are already known (stored in variable *self.contours*). 
         If this is the case, the marching cubes algorithm is omitted.
 
-        Parameters
-        ----------
-        tolerance : float
-            minimum distance between an observed pixel and the previous
-            contour pixels required to add the first one to the vertices
-            list.
-        
-        get_contours : bool, True as default
-            Specify if the marching cubes algorithm is applied to the 
-            binarized image. Specifically set to False when the 
-            binarization algorithm is implemented in the external 
-            device (e.g. an FPGA).
-
-        Returns
-        -------
-        self.contours : N-length list
-            list containing the vertices of the N shapes detected on the
-            image. each element contains an Mx2 NumPy array with the 
-            coordinates of the M vertices of the shape.
+        :param float tolerance: minimum distance between an observed 
+         pixel and the previous vertices pixels required to add the 
+         first one to the vertices list.
+        :param bool get_contours: specify if the *Marching Cubes 
+         Algorithm* is applied to the binarized image. Specifically set 
+         to False when the binarization algorithm is implemented in the 
+         external device (i.e. the FPGA).
+        :return: vertices of the N shapes detected on the
+         image. each element contains an Mx2 *np.rray* with the 
+         coordinates of the M vertices of the shape.
+        :rtype: list
         """
         rospy.logdebug("Getting the shapes' vertices in the image")
         #Obtain a list with all the contours in the image, separating each
