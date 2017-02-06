@@ -1,0 +1,4 @@
+#!/home/javier/01-scripts/01-Python/01-UGV/UviSpace/ENV/bin/python
+
+from rosdep2.main import rosdep_main
+rosdep_main()

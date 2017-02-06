@@ -1,0 +1,700 @@
+.\" Man page generated from reStructuredText.
+.
+.TH "WSTOOL" "1" "Feb 06, 2017" "0.1.13" "wstool"
+.SH NAME
+wstool \- wstool Documentation
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.sp
+Using wstool you can update several folders using a variety
+of SCMs (SVN, Mercurial, git, Bazaar) with just one command.
+.sp
+That way you can more effectively manage source code workspaces.
+.sp
+The wstool package provides a Python API for interacting with a
+source code workspace as well as a group of command line tools.
+Rosinstall leverages the \fBvcstools\fP package for source control and
+stores its state in .rosinstall files.
+.SH WSTOOL: A TOOL FOR MANAGING SOURCE CODE WORKSPACES
+.sp
+wstool allows manipulation of a set of version\-controlled folders as
+specified in a workspace definition file.
+.SS Contents
+.INDENT 0.0
+.IP \(bu 2
+\fI\%wstool: A tool for managing source code workspaces\fP
+.INDENT 2.0
+.IP \(bu 2
+\fI\%Usage\fP
+.INDENT 2.0
+.IP \(bu 2
+\fI\%init\fP
+.IP \(bu 2
+\fI\%set\fP
+.IP \(bu 2
+\fI\%merge\fP
+.IP \(bu 2
+\fI\%update\fP
+.IP \(bu 2
+\fI\%info\fP
+.IP \(bu 2
+\fI\%status\fP
+.IP \(bu 2
+\fI\%diff\fP
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.SS Usage
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+wstool is a command to manipulate multiple version controlled folders.
+
+Official usage:
+  wstool CMD [ARGS] [OPTIONS]
+
+wstool will try to infer install path from context
+
+Type \(aqwstool help\(aq for usage.
+Options:
+  help            provide help for commands
+  init            set up a directory as workspace
+  set             add or changes one entry from your workspace config
+  merge           merges your workspace with another config set
+  remove (rm)     remove an entry from your workspace config, without deleting files
+  update (up)     update or check out some of your config elements
+  info            Overview of some entries
+  status (st)     print the change status of files in some SCM controlled entries
+  diff (di)       print a diff over some SCM controlled entries
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SS init
+.sp
+set up a directory as workspace
+.sp
+wstool init does the following:
+.INDENT 0.0
+.INDENT 3.5
+.INDENT 0.0
+.IP 1. 3
+Reads folder/file/web\-uri SOURCE_PATH looking for a rosinstall yaml
+.IP 2. 3
+Creates new .rosinstall file at TARGET\-PATH configured
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+SOURCE_PATH can e.g. be a folder like /opt/ros/electric
+If PATH is not given, uses current folder.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+Usage: wstool init [TARGET_PATH [SOURCE_PATH]]?
+
+Options::
+
+  \-h, \-\-help            show this help message and exit
+  \-\-continue\-on\-error   Continue despite checkout errors
+  \-j JOBS, \-\-parallel=JOBS
+                        How many parallel threads to use for installing
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+Examples:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+$ wstool init ~/jade /opt/ros/jade
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SS set
+.sp
+add or changes one entry from your workspace config
+The command will infer whether you want to add or modify an entry. If
+you modify, it will only change the details you provide, keeping
+those you did not provide. if you only provide a uri, will use the
+basename of it as localname unless such an element already exists.
+.sp
+The command only changes the configuration, to checkout or update
+the element, run wstool update afterwards.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+Usage: wstool set [localname] [SCM\-URI]?  [\-\-(detached|svn|hg|git|bzr)] [\-\-version=VERSION]]
+
+Options:
+  \-h, \-\-help            show this help message and exit
+  \-\-detached            make an entry unmanaged (default for new element)
+  \-v VERSION, \-\-version\-new=VERSION
+                        point SCM to this version
+  \-\-git                 make an entry a git entry
+  \-\-svn                 make an entry a subversion entry
+  \-\-hg                  make an entry a mercurial entry
+  \-\-bzr                 make an entry a bazaar entry
+  \-y, \-\-confirm         Do not ask for confirmation
+  \-u, \-\-update          update repository after set
+  \-t WORKSPACE, \-\-target\-workspace=WORKSPACE
+                        which workspace to use
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+Examples:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+$ wstool set robot_model \-\-hg https://kforge.ros.org/robotmodel/robot_model
+$ wstool set robot_model \-\-version robot_model\-1.7.1
+$ wstool set robot_model \-\-detached
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SS merge
+.sp
+The command merges config with given other rosinstall element sets, from files
+or web uris.
+.sp
+The default workspace will be inferred from context, you can specify one using
+\-t.
+.sp
+By default, when an element in an additional URI has the same
+local\-name as an existing element, the existing element will be
+replaced. In order to ensure the ordering of elements is as
+provided in the URI, use the option \fB\-\-merge\-kill\-append\fP\&.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+Usage: wstool merge [URI] [OPTIONS]
+
+Options:
+  \-h, \-\-help            show this help message and exit
+  \-a, \-\-merge\-kill\-append
+                        merge by deleting given entry and appending new one
+  \-k, \-\-merge\-keep      (default) merge by keeping existing entry and
+                        discarding new one
+  \-r, \-\-merge\-replace   merge by replacing given entry with new one
+                        maintaining ordering
+  \-y, \-\-confirm\-all     do not ask for confirmation unless strictly necessary
+  \-t WORKSPACE, \-\-target\-workspace=WORKSPACE
+                        which workspace to use
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+Examples:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+$ wstool merge someother.rosinstall
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+You can use \(aq\-\(aq to pipe in input, as an example:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+$ roslocate info robot_mode | wstool merge \-
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SS update
+.sp
+update or check out some of your config elements
+.sp
+This command calls the SCM provider to pull changes from remote to
+your local filesystem. In case the url has changed, the command will
+ask whether to delete or backup the folder.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+Usage: wstool update [localname]*
+
+Options:
+  \-h, \-\-help            show this help message and exit
+  \-\-delete\-changed\-uris
+                        Delete the local copy of a directory before changing
+                        uri.
+  \-\-abort\-changed\-uris  Abort if changed uri detected
+  \-\-continue\-on\-error   Continue despite checkout errors
+  \-\-backup\-changed\-uris=BACKUP_CHANGED
+                        backup the local copy of a directory before changing
+                        uri to this directory.
+  \-j JOBS, \-\-parallel=JOBS
+                        How many parallel threads to use for installing
+  \-v, \-\-verbose         Whether to print out more information
+  \-t WORKSPACE, \-\-target\-workspace=WORKSPACE
+                        which workspace to use
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+Examples:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+$ wstool update \-t ~/jade
+$ wstool update robot_model geometry
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SS info
+.sp
+Overview of some entries
+.INDENT 0.0
+.TP
+.B The Status (S) column shows
+x  for missing
+L  for uncommited (local) changes
+V  for difference in version and/or remote URI
+C  for difference in local and remote versions
+.UNINDENT
+.sp
+The \(aqVersion\-Spec\(aq column shows what tag, branch or revision was given
+in the .rosinstall file. The \(aqUID\(aq column shows the unique ID of the
+current (and specified) version. The \(aqURI\(aq column shows the configured
+URL of the repo.
+.sp
+If status is V, the difference between what was specified and what is
+real is shown in the respective column. For SVN entries, the url is
+split up according to standard layout (trunk/tags/branches).  The
+ROS_PACKAGE_PATH follows the order of the table, earlier entries
+overlay later entries.
+.sp
+When given one localname, just show the data of one element in list
+form.
+This also has the generic properties element which is usually empty.
+.sp
+The \fB\-\-only\fP option accepts keywords: [\(aqpath\(aq, \(aqlocalname\(aq, \(aqversion\(aq,
+\(aqrevision\(aq, \(aqcur_revision\(aq, \(aquri\(aq, \(aqcur_uri\(aq, \(aqscmtype\(aq]
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+Usage: wstool info [localname]* [OPTIONS]
+
+
+Options:
+  \-h, \-\-help            show this help message and exit
+  \-\-root                Show workspace root path
+  \-\-data\-only           Does not provide explanations
+  \-\-only=ONLY           Shows comma\-separated lists of only given comma\-
+                        separated attribute(s).
+  \-\-yaml                Shows only version of single entry. Intended for
+                        scripting.
+  \-\-fetch               When used, retrieves version information from remote
+                        (takes longer).
+  \-u, \-\-untracked       Also show untracked files as modifications
+  \-t WORKSPACE, \-\-target\-workspace=WORKSPACE
+                        which workspace to use
+  \-m, \-\-managed\-only    only show managed elements
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+Examples:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+$ wstool info \-t ~/ros/jade
+$ wstool info robot_model
+$ wstool info \-\-yaml
+$ wstool info \-\-only=path,cur_uri,cur_revision robot_model geometry
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SS status
+.sp
+print the change status of files in some SCM controlled entries. The status
+columns meanings are as the respective SCM defines them.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+Usage: wstool status [localname]*
+
+Options:
+  \-h, \-\-help            show this help message and exit
+  \-\-untracked           Also shows untracked files
+  \-t WORKSPACE, \-\-target\-workspace=WORKSPACE
+                        which workspace to use
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SS diff
+.sp
+print a diff over some SCM controlled entries
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+Usage: wstool diff [localname]*
+
+Options:
+  \-h, \-\-help            show this help message and exit
+  \-\-untracked           Also shows untracked files
+  \-t WORKSPACE, \-\-target\-workspace=WORKSPACE
+                      which workspace to use
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH UBUNTU
+.sp
+On Ubuntu the recommended way to install rosinstall is to use apt.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+sudo apt\-get install python\-wstool
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH OTHER PLATFORMS
+.sp
+On other platforms rosinstall is available on pypi and can be installed via \fBpip\fP
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+pip install \-U wstool
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+or \fBeasy_install\fP:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+easy_install \-U wstool vcstools
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH ROSINSTALL FILE FORMAT
+.SS Format
+.sp
+The rosinstall file format is a yaml document. It is a list of
+top level dictionaries. Each top level dictionary is expected to have one of the vcs type keys and no other keys.
+.sp
+Inside every top level dictionary there is one required key, \fBlocal\-name\fP this represents the path where to install files.  It will support both workspace relative paths as well as absolute paths.
+.sp
+Each of the vcs type keys requires a \fBuri\fP key, and optionally takes a \fBversion\fP key.
+.SS Top Level Keys
+.sp
+The valid keys are \fBsvn\fP, \fBhg\fP, \fBgit\fP, \fBbzr\fP\&.
+.sp
+Each key represents a form of version control system to use.  These are supported from the vcstools module.
+.SS Example rosinstall syntax:
+.sp
+Below is an example rosinstall syntax with examples of most of the
+possible permutations:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+\- svn: {local\-name: some/local/path2, uri: /some/local/uri}
+\- hg: {local\-name: some/local/path3, uri: http://some/uri, version: 123}
+\- git: {local\-name: /some/local/aboslute/path, uri: http://some/uri, version: 123}
+\- bzr: {local\-name: some/local/path4, uri: http://some/uri, version: 123}
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+Things to note are:
+.INDENT 0.0
+.INDENT 3.5
+.INDENT 0.0
+.IP \(bu 2
+\fBversion\fP is optional though recommended.
+.IP \(bu 2
+Absolute or relative paths are valid for \fBlocal\-name\fP
+.IP \(bu 2
+\fBuri\fP can be a local file path to a repository.
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.SH DEVELOPER'S GUIDE
+.SS Changelog
+.SS 0.1.13
+.INDENT 0.0
+.IP \(bu 2
+Fix to avoid errors due to installing man pages with OS X\(aqs 10.11\(aqs new SIP settings.
+.IP \(bu 2
+Added option to show a simplified version info table.
+.IP \(bu 2
+Added the \-m (timeout), \-v (verbose), and \-j (parallel jobs) options to each command.
+.IP \(bu 2
+Contributors: @NikolausDemmel, @wkentaro
+.UNINDENT
+.SS 0.1.12
+.INDENT 0.0
+.IP \(bu 2
+Fix command line arguments of \fBwstool scrape\fP\&.
+.UNINDENT
+.SS 0.1.11
+.INDENT 0.0
+.IP \(bu 2
+Changed the way \fB\&.bak\fP files are created when overwriting existing configurations.
+.IP \(bu 2
+Added the Scrape command.
+.IP \(bu 2
+Added default git branch and status to \fBwstool fetch \-\-info\fP\&.
+.IP \(bu 2
+Added versioned dependency on vcstools \fB0.1.38\fP to make use of new API features.
+.UNINDENT
+.SS 0.1.10
+.INDENT 0.0
+.IP \(bu 2
+Fix regression which broke the \-j option.
+.IP \(bu 2
+Enable pretty printing of the \fB\&.rosinstall\fP file\(aqs YAML.
+.UNINDENT
+.SS 0.1.9
+.INDENT 0.0
+.IP \(bu 2
+Fix for zsh completion.
+.IP \(bu 2
+Fixed version dependency on vcstools for debian.
+.UNINDENT
+.SS 0.1.8
+.INDENT 0.0
+.IP \(bu 2
+Fix for installation issue.
+.UNINDENT
+.SS 0.1.7
+.INDENT 0.0
+.IP \(bu 2
+Added installation of generated man pages.
+.IP \(bu 2
+Added installation of shell completion for wstool.
+.IP \(bu 2
+Improved output of wstool info with the new get_current_version_label in vcstools.
+.IP \(bu 2
+Added a foreach command.
+.IP \(bu 2
+Added a \fB\-\-root\fP option to wstool info.
+.IP \(bu 2
+Enhanced the \fB\-\-update\fP option for wstool set.
+.IP \(bu 2
+Now uses multiple threads for network operations by default.
+.IP \(bu 2
+Some other minor fixes and improvements and docs.
+.UNINDENT
+.SS 0.1.5
+.INDENT 0.0
+.IP \(bu 2
+Releasing to allow changes for new platform vivid.
+.IP \(bu 2
+Fix svn diff for change in output with svn 1.7.9.
+.IP \(bu 2
+info command shows information about unmanaged paths.
+.UNINDENT
+.SS 0.1.4
+.INDENT 0.0
+.IP \(bu 2
+Fix detection of path conflicts #24 (\fI\%https://github.com/vcstools/wstool/pull/24\fP).
+.UNINDENT
+.SS 0.0.3
+.INDENT 0.0
+.IP \(bu 2
+not using ROS_WORKSPACE anymore
+.IP \(bu 2
+fix to "wstool cmd \-\-help"
+.UNINDENT
+.SS 0.0.2
+.INDENT 0.0
+.IP \(bu 2
+fix #2 creating "wstool2 file instaed of ".rosinstall"
+.UNINDENT
+.SS 0.0.1
+.INDENT 0.0
+.IP \(bu 2
+Initial creation based on functions inrosinstall
+.UNINDENT
+.SS Bug reports and feature requests
+.INDENT 0.0
+.IP \(bu 2
+\fI\%Submit a bug report\fP
+.UNINDENT
+.SS Developer Setup
+.sp
+The wstool source can be downloaded using Mercurial:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+$ git clone https://github.com/vcstools/wstool.git
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+You will also need vcstools, which you can either install using pip or download using:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+$ git clone https://github.com/vcstools/vcstools.git
+$ cd vcstools
+$ python develop
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+wstool uses \fI\%setuptools\fP,
+which you will need to download and install in order to run the
+packaging.  We use setuptools instead of distutils in order to be able
+use \fBsetup()\fP keys like \fBinstall_requires\fP\&.
+.sp
+Configure your environment:
+.INDENT 0.0
+.INDENT 3.5
+$ cd wstool
+$ python develop
+.UNINDENT
+.UNINDENT
+.SS Testing
+.sp
+Install test dependencies
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+$ pip install nose
+$ pip install mock
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+wstool uses \fI\%Python nose\fP for testing, which is
+a fairly simple and straightforward test framework.  The wstool
+mainly use \fI\%unittest\fP to construct test fixtures, but with nose
+you can also just write a function that starts with the name \fBtest\fP
+and use normal \fBassert\fP statements.
+.sp
+wstool also uses \fI\%mock\fP
+to create mocks for testing.
+.sp
+You can run the tests, including coverage, as follows:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+$ cd wstool
+$ make test
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SS Documentation
+.sp
+Sphinx is used to provide API documentation for wstool.  The documents
+are stored in the \fBdoc\fP sub\-directory.
+.sp
+You can build the docs as follows:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+$ cd wstool/doc
+$ make html
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.IP \(bu 2
+genindex
+.IP \(bu 2
+modindex
+.IP \(bu 2
+search
+.UNINDENT
+.SH AUTHOR
+Tully Foote, Thibault Kruse, Ken Conley, Brian Gerkey
+.SH COPYRIGHT
+2011, Willow Garage
+.\" Generated by docutils manpage writer.
+.

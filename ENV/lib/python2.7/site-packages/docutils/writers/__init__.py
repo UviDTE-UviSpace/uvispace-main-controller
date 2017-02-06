@@ -1,4 +1,4 @@
-# $Id: __init__.py 7969 2016-08-18 21:40:00Z milde $
+# $Id: __init__.py 7648 2013-04-18 07:36:22Z milde $
 # Author: David Goodger <goodger@python.org>
 # Copyright: This module has been placed in the public domain.
 
@@ -120,18 +120,13 @@ class UnfilteredWriter(Writer):
 
 
 _writer_aliases = {
-      'html': 'html4css1',  # may change to html5 some day
-      'html4': 'html4css1',
-      'html5': 'html5_polyglot',
+      'html': 'html4css1',
       'latex': 'latex2e',
       'pprint': 'pseudoxml',
       'pformat': 'pseudoxml',
       'pdf': 'rlpdf',
-      's5': 's5_html',
-      'xelatex': 'xetex',
-      'xhtml': 'html5_polyglot',
-      'xhtml10': 'html4css1',
-      'xml': 'docutils_xml'}
+      'xml': 'docutils_xml',
+      's5': 's5_html'}
 
 def get_writer_class(writer_name):
     """Return the Writer class from the `writer_name` module."""

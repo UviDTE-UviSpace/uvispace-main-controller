@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# :Id: $Id: error_reporting.py 7947 2016-07-22 08:49:52Z milde $
+# :Id: $Id: error_reporting.py 7668 2013-06-04 12:46:30Z milde $
 # :Copyright: © 2011 Günter Milde.
 # :License: Released under the terms of the `2-Clause BSD license`_, in short:
 #
@@ -44,18 +44,10 @@ try:
 except ImportError:
     locale_encoding = None
 else:
-    try:
-        locale_encoding = locale.getlocale()[1] or locale.getdefaultlocale()[1]
-        # locale.getpreferredencoding([do_setlocale=True|False])
-        # has side-effects | might return a wrong guess.
-        # (cf. Update 1 in http://stackoverflow.com/questions/4082645/using-python-2-xs-locale-module-to-format-numbers-and-currency)
-    except ValueError, error: # OS X may set UTF-8 without language code
-        # see http://bugs.python.org/issue18378
-        # and https://sourceforge.net/p/docutils/bugs/298/
-        if "unknown locale: UTF-8" in error.args:
-            locale_encoding = "UTF-8"
-    except: # any other problems determining the locale -> use None
-        locale_encoding = None
+    locale_encoding = locale.getlocale()[1] or locale.getdefaultlocale()[1]
+    # locale.getpreferredencoding([do_setlocale=True|False])
+    # has side-effects | might return a wrong guess.
+    # (cf. Update 1 in http://stackoverflow.com/questions/4082645/using-python-2-xs-locale-module-to-format-numbers-and-currency)
     try:
         codecs.lookup(locale_encoding or '') # None -> ''
     except LookupError:
@@ -80,7 +72,7 @@ class SafeString(object):
     def __str__(self):
         try:
             return str(self.data)
-        except UnicodeEncodeError:
+        except UnicodeEncodeError, err:
             if isinstance(self.data, Exception):
                 args = [str(SafeString(arg, self.encoding,
                                         self.encoding_errors))
@@ -197,11 +189,7 @@ class ErrorOutput(object):
             self.stream.write(data)
         except UnicodeEncodeError:
             self.stream.write(data.encode(self.encoding, self.encoding_errors))
-        except TypeError: 
-            if isinstance(data, unicode): # passed stream may expect bytes
-                self.stream.write(data.encode(self.encoding, 
-                                              self.encoding_errors))
-                return
+        except TypeError: # in Python 3, stderr expects unicode
             if self.stream in (sys.stderr, sys.stdout):
                 self.stream.buffer.write(data) # write bytes to raw stream
             else:
