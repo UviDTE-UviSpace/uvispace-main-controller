@@ -1,5 +1,5 @@
 Babel==2.3.4
-Cython==0.20.1post0
+Cython==0.20.1
 Jinja2==2.8
 MarkupSafe==0.23
 PAM==0.4.2
