@@ -1,16 +1,30 @@
 #!/usr/bin/env python 
 """
-This module subscribes to speed topic and sends SPs through serial port
+This module 'listens' to speed SPs and sends them through serial port.
 
-If run as main script, it invokes the class SerMesProtocol() to manage 
-the serial port. When a new speed value is received, it is send to the 
-external UGV using the serial protocol object.
+**Usage: messenger.py [-r <robot_id>], [--robotid=<robot_id>]**
 
-The move_robot function has a default speed limit set to [89-165]. This 
-limit is needed when the robot is connected to a DC source with a small 
-intensity limit.
+To communicate with the external slaves, the data has to be packed using 
+a prearranged protocol, in order to be unpacked and understanded 
+correctly by the slave.
+
+If it is run as main script, it creates an instance of the class 
+*SerMesProtocol* for managing the serial port. T
+
+When a new speed SP is received, it is sent to the target UGV using the 
+instanced object.
+
+Speed formatting
+^^^^^^^^^^^^^^^^
+
+The *move_robot* function has the default speed limit set to [89-165]. 
+These limits are needed when the robot is connected to a DC source with 
+a small intensity limit.
 If the program is run when the UGV is powered through a USB-B cable, it 
 will move slowly, as the limit is too small to be able to move properly.
+
+When the execution ends, the *plotter* module is called and the time 
+delays values are plotted on a graph.
 """
 # Standard libraries
 import glob
@@ -40,10 +54,10 @@ def connect_and_check(robot_id, port=None, baudrate=57600):
         except IndexError:
             print 'It was not detected any serial port connected to PC'		
             sys.exit()
-    #Converts the Python id number to a C valid number, in unsigned byte
+    #Convert the Python id number to the C format 'unsigned byte'
     serialcomm = SerMesProtocol(port=port, baudrate=baudrate)    
     serialcomm.SLAVE_ID = struct.pack('>B', robot_id)
-    #Checks connection to board. If broken, program exits
+    #Check connection to board. If broken, program exits
     if serialcomm.ready():
         print "The board is ready"
     else:
@@ -92,7 +106,7 @@ def move_robot(data, my_serial, min_speed=70, max_speed=190):
     xbee_times.append(t0-t2)
     rospy.loginfo('Transmission ended succesfully\n\n')
 
-def stop_request(my_serial):
+def stop_vehicle(my_serial):
     """Send a null speed to the UGV."""
     stop_speed = Twist()
     stop_speed.linear.x = 0.0
@@ -114,8 +128,11 @@ def print_times(wait_times, speed_calc_times, xbee_times):
           
 
 if __name__ == "__main__":
-    #This exception forces to give the robot_id argument within run command.
+    #
+    ### Main routine ###
+    #
     help_msg = 'Usage: messenger.py [-r <robot_id>], [--robotid=<robot_id>]'
+    #This try/except clause forces to give the robot_id argument.
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hr:", ["robotid="])
     except getopt.GetoptError:
@@ -130,18 +147,17 @@ if __name__ == "__main__":
             sys.exit()
         elif opt in ("-r", "--robotid"):
             robot_id = int(arg)
-    t0 = time.time()
     wait_times = []
     speed_calc_times = []
     xbee_times = []
-    #Creates an instance of SerMesProtocol and checks connection to port
+    #Create an instance of SerMesProtocol and check connection to port.
     my_serial = connect_and_check(robot_id)
     robot_speed = Speed()
     t0 = time.time()
     listener(robot_id, robot_speed, my_serial)  
-    #Keeps python from exiting until this node is stopped
+    #Keep Python from exiting until this node is stopped.
     rospy.spin()   
-    stop_request(my_serial)
+    stop_vehicle(my_serial)
     print_times(wait_times, speed_calc_times, xbee_times)
 
     ###############################################################

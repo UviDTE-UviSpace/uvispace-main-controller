@@ -1,6 +1,20 @@
 #!/usr/bin/env python
 """
 This module contains the class SerMesProtocol().
+
+The aim is to provide a set of methods for performing communication 
+operations with an external device, using a pair of XBee modules
+(IEEE 802.15.4 protocol). Needless to say, the modules have to be 
+previously configured for being able to communicate with each other, and
+that task is out of the scope of this module.
+
+The aforementioned class' methods build up messages following a common 
+structure, that will be correctly interpreted by a slave with the same
+implemented protocol.
+
+Moreover, it offers methods specific to the UGV operation, as the *move*
+method, that takes a speeds setpoint input and sends it correctly 
+formatted to the slave.
 """
 from serial import Serial
 import struct
@@ -12,13 +26,19 @@ class SerMesProtocol(Serial):
     This is a child of PySerial class and implements a comm. protocol
     
     This class implements a message-based protocol over the serial port
-    in Master slave mode: This is the starting mode. The master (PC)
-    starts communication with slave(peripheral) sending a message. Slave 
-    process the message and gives an answer.
+    in Master-slave mode: The master (PC) starts communication with 
+    the slave(peripheral) sending a message. The slave process the 
+    message and returns an answer.
 
-    The class uses serial port to implement the protocol.
+    The class uses the serial port to implement this protocol.
     In master-slave data from the device is simply passed as return from 
     a function that exist for every command implemented.  
+
+    :param str port: name identifier of the port in the PC's OS 
+    :param str baudrate: communications speed between the XBee modules. 
+    :param int stopbits: Number of bits at the end of each message.
+    :param str parity: Message parity. *None* by default
+    :param float timeout: Time to wait to achieve the communication.
     """
     def __init__(self, port,
                        baudrate,
@@ -41,18 +61,13 @@ class SerMesProtocol(Serial):
     #-------------------MASTER-SLAVE COMMANDS-------------------#
     def ready(self, tries=10):
         """
-        Asks if the communication channel is ready. Asks for ACK
+        Check if the communication channel is ready.
 
-        Parameters
-        ----------
-        tries : int
-            number of tries before exiting and raising an error.
-
-        Returns
-        -------
-        ready : boolean
-            returns a true or false condition which confirms that 
-            the message was received.
+        :param int tries: number of tries before exiting and raising an 
+         error.
+        :returns: returns a true or false condition which confirms that 
+         the message was received.
+        :rtype: bool
         """
         ready = False
         #send configuration message.
@@ -71,22 +86,15 @@ class SerMesProtocol(Serial):
 
     def move(self, setpoint=[0,0]):
         """
-        Asks to move. If ACK the action was performed
+        Send a move order to the slave.
 
-        Parameters
-        ----------
-
-        setpoint[] : int list object
-            List with element values values from 0 to 255. Velocity of
-            the AGV. First element corresponds to right wheels, and 
-            second element to left wheels. Values must be integers. They
-            are rounded if decimal.
-
-        Returns
-        -------
-        move : boolean
-            returns a true or false condition which confirms that the 
+        :param [int, int] setpoint: List with element values values from 
+         0 to 255. Velocity of the UGV. First element corresponds to 
+         right wheels, and second element to left wheels. Values are 
+         rounded if decimal.
+        :returns: true or false condition which confirms that the 
             message was received.
+        :rtype: bool
         """
         # Check that the values are correct. Invalid values may crash 
         # the Arduino program.
@@ -114,18 +122,13 @@ class SerMesProtocol(Serial):
     #-------------MASTER-SLAVE COMMANDS AUXILIAR FUNCTIONS-------------#
     def send_message(self, fun_code, data='', send_delay=0.01):
         """
-        Sends a message using the serial message protocol
+        Send a message formatted with the defined protocol.
 
-        Parameters
-        ----------
-        fun_code : str object
-	        fuction code of the command that is going to be sent.
-        length : str object
-	        LENGTH field in the message.size of the DATA field in bytes.
-        data : str object
-	        DATA field of the message. 
-        send_delay : float
-	        Delay time to wait between sent bytes.
+        :param str fun_code: function code of the command that is going 
+         to be sent.
+        :param str length: Size of the DATA field in bytes.
+        :param str data: DATA field of the message. 
+        :param float send_delay: Delay time to wait between sent bytes.
         """
         # Prepares message.
         # The data length bytes are little endian according to the protocol. 
@@ -146,24 +149,17 @@ class SerMesProtocol(Serial):
 
     def read_message(self):
         """
-        Reads a message using the serial message protocol. Checks the
-        auxiliary bytes for assuring the consistence of the message
+        Read a message using the serial message protocol. 
 
-        Returns
-        -------
-        Rx_OK : Boolean
-            Rx_OK is 0 if an error ocurred.
+        When the message is read, check the auxiliary bytes for 
+        assuring the consistence of the message.
 
-        fun_code : String
-            non decodified hex-data corresponding to the function code 
-            given by slave.
-
-        data : String
-            non decodified hex-data corresponding to the data given by 
-            slave.
-
-        length : int
-            size of the main data, measured in bytes.
+        :returns bool Rx_OK: is 0 if an error ocurred.
+        :returns str fun_code: non decodified hex-data corresponding to 
+         the function code given by the slave.
+        :returns str data: non decodified hex-data corresponding to the 
+         data given by slave.
+        :returns int length: size of the main data, in bytes.
         """
         Rx_OK = False
         fun_code = ""

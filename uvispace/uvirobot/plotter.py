@@ -1,4 +1,19 @@
 #!/usr/bin/env python
+"""
+This module provides utilities for easily drawing plots.
+
+It has 3 functions: 
+
+* *format_plotting*: sets the configuration parameters of the plots, in 
+  order to use a common format for all the plots.
+* *path_plot*: draws 2 plots in the same graph, representing the ideal 
+  path of an UGV and the real route it follows. The X and Y axes 
+  represent the 2-D coordinates of the working real space.
+* *times_plot*: Draws the time delays during execution. It is intended 
+  to draw 2 plots, one representing the communication delays with the 
+  slave, and the other repesenting the waiting times for other modules 
+  of the project to give required updates of the speed values.
+"""
 #Standard libraries
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import host_subplot
@@ -99,7 +114,6 @@ def times_plot(commtimes, waittimes):
 
 
 if __name__ == "__main__":
-    import numpy as np
     test_path = np.array(
           [[ 0.0,  0.0],
            [ 0.1,  0.1],

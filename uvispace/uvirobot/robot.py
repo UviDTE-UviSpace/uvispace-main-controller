@@ -1,5 +1,12 @@
 #!/usr/bin/env python
-"""This package communicates with user and sensors for finding paths."""
+"""This module communicates with user and sensors for finding paths.
+
+It contains a class, *RobotController*, that represents a real UGV, and 
+contains ROS functionalities for publishing new speed values, UGV's 
+attributes, such as the *robot_id*, its speed values, or an instance 
+of the *PathTracker*, for calculating and storing the robot navigation 
+values.
+"""
 # ROS libraries
 import rospy
 from geometry_msgs.msg import Twist, Pose2D
@@ -9,8 +16,11 @@ import path_tracker
 class RobotController(object):
     """
     This class contains methods needed to control a robot's behavior.
+
+    :param int robot_id: Identifier of the robot
     """
     def __init__(self, robot_id=1):
+        """Class constructor method"""
         self.robot_id = robot_id
         self.init = False
         self.speeds = Twist()
@@ -21,15 +31,16 @@ class RobotController(object):
     def set_speed(self, pose):
         """
         Receives a new pose and calculates the UGV speeds.
-        
-        Only the values x, y and theta are used, as the designed iSpace
-        consists of a 2-D flat space.
-        
-        Parameters
-        ----------
-        pose : variable of type geometry_msgs.Pose2D 
-            Variable that contains a 2-D position, with 2 cartesian 
-            values (x,y) and an angle value (theta).
+
+        After calculating the new speed value, it is published on the 
+        rostopic *'/robot_X/cmd_vel'* using the *pub_vel* object.
+
+        Only the values X, Y and theta of the *Pose2D* type are used, as 
+        the designed Space consists in a 2-D flat space.
+
+        :param pose: contains a 2-D position, with 2 cartesian values 
+         (x,y) and an angle value (theta).
+        :type pose: gemoetry_msgs.Pose2D
         """
         if self.init == False:
             self.QCTracker.append_point((pose.x, pose.y))  
@@ -46,12 +57,11 @@ class RobotController(object):
     def new_goal(self, goal):
         """
         Receives a new goal and calculates the path to reach it.
-        
-        Parameters
-        ----------
-        goal : variable of type geometry_msgs.Pose2D 
-            Variable that contains a 2-D position, with 2 cartesian 
-            values (x,y) and an angle value (theta).
+
+        :param goal: contains a 2-D position, with 2 cartesian 
+         values (x,y) and an angle value (theta).
+        :type goal: geometry_msgs.Pose2D
+            Variable that 
         """
         if self.init :
             goal_point = (goal.x, goal.y)

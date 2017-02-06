@@ -1,4 +1,14 @@
 #!/usr/bin/env python
+""" 
+Routine for getting UGV poses and publishing to speed topic
+
+The module instantiates a RobotController object and uses its methods
+for publishing new speed set points in the topic '/robot_{}/cmd_vel'.
+
+When calling the module, one argument must be passed, representing the 
+id of the desired robot. It must be the same as the one passed to the
+messenger.py module.
+"""
 # Standard libraries
 import sys
 import os
@@ -11,26 +21,16 @@ from geometry_msgs.msg import Twist, Pose2D
 #Local libraries
 from robot import RobotController
 import plotter
-""" 
-This module gets info from pose2d topic and publishes to speed topic
-
-The module instantiates a RobotController object and uses its methods
-for publishing new speed set points in the topic '/robot_{}/cmd_vel'.
-
-When calling the module, one argument must be passed, representing the 
-id of the desired robot. It must be the same as the one passed to the
-messenger.py module.
-"""
 
 def new_node(my_robot, robot_id):
     """Subscribe to topics and spins until aborted."""   
     rospy.init_node('move_robot_{}'.format(robot_id), anonymous=True)
     # The pose is published by the uvispace package
     rospy.Subscriber('/robot_{}/pose2d'.format(robot_id), Pose2D, 
-			         my_robot.set_speed, queue_size=1)    
+                     my_robot.set_speed, queue_size=1)    
     # The new goals are published by the user
     rospy.Subscriber('/robot_{}/goal'.format(robot_id), Pose2D, 
-			         my_robot.new_goal, queue_size=1)
+                     my_robot.new_goal, queue_size=1)
     rospy.on_shutdown(my_robot.on_shutdown)
     
 def make_a_rectangle():

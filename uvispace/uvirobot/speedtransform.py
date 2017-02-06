@@ -1,4 +1,10 @@
 #!/usr/bin/env python 
+"""
+Module with a class that deals with the formatting of speed values.
+
+The instances of the *Speed* class represent the speeds of 2WD UGVs, 
+and the attributes and operations related to them.
+"""
 import sys
 import numpy as np
 
@@ -6,32 +12,53 @@ class Speed(object):
     """
     This class manages the speed values compatible with a 2WD vehicle.
     
-    Default speed format is linear_angular. This means that the speed is
-    a 2-value array, whose items corresponds to the linear and angular 
-    speed respectively.
+    The default speed format is *linear_angular*. This means that the 
+    speed is a 2-values array, whose items corresponds to the linear 
+    and angular speed respectively.
+
+    :param [float, float] speed: speed values of the vehicle. If the 
+     format is *linear_angular*, it represents the linear and angular 
+     speeds of the vehicle. If the format is *2_wheel_drive*, it 
+     represents the velocities of the right and left wheels of the 
+     vehicle, respectively.
+    :param float min_value: Minimum value of the *speed* attribute
+    :param float max_value: Maximum value of the *speed* attribute
+    :param str spd_format: Format of the speed. Possible values are 
+     stored in the tuple *Speed.SPEEDFORMATS*.
+    :param str scale: Scaling of the speed. Possible values are 
+     stored in the tuple *Speed.SPEEDSCALES*.
     """    
     # Available speed formats
     SPEEDFORMATS = ('linear_angular', '2_wheel_drive')
     SPEEDSCALES = ('linear', 'non-linear')
     
     def __init__(self, speed=[0,0], min_value=-0.3, max_value=0.3,
-                 spd_format='linear_angular'):
+                 spd_format='linear_angular', scale='linear'):
         self._min_value = min_value
         self._max_value = max_value
         self._speed = np.array([None, None])
         self._format = None
-        self._scale = 'linear'
         #Wheel's diameter
         self.rho = None
         #Calls the set_speed method to initialize the format and speed 
         #attributes.
+        self._scale = self._set_scale(scale)
         self.set_speed(speed, spd_format)
         
     def set_speed(self, speed, speed_format, speed_scale='linear'):
-        """Set the speed value.
+        """Set a new speed value.
         
-        Input speed must be a 2-value list or tupple. If out of bounds, 
-        it will be rounded to the nearest bound.
+        Input speed must be a 2-values list or tupple. If out of bounds, 
+        it will be rounded to the nearest limit.
+
+        :param [float/int, float/int] speed: new values for the *speed* 
+         attribute. Depending on the format, the values may refer to the
+         linear and angular values, or to the left and right wheels 
+         speeds.
+        :param str speed_format: The format of the new speed. It has to 
+         be a valid one (Check the attribute *Speed.SPEEDFORMATS*) 
+        :param str speed_scale: The scale of the new speed. It has to 
+         be a valid one (Check the attribute *Speed.SPEEDSCALES*) 
         """
         s = np.array([0.0, 0.0])
         try:
@@ -54,7 +81,11 @@ class Speed(object):
         return self._speed
                 
     def check_bounds(self):
-        """Check that the speed values are inside valid bounds."""
+        """Check that the speed values are inside valid bounds.
+
+        If the value is out of bounds, it is rounded to the nearest 
+        limit.
+        """
         if self._scale == 'linear':
             for index, value in enumerate(self._speed):
                 if (self._speed[index] < self._min_value):
@@ -75,17 +106,15 @@ class Speed(object):
         return self._max_value
         
     def _set_format(self, new_format):
-        """Set the format of the speed.
+        """Set the new format of the speed.
         
-        Available values : 
-        ----------------
-        linear_angular : [vL, vR]
-            vL corresponds to the linear velocity and vR corresponds to
-            the angular velocity
-            
-        2_wheel_drive : [v_right, v_left]
-            v_right corresponds to the velocity of the right wheel and 
-            v_left corresponds to the velocity of the left wheel.
+        :Available values: 
+
+        * linear_angular ([vL, vR]): *vL* corresponds to the linear 
+          velocity and *vR* corresponds to the angular velocity.            
+        * 2_wheel_drive ([v_right, v_left]): *v_right* corresponds to 
+          the velocity of the right wheel and *v_left* corresponds to 
+          the velocity of the left wheel.
         """
         if not new_format in self.SPEEDFORMATS:
             raise ValueError("Not a valid format type: {}".format(new_format))
@@ -101,11 +130,10 @@ class Speed(object):
     def _set_scale(self, new_scale):
         """Set the scale of the speed.
         
-        Available values : 
-        ----------------
-        'linear'
-            
-        'non-linear'
+        :Available values : 
+        
+        * 'linear'
+        * 'non-linear'
         """
         if not new_scale in self.SPEEDSCALES:
             raise ValueError("Not a valid scale type: {}".format(new_scale))
@@ -118,7 +146,13 @@ class Speed(object):
     def linear_transform(self, new_min, new_max):
         """Change the range of values of the speed.
         
-        This is a linear conversion of the speed values.
+        The method converts the actual *speed* values and the limits it 
+        can take.
+
+        :param float new_min: absolute minimum that the new speed values 
+         may take.
+        :param float new_max: absolute maximum that the new speed values 
+         may take.
         """
         if self._scale is not 'linear':
             raise ValueError("Not a valid scale type: {}".format(self._scale))
@@ -142,31 +176,31 @@ class Speed(object):
         A characterization of the UGV should be done before performing 
         this rescalation.
         
-        Transformation
-        --------------
+        :Transformation:
+
         The values range is divided into 2 equal segments (segment A and
         segment B). If the value belongs to segment A, it will be 
         rescalated between min_A and max_A values. On the contrary, if 
         it belongs to segment B it is rescalated between min_B and 
         max_B. The mid value is assigned to 0.
+
+        ::
+
+                      min_value    zero_value    max_value
+                          |------------|------------|         
+                           segment A      segment B               
         
-                  min_value    zero_value    max_value
-                      |------------|------------|         
-                       segment A      segment B
-                          
-                                   
-        min_A             max_A         min_B             max_B
-          |-----------------|      |      |-----------------|
-                               scale_zero
-        Parameters
-        ----------
-        value : int or float
-            value to be transformed into the nonlinear space
-            
-        min_A, max_A, min_B, max_B : int or float
-            limit values for the segments A and B. The transformed
-            values will belong to one of the 2 intervals and 0.
-            min_A < max_A < scale_zero < min_B < max_B
+            min_A             max_A         min_B             max_B
+              |-----------------|      |      |-----------------|
+                                   scale_zero
+
+        :param int/float value: value to be transformed into the 
+         nonlinear space.
+        :param int/float [min_A, max_A, min_B, max_B]: limit values for 
+         the segments A and B. The transformed values will belong to one
+         of the 2 intervals and 0.
+
+            *min_A < max_A < scale_zero < min_B < max_B*
         """
         if self._scale is not 'linear':
             raise ValueError("Not a valid scale type: {}".format(self._scale))
@@ -207,36 +241,20 @@ class Speed(object):
         
         This calculus responds to the dynamics system proposed on: 
         http://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=5674957
-        
-        Parameters
-        ----------
-        vLinear = self._speed[0] : int or float
-            value of the linear speed of the vehicle.
 
-        vRotation = self._speed[1] : int or float
-            value of the angular speed of the vehicle.
-
-        rho : float 
-            Parameter of the dynamic model, which represents the vehicle's 
-            wheels diameter, in meters.
-
-        L : float
-            Parameter of the dynamic model, which represents the distance 
-            between the driving wheels of the vehicle.
-
-        wheels_modifiers : float 2-element list (0 to 1)
-            Fit coeficient for each wheel. It is intended to adjust the
-            error between the ideal model and the real system. Thus, it
-            corrects the performance difference between the 2 wheels.
-            It is recommended to tune this values by testing them on the 
-            real vehicle.
+        :param float rho: Parameter of the dynamic model, which 
+         represents the vehicle's wheels diameter, in meters.
+        :param float L: Parameter of the dynamic model, which represents
+         the distance between the driving wheels of the vehicle.
+        :param [float, float] wheels_modifiers: It is intended to adjust
+         the error between the ideal model and the real system. Thus, it
+         corrects the performance difference between the 2 wheels. It is
+         recommended to tune this values by testing them on the real 
+         vehicle.           
+        :returns: output value for the right and left wheels. Maximum 
+         and minimum limits are modified proportionally to rho.
+        :rtype: np.array([V_Right, V_Left])
             
-            
-        Returns
-        -------
-        self._speed : 2-element np.array() [V_Right, V_Left]
-            output value for the right and left wheels. Maximum and 
-            minimum limits are modified proportionally to rho.
         """
         self.rho = rho
         if self.get_format() is '2_wheel_drive':
