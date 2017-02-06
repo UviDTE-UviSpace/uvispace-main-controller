@@ -1,8 +1,5 @@
-Babel==2.3.4
 Cython==0.20.1
-Jinja2==2.8
 MarkupSafe==0.23
-PAM==0.4.2
 Pillow==2.3.0
 PyYAML==3.10
 Pygments==2.1.3
