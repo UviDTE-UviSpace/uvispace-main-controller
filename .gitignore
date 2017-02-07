@@ -26,3 +26,6 @@
 
 # Deprecated files
 /uvispace/deprecated/**
+
+#doc auxiliary files
+doc/_build
