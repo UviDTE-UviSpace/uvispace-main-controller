@@ -28,4 +28,4 @@
 /uvispace/deprecated/**
 
 #doc auxiliary files
-/docs/_build/**
+/docs/_build/
