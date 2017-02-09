@@ -33,8 +33,7 @@ class RobotController(object):
         Receives a new pose and calculates the UGV speeds.
 
         After calculating the new speed value, it is published on the 
-        rostopic *'/robot_X/cmd_vel'* using the *pub_vel* object.
-
+        rostopic *'/robot_X/cmd_vel'* using the *pub_vel* object. 
         Only the values X, Y and theta of the *Pose2D* type are used, as 
         the designed Space consists in a 2-D flat space.
 
@@ -61,7 +60,6 @@ class RobotController(object):
         :param goal: contains a 2-D position, with 2 cartesian 
          values (x,y) and an angle value (theta).
         :type goal: geometry_msgs.Pose2D
-            Variable that 
         """
         if self.init :
             goal_point = (goal.x, goal.y)

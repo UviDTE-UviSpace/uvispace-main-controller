@@ -9,11 +9,11 @@ previously configured for being able to communicate with each other, and
 that task is out of the scope of this module.
 
 The aforementioned class' methods build up messages following a common 
-structure, that will be correctly interpreted by a slave with the same
+structure and send them through serial port to a slave with the same
 implemented protocol.
 
 Moreover, it offers methods specific to the UGV operation, as the *move*
-method, that takes a speeds setpoint input and sends it correctly 
+method, that takes a speeds setpoints inputs and sends them correctly 
 formatted to the slave.
 """
 from serial import Serial
@@ -23,7 +23,7 @@ import time
 
 class SerMesProtocol(Serial):
     """
-    This is a child of PySerial class and implements a comm. protocol
+    This is a child of PySerial class and implements a comm. protocol.
     
     This class implements a message-based protocol over the serial port
     in Master-slave mode: The master (PC) starts communication with 
@@ -31,11 +31,9 @@ class SerMesProtocol(Serial):
     message and returns an answer.
 
     The class uses the serial port to implement this protocol.
-    In master-slave data from the device is simply passed as return from 
-    a function that exist for every command implemented.  
 
-    :param str port: name identifier of the port in the PC's OS 
-    :param str baudrate: communications speed between the XBee modules. 
+    :param str port: name identifier of the port path in the PC's OS.
+    :param int baudrate: communications speed between the XBee modules. 
     :param int stopbits: Number of bits at the end of each message.
     :param str parity: Message parity. *None* by default
     :param float timeout: Time to wait to achieve the communication.
@@ -63,8 +61,9 @@ class SerMesProtocol(Serial):
         """
         Check if the communication channel is ready.
 
-        :param int tries: number of tries before exiting and raising an 
-         error.
+        The parameter **tries** specifies the number of attempts before 
+        exiting and raising an error message.
+
         :returns: returns a true or false condition which confirms that 
          the message was received.
         :rtype: bool
@@ -88,10 +87,11 @@ class SerMesProtocol(Serial):
         """
         Send a move order to the slave.
 
-        :param [int, int] setpoint: List with element values values from 
-         0 to 255. Velocity of the UGV. First element corresponds to 
-         right wheels, and second element to left wheels. Values are 
-         rounded if decimal.
+        :param setpoint: List with UGV speeds, whose elements range from
+         0 to 255. The first element corresponds to right wheels, and 
+         the second element to left wheels. Values are rounded if 
+         decimal.
+        :type setpoint: [int, int]
         :returns: true or false condition which confirms that the 
             message was received.
         :rtype: bool
@@ -122,7 +122,7 @@ class SerMesProtocol(Serial):
     #-------------MASTER-SLAVE COMMANDS AUXILIAR FUNCTIONS-------------#
     def send_message(self, fun_code, data='', send_delay=0.01):
         """
-        Send a message formatted with the defined protocol.
+        Send a message to slaves formatted with the defined protocol.
 
         :param str fun_code: function code of the command that is going 
          to be sent.
@@ -154,12 +154,15 @@ class SerMesProtocol(Serial):
         When the message is read, check the auxiliary bytes for 
         assuring the consistence of the message.
 
-        :returns bool Rx_OK: is 0 if an error ocurred.
-        :returns str fun_code: non decodified hex-data corresponding to 
-         the function code given by the slave.
-        :returns str data: non decodified hex-data corresponding to the 
-         data given by slave.
-        :returns int length: size of the main data, in bytes.
+        :returns: [Rx_OK, fun_code, data, length]
+
+          * *Rx_OK* is 0 if an error ocurred.
+          * *fun_code* is the non decodified hex-data corresponding to 
+            the function code given by the slave.
+          * *data* is the non decodified hex-data corresponding to the 
+            data given by slave.
+          * *length* is the size of the main data, in bytes
+        :rtype: [bool, str, str, int]
         """
         Rx_OK = False
         fun_code = ""

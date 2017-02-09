@@ -2,8 +2,15 @@
 """
 Module with a class that deals with the formatting of speed values.
 
-The instances of the *Speed* class represent the speeds of 2WD UGVs, 
-and the attributes and operations related to them.
+An instance of the *Speed* class represents the speeds of 2WD (2-Wheel-
+Drive) UGVs, and the attributes and operations related to them. They 
+convert *linear-angular* speeds into *left-right* speeds, which is the 
+used format in the *Arduino* slaves.
+
+They also allow to change the values scale. It is important to know that
+the *Arduino* manages speed values ranging from 0 to 255 for each wheel.
+The first 127 values represent reverse direction speeds, and the last 
+127 direct direction speeds (127 is null speed).
 """
 import sys
 import numpy as np
@@ -168,13 +175,13 @@ class Speed(object):
         """ 
         Make a non-linear conversion of speed values.
         
-        Intended to avoid useless points near to 0 on a real UGV, it
-        translates the input speeds to useful segments.
+        Intended to avoid the useless values near to 0 speed on a real 
+        UGV, and extreme values that implies high power. It translates 
+        the input speeds to useful segments. A characterization of the 
+        UGV has been done before performing this rescalation.
         
-        The previous scale has to be linear.
-        
-        A characterization of the UGV should be done before performing 
-        this rescalation.
+        This method can only be called if the class' scale is linear 
+        i.e. can't convert a nonlinear scale to another nonlinear scale.
         
         :Transformation:
 
@@ -188,19 +195,22 @@ class Speed(object):
 
                       min_value    zero_value    max_value
                           |------------|------------|         
-                           segment A      segment B               
+                            segment A     segment B               
         
             min_A             max_A         min_B             max_B
               |-----------------|      |      |-----------------|
                                    scale_zero
 
-        :param int/float value: value to be transformed into the 
-         nonlinear space.
-        :param int/float [min_A, max_A, min_B, max_B]: limit values for 
+        :param int/float [min_A, max_A, min_B, max_B]: Limit values for 
          the segments A and B. The transformed values will belong to one
          of the 2 intervals and 0.
-
+         
             *min_A < max_A < scale_zero < min_B < max_B*
+
+        :param int scale_zero: Null speed value in the new scale.
+        :returns: The speed value after being converted to the new 
+         scale.
+        :rtype: int
         """
         if self._scale is not 'linear':
             raise ValueError("Not a valid scale type: {}".format(self._scale))
@@ -246,15 +256,15 @@ class Speed(object):
          represents the vehicle's wheels diameter, in meters.
         :param float L: Parameter of the dynamic model, which represents
          the distance between the driving wheels of the vehicle.
-        :param [float, float] wheels_modifiers: It is intended to adjust
+        :param wheels_modifiers: It is intended to adjust
          the error between the ideal model and the real system. Thus, it
          corrects the performance difference between the 2 wheels. It is
          recommended to tune this values by testing them on the real 
-         vehicle.           
+         vehicle.
+        :type wheels_modifiers: [float, float]           
         :returns: output value for the right and left wheels. Maximum 
          and minimum limits are modified proportionally to rho.
         :rtype: np.array([V_Right, V_Left])
-            
         """
         self.rho = rho
         if self.get_format() is '2_wheel_drive':
@@ -277,4 +287,3 @@ class Speed(object):
         rl_speeds = np.clip([vR_raw, vL_raw], self._min_value, self._max_value)
         self.set_speed(rl_speeds, '2_wheel_drive')
         return self._speed
-

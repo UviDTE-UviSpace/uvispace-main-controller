@@ -14,8 +14,8 @@ If it is run as main script, it creates an instance of the class
 When a new speed SP is received, it is sent to the target UGV using the 
 instanced object.
 
-Speed formatting
-^^^^^^^^^^^^^^^^
+**Speed formatting:**
+
 
 The *move_robot* function has the default speed limit set to [89-165]. 
 These limits are needed when the robot is connected to a DC source with 
