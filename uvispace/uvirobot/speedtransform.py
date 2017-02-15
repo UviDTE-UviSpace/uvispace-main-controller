@@ -23,7 +23,7 @@ class Speed(object):
     speed is a 2-values array, whose items corresponds to the linear 
     and angular speed respectively.
 
-    :param [float, float] speed: speed values of the vehicle. If the 
+    :param speed: speed values of the vehicle. If the 
      format is *linear_angular*, it represents the linear and angular 
      speeds of the vehicle. If the format is *2_wheel_drive*, it 
      represents the velocities of the right and left wheels of the 
@@ -34,6 +34,7 @@ class Speed(object):
      stored in the tuple *Speed.SPEEDFORMATS*.
     :param str scale: Scaling of the speed. Possible values are 
      stored in the tuple *Speed.SPEEDSCALES*.
+    :type speed: [float, float]
     """    
     # Available speed formats
     SPEEDFORMATS = ('linear_angular', '2_wheel_drive')
