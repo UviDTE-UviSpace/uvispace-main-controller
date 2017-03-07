@@ -14,7 +14,10 @@ from scipy import misc
 import socket
 import sys
 #ROS libraries
-import rospy
+try:
+    import rospy
+except:
+    import logging
 #Local libraries
 from client import Client
 import imgprocessing
@@ -152,15 +155,24 @@ class VideoSensor(object):
             self._ip = self.conf.get('VideoSensor', 'IP')
             self._port = int(self.conf.get('VideoSensor', 'PORT'))
         except NoSectionError:
-            rospy.logerr('Missing config file: {}'.format(self.filename))
+            try:
+                rospy.logerr('Missing config file: {}'.format(self.filename))
+            except:
+                pass
             return
-        rospy.logdebug('Opened configuration file. '
+        try:
+            rospy.logdebug('Opened configuration file. '
                            'Connecting to {}'.format(self._ip))
+        except:
+            pass
         try:
             self._client.open_connection(self._ip, self._port)
             self._connected = True
         except socket.timeout:
-            rospy.logwarn('Unable to connect to port. Timeout')
+            try:
+                rospy.logwarn('Unable to connect to port. Timeout')
+            except:
+                pass
 
     def disconnect_client(self):
         """Close TCP/IP connection with the device.
@@ -169,7 +181,10 @@ class VideoSensor(object):
         be able to be reopened.
         """
         if not self._connected:
-            rospy.logwarn('Cannot disconnect, as it was not connected.')
+            try:
+                rospy.logwarn('Cannot disconnect, as it was not connected.')
+            except:
+                pass
             return
         self.set_register('SYSTEM_OUTPUT', 0)
         self._client.close_connection()
@@ -187,7 +202,10 @@ class VideoSensor(object):
         """
         #Check that the filename is correct
         if not self.conf.sections():
-            rospy.logerr('Missing config file: {}'.format(self.filename))
+            try:
+                rospy.logerr('Missing config file: {}'.format(self.filename))
+            except:
+                pass
             return
         #Sensor color thresholds parameters
         self._params['red_thresholds'] = ast.literal_eval(
@@ -214,7 +232,10 @@ class VideoSensor(object):
         self.get_limits_array()
         #If the flag is marked as False, the method stops here.
         if not write2fpga:
-            rospy.logdebug("Loaded parameters. FPGA wasn't configured")
+            try:
+                rospy.logdebug("Loaded parameters. FPGA wasn't configured")
+            except:
+                pass
             return
         #--------------------------------------------------------------#
         ###Write to the FPGA registers the loaded configuration.###
@@ -238,8 +259,11 @@ class VideoSensor(object):
         self.set_register('SYSTEM_OUTPUT', self._params['output'])
         #Send the configuration command to the FPGA
         conf = self._client.write_command('CONFIGURE_CAMERA', True)
-        rospy.logdebug(repr("Obtained '{}' "
+        try:
+            rospy.logdebug(repr("Obtained '{}' "
                            "after 'CONFIGURE_CAMERA'".format(conf)))
+        except:
+            pass
 
     def read_conffile(self, filename):
         """
@@ -355,10 +379,16 @@ class VideoSensor(object):
             for item in value[1:]:
                 formatted_value = "{},{}".format(formatted_value, item)
         else:
-            rospy.logwarn("Not valid value type for {}".format(value))
+            try:
+                rospy.logwarn("Not valid value type for {}".format(value))
+            except:
+                pass
         message = self._client.write_register(register, formatted_value)
-        rospy.logdebug(repr("Obtained '{}' after writing {} on {} register."
+        try:
+            rospy.logdebug(repr("Obtained '{}' after writing {} on {} register."
                                 "".format(message, formatted_value, register)))
+        except:
+            pass
         return message
 
     def configure_tracker(self, tracker_id, min_x, min_y, width, height):
@@ -379,7 +409,10 @@ class VideoSensor(object):
         to the FPGA are integers. Other types like float are not valid
         and the FPGA will not recognize them.
         """
-        rospy.logdebug('Configuring tracker {}'.format(tracker_id))
+        try:
+            rospy.logdebug('Configuring tracker {}'.format(tracker_id))
+        except:
+            pass
         self.set_register('SET_WINDOW', '{},{},{},{},{}'
                           ''.format(tracker_id, min_x, min_y, width, height))
 
@@ -405,7 +438,10 @@ class VideoSensor(object):
         message = self._client.write_command('GET_NEW_FRAME', True)
         while message != "Image captured.\n":
             if not tries:
-                rospy.logwarn("Stop waiting for a frame after 20 tries")
+                try:
+                    rospy.logwarn("Stop waiting for a frame after 20 tries")
+                except:
+                    pass
                 sys.exit()
             tries -= 1
             #Timeout error means that the FPGA buffer is empty. If this
@@ -414,7 +450,10 @@ class VideoSensor(object):
                 message = self._client.recv(self._client.buffer_size)
             except socket.timeout:
                 pass
-        rospy.logdebug(repr("'{}' after {} tries.".format(message, 20 - tries)))
+        try:
+            rospy.logdebug(repr("'{}' after {} tries.".format(message, 20 - tries)))
+        except:
+            pass
         #Set dim (dimensions) to the number of components per pixel.
         if gray:
             command = 'GET_GRAY_IMAGE'
@@ -425,7 +464,10 @@ class VideoSensor(object):
             dim = 3
             shape = (self._params['height'], self._params['width'], dim)
         self._client.write_command(command)
-        rospy.logdebug("'{}' command sent.".format(command))
+        try:
+            rospy.logdebug("'{}' command sent.".format(command))
+        except:
+            pass
         #SIZE = Width x Height x Dimensions
         img_size = self._params['width'] * self._params['height'] * dim
         data = self._client.read_data(img_size)

@@ -1,0 +1,423 @@
+///
+/// Locator block
+/// -------------
+///
+/// This module implements the boundary corners detection of the geometrical 
+/// figure, which is used by the shape detection algorithm.
+///
+module locator (
+        input clock,
+        input reset_n,
+        input enable,
+        // Size of image
+        input [11:0] width,
+        input [11:0] height,
+        // Search window
+        input sw_write,
+        input [11:0] sw_x, 
+        input [11:0] sw_y,
+        input [11:0] sw_width,
+        input [11:0] sw_height,
+        // Image data input
+        input in_write,
+        input in_pixel,
+        input [11:0] in_x,
+        input [11:0] in_y,
+        input in_done,
+        // Out search window
+        output reg [11:0] out_x,
+        output reg [11:0] out_y,
+        output reg [11:0] out_width,
+        output reg [11:0] out_height,
+        // Data output
+        output reg [11:0] out_left1_x,
+        output reg [11:0] out_left1_y,
+        output reg [11:0] out_left2_x,
+        output reg [11:0] out_left2_y,
+        output reg [11:0] out_top1_x,
+        output reg [11:0] out_top1_y,
+        output reg [11:0] out_top2_x,
+        output reg [11:0] out_top2_y,
+        output reg [11:0] out_right1_x,
+        output reg [11:0] out_right1_y,
+        output reg [11:0] out_right2_x,
+        output reg [11:0] out_right2_y,
+        output reg [11:0] out_bottom1_x,
+        output reg [11:0] out_bottom1_y,
+        output reg [11:0] out_bottom2_x,
+        output reg [11:0] out_bottom2_y
+    );
+    
+    reg done;
+    reg move;
+    reg write;
+    reg write_sw;
+    always @(posedge clock)
+    begin
+        done <= in_done;
+        move <= done;
+        write <= sw_write;
+        if (reset_n) begin
+            if (write && !sw_write) begin
+                write_sw <= 1'b1;
+            end
+            if (done && !in_done) begin
+                write_sw <= 1'b0;
+            end
+        end
+        else begin
+            write_sw <= 1'b0;
+        end
+    end
+    
+//    // Center of gravity
+//    reg [31:0] size;
+//    reg [31:0] sum_x;
+//    reg [31:0] sum_y;
+//    reg [11:0] x_cm;
+//    reg [11:0] y_cm;
+//    always @(posedge clock)
+//    begin
+//        if (reset_n) begin
+//            if (enable) begin
+//              if (in_write) begin
+//                  if (in_pixel) begin
+//                      // Checks that the pixel is into the ROI
+//                      if ((in_x >= left) && (in_x < right) && 
+//                          (in_y >= top) && (in_y < bottom)) begin
+//                          size[31:0] <= size[31:0] + 1;
+//                          sum_x[31:0] <= sum_x[31:0] + in_x;
+//                          sum_y[31:0] <= sum_y[31:0] + in_y;
+//                      end
+//                  end
+//              end
+//              if (done && !in_done) begin
+//                  size[31:0] <= 32'd0;
+//                  sum_x[31:0] <= 32'd0;
+//                  sum_y[31:0] <= 32'd0;
+//                  x_cm[11:0] <= sum_x[31:0] / size[31:0];
+//                  y_cm[11:0] <= sum_y[31:0] / size[31:0];
+//              end
+//          end
+//        end
+//        else begin
+//            size[31:0] <= 32'd0;
+//            sum_x[31:0] <= 32'd0;
+//            sum_y[31:0] <= 32'd0;
+//            x_cm[11:0] <= 12'd0;
+//            y_cm[11:0] <= 12'd0;
+//        end
+//    end
+
+    // Bounding box
+    reg [31:0] size;
+    reg [11:0] x_cm;
+    reg [11:0] y_cm;
+    always @(posedge clock)
+    begin
+        if (reset_n) begin
+            if (enable) begin
+              if (in_write) begin
+                  if (in_pixel) begin
+                      // Checks that the pixel is into the ROI
+                      if ((in_x >= left) && (in_x < right) && 
+                          (in_y >= top) && (in_y < bottom)) begin
+                          size[31:0] <= size[31:0] + 1;
+                      end
+                  end
+              end
+              if (done && !in_done) begin
+                  size[31:0] <= 32'd0;
+                  x_cm[11:0] <= {1'b0, left1[11:1]} + {1'b0, right1[11:1]};
+                  y_cm[11:0] <= {1'b0, top1[11:1]} + {1'b0, bottom1[11:1]};
+              end
+          end
+        end
+        else begin
+            size[31:0] <= 32'd0;
+            x_cm[11:0] <= 12'd0;
+            y_cm[11:0] <= 12'd0;
+        end
+    end
+    
+    // Search window
+    reg [11:0] left;
+    reg [11:0] top;
+    reg [11:0] right;
+    reg [11:0] bottom;
+    always @(posedge clock)
+    begin
+        if (reset_n) begin
+            if (enable) begin
+                if (done && !in_done) begin
+                    if (write_sw) begin
+	                    left[11:0] <= sw_x[11:0];
+	                    top[11:0] <= sw_y[11:0];
+	                    right[11:0] <= sw_x[11:0] + sw_width[11:0];
+	                    bottom[11:0] <= sw_y[11:0] + sw_height[11:0];
+                    end
+                end
+                if (move && !done) begin
+                    if ((x_cm > left) && (x_cm < right)) begin
+	                    if (x_cm > sw_width[11:1]) begin
+	                        left[11:0] <= x_cm[11:0] - {1'b0, sw_width[11:1]};
+	                    end
+	                    else begin
+	                        left[11:0] <= 12'd0;
+	                    end
+	                    if (x_cm < (width - sw_width[11:1])) begin
+	                        right[11:0] <= x_cm[11:0] + {1'b0, sw_width[11:1]};
+	                    end
+	                    else begin
+	                        right[11:0] <= width[11:0];
+	                    end
+                    end
+                    if ((y_cm > top) && (y_cm < bottom)) begin
+	                    if (y_cm > sw_height[11:1]) begin
+	                        top[11:0] <= y_cm[11:0] - {1'b0, sw_height[11:1]};
+	                    end
+	                    else begin
+	                        top[11:0] <= 12'd0;
+	                    end
+	                    if (y_cm < (height - sw_height[11:1])) begin
+	                        bottom[11:0] <= y_cm[11:0] + {1'b0, sw_height[11:1]};
+	                    end
+	                    else begin
+	                        bottom[11:0] <= height[11:0];
+	                    end
+                    end
+                end
+            end
+            else begin
+                if (done && !in_done) begin
+                    left[11:0] <=12'd0;
+                    top[11:0] <= 12'd0;
+                    right[11:0] <= width[11:0];
+                    bottom[11:0] <= height[11:0];
+                end
+            end
+        end
+        else begin
+            left[11:0] <= 12'd0;
+            top[11:0] <= 12'd0;
+            right[11:0] <= width[11:0];
+            bottom[11:0] <= height[11:0];
+        end
+    end
+    
+    // Corners locator 1
+    reg [11:0] left1;
+    reg [11:0] left1_x, left1_y;
+    reg [11:0] right1;
+    reg [11:0] right1_x, right1_y;
+    reg [11:0] top1;
+    reg [11:0] top1_x, top1_y;
+    reg [11:0] bottom1;
+    reg [11:0] bottom1_x, bottom1_y;
+    always @(posedge clock)
+    begin
+        if (reset_n) begin
+            if (in_write) begin
+                if (in_pixel) begin
+                    if ((in_x >= left) && (in_x < right) && 
+                        (in_y >= top) && (in_y < bottom)) begin
+	                    if (left1 > in_x) begin
+	                        left1[11:0] <= in_x[11:0];
+	                        left1_x[11:0] <= in_x[11:0];
+	                        left1_y[11:0] <= in_y[11:0];
+	                    end
+	                    if (top1 > in_y) begin
+	                        top1[11:0] <= in_y[11:0];
+	                        top1_x[11:0] <= in_x[11:0];
+	                        top1_y[11:0] <= in_y[11:0];
+	                    end
+	                    if (right1 < in_x) begin
+	                        right1[11:0] <= in_x[11:0];
+	                        right1_x[11:0] <= in_x[11:0];
+	                        right1_y[11:0] <= in_y[11:0];
+	                    end
+	                    if (bottom1 < in_y) begin
+	                        bottom1[11:0] <= in_y[11:0];
+	                        bottom1_x[11:0] <= in_x[11:0];
+	                        bottom1_y[11:0] <= in_y[11:0];
+	                    end
+	                end
+                end
+            end
+            if (done && !in_done) begin
+                left1[11:0] <= right[11:0];
+	            top1[11:0] <= bottom[11:0];
+	            right1[11:0] <= left[11:0];
+	            bottom1[11:0] <= top[11:0];
+	            left1_x[11:0] <= 12'd0;
+	            left1_y[11:0] <= 12'd0;
+	            top1_x[11:0] <= 12'd0;
+	            top1_y[11:0] <= 12'd0;
+	            right1_x[11:0] <= 12'd0;
+	            right1_y[11:0] <= 12'd0;
+	            bottom1_x[11:0] <= 12'd0;
+	            bottom1_y[11:0] <= 12'd0;
+            end
+        end
+        else begin
+            left1[11:0] <= right[11:0];
+            top1[11:0] <= bottom[11:0];
+            right1[11:0] <= left[11:0];
+            bottom1[11:0] <= top[11:0];
+            left1_x[11:0] <= 12'd0;
+            left1_y[11:0] <= 12'd0;
+            top1_x[11:0] <= 12'd0;
+            top1_y[11:0] <= 12'd0;
+            right1_x[11:0] <= 12'd0;
+            right1_y[11:0] <= 12'd0;
+            bottom1_x[11:0] <= 12'd0;
+            bottom1_y[11:0] <= 12'd0;
+        end
+    end
+    
+    // Corners locator 2
+    reg [11:0] left2;
+    reg [11:0] left2_x, left2_y;
+    reg [11:0] right2;
+    reg [11:0] right2_x, right2_y;
+    reg [11:0] top2;
+    reg [11:0] top2_x, top2_y;
+    reg [11:0] bottom2;
+    reg [11:0] bottom2_x, bottom2_y;
+    always @(posedge clock)
+    begin
+        if (reset_n) begin
+            if (in_write) begin
+                if (in_pixel) begin
+                    if ((in_x >= left) && (in_x < right) && 
+                        (in_y >= top) && (in_y < bottom)) begin
+                        if (left2 >= in_x) begin
+                            left2[11:0] <= in_x[11:0];
+                            left2_x[11:0] <= in_x[11:0];
+                            left2_y[11:0] <= in_y[11:0];
+                        end
+                        if (top2 >= in_y) begin
+                            top2[11:0] <= in_y[11:0];
+                            top2_x[11:0] <= in_x[11:0];
+                            top2_y[11:0] <= in_y[11:0];
+                        end
+                        if (right2 <= in_x) begin
+                            right2[11:0] <= in_x[11:0];
+                            right2_x[11:0] <= in_x[11:0];
+                            right2_y[11:0] <= in_y[11:0];
+                        end
+                        if (bottom2 <= in_y) begin
+                            bottom2[11:0] <= in_y[11:0];
+                            bottom2_x[11:0] <= in_x[11:0];
+                            bottom2_y[11:0] <= in_y[11:0];
+                        end
+                    end
+                end
+            end
+            if (done && !in_done) begin
+                left2[11:0] <= right[11:0];
+                top2[11:0] <= bottom[11:0];
+                right2[11:0] <= left[11:0];
+                bottom2[11:0] <= top[11:0];
+                left2_x[11:0] <= 12'd0;
+                left2_y[11:0] <= 12'd0;
+                top2_x[11:0] <= 12'd0;
+                top2_y[11:0] <= 12'd0;
+                right2_x[11:0] <= 12'd0;
+                right2_y[11:0] <= 12'd0;
+                bottom2_x[11:0] <= 12'd0;
+                bottom2_y[11:0] <= 12'd0;
+            end
+        end
+        else begin
+            left2[11:0] <= right[11:0];
+            top2[11:0] <= bottom[11:0];
+            right2[11:0] <= left[11:0];
+            bottom2[11:0] <= top[11:0];
+            left2_x[11:0] <= 12'd0;
+            left2_y[11:0] <= 12'd0;
+            top2_x[11:0] <= 12'd0;
+            top2_y[11:0] <= 12'd0;
+            right2_x[11:0] <= 12'd0;
+            right2_y[11:0] <= 12'd0;
+            bottom2_x[11:0] <= 12'd0;
+            bottom2_y[11:0] <= 12'd0;
+        end
+    end
+    
+    // Update output registers
+    always @(posedge clock)
+    begin
+        if (reset_n) begin
+            if (done && !in_done) begin
+                // Search window output
+                out_x[11:0] <= left[11:0];
+                out_y[11:0] <= top[11:0];
+                out_width[11:0] <= right[11:0] - left[11:0];
+                out_height[11:0] <= bottom[11:0] - top[11:0];
+                // Corners output
+                if (size > 10) begin
+	                out_left1_x[11:0] <= left1_x[11:0];
+	                out_left1_y[11:0] <= left1_y[11:0];
+	                out_left2_x[11:0] <= left2_x[11:0];
+	                out_left2_y[11:0] <= left2_y[11:0];
+	                out_top1_x[11:0] <= top1_x[11:0];
+	                out_top1_y[11:0] <= top1_y[11:0];
+	                out_top2_x[11:0] <= top2_x[11:0];
+	                out_top2_y[11:0] <= top2_y[11:0];
+	                out_right1_x[11:0] <= right1_x[11:0];
+	                out_right1_y[11:0] <= right1_y[11:0];
+	                out_right2_x[11:0] <= right2_x[11:0];
+	                out_right2_y[11:0] <= right2_y[11:0];
+	                out_bottom1_x[11:0] <= bottom1_x[11:0];
+	                out_bottom1_y[11:0] <= bottom1_y[11:0];
+	                out_bottom2_x[11:0] <= bottom2_x[11:0];
+	                out_bottom2_y[11:0] <= bottom2_y[11:0];
+                end
+                else begin
+                    out_left1_x[11:0] <= 12'd0;
+                    out_left1_y[11:0] <= 12'd0;
+                    out_left2_x[11:0] <= 12'd0;
+                    out_left2_y[11:0] <= 12'd0;
+                    out_top1_x[11:0] <= 12'd0;
+                    out_top1_y[11:0] <= 12'd0;
+                    out_top2_x[11:0] <= 12'd0;
+                    out_top2_y[11:0] <= 12'd0;
+                    out_right1_x[11:0] <= 12'd0;
+                    out_right1_y[11:0] <= 12'd0;
+                    out_right2_x[11:0] <= 12'd0;
+                    out_right2_y[11:0] <= 12'd0;
+                    out_bottom1_x[11:0] <= 12'd0;
+                    out_bottom1_y[11:0] <= 12'd0;
+                    out_bottom2_x[11:0] <= 12'd0;
+                    out_bottom2_y[11:0] <= 12'd0;
+                end
+            end
+        end
+        else begin
+            // Search window output
+            out_x[11:0] <= 12'd0;
+            out_y[11:0] <= 12'd0;
+            out_width[11:0] <= 12'd0;
+            out_height[11:0] <= 12'd0;
+            // Data output
+            out_left1_x[11:0] <= 12'd0;
+            out_left1_y[11:0] <= 12'd0;
+            out_left2_x[11:0] <= 12'd0;
+            out_left2_y[11:0] <= 12'd0;
+            out_top1_x[11:0] <= 12'd0;
+            out_top1_y[11:0] <= 12'd0;
+            out_top2_x[11:0] <= 12'd0;
+            out_top2_y[11:0] <= 12'd0;
+            out_right1_x[11:0] <= 12'd0;
+            out_right1_y[11:0] <= 12'd0;
+            out_right2_x[11:0] <= 12'd0;
+            out_right2_y[11:0] <= 12'd0;
+            out_bottom1_x[11:0] <= 12'd0;
+            out_bottom1_y[11:0] <= 12'd0;
+            out_bottom2_x[11:0] <= 12'd0;
+            out_bottom2_y[11:0] <= 12'd0;
+        end
+    end
+       
+endmodule

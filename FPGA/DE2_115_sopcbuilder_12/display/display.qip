@@ -1,0 +1,4 @@
+# display (frame rate counter)
+set_global_assignment -name VERILOG_FILE [file join $::quartus(qip_path) hdl/display_controller.v]
+set_global_assignment -name VERILOG_FILE [file join $::quartus(qip_path) hdl/SEG7_LUT.v]
+set_global_assignment -name VERILOG_FILE [file join $::quartus(qip_path) hdl/SEG7_LUT_8.v]

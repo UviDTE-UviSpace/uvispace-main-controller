@@ -1,0 +1,8 @@
+C:/Users/Jorge/workspace/VideoSensor/sensor/test/connected_tb.v {1 {vlog -work work -nocovercells C:/Users/Jorge/workspace/VideoSensor/sensor/test/connected_tb.v
+Model Technology ModelSim ALTERA vlog 6.6d Compiler 2010.11 Nov  2 2010
+-- Compiling module connected_tb
+
+Top level modules:
+	connected_tb
+
+} {} {}}

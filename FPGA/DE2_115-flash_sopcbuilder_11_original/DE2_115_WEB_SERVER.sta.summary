@@ -1,0 +1,545 @@
+------------------------------------------------------------
+TimeQuest Timing Analyzer Summary
+------------------------------------------------------------
+
+Type  : Slow 1200mV 85C Model Setup 'camera_clk'
+Slack : -14.530
+TNS   : -6074.774
+
+Type  : Slow 1200mV 85C Model Setup 'DE2_115_SOPC_inst|the_pll|sd1|pll7|clk[2]'
+Slack : -9.457
+TNS   : -606.503
+
+Type  : Slow 1200mV 85C Model Setup 'DE2_115_SOPC_inst|the_pll|sd1|pll7|clk[0]'
+Slack : -7.439
+TNS   : -9.453
+
+Type  : Slow 1200mV 85C Model Setup 'CLOCK_50'
+Slack : -5.102
+TNS   : -78.860
+
+Type  : Slow 1200mV 85C Model Setup 'ENET0_RX_CLK'
+Slack : -1.941
+TNS   : -98.053
+
+Type  : Slow 1200mV 85C Model Setup 'u6|altpll_component|auto_generated|pll1|clk[2]'
+Slack : -1.909
+TNS   : -1.909
+
+Type  : Slow 1200mV 85C Model Setup 'u6|altpll_component|auto_generated|pll1|clk[0]'
+Slack : -1.679
+TNS   : -123.028
+
+Type  : Slow 1200mV 85C Model Setup 'u6|altpll_component|auto_generated|pll1|clk[3]'
+Slack : 35.958
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Setup 'altera_reserved_tck'
+Slack : 46.341
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Hold 'camera_clk'
+Slack : -4.428
+TNS   : -1965.618
+
+Type  : Slow 1200mV 85C Model Hold 'CLOCK_50'
+Slack : -0.936
+TNS   : -1.842
+
+Type  : Slow 1200mV 85C Model Hold 'ENET0_RX_CLK'
+Slack : -0.160
+TNS   : -0.284
+
+Type  : Slow 1200mV 85C Model Hold 'DE2_115_SOPC_inst|the_pll|sd1|pll7|clk[0]'
+Slack : 0.255
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Hold 'DE2_115_SOPC_inst|the_pll|sd1|pll7|clk[2]'
+Slack : 0.260
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Hold 'u6|altpll_component|auto_generated|pll1|clk[0]'
+Slack : 0.340
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Hold 'altera_reserved_tck'
+Slack : 0.403
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Hold 'u6|altpll_component|auto_generated|pll1|clk[2]'
+Slack : 0.403
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Hold 'u6|altpll_component|auto_generated|pll1|clk[3]'
+Slack : 0.432
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Recovery 'u6|altpll_component|auto_generated|pll1|clk[0]'
+Slack : -3.924
+TNS   : -1410.184
+
+Type  : Slow 1200mV 85C Model Recovery 'DE2_115_SOPC_inst|the_pll|sd1|pll7|clk[0]'
+Slack : -3.667
+TNS   : -537.431
+
+Type  : Slow 1200mV 85C Model Recovery 'u6|altpll_component|auto_generated|pll1|clk[3]'
+Slack : -3.245
+TNS   : -90.846
+
+Type  : Slow 1200mV 85C Model Recovery 'u6|altpll_component|auto_generated|pll1|clk[2]'
+Slack : -1.320
+TNS   : -15.416
+
+Type  : Slow 1200mV 85C Model Recovery 'ENET0_RX_CLK'
+Slack : -0.928
+TNS   : -143.483
+
+Type  : Slow 1200mV 85C Model Recovery 'camera_clk'
+Slack : -0.578
+TNS   : -80.751
+
+Type  : Slow 1200mV 85C Model Recovery 'DE2_115_SOPC_inst|the_pll|sd1|pll7|clk[2]'
+Slack : 4.509
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Recovery 'CLOCK_50'
+Slack : 8.067
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Recovery 'altera_reserved_tck'
+Slack : 47.920
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Removal 'camera_clk'
+Slack : -0.784
+TNS   : -109.737
+
+Type  : Slow 1200mV 85C Model Removal 'ENET0_RX_CLK'
+Slack : 0.187
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Removal 'CLOCK_50'
+Slack : 0.744
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Removal 'u6|altpll_component|auto_generated|pll1|clk[2]'
+Slack : 0.913
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Removal 'DE2_115_SOPC_inst|the_pll|sd1|pll7|clk[0]'
+Slack : 0.973
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Removal 'altera_reserved_tck'
+Slack : 1.190
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Removal 'DE2_115_SOPC_inst|the_pll|sd1|pll7|clk[2]'
+Slack : 3.661
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Removal 'u6|altpll_component|auto_generated|pll1|clk[3]'
+Slack : 3.986
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Removal 'u6|altpll_component|auto_generated|pll1|clk[0]'
+Slack : 3.988
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'ENET0_RX_CLK'
+Slack : 3.635
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'DE2_115_SOPC_inst|the_pll|sd1|pll7|clk[0]'
+Slack : 4.605
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'u6|altpll_component|auto_generated|pll1|clk[0]'
+Slack : 4.697
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'camera_clk'
+Slack : 4.723
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'CLOCK_50'
+Slack : 9.422
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'u6|altpll_component|auto_generated|pll1|clk[3]'
+Slack : 19.710
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'u6|altpll_component|auto_generated|pll1|clk[2]'
+Slack : 20.541
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'DE2_115_SOPC_inst|the_pll|sd1|pll7|clk[2]'
+Slack : 49.685
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'altera_reserved_tck'
+Slack : 49.705
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Setup 'camera_clk'
+Slack : -12.125
+TNS   : -5482.579
+
+Type  : Slow 1200mV 0C Model Setup 'DE2_115_SOPC_inst|the_pll|sd1|pll7|clk[2]'
+Slack : -8.695
+TNS   : -554.641
+
+Type  : Slow 1200mV 0C Model Setup 'DE2_115_SOPC_inst|the_pll|sd1|pll7|clk[0]'
+Slack : -6.781
+TNS   : -8.097
+
+Type  : Slow 1200mV 0C Model Setup 'CLOCK_50'
+Slack : -4.666
+TNS   : -72.460
+
+Type  : Slow 1200mV 0C Model Setup 'ENET0_RX_CLK'
+Slack : -1.613
+TNS   : -78.795
+
+Type  : Slow 1200mV 0C Model Setup 'u6|altpll_component|auto_generated|pll1|clk[2]'
+Slack : -1.543
+TNS   : -1.543
+
+Type  : Slow 1200mV 0C Model Setup 'u6|altpll_component|auto_generated|pll1|clk[0]'
+Slack : -1.401
+TNS   : -92.788
+
+Type  : Slow 1200mV 0C Model Setup 'u6|altpll_component|auto_generated|pll1|clk[3]'
+Slack : 36.297
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Setup 'altera_reserved_tck'
+Slack : 46.729
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Hold 'camera_clk'
+Slack : -3.943
+TNS   : -1869.655
+
+Type  : Slow 1200mV 0C Model Hold 'CLOCK_50'
+Slack : -0.704
+TNS   : -1.008
+
+Type  : Slow 1200mV 0C Model Hold 'ENET0_RX_CLK'
+Slack : -0.086
+TNS   : -0.095
+
+Type  : Slow 1200mV 0C Model Hold 'DE2_115_SOPC_inst|the_pll|sd1|pll7|clk[2]'
+Slack : 0.237
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Hold 'DE2_115_SOPC_inst|the_pll|sd1|pll7|clk[0]'
+Slack : 0.238
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Hold 'u6|altpll_component|auto_generated|pll1|clk[0]'
+Slack : 0.336
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Hold 'altera_reserved_tck'
+Slack : 0.353
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Hold 'u6|altpll_component|auto_generated|pll1|clk[2]'
+Slack : 0.355
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Hold 'u6|altpll_component|auto_generated|pll1|clk[3]'
+Slack : 0.390
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Recovery 'u6|altpll_component|auto_generated|pll1|clk[0]'
+Slack : -3.370
+TNS   : -1191.902
+
+Type  : Slow 1200mV 0C Model Recovery 'DE2_115_SOPC_inst|the_pll|sd1|pll7|clk[0]'
+Slack : -3.183
+TNS   : -459.909
+
+Type  : Slow 1200mV 0C Model Recovery 'u6|altpll_component|auto_generated|pll1|clk[3]'
+Slack : -2.725
+TNS   : -76.287
+
+Type  : Slow 1200mV 0C Model Recovery 'u6|altpll_component|auto_generated|pll1|clk[2]'
+Slack : -0.995
+TNS   : -10.179
+
+Type  : Slow 1200mV 0C Model Recovery 'ENET0_RX_CLK'
+Slack : -0.671
+TNS   : -98.481
+
+Type  : Slow 1200mV 0C Model Recovery 'camera_clk'
+Slack : -0.522
+TNS   : -72.978
+
+Type  : Slow 1200mV 0C Model Recovery 'DE2_115_SOPC_inst|the_pll|sd1|pll7|clk[2]'
+Slack : 5.027
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Recovery 'CLOCK_50'
+Slack : 8.094
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Recovery 'altera_reserved_tck'
+Slack : 48.261
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Removal 'camera_clk'
+Slack : -0.678
+TNS   : -94.797
+
+Type  : Slow 1200mV 0C Model Removal 'ENET0_RX_CLK'
+Slack : 0.151
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Removal 'CLOCK_50'
+Slack : 0.678
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Removal 'u6|altpll_component|auto_generated|pll1|clk[2]'
+Slack : 0.794
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Removal 'DE2_115_SOPC_inst|the_pll|sd1|pll7|clk[0]'
+Slack : 0.875
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Removal 'altera_reserved_tck'
+Slack : 1.095
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Removal 'DE2_115_SOPC_inst|the_pll|sd1|pll7|clk[2]'
+Slack : 3.299
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Removal 'u6|altpll_component|auto_generated|pll1|clk[3]'
+Slack : 3.601
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Removal 'u6|altpll_component|auto_generated|pll1|clk[0]'
+Slack : 3.604
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'ENET0_RX_CLK'
+Slack : 3.653
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'DE2_115_SOPC_inst|the_pll|sd1|pll7|clk[0]'
+Slack : 4.643
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'u6|altpll_component|auto_generated|pll1|clk[0]'
+Slack : 4.688
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'camera_clk'
+Slack : 4.824
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'CLOCK_50'
+Slack : 9.445
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'u6|altpll_component|auto_generated|pll1|clk[3]'
+Slack : 19.692
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'u6|altpll_component|auto_generated|pll1|clk[2]'
+Slack : 20.524
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'altera_reserved_tck'
+Slack : 49.585
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'DE2_115_SOPC_inst|the_pll|sd1|pll7|clk[2]'
+Slack : 49.677
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Setup 'DE2_115_SOPC_inst|the_pll|sd1|pll7|clk[2]'
+Slack : -4.769
+TNS   : -304.949
+
+Type  : Fast 1200mV 0C Model Setup 'DE2_115_SOPC_inst|the_pll|sd1|pll7|clk[0]'
+Slack : -3.789
+TNS   : -3.789
+
+Type  : Fast 1200mV 0C Model Setup 'CLOCK_50'
+Slack : -2.562
+TNS   : -37.660
+
+Type  : Fast 1200mV 0C Model Setup 'camera_clk'
+Slack : -1.808
+TNS   : -3390.482
+
+Type  : Fast 1200mV 0C Model Setup 'u6|altpll_component|auto_generated|pll1|clk[2]'
+Slack : -0.335
+TNS   : -0.335
+
+Type  : Fast 1200mV 0C Model Setup 'u6|altpll_component|auto_generated|pll1|clk[0]'
+Slack : -0.033
+TNS   : -0.066
+
+Type  : Fast 1200mV 0C Model Setup 'ENET0_RX_CLK'
+Slack : 0.185
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Setup 'u6|altpll_component|auto_generated|pll1|clk[3]'
+Slack : 38.062
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Setup 'altera_reserved_tck'
+Slack : 48.445
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Hold 'camera_clk'
+Slack : -2.411
+TNS   : -1794.372
+
+Type  : Fast 1200mV 0C Model Hold 'CLOCK_50'
+Slack : -0.727
+TNS   : -13.001
+
+Type  : Fast 1200mV 0C Model Hold 'ENET0_RX_CLK'
+Slack : -0.371
+TNS   : -12.768
+
+Type  : Fast 1200mV 0C Model Hold 'DE2_115_SOPC_inst|the_pll|sd1|pll7|clk[0]'
+Slack : 0.042
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Hold 'DE2_115_SOPC_inst|the_pll|sd1|pll7|clk[2]'
+Slack : 0.114
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Hold 'u6|altpll_component|auto_generated|pll1|clk[0]'
+Slack : 0.137
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Hold 'altera_reserved_tck'
+Slack : 0.180
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Hold 'u6|altpll_component|auto_generated|pll1|clk[2]'
+Slack : 0.183
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Hold 'u6|altpll_component|auto_generated|pll1|clk[3]'
+Slack : 0.197
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Recovery 'u6|altpll_component|auto_generated|pll1|clk[0]'
+Slack : -1.345
+TNS   : -464.848
+
+Type  : Fast 1200mV 0C Model Recovery 'DE2_115_SOPC_inst|the_pll|sd1|pll7|clk[0]'
+Slack : -1.225
+TNS   : -171.887
+
+Type  : Fast 1200mV 0C Model Recovery 'u6|altpll_component|auto_generated|pll1|clk[3]'
+Slack : -1.040
+TNS   : -29.120
+
+Type  : Fast 1200mV 0C Model Recovery 'camera_clk'
+Slack : -0.490
+TNS   : -68.399
+
+Type  : Fast 1200mV 0C Model Recovery 'u6|altpll_component|auto_generated|pll1|clk[2]'
+Slack : 0.017
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Recovery 'ENET0_RX_CLK'
+Slack : 0.411
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Recovery 'DE2_115_SOPC_inst|the_pll|sd1|pll7|clk[2]'
+Slack : 7.027
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Recovery 'CLOCK_50'
+Slack : 8.967
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Recovery 'altera_reserved_tck'
+Slack : 49.233
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Removal 'camera_clk'
+Slack : -0.453
+TNS   : -63.388
+
+Type  : Fast 1200mV 0C Model Removal 'ENET0_RX_CLK'
+Slack : -0.079
+TNS   : -0.079
+
+Type  : Fast 1200mV 0C Model Removal 'CLOCK_50'
+Slack : 0.190
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Removal 'u6|altpll_component|auto_generated|pll1|clk[2]'
+Slack : 0.412
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Removal 'DE2_115_SOPC_inst|the_pll|sd1|pll7|clk[0]'
+Slack : 0.477
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Removal 'altera_reserved_tck'
+Slack : 0.554
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Removal 'DE2_115_SOPC_inst|the_pll|sd1|pll7|clk[2]'
+Slack : 1.898
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Removal 'u6|altpll_component|auto_generated|pll1|clk[3]'
+Slack : 2.063
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Removal 'u6|altpll_component|auto_generated|pll1|clk[0]'
+Slack : 2.068
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'ENET0_RX_CLK'
+Slack : 3.377
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'camera_clk'
+Slack : 4.277
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'u6|altpll_component|auto_generated|pll1|clk[0]'
+Slack : 4.751
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'DE2_115_SOPC_inst|the_pll|sd1|pll7|clk[0]'
+Slack : 4.760
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'CLOCK_50'
+Slack : 9.241
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'u6|altpll_component|auto_generated|pll1|clk[3]'
+Slack : 19.790
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'u6|altpll_component|auto_generated|pll1|clk[2]'
+Slack : 20.613
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'altera_reserved_tck'
+Slack : 49.435
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'DE2_115_SOPC_inst|the_pll|sd1|pll7|clk[2]'
+Slack : 49.761
+TNS   : 0.000
+
+------------------------------------------------------------

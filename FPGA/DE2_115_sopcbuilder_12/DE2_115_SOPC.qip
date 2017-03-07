@@ -1,0 +1,51 @@
+# clk_50
+# cpu
+set_global_assignment -name SDC_FILE [file join $::quartus(qip_path) "cpu.sdc"]
+set_global_assignment -name SOURCE_FILE [file join $::quartus(qip_path) "cpu.ocp"]
+# sysid
+# timer
+# clock_crossing_io
+# tri_state_bridge_flash
+# ext_flash
+# led_pio
+# lcd
+# jtag_uart
+# pll
+set_global_assignment -name TCL_FILE [file join $::quartus(ip_rootpath) "altera/sopc_builder_ip/altera_avalon_altpll/altera_avalon_altpll_hw.tcl"]
+set_global_assignment -name VERILOG_FILE [file join $::quartus(qip_path) "pll.v"]
+# sram
+set_global_assignment -name TCL_FILE [file join $::quartus(qip_path) "ip/TERASIC_SRAM/TERASIC_SRAM_hw.tcl"]
+set_global_assignment -name VERILOG_FILE [file join $::quartus(qip_path) "ip/TERASIC_SRAM/TERASIC_SRAM.v"]
+set_global_assignment -name VERILOG_FILE [file join $::quartus(qip_path) "sram.v"]
+# camera
+set_global_assignment -name TCL_FILE [file join $::quartus(qip_path) "ip/avalon_camera/avalon_camera_hw.tcl"]
+set_global_assignment -name VERILOG_FILE [file join $::quartus(qip_path) "ip/avalon_camera/hdl/avalon_camera.v"]
+set_global_assignment -name VERILOG_FILE [file join $::quartus(qip_path) "camera.v"]
+# sensor
+set_global_assignment -name TCL_FILE [file join $::quartus(qip_path) "ip/apio_sensor/apio_sensor_hw.tcl"]
+set_global_assignment -name VERILOG_FILE [file join $::quartus(qip_path) "ip/apio_sensor/hdl/apio_sensor.v"]
+set_global_assignment -name VERILOG_FILE [file join $::quartus(qip_path) "sensor.v"]
+# tracker_0
+set_global_assignment -name TCL_FILE [file join $::quartus(qip_path) "ip/avalon_locator/avalon_locator_hw.tcl"]
+set_global_assignment -name VERILOG_FILE [file join $::quartus(qip_path) "ip/avalon_locator/hdl/avalon_locator.v"]
+set_global_assignment -name VERILOG_FILE [file join $::quartus(qip_path) "tracker_0.v"]
+# tracker_1
+set_global_assignment -name VERILOG_FILE [file join $::quartus(qip_path) "tracker_1.v"]
+# tracker_2
+set_global_assignment -name VERILOG_FILE [file join $::quartus(qip_path) "tracker_2.v"]
+# tracker_3
+set_global_assignment -name VERILOG_FILE [file join $::quartus(qip_path) "tracker_3.v"]
+# tracker_4
+set_global_assignment -name VERILOG_FILE [file join $::quartus(qip_path) "tracker_4.v"]
+# tracker_5
+set_global_assignment -name VERILOG_FILE [file join $::quartus(qip_path) "tracker_5.v"]
+# eth_ocm_0
+set_global_assignment -name TCL_FILE [file join $::quartus(qip_path) "ip/eth_ocm/eth_ocm_hw.tcl"]
+set_global_assignment -name VERILOG_FILE [file join $::quartus(qip_path) "ip/eth_ocm/eth_ocm.v"]
+set_global_assignment -name VERILOG_FILE [file join $::quartus(qip_path) "eth_ocm_0.v"]
+# null
+set_global_assignment -name SDC_FILE [file join $::quartus(ip_rootpath) "altera/sopc_builder_ip/altera_avalon_clock_adapter/altera_avalon_clock_adapter.sdc"]
+set_global_assignment -name SOPC_BUILDER_SIGNATURE_ID "1C1B0D0C17650000015AAA3BA5D6"
+set_global_assignment -entity "DE2_115_SOPC" -name IP_TOOL_NAME "sopc"
+set_global_assignment -entity "DE2_115_SOPC" -name IP_TOOL_VERSION "12.1sp1"
+set_global_assignment -entity "DE2_115_SOPC" -name IP_TOOL_ENV "sopc"

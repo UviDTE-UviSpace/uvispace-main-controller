@@ -1,0 +1,81 @@
+`timescale 1 ns / 100 ps
+
+module connected_tb;
+    
+    parameter WIDTH = 160;
+    parameter HEIGHT = 120;
+        
+    reg clock;
+    reg reset_n;
+    
+    reg pixel_wr;
+    reg pixel_in;
+    
+    wire pixel_rd;
+    wire [6:0] pixel_out;
+    
+    wire [15:0] size;
+    wire [31:0] left;
+    wire [31:0] top;
+    wire [31:0] right;
+    wire [31:0] bottom;
+    
+    wire done;
+         
+    connected conn(
+        .clock(clock),
+        .reset_n(reset_n),
+        .width(WIDTH[15:0]),
+        .height(HEIGHT[15:0]),
+        .in_write(pixel_wr),
+        .in_pixel(pixel_in),
+        .out_write(pixel_rd),
+        .out_pixel(pixel_out),
+        .out1_size(size),
+        .out1_left1(left),
+        .out1_top1(top),
+        .out1_right1(right),
+        .out1_bottom1(bottom),
+        .out_done(done)
+    );
+      
+    initial clock = 1'b0;
+    always #7 clock = ~clock;
+    
+    initial reset_n = 1'b0;
+    initial #100 reset_n = 1'b1;
+    
+    // Data memory
+    reg [7:0] pix [0:(WIDTH * HEIGHT)-1];
+    //reg [N-1:0] data_out [0:(WIDTH * HEIGHT)-1];
+
+    initial begin
+        // Reads the input data memory
+        $readmemb("connected.bin", pix);
+        // Reads the output data memory
+        //$readmemb ("connected_out.bin", data_out);
+    end
+    
+    initial pixel_wr <= 1'b0;
+    
+    integer i = 0;
+    always @(posedge clock)
+    begin
+        if (reset_n) begin
+            pixel_wr <= ~pixel_wr;
+            if (!pixel_wr) begin
+                pixel_in <= pix[i];
+                if (i < (WIDTH * HEIGHT)) begin
+                    i <= i + 1;
+                end
+            end
+            if (done) $finish;
+        end
+        else begin
+            i <= 0;
+            pixel_wr <= 1'b0;
+            pixel_in <= 1'b0;
+        end
+    end
+
+endmodule

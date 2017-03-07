@@ -1,0 +1,48 @@
+# Verilog files
+SOURCEDIR = hdl
+FILES = hdl/*
+SOURCEFILES = hdl/*
+VERILOGEX = .v
+ 
+# Testbench variables
+TESTDIR = test
+TESTBENCHNAME = $(subst ${VERILOGEX},,${TESTBENCH})
+TESTBENCHPATH = $(TESTDIR)/${TESTBENCHNAME}$(VERILOGEX)
+ 
+# Icarus verilog configuration
+VERILOG_CMD = iverilog
+#VERILOG_FLAGS  = 
+ 
+# VVP (iverilog runtime engine)
+VVP_CMD = vvp
+#VVP_FLAGS = -n
+ 
+# Simulation variables
+SIMDIR = sim
+DUMPTYPE = vcd
+ 
+# Simulation viewer
+WAVEFORM_VIEWER = gtkwave # Waveform viewer executable
+ 
+
+all: compile run view
+ 
+testbench_check:
+ifeq ($(strip $(TESTBENCH)),)
+		@echo "TESTBENCH not set. Use TESTBENCH=value to set it."
+		@exit 2
+endif
+ 
+compile : testbench_check
+	mkdir -p $(SIMDIR)
+	$(VERILOG_CMD) -o  $(SIMDIR)/$(TESTBENCHNAME) $(TESTBENCHPATH) $(FILES)
+ 
+run : testbench_check
+	$(VVP_CMD) $(VVP_FLAGS) $(SIMDIR)/$(TESTBENCHNAME) -$(DUMPTYPE)
+	mv dump.$(DUMPTYPE) $(SIMDIR)/$(TESTBENCHNAME).$(DUMPTYPE)
+ 
+view : testbench_check
+	$(WAVEFORM_VIEWER)  $(SIMDIR)/$(TESTBENCHNAME).$(DUMPTYPE)
+ 
+clean : test_bench_check
+	rm $(SIM_DIR)/$(TESTBENCHNAME)*

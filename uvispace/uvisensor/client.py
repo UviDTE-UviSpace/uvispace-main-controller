@@ -15,7 +15,10 @@ import errno
 import socket
 from socket import socket as Socket
 #ROS libraries
-import rospy
+try:
+    import rospy
+except:
+    pass
 
 
 class Client(Socket):
@@ -99,9 +102,15 @@ class Client(Socket):
         if not isinstance(self._sock, socket._closedsocket):
             self.write_command('CLOSE_CONNECTION')
             self.close()
-            rospy.loginfo('Closed the TCP client\n\n{}'.format(75*'-'))
+            try:
+                rospy.loginfo('Closed the TCP client\n\n{}'.format(75*'-'))
+            except:
+                pass
         else:
-            rospy.logdebug('Unable to close TCP client. Already closed')
+            try:
+                rospy.logdebug('Unable to close TCP client. Already closed')
+            except:
+                pass
 
     def open_connection(self, ip, port):
         """Create a TCP/IP socket connection.
@@ -111,13 +120,16 @@ class Client(Socket):
 
         :param str ip: IP adress of the device.
 
-        :param str port: socket port.
+        :param int port: socket port.
         """
         self.ip = ip
         self.port = port
         self.connect((self.ip, self.port))
-        rospy .loginfo('Started TCP client with IP: {} '
+        try:
+            rospy .loginfo('Started TCP client with IP: {} '
                           'and PORT:{}.'.format(self.ip, self.port))
+        except:
+            pass
         #Empty the data buffer, as it contains the 'welcome message'.
         self.recv(self.buffer_size)
         
@@ -137,13 +149,19 @@ class Client(Socket):
                 received_package = self.recv(self.buffer_size)
             except socket.timeout:
                 amount = 100 * float(bytes)/size
-                rospy.logwarn('Stopped data acquisition with {:.2f}% '
+                try:
+                    rospy.logwarn('Stopped data acquisition with {:.2f}% '
                                      'of the data acquired'.format(amount))
+                except:
+                    pass
                 break
             bytes += len(received_package)
             packages.append(received_package)
-        rospy.logdebug('Received {} bytes of {} ({:.2f}%)\r'.format(
+        try:
+            rospy.logdebug('Received {} bytes of {} ({:.2f}%)\r'.format(
                            bytes, size, (100 * float(bytes)/size)))
+        except:
+            pass
         #Cocatenate all the packages in a unique variable
         data = ''.join(packages)
         return data
