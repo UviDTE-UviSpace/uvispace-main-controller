@@ -1,8 +1,0 @@
-# sdram
-set_global_assignment -name VERILOG_FILE [file join $::quartus(qip_path) sdram_controller.v]
-set_global_assignment -name VERILOG_FILE [file join $::quartus(qip_path) sdram_control.v]
-set_global_assignment -name VERILOG_FILE [file join $::quartus(qip_path) Sdram_FIFO.v]
-set_global_assignment -name VERILOG_FILE [file join $::quartus(qip_path) sdr_data_path.v]
-set_global_assignment -name VERILOG_FILE [file join $::quartus(qip_path) control_interface.v]
-set_global_assignment -name VERILOG_FILE [file join $::quartus(qip_path) command.v]
-set_global_assignment -name VERILOG_INCLUDE_FILE [file join $::quartus(qip_path) Sdram_Params.h]

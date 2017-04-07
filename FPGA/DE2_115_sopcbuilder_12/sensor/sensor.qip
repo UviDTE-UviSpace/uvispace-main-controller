@@ -1,7 +1,0 @@
-# sensor
-set_global_assignment -name VERILOG_FILE [file join $::quartus(qip_path) hdl/sensor_controller.v]
-set_global_assignment -name VERILOG_FILE [file join $::quartus(qip_path) hdl/RGB2BIN.v]
-set_global_assignment -name VERILOG_FILE [file join $::quartus(qip_path) hdl/fifo.v]
-set_global_assignment -name VERILOG_FILE [file join $::quartus(qip_path) hdl/fifo_prg.v]
-set_global_assignment -name VERILOG_FILE [file join $::quartus(qip_path) hdl/erosion.v]
-set_global_assignment -name VERILOG_FILE [file join $::quartus(qip_path) hdl/counter.v]
