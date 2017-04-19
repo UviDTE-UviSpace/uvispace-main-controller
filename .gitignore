@@ -29,3 +29,7 @@
 
 #doc auxiliary files
 /docs/_build/
+
+#Quartus II files
+/DE1-SoC/FPGA_Design/.qsys_edit/**
+/DE1-SoC/FPGA_Design/db/**
