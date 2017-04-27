@@ -5,7 +5,7 @@ The functions are calls to the VideoSensor class methods in order to
 capture images and then work with them using the imgprrocessing.Image
 class and its methods.
 """
-#Standard libraries
+# Standard libraries
 import ast
 import ConfigParser
 import numpy as np
@@ -13,14 +13,17 @@ import pylab
 from scipy import misc
 import socket
 import sys
-#ROS libraries
+
+# ROS libraries
 try:
     import rospy
 except:
     import logging
-#Local libraries
+
+# Local libraries
 from client import Client
 import imgprocessing
+
 
 def camera_startup(filename):
     """Bring up connection with camera and set up its configuration.
@@ -28,17 +31,18 @@ def camera_startup(filename):
     Get an instance of the VideoSensor class and return it after doing
     initialization operations.
     """
-    #Instantiate VideoSensor class. The filename contains the configuration
+    # Instantiate VideoSensor class. The filename contains the configuration
     camera = VideoSensor(filename)
     if not camera._connected:
         raise AttributeError("No connection to specified camera.")
     camera.load_configuration()
-    #Reset trackers
+    # Reset trackers
     camera.set_register('FREE_ALL', '')
-    #System output = 4?
+    # System output = 4?
     camera.set_register('SYSTEM_OUTPUT', 4)
     conf = camera._client.write_command('CONFIGURE_CAMERA', True)
     return camera
+
 
 def get_image(camera, filename=''):
     """Get an image. Input is an instance of VideoSensor class
@@ -50,6 +54,7 @@ def get_image(camera, filename=''):
     image.binarize(camera._params['red_thresholds'])
     image.get_shapes()
     return image
+
 
 def set_tracker(camera, image=[]):
     """Configure trackers according to detected triangles.
@@ -76,7 +81,7 @@ def set_tracker(camera, image=[]):
     image : imgprocessing.Image() object
         frame captured and obtained from the FPGA.
     """
-    #Get an Image object with triangle shapes in it already segregated.
+    # Get an Image object with triangle shapes in it already segregated.
     if not image:
         image = get_image(camera)
         triangles = image.triangles
@@ -85,14 +90,13 @@ def set_tracker(camera, image=[]):
     for index, triangle in enumerate(image.triangles):
         triangle.get_pose()
         triangle.get_window(min_value=0, max_value=image.image.shape)
-        min_x = int(camera._scale * triangle.window[0,1])
-        min_y = int(camera._scale * triangle.window[0,0])
-        width = int(camera._scale * triangle.window[1,1] - min_x)
-        height = int(camera._scale * triangle.window[1,0] - min_y)
-        camera.configure_tracker(index+1, min_x, min_y, width, height)
-        tracker_position = [index+1, min_x, min_y, width, height]
+        min_x = int(camera._scale * triangle.window[0, 1])
+        min_y = int(camera._scale * triangle.window[0, 0])
+        width = int(camera._scale * triangle.window[1, 1] - min_x)
+        height = int(camera._scale * triangle.window[1, 0] - min_y)
+        camera.configure_tracker(index + 1, min_x, min_y, width, height)
+        tracker_position = [index + 1, min_x, min_y, width, height]
     return image, tracker_position
-
 
 
 class VideoSensor(object):
@@ -107,11 +111,11 @@ class VideoSensor(object):
      usedd. By, default, the FPGA has a 2:1 scale i.e. only half of the 
      pixels are being used.
     """
-    #Allowed attribute values.
+    # Allowed attribute values.
     PARAMETERS = ('red_thresholds',
                   'green_thresholds',
                   'blue_thresholds',
-                  'width', 
+                  'width',
                   'height',
                   'start_col',
                   'start_row',
@@ -128,21 +132,21 @@ class VideoSensor(object):
         Initialize attributes. If filename is passed, open connection.
         """
         self.filename = None
-        self.offsets = [0,0]
+        self.offsets = [0, 0]
         self._ip = ''
         self._port = None
         self._scale = scale
         self._H = None
         self._limits = None
-        #Dictionary variable where camera parameters are stored.
+        # Dictionary variable where camera parameters are stored.
         self._params = {}
-        #The Client class handles the TCP/IP connection to the device.
+        # The Client class handles the TCP/IP connection to the device.
         self._client = Client()
         self._connected = False
-        #Instantiate a configuration class and read input filename.
+        # Instantiate a configuration class and read input filename.
         self.conf = ConfigParser.RawConfigParser()
         self.read_conffile(filename)
-        #Open connection if a filename is given
+        # Open connection if a filename is given
         if self.conf.sections():
             self.connect_client()
 
@@ -150,7 +154,7 @@ class VideoSensor(object):
         """
         Read TCP/IP parameters in config file and connect to the device. 
         """
-        #The IP and PORT parameters are stored in the config file.
+        # The IP and PORT parameters are stored in the config file.
         try:
             self._ip = self.conf.get('VideoSensor', 'IP')
             self._port = int(self.conf.get('VideoSensor', 'PORT'))
@@ -196,25 +200,25 @@ class VideoSensor(object):
 
         * Read camera and sensor parameters in self.filename. They are 
           then stored in the self._params variable. 
-        * If write2fpga flag is True, write paramters in the FPGA 
-          registers by calling set_resgister() method. Finally, send 
+        * If write2fpga flag is True, write parameters in the FPGA 
+          registers by calling set_register() method. Finally, send 
           'CONFIGURE_CAMERA' command to FPGA.
         """
-        #Check that the filename is correct
+        # Check that the filename is correct
         if not self.conf.sections():
             try:
                 rospy.logerr('Missing config file: {}'.format(self.filename))
             except:
                 pass
             return
-        #Sensor color thresholds parameters
+        # Sensor color thresholds parameters
         self._params['red_thresholds'] = ast.literal_eval(
-                                self.conf.get('Sensor', 'red_thresholds'))
+            self.conf.get('Sensor', 'red_thresholds'))
         self._params['green_thresholds'] = ast.literal_eval(
-                                self.conf.get('Sensor', 'green_thresholds'))
+            self.conf.get('Sensor', 'green_thresholds'))
         self._params['blue_thresholds'] = ast.literal_eval(
-                                self.conf.get('Sensor', 'blue_thresholds'))
-        #Camera acquisition geometry parameters
+            self.conf.get('Sensor', 'blue_thresholds'))
+        # Camera acquisition geometry parameters
         self._params['width'] = self.conf.getint('Camera', 'width')
         self._params['height'] = self.conf.getint('Camera', 'height')
         self._params['start_col'] = self.conf.getint('Camera', 'start_column')
@@ -226,42 +230,43 @@ class VideoSensor(object):
         self._params['exposure'] = self.conf.getint('Camera', 'exposure')
         self._params['skip'] = self._params['row_mode']
         self._params['output'] = 0
-        #Read and store the camera offsets
+        # Read and store the camera offsets
         self.get_offsets()
         self.get_homography_array()
         self.get_limits_array()
-        #If the flag is marked as False, the method stops here.
+        # If the flag is marked as False, the method stops here.
         if not write2fpga:
             try:
                 rospy.logdebug("Loaded parameters. FPGA wasn't configured")
             except:
                 pass
             return
-        #--------------------------------------------------------------#
-        ###Write to the FPGA registers the loaded configuration.###
-        ####SENSOR COLOR THRESHOLDS####
-        #They must be of string type.
+        # --------------------------------------------------------------#
+        # Write to the FPGA registers the loaded configuration.
+        # SENSOR COLOR THRESHOLDS
+        # They must be of string type.
         self.set_register('RED_THRESHOLD', self._params['red_thresholds'])
         self.set_register('GREEN_THRESHOLD', self._params['green_thresholds'])
         self.set_register('BLUE_THRESHOLD', self._params['blue_thresholds'])
-        ####CAMERA GEOMETRY PARAMETERS####
-        #They must be string type.
-        self.set_register('IMAGE_SHAPE', (self._params['width'], 
+
+        # CAMERA GEOMETRY PARAMETERS
+        # They must be string type.
+        self.set_register('IMAGE_SHAPE', (self._params['width'],
                                           self._params['height']))
         self.set_register('IMAGE_EXPOSURE', self._params['exposure'])
-        #Ignore initial rows and columns, as they contain useless pixels.
+        # Ignore initial rows and columns, as they contain useless pixels.
         self.set_register('START_INDEXES', (self._params['start_col'],
-                                             self._params['start_row']))
-        self.set_register('SYSTEM_SHAPE', (self._params['col_size'], 
+                                            self._params['start_row']))
+        self.set_register('SYSTEM_SHAPE', (self._params['col_size'],
                                            self._params['row_size']))
-        self.set_register('SYSTEM_MODES', (self._params['col_mode'], 
+        self.set_register('SYSTEM_MODES', (self._params['col_mode'],
                                            self._params['row_mode']))
         self.set_register('SYSTEM_OUTPUT', self._params['output'])
-        #Send the configuration command to the FPGA
+        # Send the configuration command to the FPGA
         conf = self._client.write_command('CONFIGURE_CAMERA', True)
         try:
             rospy.logdebug(repr("Obtained '{}' "
-                           "after 'CONFIGURE_CAMERA'".format(conf)))
+                                "after 'CONFIGURE_CAMERA'".format(conf)))
         except:
             pass
 
@@ -278,11 +283,11 @@ class VideoSensor(object):
         Get an homography array from the configuration file.
         """
         try:
-            #Read the value of H as is written on file.
+            # Read the value of H as is written on file.
             raw_H = self.conf.get('Misc', 'H')
         except NoSectionError:
             raise AttributeError("There is no 'H' section in the conf file")
-        #Format the value in order to get a 3x3 array.
+        # Format the value in order to get a 3x3 array.
         tuple_format = ','.join(raw_H.split('\n'))
         array_format = ast.literal_eval(tuple_format)
         self._H = np.array(array_format)
@@ -293,11 +298,11 @@ class VideoSensor(object):
         Get the limits array from the configuration file.
         """
         try:
-            #Read the value of H as is written on file.
+            # Read the value of H as is written on file.
             raw_L = self.conf.get('Misc', 'limits')
         except NoSectionError:
             raise AttributeError("There is no 'H' section in the conf file")
-        #Format the value in order to get a 3x3 array.
+        # Format the value in order to get a 3x3 array.
         tuple_format = ','.join(raw_L.split('\n'))
         array_format = ast.literal_eval(tuple_format)
         self._limits = np.array(array_format)
@@ -313,7 +318,7 @@ class VideoSensor(object):
         :return: row and column offsets i.e. [row_offset, col_offset] 
         :rtype: list[float, float]
         """
-        #Get the physical quadrant value
+        # Get the physical quadrant value
         quadrant = self.conf.get('Misc', 'quadrant')
         try:
             width = self._params['width']
@@ -344,7 +349,7 @@ class VideoSensor(object):
         """
         value = self._client.read_register(register)
         return value
-        
+
     def set_register(self, register, value):
         """
         Write a value into an FPGA register.
@@ -354,7 +359,7 @@ class VideoSensor(object):
          can be found on the documentation of the *client.Client* class.
         :param value: the value that will be written to the register. It
          is mandatory to send it as string type. Thus, the value has to
-         be converted. For tupples or lists, brackets or parenthesis are
+         be converted. For tuples or lists, brackets or parenthesis are
          not allowed, so they have to be eliminated.
         :type value: int or tuple/list   
         :return: message obtained back from the FPGA after writing into 
@@ -367,14 +372,14 @@ class VideoSensor(object):
            * sent_value = '(3.45, 2.21)' ---> No OK
            * sent_value = '3.45, 2.21' ---> OK
         """
-        #int values are directly converted to string variables.
+        # int values are directly converted to string variables.
         if type(value) in (str, int):
             formatted_value = str(value)
-        #In case of tuples, FPGA only understands decomposed string elements.
-        #i.e. '(value1, value2)' is not valid. 'value1,value2' is valid.
+        # In case of tuples, FPGA only understands decomposed string elements.
+        # i.e. '(value1, value2)' is not valid. 'value1,value2' is valid.
         elif type(value) is tuple:
-            #First element is added individually because it is not preceded
-            #by a comma separator.
+            # First element is added individually because it is not preceded
+            # by a comma separator.
             formatted_value = str(value[0])
             for item in value[1:]:
                 formatted_value = "{},{}".format(formatted_value, item)
@@ -414,7 +419,7 @@ class VideoSensor(object):
         except:
             pass
         self.set_register('SET_WINDOW', '{},{},{},{},{}'
-                          ''.format(tracker_id, min_x, min_y, width, height))
+                                        ''.format(tracker_id, min_x, min_y, width, height))
 
     def capture_frame(self, gray=True, tries=20, output_file=''):
         """
@@ -434,7 +439,7 @@ class VideoSensor(object):
          equals to the number of components per pixel.
         :rtype: MxNxdim numpy.array
         """
-        #Request a frame capture to the socket client
+        # Request a frame capture to the socket client
         message = self._client.write_command('GET_NEW_FRAME', True)
         while message != "Image captured.\n":
             if not tries:
@@ -444,8 +449,8 @@ class VideoSensor(object):
                     pass
                 sys.exit()
             tries -= 1
-            #Timeout error means that the FPGA buffer is empty. If this
-            #happens, it will try to read the buffer again.
+            # Timeout error means that the FPGA buffer is empty. If this
+            # happens, it will try to read the buffer again.
             try:
                 message = self._client.recv(self._client.buffer_size)
             except socket.timeout:
@@ -454,7 +459,7 @@ class VideoSensor(object):
             rospy.logdebug(repr("'{}' after {} tries.".format(message, 20 - tries)))
         except:
             pass
-        #Set dim (dimensions) to the number of components per pixel.
+        # Set dim (dimensions) to the number of components per pixel.
         if gray:
             command = 'GET_GRAY_IMAGE'
             dim = 1
@@ -468,14 +473,10 @@ class VideoSensor(object):
             rospy.logdebug("'{}' command sent.".format(command))
         except:
             pass
-        #SIZE = Width x Height x Dimensions
+        # SIZE = Width x Height x Dimensions
         img_size = self._params['width'] * self._params['height'] * dim
         data = self._client.read_data(img_size)
         image = pylab.fromstring(data, dtype=pylab.uint8).reshape(shape)
         if output_file:
             misc.imsave(output_file, image)
         return image
-
-
-
-

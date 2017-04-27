@@ -4,16 +4,17 @@ This module contain classes and methods with geometrical operations.
 
 The operations are done in the 2-D space
 It works with 2-D shapes represented by arrays. Thus, the calculations
-are based on matricial operations and linear algebra. 
+are based on matrix operations and linear algebra. 
 """
-#Standard libraries
+# Standard libraries
 import numpy as np
+
 
 class Triangle(object):
     """
-    Class for dealing with geometric operations refered to triangles.
+    Class for dealing with geometric operations referred to triangles.
 
-    An instance of the classrepresents an isosceles triangle in a 
+    An instance of the class represents an isosceles triangle in a 
     2-D space, with the 2 equal sides being bigger than the base one.
 
     :param np.array(shape=3x2) vertices: vertices coordinates of the 
@@ -25,6 +26,7 @@ class Triangle(object):
      referred to a cartesian system [x,y] instead of the images typical 
      standard [row. column] = [y,x]
     """
+
     def __init__(self, vertices, isglobal=False, cartesian=False):
         """
         Triangle class constructor.
@@ -32,19 +34,19 @@ class Triangle(object):
         if len(vertices) is not 3:
             raise ValueError("Expected an array with 3 vertices")
         self.vertices = vertices.astype(np.float32)
-        #These flags indicate the coordinates system that is being used
+        # These flags indicate the coordinates system that is being used
         self.isglobal = isglobal
         self.cartesian = cartesian
-        #The barycenter X is equal to the sum of the X coordinates divided by 3.
+        # The barycenter X is equal to the sum of the X coordinates divided by 3.
         self.barycenter = self.vertices.sum(axis=0) / 3
         self.sides = np.zeros([3])
-        #base_index is the identifier for the base side in 'sides' array.
+        # base_index is the identifier for the base side in 'sides' array.
         self.base_index = None
         self.midpoint = np.array([])
         self.angle = None
         self.window = np.array([])
         self.contours = []
-        #Scale ratio for converting pixel coordinates to millimetres.
+        # Scale ratio for converting pixel coordinates to millimetres.
         self._scale = 1
 
     def __str__(self):
@@ -79,7 +81,7 @@ class Triangle(object):
         :param list[int, int] offsets: column and row offsets between 
           the local and the global systems.
         :param K: Scale ratio to be applied to the points coordinates.
-        :type K: possitive int or float
+        :type K: positive int or float
         :param bool image2cartesian: If True, a conversion from image 
          coordinate system to cartesian system is performed. Thus, the 
          output will be of the form of [x,y] instead of [row,column].
@@ -87,21 +89,21 @@ class Triangle(object):
         """
         if self.isglobal:
             return
-        #Assess K and assign value to 'scale' attribute if it is valid.
+        # Assess K and assign value to 'scale' attribute if it is valid.
         if K is None:
             K = self._scale
         elif K <= 0:
             raise ValueError("The scale ratio K must be greater than 0")
         else:
             self._scale = K
-        self.vertices[:,0] = offsets[0] - self.vertices[:,0]
-        self.vertices[:,1] -= offsets[1]
+        self.vertices[:, 0] = offsets[0] - self.vertices[:, 0]
+        self.vertices[:, 1] -= offsets[1]
         self.vertices *= self._scale
         self.barycenter[0] = offsets[0] - self.barycenter[0]
         self.barycenter[1] -= offsets[1]
         self.barycenter *= self._scale
-        #If the pose was not previously calculated, 
-        #a ValueError is catched and ignored.
+        # If the pose was not previously calculated,
+        # a ValueError is caught and ignored.
         try:
             self.midpoint[0] = offsets[0] - self.midpoint[0]
             self.midpoint[1] -= offsets[1]
@@ -109,15 +111,15 @@ class Triangle(object):
         except IndexError:
             pass
         if image2cartesian:
-            #Convert the vertices coordinates
-            tmp = np.copy(self.vertices[:,0])
-            self.vertices[:,0] = self.vertices[:,1]
-            self.vertices[:,1] = tmp
-            #Convert the barycenter coordinates
+            # Convert the vertices coordinates
+            tmp = np.copy(self.vertices[:, 0])
+            self.vertices[:, 0] = self.vertices[:, 1]
+            self.vertices[:, 1] = tmp
+            # Convert the barycenter coordinates
             tmp = np.copy(self.barycenter[0])
             self.barycenter[0] = self.barycenter[1]
             self.barycenter[1] = tmp
-            #Convert the midpoint coordinates
+            # Convert the midpoint coordinates
             try:
                 tmp = np.copy(self.midpoint[0])
                 self.midpoint[0] = self.midpoint[1]
@@ -138,7 +140,7 @@ class Triangle(object):
           the local and the global systems.
 
         :param K: Scale ratio to be applied to the points coordinates.
-        :type K: possitive int or float
+        :type K: positive int or float
         :param bool cartesian2image: If True, a conversion from 
          cartesian coordinates system to image system is performed. 
          Thus, the  output will be of the form of [row,column] instead 
@@ -147,7 +149,7 @@ class Triangle(object):
         """
         if not self.isglobal:
             return
-        #Assess K and assign value to 'scale' attribute if it is valid.
+        # Assess K and assign value to 'scale' attribute if it is valid.
         if K is None:
             K = self._scale
         elif K <= 0:
@@ -155,15 +157,15 @@ class Triangle(object):
         else:
             self._scale = K
         if cartesian2image:
-            #Convert the vertices coordinates
-            tmp = np.copy(self.vertices[:,0])
-            self.vertices[:,0] = self.vertices[:,1]
-            self.vertices[:,1] = tmp
-            #Convert the barycenter coordinates
+            # Convert the vertices coordinates
+            tmp = np.copy(self.vertices[:, 0])
+            self.vertices[:, 0] = self.vertices[:, 1]
+            self.vertices[:, 1] = tmp
+            # Convert the barycenter coordinates
             tmp = np.copy(self.barycenter[0])
             self.barycenter[0] = self.barycenter[1]
             self.barycenter[1] = tmp
-            #Convert the midpoint coordinates
+            # Convert the midpoint coordinates
             try:
                 tmp = np.copy(self.midpoint[0])
                 self.midpoint[0] = self.midpoint[1]
@@ -172,13 +174,13 @@ class Triangle(object):
                 pass
             self.cartesian = False
         self.vertices /= self._scale
-        self.vertices[:,0] = offsets[0] - self.vertices[:,0]
-        self.vertices[:,1] += offsets[1]
+        self.vertices[:, 0] = offsets[0] - self.vertices[:, 0]
+        self.vertices[:, 1] += offsets[1]
         self.barycenter /= self._scale
         self.barycenter[0] = offsets[0] - self.barycenter[0]
         self.barycenter[1] += offsets[1]
-        #If the pose was not previously calculated, 
-        #a ValueError is catched and ignored.
+        # If the pose was not previously calculated,
+        # a ValueError is catched and ignored.
         try:
             self.midpoint /= self._scale
             self.midpoint[0] = offsets[0] - self.midpoint[0]
@@ -192,7 +194,7 @@ class Triangle(object):
         Return triangle's angle and base midpoint, given its vertices.
 
         The coordinates of 3 vertices defining the triangle are used,
-        packed in a single 3x2 array. This method asumes that the
+        packed in a single 3x2 array. This method assumes that the
         triangle is isosceles and the 2 equal sides are bigger than 
         the different one, called base.
 
@@ -212,21 +214,21 @@ class Triangle(object):
         :rtype: float32, float32, float32
         """
         vertices = self.vertices.astype(np.float32)
-        #Calculate the length of the sides i.e. the Euclidean distance
+        # Calculate the length of the sides i.e. the Euclidean distance
         self.sides[0] = np.linalg.norm(vertices[2] - vertices[1])
         self.sides[1] = np.linalg.norm(vertices[0] - vertices[2])
         self.sides[2] = np.linalg.norm(vertices[1] - vertices[0])
-        #If 2 sides are equal, the common vertex is the front one and 
-        #The base midpoint is calculated with the other 2.
+        # If 2 sides are equal, the common vertex is the front one and
+        # The base midpoint is calculated with the other 2.
         self.base_index = np.argmin(self.sides)
-        self.midpoint = (vertices[self.base_index-1]
-                         + vertices[self.base_index-2]) / 2
-        #Calculus of the x and y distance between the midpoint and the vertex
-        #opposite to the base side.
+        self.midpoint = (vertices[self.base_index - 1]
+                         + vertices[self.base_index - 2]) / 2
+        # Calculus of the x and y distance between the midpoint and the vertex
+        # opposite to the base side.
         if self.cartesian:
             x, y = vertices[self.base_index] - self.midpoint
         else:
-            #The array 'y'(rows) counts downwards, contrary to cartesian system.
+            # The array 'y'(rows) counts downwards, contrary to cartesian system.
             row, col = vertices[self.base_index] - self.midpoint
             x, y = col, -row
         self.angle = np.arctan2(y, x)
@@ -259,23 +261,23 @@ class Triangle(object):
         :rtype: 2x2 np.array
         """
         distance = self.sides.max() * k
-        window = np.array([self.barycenter - distance, 
+        window = np.array([self.barycenter - distance,
                            self.barycenter + distance])
-        #Create 2 arrays of booleans: the first indicating if any value in each
-        #axis is greater than max_value, and the second if any value in each
-        #axis is lower than min_value. 
+        # Create 2 arrays of booleans: the first indicating if any value in each
+        # axis is greater than max_value, and the second if any value in each
+        # axis is lower than min_value.
         outbounds = [np.any(window - max_value > 0, axis=0),
-                    np.any(window - min_value < 0, axis=0)]
-        #Third condition array, when none of the previous ones is fullfilled.
+                     np.any(window - min_value < 0, axis=0)]
+        # Third condition array, when none of the previous ones is fulfilled.
         inbounds = np.all(np.invert(outbounds), axis=0)
         condlist = np.vstack([outbounds, inbounds])
-        #Subtract to each axis the greatest distance from one of its pixels 
-        #to the maximum allowed. Idem for the minimum values.
+        # Subtract to each axis the greatest distance from one of its pixels
+        # to the maximum allowed. Idem for the minimum values.
         max_clipped = window - np.max(window - max_value, axis=0)
         min_clipped = window + np.max(min_value - window, axis=0)
         choicelist = [max_clipped, min_clipped, window]
-        #Obtain the final array getting elements from each of the 3 values 
-        #arrays, depending on the conditions values.
+        # Obtain the final array getting elements from each of the 3 values
+        # arrays, depending on the conditions values.
         self.window = np.select(condlist, choicelist)
         return self.window
 
@@ -283,7 +285,7 @@ class Triangle(object):
         """
         Perform an homography operation to the Triangle vertices.
 
-        The homography is a geometrical tranformation that obtains the 
+        The homography is a geometrical transformation that obtains the 
         projection of certain points from a plain to another. 
         *self.vertices* variable is updated
 
@@ -292,11 +294,11 @@ class Triangle(object):
         :return: the new vertices coordinates values.
         """
         points = np.copy(self.vertices)
-        #Loop for performing the homography to very 2-D vertex' coordinates.
+        # Loop for performing the homography to very 2-D vertex' coordinates.
         for index, row in enumerate(points):
-            #Append '1' to the point vector and perform a matrix product with H.
+            # Append '1' to the point vector and perform a matrix product with H.
             operand = np.hstack([row, 1])
-            product = np.dot(H , operand)
+            product = np.dot(H, operand)
             new_point = product[0:2] / product[2]
             points[index] = new_point
         self.vertices = np.copy(points)
@@ -318,12 +320,12 @@ class Triangle(object):
         :return: the new vertices coordinates values.
         """
         points = np.copy(self.vertices)
-        #Loop for performing the homography to very 2-D vertex' coordinates.
+        # Loop for performing the homography to very 2-D vertex' coordinates.
         for index, row in enumerate(points):
-            #Append '1' to the point vector and perform a matrix product with H.
+            # Append '1' to the point vector and perform a matrix product with H.
             operand = np.hstack([row, 1])
-            #Use least squares method to get Y from X=H.Y
-            product = np.linalg.lstsq(H , operand)[0]
+            # Use least squares method to get Y from X=H.Y
+            product = np.linalg.lstsq(H, operand)[0]
             new_point = product[0:2] / product[2]
             points[index] = new_point
         self.vertices = np.copy(points)
@@ -347,16 +349,16 @@ class Triangle(object):
         :rtype: bool
         """
         for index in range(len(limits)):
-            #Define a segment with 2 limit points of the quadrant.
-            seg = Segment(limits[index], limits[index-1])
-            #Evaluate each vertex of the triangle.
+            # Define a segment with 2 limit points of the quadrant.
+            seg = Segment(limits[index], limits[index - 1])
+            # Evaluate each vertex of the triangle.
             for vertex in self.vertices:
-                #Get the distance in mm to the segment.
+                # Get the distance in mm to the segment.
                 dist = seg.distance2point(vertex)
-                #Evaluate if the vertex is closer than the tolerance.
+                # Evaluate if the vertex is closer than the tolerance.
                 if dist < tolerance:
                     return True
-        #If any of the vertices wasn't near to any of the segments return False.
+        # If any of the vertices wasn't near to any of the segments return False.
         return False
 
 
@@ -364,17 +366,18 @@ class Segment(object):
     """
     This class contains methods for dealing with 2D segments operations.
 
-    :param pointA: X and Y coordinates of the initial points.
-    :param pointB: X and Y coordinates of the  end points.
-    :type pointA: len-2 tuple or list
-    :type pointB: len-2 tuple or list
+    :param point_a: X and Y coordinates of the initial points.
+    :param point_b: X and Y coordinates of the  end points.
+    :type point_a: len-2 tuple or list
+    :type point_b: len-2 tuple or list
     """
-    def __init__(self, pointA, pointB):
+
+    def __init__(self, point_a, point_b):
         """Define the segment basic attributes.
         """
-        self.pointA = np.array(pointA)
-        self.pointB = np.array(pointB)
-        #Get the segment modulus for further operations.
+        self.pointA = np.array(point_a)
+        self.pointB = np.array(point_b)
+        # Get the segment modulus for further operations.
         self.modulus = np.linalg.norm(self.pointA - self.pointB)
 
     def distance2point(self, point):
@@ -393,37 +396,32 @@ class Segment(object):
         being :math:`|A| \\cdot cos(alpha)` the projection of A on B
 
         If the projection is less than 0, it implies that the point is
-        left to the first point (as cos(alphha) is negative), being this
+        left to the first point (as cos(alpha) is negative), being this
         first point the nearest one to the target point. 
 
-        Moreover, if the projection is greter than the modulus of the
+        Moreover, if the projection is greater than the modulus of the
         segment, it implies that the target point is is right to the end
         point, being this the nearest one.
 
         Finally, the the distance to the segment is obtained and 
-        returned using the Pitagoras' theorem.
+        returned using the Pythagoras' theorem.
 
         :return: The distance of the point to the segment
         """
-        #target point and Segment's final point coordinates referred to the
-        #initial point. Needed for the dot product.
+        # target point and Segment's final point coordinates referred to the
+        # initial point. Needed for the dot product.
         vector1 = self.pointB - self.pointA
         vector2 = point - self.pointA
-        #Distance from pointA to the projection of vector2 on vector1.
+        # Distance from pointA to the projection of vector2 on vector1.
         projection = np.dot(vector1, vector2) / self.modulus
-        #Case that target point is minor that pointA
+        # Case that target point is minor that pointA
         if projection <= 0:
             distance = np.linalg.norm(vector2)
-        #Case that target point is greater that pointB
+        # Case that target point is greater that pointB
         elif projection >= self.modulus:
             distance = np.linalg.norm(point - self.pointB)
-        #Case that target point is between pointA and pointB
+        # Case that target point is between pointA and pointB
         else:
-            #Pithagoras theorem for getting the leg of a right-angled triangle.
-            distance = np.sqrt((vector2**2).sum() - projection**2)
+            # Pythagoras theorem for getting the leg of a right-angled triangle.
+            distance = np.sqrt((vector2 ** 2).sum() - projection ** 2)
         return distance
-
-
-
-
-

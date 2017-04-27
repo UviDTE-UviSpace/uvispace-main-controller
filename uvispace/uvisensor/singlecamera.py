@@ -1,11 +1,4 @@
 #!/usr/bin/env python
-#Standard libraries
-import logging
-import numpy as np
-import threading
-#Local libraries
-import imgprocessing
-import videosensor
 """
 Main routine for controlling an external FPGA with a camera device.
 
@@ -21,6 +14,15 @@ NOTE: The proper way to end the program is to press 'Q', as the terminal
 prompt indicates during execution. Using the Keyboard Interrupt will 
 probably corrupt the TCP/IP socket and the FPGA will have to be reset.
 """
+# Standard libraries
+import logging
+import numpy as np
+import threading
+
+# Local libraries
+import videosensor
+
+
 def input_task(begin_event, end_event):
     """Ask user for 'Quit' command and wait until answer is obtained."""
     begin_event.wait()
@@ -30,12 +32,13 @@ def input_task(begin_event, end_event):
             end_event.set()
             print 'end_event set to {}'.format(end_event.isSet())
 
+
 def cam_task(begin_loop, end_loop, conf_file):
     """Initialize and request UGV position until program exit."""
     camera = videosensor.camera_startup(conf_file)
     triangles = [None]
     try:
-        #Check that camera is connected and tracker location and get a frame.
+        # Check that camera is connected and tracker location and get a frame.
         image, _ = videosensor.set_tracker(camera)
     except AttributeError:
         end_loop.set()
@@ -44,30 +47,30 @@ def cam_task(begin_loop, end_loop, conf_file):
         begin_loop.set()
     print 'entering loop'
     while not end_loop.isSet():
-        #Get the 8 points of the robot 1 and convert them to an array
+        # Get the 8 points of the robot 1 and convert them to an array
         try:
             location = camera.get_register('ACTUAL_LOCATION')['1']
         except KeyError:
             triangles = [None]
             continue
-        #Scale the contours obtained according to the FPGA to image ratio.
+        # Scale the contours obtained according to the FPGA to image ratio.
         contours = np.array(location) / camera._scale
-        #Convert from Cartesian to Image coordinates
-        tmp = np.copy(contours[:,0])
-        contours[:,0] = contours[:,1]
-        contours[:,1] = tmp
+        # Convert from Cartesian to Image coordinates
+        tmp = np.copy(contours[:, 0])
+        contours[:, 0] = contours[:, 1]
+        contours[:, 1] = tmp
         image.contours = [contours]
-        #Correct barrel distortion.
+        # Correct barrel distortion.
         image.correct_distortion()
-        #Obtain 3 vertices from the contours
+        # Obtain 3 vertices from the contours
         image.get_shapes(get_contours=False)
-        #If no triangles are detected, avoid next instructions.
+        # If no triangles are detected, avoid next instructions.
         if len(image.triangles):
             triangles[0] = image.triangles[0]
-            #Obtain global cartesian coordinates with a scale ratio 4:1.
+            # Obtain global cartesian coordinates with a scale ratio 4:1.
             triangles[0].get_local2global(camera.offsets, K=4)
             triangles[0].homography(camera._H)
-            #Block the lock object until the pose is written to dictionary.
+            # Block the lock object until the pose is written to dictionary.
             image.triangles[0].get_pose()
             logging.debug("detected triangle with vertices at {}"
                           "".format(image.triangles[0].get_pose()))
@@ -76,9 +79,9 @@ def cam_task(begin_loop, end_loop, conf_file):
     camera.disconnect_client()
 
 
-if __name__ == '__main__':
+def main():
     logging.basicConfig(format=('%(asctime)s.%(msecs)03d '
-                               '%(levelname)s:%(message)s'), 
+                                '%(levelname)s:%(message)s'),
                         level=logging.DEBUG,
                         datefmt='%H:%M:%S',
                         filename='./log/main.log')
@@ -89,10 +92,10 @@ if __name__ == '__main__':
     begin_event = threading.Event()
     end_event = threading.Event()
     threads = [
-           threading.Thread(target=input_task, args=(begin_event, end_event)),
-           threading.Thread(target=cam_task, 
-                            args=(begin_event, end_event, conf_file))
-              ]
+        threading.Thread(target=input_task, args=(begin_event, end_event)),
+        threading.Thread(target=cam_task,
+                         args=(begin_event, end_event, conf_file))
+    ]
     # start threads
     for thread in threads:
         thread.start()
@@ -101,7 +104,5 @@ if __name__ == '__main__':
         thread.join()
 
 
-
-
-
-
+if __name__ == '__main__':
+    main()
