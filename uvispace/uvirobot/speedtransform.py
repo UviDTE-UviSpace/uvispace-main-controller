@@ -166,7 +166,7 @@ class Speed(object):
             raise ValueError("Not a valid scale type: {}".format(self._scale))
         num = (self._speed - self._min_value) * (new_max - new_min)
         den = self._max_value - self._min_value
-        new_value = (num / den) + new_max
+        new_value = (num/den) + new_max
         self.set_speed(new_value)
         return new_value
 
@@ -221,7 +221,7 @@ class Speed(object):
         except (ValueError, TypeError) as e:
             raise e
         if not (float(min_A) < float(max_A) < float(scale_zero)
-                    < float(min_B) < float(max_B)):
+                < float(min_B) < float(max_B)):
             raise ValueError("Not valid segment limits. \
                     min_A < max_A < scale_zero < min_B < max_B")
         # Gets the value of the middle point
@@ -233,9 +233,9 @@ class Speed(object):
         den1 = self._max_value - zero_value
         den2 = zero_value - self._min_value
         # Operations applied to values greater than zero_value
-        speed[speed > zero_value] = (num1[speed > zero_value] / den1) + min_B
+        speed[speed>zero_value] = (num1[speed>zero_value] / den1) + min_B
         # Operations applied to values smaller than zero_value
-        speed[speed < zero_value] = (num2[speed < zero_value] / den2) + min_A
+        speed[speed<zero_value] = (num2[speed<zero_value] / den2) + min_A
         # Zero values are turned to the new scale defined zero
         speed[speed == zero_value] = scale_zero
         self._speed = speed

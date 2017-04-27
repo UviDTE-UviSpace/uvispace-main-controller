@@ -58,7 +58,7 @@ class SerMesProtocol(Serial):
         if self._isOpen:
             self.flushInput()
 
-    # -------------------MASTER-SLAVE COMMANDS-------------------#
+    # -------------------MASTER-SLAVE COMMANDS------------------- #
     def ready(self, tries=10):
         """
         Check if the communication channel is ready.
@@ -121,8 +121,7 @@ class SerMesProtocol(Serial):
             else:
                 return False
 
-                # -------------MASTER-SLAVE COMMANDS AUXILIAR FUNCTIONS-------------#
-
+    # -------------MASTER-SLAVE COMMANDS AUXILIAR FUNCTIONS------------- #
     def send_message(self, fun_code, data='', send_delay=0.01):
         """
         Send a message to slaves formatted with the defined protocol.
@@ -137,13 +136,13 @@ class SerMesProtocol(Serial):
         # Thus, these bytes have to be reversed.
         data_length = struct.pack('>H', len(data))[::-1]
         message = '{stx}{slave}{master}{ln}{func}{sent_data}{etx}'.format(
-            stx=self.STX,
-            slave=self.SLAVE_ID,
-            master=self.MASTER_ID,
-            ln=data_length,
-            func=fun_code,
-            sent_data=data,
-            etx=self.ETX)
+                stx=self.STX,
+                slave=self.SLAVE_ID,
+                master=self.MASTER_ID,
+                ln=data_length,
+                func=fun_code,
+                sent_data=data,
+                etx=self.ETX)
         # sends message.
         print 'sending... {}'.format(" ".join(hex(ord(n)) for n in message))
         self.write(message)
@@ -215,7 +214,7 @@ class SerMesProtocol(Serial):
 
         return (Rx_OK, fun_code, length, data)
 
-        # ---------- CLASS CONSTANTS ----------#
+        # ---------- CLASS CONSTANTS ---------- #
 
     # message fields
     STX = '\x02'

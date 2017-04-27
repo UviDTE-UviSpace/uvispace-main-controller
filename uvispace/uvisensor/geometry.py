@@ -96,8 +96,8 @@ class Triangle(object):
             raise ValueError("The scale ratio K must be greater than 0")
         else:
             self._scale = K
-        self.vertices[:, 0] = offsets[0] - self.vertices[:, 0]
-        self.vertices[:, 1] -= offsets[1]
+        self.vertices[:,0] = offsets[0] - self.vertices[:,0]
+        self.vertices[:,1] -= offsets[1]
         self.vertices *= self._scale
         self.barycenter[0] = offsets[0] - self.barycenter[0]
         self.barycenter[1] -= offsets[1]
@@ -112,9 +112,9 @@ class Triangle(object):
             pass
         if image2cartesian:
             # Convert the vertices coordinates
-            tmp = np.copy(self.vertices[:, 0])
-            self.vertices[:, 0] = self.vertices[:, 1]
-            self.vertices[:, 1] = tmp
+            tmp = np.copy(self.vertices[:,0])
+            self.vertices[:,0] = self.vertices[:,1]
+            self.vertices[:,1] = tmp
             # Convert the barycenter coordinates
             tmp = np.copy(self.barycenter[0])
             self.barycenter[0] = self.barycenter[1]
@@ -158,9 +158,9 @@ class Triangle(object):
             self._scale = K
         if cartesian2image:
             # Convert the vertices coordinates
-            tmp = np.copy(self.vertices[:, 0])
-            self.vertices[:, 0] = self.vertices[:, 1]
-            self.vertices[:, 1] = tmp
+            tmp = np.copy(self.vertices[:,0])
+            self.vertices[:,0] = self.vertices[:,1]
+            self.vertices[:,1] = tmp
             # Convert the barycenter coordinates
             tmp = np.copy(self.barycenter[0])
             self.barycenter[0] = self.barycenter[1]
@@ -174,8 +174,8 @@ class Triangle(object):
                 pass
             self.cartesian = False
         self.vertices /= self._scale
-        self.vertices[:, 0] = offsets[0] - self.vertices[:, 0]
-        self.vertices[:, 1] += offsets[1]
+        self.vertices[:,0] = offsets[0] - self.vertices[:,0]
+        self.vertices[:,1] += offsets[1]
         self.barycenter /= self._scale
         self.barycenter[0] = offsets[0] - self.barycenter[0]
         self.barycenter[1] += offsets[1]
@@ -221,8 +221,8 @@ class Triangle(object):
         # If 2 sides are equal, the common vertex is the front one and
         # The base midpoint is calculated with the other 2.
         self.base_index = np.argmin(self.sides)
-        self.midpoint = (vertices[self.base_index - 1]
-                         + vertices[self.base_index - 2]) / 2
+        self.midpoint = (vertices[self.base_index-1]
+                         + vertices[self.base_index-2]) / 2
         # Calculus of the x and y distance between the midpoint and the vertex
         # opposite to the base side.
         if self.cartesian:

@@ -141,9 +141,9 @@ class CameraThread(threading.Thread):
             # Scale the contours obtained according to the FPGA to image ratio.
             contours = np.array(locations) / self.camera._scale
             # Convert from Cartesian to Image coordinates
-            tmp = np.copy(contours[:, 0])
-            contours[:, 0] = contours[:, 1]
-            contours[:, 1] = tmp
+            tmp = np.copy(contours[:,0])
+            contours[:,0] = contours[:,1]
+            contours[:,1] = tmp
             self.image.contours = [contours]
             # Correct barrel distortion.
             self.image.correct_distortion()
@@ -278,7 +278,7 @@ class DataFusionThread(threading.Thread):
                         triangle = self._triangles[index]['1']
                         # Evaluate if triangle is in borders region.
                         self._inborders[index]['1'] = triangle.in_borders(
-                            self.quadrant_limits[index])
+                                self.quadrant_limits[index])
                     # If dictionary element is None, skip to next camera.
                     else:
                         continue
@@ -296,7 +296,7 @@ class DataFusionThread(threading.Thread):
                     if index2 == index:
                         continue
                     self._inborders[index2]['1'] = triangle.in_borders(
-                        self.quadrant_limits[index2])
+                            self.quadrant_limits[index2])
                     # Update triangles[index2] if there is not any tracker
                     # initialized and UGV is within borders of the Camera.
                     if (self._inborders[index2]['1'] and not
@@ -304,7 +304,7 @@ class DataFusionThread(threading.Thread):
                         self._ntriangles[index2]['1'] = copy.copy(triangle)
                         self._reset_flags[index2]['1'] = False
                         rospy.loginfo("New triangle in Camera{}".format(
-                            index2))
+                                index2))
                     # If the UGV is not in borders, but a tracker is set and is
                     # returning None values, it has to be reset.
                     elif (not self._inborders[index2]['1'] and

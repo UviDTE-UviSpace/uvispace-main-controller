@@ -160,7 +160,7 @@ class Client(Socket):
             packages.append(received_package)
         try:
             rospy.logdebug('Received {} bytes of {} ({:.2f}%)\r'.format(
-                bytes, size, (100 * float(bytes) / size)))
+                    bytes, size, (100 * float(bytes) / size)))
         except:
             pass
         # Concatenate all the packages in a unique variable

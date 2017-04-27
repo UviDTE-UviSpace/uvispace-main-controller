@@ -146,7 +146,7 @@ class Image(object):
                 # Calculate the r distance. First numerator and then denominator.
                 r = (distance ** 2).sum(axis=1).astype(np.float)
                 r /= (center ** 2).sum() * 2
-                coeffs = np.array([r * ky, r * kx]).transpose() + 1
+                coeffs = np.array([r*ky, r*kx]).transpose() + 1
                 corrected = distance * coeffs + center
                 self.contours[index] = corrected
         elif not only_contours:

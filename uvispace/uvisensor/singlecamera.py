@@ -56,9 +56,9 @@ def cam_task(begin_loop, end_loop, conf_file):
         # Scale the contours obtained according to the FPGA to image ratio.
         contours = np.array(location) / camera._scale
         # Convert from Cartesian to Image coordinates
-        tmp = np.copy(contours[:, 0])
-        contours[:, 0] = contours[:, 1]
-        contours[:, 1] = tmp
+        tmp = np.copy(contours[:,0])
+        contours[:,0] = contours[:,1]
+        contours[:,1] = tmp
         image.contours = [contours]
         # Correct barrel distortion.
         image.correct_distortion()

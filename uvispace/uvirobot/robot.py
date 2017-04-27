@@ -50,7 +50,7 @@ class RobotController(object):
         rospy.loginfo('\nLocation--> '
                       'X: {pose.x}, Y: {pose.y}, theta: {pose.theta} \n'
                       'Speeds--> Linear: {linear}, Angular {angular}'.format(
-                        pose=pose, linear=linear, angular=angular))
+                            pose=pose, linear=linear, angular=angular))
         self.speeds.linear.x = linear
         self.speeds.angular.z = angular
         self.pub_vel.publish(self.speeds)

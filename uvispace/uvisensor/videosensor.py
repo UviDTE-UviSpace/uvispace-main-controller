@@ -90,10 +90,10 @@ def set_tracker(camera, image=[]):
     for index, triangle in enumerate(image.triangles):
         triangle.get_pose()
         triangle.get_window(min_value=0, max_value=image.image.shape)
-        min_x = int(camera._scale * triangle.window[0, 1])
-        min_y = int(camera._scale * triangle.window[0, 0])
-        width = int(camera._scale * triangle.window[1, 1] - min_x)
-        height = int(camera._scale * triangle.window[1, 0] - min_y)
+        min_x = int(camera._scale * triangle.window[0,1])
+        min_y = int(camera._scale * triangle.window[0,0])
+        width = int(camera._scale * triangle.window[1,1] - min_x)
+        height = int(camera._scale * triangle.window[1,0] - min_y)
         camera.configure_tracker(index + 1, min_x, min_y, width, height)
         tracker_position = [index + 1, min_x, min_y, width, height]
     return image, tracker_position
@@ -213,11 +213,11 @@ class VideoSensor(object):
             return
         # Sensor color thresholds parameters
         self._params['red_thresholds'] = ast.literal_eval(
-            self.conf.get('Sensor', 'red_thresholds'))
+                self.conf.get('Sensor', 'red_thresholds'))
         self._params['green_thresholds'] = ast.literal_eval(
-            self.conf.get('Sensor', 'green_thresholds'))
+                self.conf.get('Sensor', 'green_thresholds'))
         self._params['blue_thresholds'] = ast.literal_eval(
-            self.conf.get('Sensor', 'blue_thresholds'))
+                self.conf.get('Sensor', 'blue_thresholds'))
         # Camera acquisition geometry parameters
         self._params['width'] = self.conf.getint('Camera', 'width')
         self._params['height'] = self.conf.getint('Camera', 'height')
