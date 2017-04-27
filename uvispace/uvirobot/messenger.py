@@ -5,7 +5,7 @@ This module 'listens' to speed SPs and sends them through serial port.
 **Usage: messenger.py [-r <robot_id>], [--robotid=<robot_id>]**
 
 To communicate with the external slaves, the data has to be packed using 
-a prearranged protocol, in order to be unpacked and understanded 
+a prearranged protocol, in order to be unpacked and understood 
 correctly by the slave.
 
 If it is run as main script, it creates an instance of the class 
@@ -32,16 +32,18 @@ import struct
 import sys
 import getopt
 import time
-import serial
 import os
+
 # ROS libraries
 import rospy
 from geometry_msgs.msg import Twist
+
 # Local libraries
 from serialcomm import SerMesProtocol
 from speedtransform import Speed
 import plotter
-    
+
+
 def connect_and_check(robot_id, port=None, baudrate=57600):
     """Return an instance of SerMesProtocol and check it is ready.
     
@@ -52,50 +54,52 @@ def connect_and_check(robot_id, port=None, baudrate=57600):
         try:
             port = glob.glob('/dev/ttyUSB*')[0]
         except IndexError:
-            print 'It was not detected any serial port connected to PC'		
+            print 'It was not detected any serial port connected to PC'
             sys.exit()
-    #Convert the Python id number to the C format 'unsigned byte'
-    serialcomm = SerMesProtocol(port=port, baudrate=baudrate)    
+    # Convert the Python id number to the C format 'unsigned byte'
+    serialcomm = SerMesProtocol(port=port, baudrate=baudrate)
     serialcomm.SLAVE_ID = struct.pack('>B', robot_id)
-    #Check connection to board. If broken, program exits
+    # Check connection to board. If broken, program exits
     if serialcomm.ready():
         print "The board is ready"
     else:
         print "The board is not ready"
         sys.exit()
-    return serialcomm        
-        
+    return serialcomm
+
+
 def listener(robot_id, robot_speed, serial):
-    """Create a node and subscribe to its robot 'cmd_vel' topic.""" 
+    """Create a node and subscribe to its robot 'cmd_vel' topic."""
     try:
         rospy.init_node('robot{}_messenger'.format(robot_id), anonymous=True)
     except rospy.exceptions.ROSException:
         pass
-    rospy.Subscriber('/robot_{}/cmd_vel'.format(robot_id), Twist, 
+    rospy.Subscriber('/robot_{}/cmd_vel'.format(robot_id), Twist,
                      move_robot, callback_args=serial,
                      queue_size=1)
-    
+
+
 def move_robot(data, my_serial, min_speed=70, max_speed=190):
     """Convert Twist msg into 2WD value and send it through port."""
-    #Change proposal. In order to accept all the parameters
-#    my_serial = args[0]
-#    robot_speed = args[1]
+    # Change proposal. In order to accept all the parameters
+    #    my_serial = args[0]
+    #    robot_speed = args[1]
     global t0
     global t1
     global t2
     t1 = time.time()
-    wait_times.append(t1-t0)
+    wait_times.append(t1 - t0)
     rospy.loginfo('New set point received')
     linear = data.linear.x
     angular = data.angular.z
     t2 = time.time()
-    speed_calc_times.append(t2-t1)
+    speed_calc_times.append(t2 - t1)
     robot_speed.set_speed([linear, angular], 'linear_angular')
-    #Get the right and left speeds in case of direct movement
-    #The coeficients were found empirically
+    # Get the right and left speeds in case of direct movement
+    # The coeficients were found empirically
     if (robot_speed.get_speed()[0] > 0):
         robot_speed.get_2WD_speeds(wheels_modifiers=[0.53, 1])
-    #Get the right and left speeds in case of reverse movement
+    # Get the right and left speeds in case of reverse movement
     else:
         robot_speed.get_2WD_speeds(wheels_modifiers=[1, 1])
     vRight, vLeft = robot_speed.nonlinear_transform(min_A=min_speed,
@@ -103,8 +107,9 @@ def move_robot(data, my_serial, min_speed=70, max_speed=190):
     rospy.loginfo('I am sending R: {} L: {}'.format(vRight, vLeft))
     my_serial.move([vRight, vLeft])
     t0 = time.time()
-    xbee_times.append(t0-t2)
+    xbee_times.append(t0 - t2)
     rospy.loginfo('Transmission ended succesfully\n\n')
+
 
 def stop_vehicle(my_serial):
     """Send a null speed to the UGV."""
@@ -124,15 +129,13 @@ def print_times(wait_times, speed_calc_times, xbee_times):
            'XBee message sending mean time: {xbee}'
            .format(wait=wait_mean_time, speed=speed_calc_mean_time,
                    xbee=xbee_mean_time)
-          )
-          
+           )
+
 
 if __name__ == "__main__":
-    #
-    ### Main routine ###
-    #
+    # Main routine
     help_msg = 'Usage: messenger.py [-r <robot_id>], [--robotid=<robot_id>]'
-    #This try/except clause forces to give the robot_id argument.
+    # This try/except clause forces to give the robot_id argument.
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hr:", ["robotid="])
     except getopt.GetoptError:
@@ -150,32 +153,25 @@ if __name__ == "__main__":
     wait_times = []
     speed_calc_times = []
     xbee_times = []
-    #Create an instance of SerMesProtocol and check connection to port.
+    # Create an instance of SerMesProtocol and check connection to port.
     my_serial = connect_and_check(robot_id)
     robot_speed = Speed()
     t0 = time.time()
-    listener(robot_id, robot_speed, my_serial)  
-    #Keep Python from exiting until this node is stopped.
-    rospy.spin()   
+    listener(robot_id, robot_speed, my_serial)
+    # Keep Python from exiting until this node is stopped.
+    rospy.spin()
     stop_vehicle(my_serial)
     print_times(wait_times, speed_calc_times, xbee_times)
 
-    ###############################################################
-    ########## Print the log output to files and plot it ##########
-    ###############################################################
+    # Print the log output to files and plot it
     script_path = os.path.dirname(os.path.realpath(__file__))
-    #A file identifier is generated from the current time value
+    # A file identifier is generated from the current time value
     file_id = int(time.time())
     with open('{}/tmp/comm{}.log'.format(script_path, file_id), 'a') as f:
         for item in xbee_times:
-            print>>f, '{0:.5f}'.format(item)
+            print>> f, '{0:.5f}'.format(item)
     with open('{}/tmp/waittimes{}.log'.format(script_path, file_id), 'a') as f:
         for item in wait_times:
-            print>>f, '{0:.5f}'.format(item)
-    #Plots the robot ideal path.
+            print>> f, '{0:.5f}'.format(item)
+    # Plots the robot ideal path.
     plotter.times_plot(xbee_times, wait_times)
-    
-
-    
-
-

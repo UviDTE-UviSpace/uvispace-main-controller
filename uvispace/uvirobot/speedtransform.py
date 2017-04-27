@@ -12,8 +12,8 @@ the *Arduino* manages speed values ranging from 0 to 255 for each wheel.
 The first 127 values represent reverse direction speeds, and the last 
 127 direct direction speeds (127 is null speed).
 """
-import sys
 import numpy as np
+
 
 class Speed(object):
     """
@@ -35,24 +35,24 @@ class Speed(object):
     :param str scale: Scaling of the speed. Possible values are 
      stored in the tuple *Speed.SPEEDSCALES*.
     :type speed: [float, float]
-    """    
+    """
     # Available speed formats
     SPEEDFORMATS = ('linear_angular', '2_wheel_drive')
     SPEEDSCALES = ('linear', 'non-linear')
-    
-    def __init__(self, speed=[0,0], min_value=-0.3, max_value=0.3,
+
+    def __init__(self, speed=[0, 0], min_value=-0.3, max_value=0.3,
                  spd_format='linear_angular', scale='linear'):
         self._min_value = min_value
         self._max_value = max_value
         self._speed = np.array([None, None])
         self._format = None
-        #Wheel's diameter
+        # Wheel's diameter
         self.rho = None
-        #Calls the set_speed method to initialize the format and speed 
-        #attributes.
+        # Calls the set_speed method to initialize the format and speed
+        # attributes.
         self._scale = self._set_scale(scale)
         self.set_speed(speed, spd_format)
-        
+
     def set_speed(self, speed, speed_format, speed_scale='linear'):
         """Set a new speed value.
         
@@ -77,17 +77,17 @@ class Speed(object):
         else:
             if len(speed) is not 2:
                 raise ValueError("Not a valid speed: {}".format(speed))
-        #If no errors are raised, assign values to _speed attribute.
+        # If no errors are raised, assign values to _speed attribute.
         self._speed = s
-        #The speed value is rounded to the nearest limit when out of bounds.
+        # The speed value is rounded to the nearest limit when out of bounds.
         self.check_bounds()
         self._set_format(speed_format)
         self._set_scale(speed_scale)
-    
+
     def get_speed(self):
         """Return the value of the speed."""
         return self._speed
-                
+
     def check_bounds(self):
         """Check that the speed values are inside valid bounds.
 
@@ -102,17 +102,17 @@ class Speed(object):
                     self._speed[index] = self._max_value
         if self._scale == 'non-linear':
             pass
-            #Checks if the speed value is in segmentA or segmentB.
+            # Checks if the speed value is in segmentA or segmentB.
         return self._speed
-        
+
     def get_min_value(self):
-        """ Return the minimum allowed value for a linear scale."""   
+        """ Return the minimum allowed value for a linear scale."""
         return self._min_value
-        
+
     def get_max_value(self):
-        """ Return the maximum allowed value for a linear scale."""   
+        """ Return the maximum allowed value for a linear scale."""
         return self._max_value
-        
+
     def _set_format(self, new_format):
         """Set the new format of the speed.
         
@@ -130,11 +130,11 @@ class Speed(object):
             self._max_value *= self.rho
             self._min_value *= self.rho
         self._format = new_format
-        
+
     def get_format(self):
         """Return the format value."""
         return self._format
-        
+
     def _set_scale(self, new_scale):
         """Set the scale of the speed.
         
@@ -146,7 +146,7 @@ class Speed(object):
         if not new_scale in self.SPEEDSCALES:
             raise ValueError("Not a valid scale type: {}".format(new_scale))
         self._scale = new_scale
-                
+
     def get_scale(self):
         """Return the scale value."""
         return self._scale
@@ -166,13 +166,13 @@ class Speed(object):
             raise ValueError("Not a valid scale type: {}".format(self._scale))
         num = (self._speed - self._min_value) * (new_max - new_min)
         den = self._max_value - self._min_value
-        new_value = (num/den) + new_max
+        new_value = (num / den) + new_max
         self.set_speed(new_value)
         return new_value
-        
+
     def nonlinear_transform(self, min_A=30, max_A=100,
-                                  min_B=160, max_B=220, 
-                                  scale_zero = 127):
+                            min_B=160, max_B=220,
+                            scale_zero=127):
         """ 
         Make a non-linear conversion of speed values.
         
@@ -216,33 +216,33 @@ class Speed(object):
         if self._scale is not 'linear':
             raise ValueError("Not a valid scale type: {}".format(self._scale))
         try:
-             condition = (float(min_A) < float(max_A) < float(scale_zero)
-                                            < float(min_B) < float(max_B))
+            condition = (float(min_A) < float(max_A) < float(scale_zero)
+                         < float(min_B) < float(max_B))
         except (ValueError, TypeError) as e:
             raise e
         if not (float(min_A) < float(max_A) < float(scale_zero)
-                                  < float(min_B) < float(max_B)):
+                    < float(min_B) < float(max_B)):
             raise ValueError("Not valid segment limits. \
                     min_A < max_A < scale_zero < min_B < max_B")
-        #Gets the value of the middle point
+        # Gets the value of the middle point
         zero_value = (self._max_value + self._min_value) / 2.0
         speed = self._speed
-        #Numerators and denominators for the 2 options of the inequation
+        # Numerators and denominators for the 2 options of the inequation
         num1 = (speed - zero_value) * (max_B - min_B)
         num2 = (speed - self._min_value) * (max_A - min_A)
         den1 = self._max_value - zero_value
         den2 = zero_value - self._min_value
-        #Operations applied to values greater than zero_value
-        speed[speed>zero_value] = (num1[speed>zero_value] / den1) + min_B
-        #Operations applied to values smaller than zero_value
-        speed[speed<zero_value] = (num2[speed<zero_value] / den2) + min_A
-        #Zero values are turned to the new scale defined zero
-        speed[speed==zero_value] = scale_zero
+        # Operations applied to values greater than zero_value
+        speed[speed > zero_value] = (num1[speed > zero_value] / den1) + min_B
+        # Operations applied to values smaller than zero_value
+        speed[speed < zero_value] = (num2[speed < zero_value] / den2) + min_A
+        # Zero values are turned to the new scale defined zero
+        speed[speed == zero_value] = scale_zero
         self._speed = speed
         self._scale = 'non-linear'
         return self._speed
-        
-    def get_2WD_speeds(self, rho=0.065, L=0.150, wheels_modifiers=[1,1]):
+
+    def get_2WD_speeds(self, rho=0.065, L=0.150, wheels_modifiers=[1, 1]):
         """
         Obtain two speeds components, one for each side of the vehicle.
         
@@ -273,18 +273,18 @@ class Speed(object):
             return self.get_speed()
         vLinear = self._speed[0]
         vRotation = self._speed[1]
-        #Extract and clip the 2 coefficients from the input list
+        # Extract and clip the 2 coefficients from the input list
         right_coef, left_coef = np.clip(wheels_modifiers, 0, 1)
-        #Conversion of the linear speed range to the wheels angular speed.
+        # Conversion of the linear speed range to the wheels angular speed.
         self._max_value /= rho
         self._min_value /= rho
-        #Calculation of the 2 different values of the conversion matrix.
-        term1 = (1 / rho ) * vLinear
-        term2 = (2 * rho * vRotation) / L    
-        #Calculates the raw velocity values.
+        # Calculation of the 2 different values of the conversion matrix.
+        term1 = (1 / rho) * vLinear
+        term2 = (2 * rho * vRotation) / L
+        # Calculates the raw velocity values.
         vR_raw = (term1 + term2) * right_coef
         vL_raw = (term1 - term2) * left_coef
-        #Clips the raw velocities to avoid invalid values
+        # Clips the raw velocities to avoid invalid values
         rl_speeds = np.clip([vR_raw, vL_raw], self._min_value, self._max_value)
         self.set_speed(rl_speeds, '2_wheel_drive')
         return self._speed
