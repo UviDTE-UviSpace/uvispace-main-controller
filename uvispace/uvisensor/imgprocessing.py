@@ -6,7 +6,7 @@ The operations implemented in the class methods are focused to the
 images obtained from the external FPGAs in the UviSpace project. Thus, 
 once obtained a grey scale image, this module provide functions for 
 getting the shapes (triangles) in the image, and then their vertices. 
-Prior to segmentate the image, a binarization has to be applied, as it 
+Prior to segment the image, a binarization has to be applied, as it 
 eases the segmentation process. 
 
 Important note
@@ -31,16 +31,18 @@ array convention. Finally, when sending the array values to a viewer or
 to an external device, the image representation mentioned above is 
 the typical used system.
 """
-#Standard libraries
+# Standard libraries
 import cv2
 import numpy as np
-from scipy import ndimage
 import skimage.measure
 import skimage.morphology
-#ROS libraries
+
+# ROS libraries
 import rospy
-#Local libraries
+
+# Local libraries
 import geometry
+
 
 class Image(object):
     """Class with image processing methods oriented to UGV detection.
@@ -49,6 +51,7 @@ class Image(object):
     :param list contours: each element is an Mx2 array containing M 
      points defining a closed contour.
     """
+
     def __init__(self, image, contours=[]):
         """
         Image class constructor. Set image and contours attributes.
@@ -74,7 +77,7 @@ class Image(object):
         the noise in the rest of the image.
 
         :param [int or float, int or float] thresholds : minimum and 
-         maximum values betweeen whom the image intensity values will be
+         maximum values between whom the image intensity values will be
          accepted as 1 (rescaled to 255). Values greater than the 
          maximum and smaller than the minimum will be truncated to 0.
         
@@ -83,29 +86,29 @@ class Image(object):
          to the input threshold values.
         :rtype: binary numpy.array(shape=MxN)
         """
-        #Obtain the thresholds in base 2 and get the red component slice.
+        # Obtain the thresholds in base 2 and get the red component slice.
         th_min = bin(thresholds[0])
         th_max = bin(thresholds[1])
         red_c = (th_min[-30:-20], th_max[-30:-20])
-        #Why is it neccesary to divide by 4??
+        # Why is it necessary to divide by 4??
         thr_min = int(red_c[0], 2) / 4
         thr_max = int(red_c[1], 2) / 4
         rospy.logdebug("Thresholding between {} and {}".format(thr_min,
                                                                thr_max))
-        #The first binary approach is obtained evaluating 2 thresholds
+        # The first binary approach is obtained evaluating 2 thresholds
         raw_binarized = cv2.inRange(self.image, thr_min, thr_max)
-        #A simple erosion gets rid of the whole noise. Dilating the eroded  
-        #image several times provides an acceptable ROI for the binary mask.
-        kernel = np.ones((5,5),np.uint8)
+        # A simple erosion gets rid of the whole noise. Dilating the eroded
+        # image several times provides an acceptable ROI for the binary mask.
+        kernel = np.ones((5, 5), np.uint8)
         erosion = cv2.erode(raw_binarized, kernel, iterations=1)
-        kernel = np.ones((5,5),np.uint8)
-        dilate = cv2.dilate(erosion,kernel,iterations = 5)
+        kernel = np.ones((5, 5), np.uint8)
+        dilate = cv2.dilate(erosion, kernel, iterations=5)
         mask = dilate / 255
         filtered = raw_binarized * mask
-        #Eliminate holes inside the detected shapes
+        # Eliminate holes inside the detected shapes
         labels = skimage.morphology.label(filtered)
         label_count = np.bincount(labels.ravel())
-        #Detect the background pixels, assuming they are majority in the image.
+        # Detect the background pixels, assuming they are majority in the image.
         background = np.argmax(label_count)
         self._binarized = filtered
         self._binarized[labels != background] = 255
@@ -134,13 +137,13 @@ class Image(object):
         :param bool only_contours: Specify if the correction is to be 
          applied to the whole image or only to the contours.
         """
-        #Calculate the image center as the middle point of the width and height.
-        center = np.array(self.image.shape)/2
-        #If contours is an empty list, algorithm is not outperformed.
+        # Calculate the image center as the middle point of the width and height.
+        center = np.array(self.image.shape) / 2
+        # If contours is an empty list, algorithm is not outperformed.
         if only_contours and self.contours:
             for index, cnt in enumerate(self.contours):
                 distance = cnt - center
-                #Calculate the r distance. First numerator and then denominator.
+                # Calculate the r distance. First numerator and then denominator.
                 r = (distance ** 2).sum(axis=1).astype(np.float)
                 r /= (center ** 2).sum() * 2
                 coeffs = np.array([r*ky, r*kx]).transpose() + 1
@@ -148,7 +151,6 @@ class Image(object):
                 self.contours[index] = corrected
         elif not only_contours:
             pass
-                
 
     def get_shapes(self, tolerance=8, get_contours=True):
         """
@@ -178,29 +180,24 @@ class Image(object):
         :rtype: list
         """
         rospy.logdebug("Getting the shapes' vertices in the image")
-        #Obtain a list with all the contours in the image, separating each
-        #shape in a different element of the list
+        # Obtain a list with all the contours in the image, separating each
+        # shape in a different element of the list
         if get_contours:
             self.contours = skimage.measure.find_contours(self._binarized, 200)
         self.triangles = []
-        #Get the vertices of each shape in the image.
+        # Get the vertices of each shape in the image.
         for cnt in self.contours:
             coords = skimage.measure.approximate_polygon(cnt, tolerance)
             max_coords = np.array(self.image.shape) - 1
-            #Sometimes, the initial vertex is repeatead at the end. 
-            #Thus, if len is 3 and vertex is NOT repeated, it is a triangle
+            # Sometimes, the initial vertex is repeatead at the end.
+            # Thus, if len is 3 and vertex is NOT repeated, it is a triangle
             if len(coords) == 3 and (not np.array_equal(coords[0], coords[-1])):
-                triangle = geometry.Triangle(np.clip(coords, [0,0], max_coords))
+                triangle = geometry.Triangle(np.clip(coords, [0, 0], max_coords))
                 self.triangles.append(triangle)
-            #If len is 4 and vertex IS repeated, it is a triangle
-            if len(coords) == 4 and  np.array_equal(coords[0], coords[-1]):
-                triangle = geometry.Triangle(np.clip(coords[1:], 
-                                                    [0,0], max_coords))
+            # If len is 4 and vertex IS repeated, it is a triangle
+            if len(coords) == 4 and np.array_equal(coords[0], coords[-1]):
+                triangle = geometry.Triangle(np.clip(coords[1:],
+                                                     [0, 0], max_coords))
                 self.triangles.append(triangle)
             rospy.logdebug("A {}-vertices shape was found".format(len(coords)))
         return self.triangles
-
-        
-
-
-

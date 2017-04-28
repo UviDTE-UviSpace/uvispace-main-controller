@@ -2,16 +2,17 @@
 """This module communicates with user and sensors for finding paths.
 
 It contains a class, *RobotController*, that represents a real UGV, and 
-contains ROS functionalities for publishing new speed values, UGV's 
+contains ROS functionality for publishing new speed values, UGV's 
 attributes, such as the *robot_id*, its speed values, or an instance 
 of the *PathTracker*, for calculating and storing the robot navigation 
 values.
 """
 # ROS libraries
 import rospy
-from geometry_msgs.msg import Twist, Pose2D
+from geometry_msgs.msg import Twist
 # Local libraries
 import path_tracker
+
 
 class RobotController(object):
     """
@@ -19,6 +20,7 @@ class RobotController(object):
 
     :param int robot_id: Identifier of the robot
     """
+
     def __init__(self, robot_id=1):
         """Class constructor method"""
         self.robot_id = robot_id
@@ -27,7 +29,7 @@ class RobotController(object):
         self.QCTracker = path_tracker.QuadCurveTracker()
         self.pub_vel = rospy.Publisher('/robot_{}/cmd_vel'.format(robot_id),
                                        Twist, queue_size=1)
-		
+
     def set_speed(self, pose):
         """
         Receives a new pose and calculates the UGV speeds.
@@ -42,13 +44,13 @@ class RobotController(object):
         :type pose: gemoetry_msgs.Pose2D
         """
         if self.init == False:
-            self.QCTracker.append_point((pose.x, pose.y))  
+            self.QCTracker.append_point((pose.x, pose.y))
             self.init = True
         linear, angular = self.QCTracker.run(pose.x, pose.y, pose.theta)
         rospy.loginfo('\nLocation--> '
-               'X: {pose.x}, Y: {pose.y}, theta: {pose.theta} \n'
-               'Speeds--> Linear: {linear}, Angular {angular}'.format(
-               pose=pose, linear=linear, angular=angular))
+                      'X: {pose.x}, Y: {pose.y}, theta: {pose.theta} \n'
+                      'Speeds--> Linear: {linear}, Angular {angular}'.format(
+                            pose=pose, linear=linear, angular=angular))
         self.speeds.linear.x = linear
         self.speeds.angular.z = angular
         self.pub_vel.publish(self.speeds)
@@ -61,19 +63,18 @@ class RobotController(object):
          values (x,y) and an angle value (theta).
         :type goal: geometry_msgs.Pose2D
         """
-        if self.init :
+        if self.init:
             goal_point = (goal.x, goal.y)
             # Adds the new goal to the current path, calculating all the 
             # intermediate points and stacking them to the path array
             self.QCTracker.append_point(goal_point)
             rospy.loginfo('New goal--> X: {}, Y: {}'.format(goal.x, goal.y))
-        else :
+        else:
             rospy.loginfo(' The system is not yet initialized. \
             Waiting for a pose to be published ')
-            
+
     def on_shutdown(self):
         """ Shutdown method. Is called when execution is aborted."""
         self.speeds.linear.x = 0.0
         self.speeds.angular.z = 0.0
-        self.pub_vel.publish(self.speeds)   
-
+        self.pub_vel.publish(self.speeds)

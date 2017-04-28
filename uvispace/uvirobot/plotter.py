@@ -11,19 +11,19 @@ It has 3 functions:
   represent the 2-D coordinates of the working real space.
 * *times_plot*: Draws the time delays during execution. It is intended 
   to draw 2 plots, one representing the communication delays with the 
-  slave, and the other repesenting the waiting times for other modules 
+  slave, and the other representing the waiting times for other modules 
   of the project to give required updates of the speed values.
 """
-#Standard libraries
+# Standard libraries
 import matplotlib.pyplot as plt
-from mpl_toolkits.axes_grid1 import host_subplot
 import numpy as np
 import os
+
 
 def format_plotting():
     plt.rcParams['figure.figsize'] = (10, 8)
     plt.rcParams['font.size'] = 22
-#    plt.rcParams['font.family'] = 'Times New Roman'
+    #    plt.rcParams['font.family'] = 'Times New Roman'
     plt.rcParams['axes.labelsize'] = plt.rcParams['font.size']
     plt.rcParams['axes.titlesize'] = 1.2 * plt.rcParams['font.size']
     plt.rcParams['legend.fontsize'] = 0.9 * plt.rcParams['font.size']
@@ -48,31 +48,33 @@ def format_plotting():
     plt.gca().spines['right'].set_color('none')
     plt.gca().spines['top'].set_color('none')
     plt.gca().xaxis.set_ticks_position('bottom')
-    plt.gca().yaxis.set_ticks_position('left')   
+    plt.gca().yaxis.set_ticks_position('left')
+
 
 def path_plot(input_path, real_route):
     """Draw on a figure the desired and real paths."""
     x1, y1 = input_path[:,0], input_path[:,1]
-    #If there is only one point in the array, an IndexError will be raised.
+    # If there is only one point in the array, an IndexError will be raised.
     try:
         x2, y2 = real_route[:,0], real_route[:,1]
     except IndexError:
         x2, y2 = real_route[0], real_route[1]
-    #Draws the figure
+    # Draws the figure
     format_plotting()
     ax = plt.subplot(111)
-    #Plotting of the 2 lines, with 'point' markers and blue and red colours
+    # Plotting of the 2 lines, with 'point' markers and blue and red colours
     line1, = ax.plot(x1, y1, 'b.-')
-    line2, = ax.plot(x2, y2, 'r.-')    
+    line2, = ax.plot(x2, y2, 'r.-')
     ax.grid()
     ax.axis('equal')
     ax.set_xlim([-2, 2])
     ax.set_ylim([-2, 2])
-    ax.set_xlabel('X Axis')    
+    ax.set_xlabel('X Axis')
     ax.set_ylabel('Y Axis')
     script_path = os.path.dirname(os.path.realpath(__file__))
     plt.savefig('{}/tmp/path_plot.eps'.format(script_path), bbox_inches='tight')
     plt.show()
+
 
 def times_plot(commtimes, waittimes):
     """Draw the history of communication times with the XBee modules.
@@ -86,19 +88,19 @@ def times_plot(commtimes, waittimes):
     comm_numbers = np.arange(len(commtimes))
     commdata = np.array([comm_numbers, commtimes]).transpose()
     x1, y1 = commdata[:,0], commdata[:,1]
-    #The first value of waittimes is ignored as it is the time for setting up.
+    # The first value of waittimes is ignored as it is the time for setting up.
     wait_numbers = np.arange(len(waittimes[1:]))
     waitdata = np.array([wait_numbers, waittimes[1:]]).transpose()
-    #If there is only one point in the array, an IndexError will be raised.
+    # If there is only one point in the array, an IndexError will be raised.
     try:
         x2, y2 = waitdata[:,0], waitdata[:,1]
     except IndexError:
         x2, y2 = waitdata[0], waitdata[1]
     format_plotting()
-#    fig = plt.figure()
+    #    fig = plt.figure()
     ax = plt.subplot(111)
-    line1, = ax.plot(x1, y1, 'bo-', label= 'Communication times')
-    line2, = ax.plot(x2, y2, 'ro-', label= 'Waiting times')
+    line1, = ax.plot(x1, y1, 'bo-', label='Communication times')
+    line2, = ax.plot(x2, y2, 'ro-', label='Waiting times')
     ax.grid()
     ax.set_xlim(left=0)
     ax.set_ylim(bottom=0)
@@ -107,33 +109,34 @@ def times_plot(commtimes, waittimes):
     legend = plt.legend(shadow=True)
     script_path = os.path.dirname(os.path.realpath(__file__))
 
-#    import pdb; pdb.set_trace()
     plt.savefig('{}/tmp/times_plot.eps'.format(script_path),
-                                         bbox_inches='tight')
+                bbox_inches='tight')
     plt.show()
 
 
-if __name__ == "__main__":
+def main():
     test_path = np.array(
-          [[ 0.0,  0.0],
-           [ 0.1,  0.1],
-           [ 0.1,  0.2],
-           [ 0.1,  0.3],
-           [ 0.2,  0.5],
-           [ 0.4,  0.6]])
+            [[0.0, 0.0],
+             [0.1, 0.1],
+             [0.1, 0.2],
+             [0.1, 0.3],
+             [0.2, 0.5],
+             [0.4, 0.6]])
     test_route = np.array(
-          [[ 0.0,  0.0],
-           [ 0.0,  -0.1],
-           [ 0.1,  0.0],
-           [ 0.4,  0.5],
-           [ 0.5,  0.6],
-           [ 0.8,  0.7],
-           [ 1.0,  0.0],
-           [ 0.7,  -0.6],
-           [ 2.0,  -1.6]])
+            [[0.0, 0.0],
+             [0.0, -0.1],
+             [0.1, 0.0],
+             [0.4, 0.5],
+             [0.5, 0.6],
+             [0.8, 0.7],
+             [1.0, 0.0],
+             [0.7, -0.6],
+             [2.0, -1.6]])
     path_plot(test_path, test_route)
-    
-#ellipse with center in (0,0), width
 
 
+# ellipse with center in (0,0), width
 
+
+if __name__ == '__main__':
+    main()

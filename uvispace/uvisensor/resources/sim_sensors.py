@@ -6,8 +6,6 @@ A robot is simulated to be placed at the coordinate (1,1) with an angle
 of 0 radians. The pose is published to the topic every 25 milliseconds.
 """
 import rospy
-import roslib
-from std_msgs.msg import String
 from geometry_msgs.msg import Pose2D
 import time
 
