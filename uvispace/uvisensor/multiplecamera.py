@@ -330,7 +330,9 @@ class DataFusionThread(threading.Thread):
             if triangle:
                 pose = triangle.get_pose()
                 # Convert coordinates to meters.
-                mpose = [pose[0] / 1000, pose[1] / 1000, pose[2]]
+                mpose = [np.asscalar(pose[0]) / 1000,
+                         np.asscalar(pose[1]) / 1000,
+                         np.asscalar(pose[2])]
                 logging.debug("detected triangle at {}mm and {} radians."
                                "".format(pose[0:2], pose[2]))
                 pose_msg = {'x': mpose[0], 'y': mpose[1], 'theta': mpose[2]}

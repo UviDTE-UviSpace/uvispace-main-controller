@@ -6,6 +6,9 @@ A robot is simulated to be placed at the coordinate (1,1) with an angle
 of 0 radians. The pose is published every 25 milliseconds.
 """
 import time
+from decimal import Decimal
+import numpy
+
 import zmq
 
 
@@ -14,9 +17,9 @@ def main():
     # FIXME [floonone-20170503] hardcoded socket bind
     publisher.bind("tcp://*:35001")
     position = {
-        'x': 1.0,
-        'y': 1.0,
-        'theta': 0.0
+        'x': numpy.asscalar(numpy.float32(1.0)),
+        'y': numpy.asscalar(numpy.float32(2.4)),
+        'theta': numpy.asscalar(numpy.float32(-2.9385785723))
     }
     try:
         while True:
