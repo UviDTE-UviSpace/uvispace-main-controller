@@ -26,10 +26,8 @@ import copy
 import numpy as np
 import threading
 import time
-
-# ROS libraries
-from geometry_msgs.msg import Pose2D
-import rospy
+import logging
+import zmq
 
 # Local libraries
 import videosensor
@@ -161,7 +159,7 @@ class CameraThread(threading.Thread):
             # Free the ROI tracker if corresponding flag was raised
             if self._reset_flag['1']:
                 self.camera.set_register('FREE_TRACKER', '1')
-                rospy.loginfo('{} TRACKER FREED'.format(self.name))
+                logging.info('{} TRACKER FREED'.format(self.name))
                 self._reset_flag = {'1': False}
                 self._triangles.pop('1', None)
             # Sync operations. Write to global variables.
@@ -174,7 +172,7 @@ class CameraThread(threading.Thread):
             # Sleep the rest of the cycle
             while (time.time() - cycle_start_time < self.cycletime):
                 pass
-        rospy.logdebug('shutting down {}'.format(self.name))
+        logging.debug('shutting down {}'.format(self.name))
         self.camera.disconnect_client()
 
 
@@ -218,9 +216,6 @@ class DataFusionThread(threading.Thread):
     :param end_event: *threading.Event* object that is set to True when 
      the *UserThread* detects an 'end' order from the user.
 
-    :param publisher: *rospy.Publisher* object for sending pose values to 
-     a ROS topic, that can be read by other ROS nodes.
-
     :param reset_flags: List containing N dictionaries whose entries are
      flags set to True when a ROI tracker in specified FPGA to be reset.
 
@@ -229,12 +224,14 @@ class DataFusionThread(threading.Thread):
 
     def __init__(self, triangles, ntriangles, conditions, inborders,
                  quadrant_limits, begin_events, end_event, reset_flags,
-                 publisher, name='Fusion Thread'):
+                 name='Fusion Thread'):
         """
         Class constructor method
         """
         threading.Thread.__init__(self, name=name)
-        self.publisher = publisher
+        # FIXME [floonone-20170503] hardcoded socket bind
+        self.publisher = zmq.Context.instance().socket(zmq.PUB)
+        self.publisher.bind("tcp://*:35001")
         self.cycletime = 0.02
         self.quadrant_limits = quadrant_limits
         # Synchronization variables
@@ -303,7 +300,7 @@ class DataFusionThread(threading.Thread):
                     self._triangles[index2]):
                         self._ntriangles[index2]['1'] = copy.copy(triangle)
                         self._reset_flags[index2]['1'] = False
-                        rospy.loginfo("New triangle in Camera{}".format(
+                        logging.info("New triangle in Camera{}".format(
                                 index2))
                     # If the UGV is not in borders, but a tracker is set and is
                     # returning None values, it has to be reset.
@@ -334,10 +331,11 @@ class DataFusionThread(threading.Thread):
                 pose = triangle.get_pose()
                 # Convert coordinates to meters.
                 mpose = [pose[0] / 1000, pose[1] / 1000, pose[2]]
-                rospy.logdebug("detected triangle at {}mm and {} radians."
+                logging.debug("detected triangle at {}mm and {} radians."
                                "".format(pose[0:2], pose[2]))
-                self.publisher.publish(Pose2D(mpose[0], mpose[1], mpose[2]))
-            rospy.loginfo("Triangles at: {}".format(self._triangles))
+                pose_msg = {'x': mpose[0], 'y': mpose[1], 'theta': mpose[2]}
+                self.publisher.send_json(pose_msg)
+            logging.info("Triangles at: {}".format(self._triangles))
             #            rospy.loginfo("Borders: {}".format(self._inborders))
             # Sleep the rest of the cycle
             while (time.time() - cycle_start_time < self.cycletime):
@@ -372,7 +370,7 @@ class UserThread(threading.Thread):
         # Wait until all camera threads start.
         for event in self.begin_events:
             event.wait()
-        rospy.loginfo("All cameras were initialized")
+        logging.info("All cameras were initialized")
         while not self.end_event.isSet():
             # Start the cycle timer
             cycle_start_time = time.time()
@@ -391,9 +389,7 @@ def main():
     Read configuration files, initialize variables and set up threads.
     :return: 
     """
-    rospy.init_node('uvisensor')
-    publisher = rospy.Publisher('/robot_1/pose2d', Pose2D, queue_size=1)
-    rospy.loginfo("BEGINNING MAIN EXECUTION")
+    logging.info("BEGINNING MAIN EXECUTION")
     # Get the relative path to all the config files stored in /config folder.
     conf_files = glob.glob("./resources/config/*.cfg")
     conf_files.sort()
@@ -427,7 +423,7 @@ def main():
     # Thread for merging the data obtained at every CameraThread.
     threads.append(DataFusionThread(triangles, ntriangles, conditions,
                                     inborders, quadrant_limits, begin_events,
-                                    end_event, reset_flags, publisher))
+                                    end_event, reset_flags))
     # Thread for getting user input.
     threads.append(UserThread(begin_events, end_event))
     # start threads
