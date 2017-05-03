@@ -3,7 +3,7 @@
 Routine for getting UGV poses and publishing to speed topic
 
 The module instantiates a RobotController object and uses its methods
-for publishing new speed set points in the topic '/robot_{}/cmd_vel'.
+for publishing new speed set points.
 
 When calling the module, one argument must be passed, representing the 
 id of the desired robot. It must be the same as the one passed to the
@@ -15,35 +15,20 @@ import os
 import getopt
 import numpy as np
 import time
-
-# ROS libraries
-import rospy
-from geometry_msgs.msg import Pose2D
+import zmq
 
 # Local libraries
 from robot import RobotController
 import plotter
 
 
-def new_node(my_robot, robot_id):
-    """Subscribe to topics and spins until aborted."""
-    rospy.init_node('move_robot_{}'.format(robot_id), anonymous=True)
-    # The pose is published by the uvispace package
-    rospy.Subscriber('/robot_{}/pose2d'.format(robot_id), Pose2D,
-                     my_robot.set_speed, queue_size=1)
-    # The new goals are published by the user
-    rospy.Subscriber('/robot_{}/goal'.format(robot_id), Pose2D,
-                     my_robot.new_goal, queue_size=1)
-    rospy.on_shutdown(my_robot.on_shutdown)
-
-
 def make_a_rectangle(my_robot):
     """Set the robot path to a rectangle of fixed vertices."""
-    point_a = Pose2D(x=1.0, y=1.0)
-    point_b = Pose2D(x=-1.0, y=1.0)
-    point_c = Pose2D(x=-1.0, y=-1.0)
-    point_d = Pose2D(x=1.0, y=-1.0)
-    point_e = Pose2D(x=1.0, y=0.0)
+    point_a = {'x': 1.0, 'y': 1.0}
+    point_b = {'x': -1.0, 'y': 1.0}
+    point_c = {'x': -1.0, 'y': -1.0}
+    point_d = {'x': 1.0, 'y': -1.0}
+    point_e = {'x': 1.0, 'y': 0.0}
     my_robot.new_goal(point_a)
     my_robot.new_goal(point_b)
     my_robot.new_goal(point_c)
@@ -51,10 +36,60 @@ def make_a_rectangle(my_robot):
     my_robot.new_goal(point_e)
 
 
+def init_sockets():
+    # Open a subscribe socket to listen for position data
+    pos_sock = zmq.Context.instance().socket(zmq.SUB)
+    pos_sock.setsockopt_string(zmq.SUBSCRIBE, u"")
+    pos_sock.setsockopt(zmq.CONFLATE, True)
+    # FIXME [floonone-20170503] hardcoded socket connect
+    pos_sock.connect("tcp://localhost:35001")
+
+    # Open a subscribe socket to listen for new goals
+    goa_sock = zmq.Context.instance().socket(zmq.SUB)
+    goa_sock.setsockopt_string(zmq.SUBSCRIBE, u"")
+    pos_sock.setsockopt(zmq.CONFLATE, True)
+    # FIXME [floonone-20170503] hardcoded socket connect
+    goa_sock.connect("tcp://localhost:35021")
+
+    sockets = {
+        'position': pos_sock,
+        'goal': goa_sock
+    }
+    return sockets
+
+
+def listen(sockets, my_robot):
+    # Initialize poll set
+    poller = zmq.Poller()
+    poller.register(sockets['position'], zmq.POLLIN)
+    poller.register(sockets['goal'], zmq.POLLIN)
+
+    # listen for position information and new goal points
+    try:
+        while True:
+            socks = dict(poller.poll())
+            if sockets['position'] in socks \
+                    and socks[sockets['position']] == zmq.POLLIN:
+                position = sockets['position'].recv_json()
+                print(position)
+                my_robot.set_speed(position)
+
+            if sockets['goal'] in socks \
+                    and socks[sockets['goal']] == zmq.POLLIN:
+                goal = sockets['goal'].recv_json()
+                my_robot.new_goal(goal)
+
+            time.sleep(0.5)
+
+    except KeyboardInterrupt:
+        my_robot.on_shutdown()
+    return
+
+
 def main():
     # This exception forces to give the robot_id argument within run command.
     rectangle_path = False
-    help_msg = ('Usage: move_robot.py [-r <robot_id>], [--robotid=<robot_id>], '
+    help_msg = ('Usage: controller.py [-r <robot_id>], [--robotid=<robot_id>], '
                 '[--rectangle]')
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hr:", ["robotid=",
@@ -69,27 +104,34 @@ def main():
         if opt == '-h':
             print help_msg
             sys.exit()
-        elif opt in ("-r", "--robotid"):
+        if opt in ("-r", "--robotid"):
             robot_id = int(arg)
-        elif opt == "--rectangle":
+        if opt == "--rectangle":
             rectangle_path = True
-    # Calls the main function  
+    # Calls the main function
     my_robot = RobotController(robot_id)
-    new_node(my_robot, robot_id)
+
+    # Open listening sockets
+    sockets = init_sockets()
+
     # Until the first pose is not published, the robot instance
     # is not initialized.
     while not my_robot.init:
-        pass
+        position = sockets['position'].recv_json()
+        my_robot.set_speed(position)
+
     # This function sends 4 rectangle points to the robot path.
     if rectangle_path:
         make_a_rectangle(my_robot)
-    rospy.spin()
+
+    # Listen sockets
+    listen(sockets, my_robot)
 
     # Print the log output to files and plot it
     script_path = os.path.dirname(os.path.realpath(__file__))
     # A file identifier is generated from the current time value
-    file_id = int(time.time())
-    with open('{}/tmp/path{}.log'.format(script_path, file_id), 'a') as f:
+    file_id = time.strftime('%Y%m%d_%H%M')
+    with open('{}/tmp/path_{}.log'.format(script_path, file_id), 'a') as f:
         np.savetxt(f, my_robot.QCTracker.route, fmt='%.2f')
     # Plots the robot ideal path.
     plotter.path_plot(my_robot.QCTracker.path, my_robot.QCTracker.route)
