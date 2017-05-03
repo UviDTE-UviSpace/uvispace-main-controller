@@ -46,18 +46,19 @@ class RobotController(object):
         Only the values X, Y and theta of the *Pose2D* type are used, as 
         the designed Space consists in a 2-D flat space.
 
-        :param pose: contains a 2-D position, with 2 cartesian values 
-         (x,y) and an angle value (theta).
-        :type pose: geometry_msgs.Pose2D
+        :param pose: contains a 2-D position, with 2 cartesian values (x,y)
+         and an angle value (theta).
         """
         if not self.init:
-            self.QCTracker.append_point((pose.x, pose.y))
+            self.QCTracker.append_point((pose['x'], pose['y']))
             self.init = True
-        linear, angular = self.QCTracker.run(pose.x, pose.y, pose.theta)
+        linear, angular = self.QCTracker.run(
+                pose['x'], pose['y'], pose['theta'])
         logging.info('\nLocation--> '
-                     'X: {pose.x}, Y: {pose.y}, theta: {pose.theta} \n'
-                     'Speeds--> Linear: {linear}, Angular {angular}'.format(
-                            pose=pose, linear=linear, angular=angular))
+                     'X: {}, Y: {}, theta: {} \n'
+                     'Speeds--> Linear: {}, Angular {}'.format(
+                            pose['x'], pose['y'], pose['theta'],
+                            linear, angular))
         self.speeds['linear'] = linear
         self.speeds['angular'] = angular
         self.pub_vel.send_json(self.speeds)
@@ -66,16 +67,16 @@ class RobotController(object):
         """
         Receives a new goal and calculates the path to reach it.
 
-        :param goal: contains a 2-D position, with 2 cartesian 
-         values (x,y) and an angle value (theta).
-        :type goal: geometry_msgs.Pose2D
+        :param goal: contains a 2-D position, with 2 cartesian values (x,y)
+         and an angle value (theta).
         """
         if self.init:
-            goal_point = (goal.x, goal.y)
+            goal_point = (goal['x'], goal['y'])
             # Adds the new goal to the current path, calculating all the 
             # intermediate points and stacking them to the path array
             self.QCTracker.append_point(goal_point)
-            logging.info('New goal--> X: {}, Y: {}'.format(goal.x, goal.y))
+            logging.info('New goal--> X: {}, Y: {}'.format(
+                    goal['x'], goal['y']))
         else:
             logging.info(' The system is not yet initialized. '
                          'Waiting for a pose to be published ')
