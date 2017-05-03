@@ -69,7 +69,7 @@ def connect_and_check(robot_id, port=None, baudrate=57600):
 
 def listen_speed_directives(my_serial, robot_speed, speed_calc_times,
                             wait_times, xbee_times):
-    # Open a  subscribe socket to listen speed directives
+    # Open a subscribe socket to listen speed directives
     listener = zmq.Context.instance().socket(zmq.SUB)
     listener.setsockopt_string(zmq.SUBSCRIBE, u"")
     # FIXME [floonone-20170428] hardcoded socket connect
@@ -115,7 +115,7 @@ def move_robot(data, my_serial, wait_times, speed_calc_times, xbee_times,
     my_serial.move([v_right, v_left])
     t0 = time.time()
     xbee_times.append(t0 - t2)
-    logging.info('Transmission ended succesfully\n\n')
+    logging.info('Transmission ended successfully\n\n')
 
 
 def stop_vehicle(my_serial, wait_times, speed_calc_times, xbee_times,
