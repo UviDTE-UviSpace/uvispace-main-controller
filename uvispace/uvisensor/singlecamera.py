@@ -22,6 +22,9 @@ import threading
 # Local libraries
 import videosensor
 
+import settings
+logger = logging.getLogger('sensor')
+
 
 def input_task(begin_event, end_event):
     """Ask user for 'Quit' command and wait until answer is obtained."""
@@ -72,7 +75,7 @@ def cam_task(begin_loop, end_loop, conf_file):
             triangles[0].homography(camera._H)
             # Block the lock object until the pose is written to dictionary.
             image.triangles[0].get_pose()
-            logging.debug("detected triangle with vertices at {}"
+            logger.debug("detected triangle with vertices at {}"
                           "".format(image.triangles[0].get_pose()))
             print image.triangles[0].get_pose()
     print 'exiting camera thread'
@@ -80,13 +83,13 @@ def cam_task(begin_loop, end_loop, conf_file):
 
 
 def main():
-    logging.basicConfig(format=('%(asctime)s.%(msecs)03d '
+    logger.basicConfig(format=('%(asctime)s.%(msecs)03d '
                                 '%(levelname)s:%(message)s'),
-                        level=logging.DEBUG,
+                        level=logger.DEBUG,
                         datefmt='%H:%M:%S',
                         filename='./log/main.log')
-    log = logging.getLogger(__name__)
-    logging.info("BEGINNING MAIN EXECUTION")
+    log = logger.getLogger(__name__)
+    logger.info("BEGINNING MAIN EXECUTION")
     #
     conf_file = './resources/config/video_sensor2.cfg'
     begin_event = threading.Event()

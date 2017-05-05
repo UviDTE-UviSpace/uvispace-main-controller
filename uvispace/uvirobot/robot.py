@@ -2,7 +2,7 @@
 """This module communicates with user and sensors for finding paths.
 
 It contains a class, *RobotController*, that represents a real UGV, and 
-contains ROS functionality for publishing new speed values, UGVs 
+contains functionality for publishing new speed values, UGVs 
 attributes, such as the *robot_id*, its speed values, or an instance 
 of the *PathTracker*, for calculating and storing the robot navigation 
 values.
@@ -13,6 +13,9 @@ import zmq
 
 # Local libraries
 import path_tracker
+
+import settings
+logger = logging.getLogger("controller")
 
 
 class RobotController(object):
@@ -54,9 +57,9 @@ class RobotController(object):
             self.init = True
         linear, angular = self.QCTracker.run(
                 pose['x'], pose['y'], pose['theta'])
-        logging.info('\nLocation--> '
-                     'X: {}, Y: {}, theta: {} \n'
-                     'Speeds--> Linear: {}, Angular {}'.format(
+        logger.info('\nLocation--> '
+                    'X: {}, Y: {}, theta: {} \n'
+                    'Speeds--> Linear: {}, Angular {}'.format(
                             pose['x'], pose['y'], pose['theta'],
                             linear, angular))
         self.speeds['linear'] = linear
@@ -75,11 +78,11 @@ class RobotController(object):
             # Adds the new goal to the current path, calculating all the 
             # intermediate points and stacking them to the path array
             self.QCTracker.append_point(goal_point)
-            logging.info('New goal--> X: {}, Y: {}'.format(
+            logger.info('New goal--> X: {}, Y: {}'.format(
                     goal['x'], goal['y']))
         else:
-            logging.info(' The system is not yet initialized. '
-                         'Waiting for a pose to be published ')
+            logger.info(' The system is not yet initialized. '
+                        'Waiting for a pose to be published ')
 
     def on_shutdown(self):
         """

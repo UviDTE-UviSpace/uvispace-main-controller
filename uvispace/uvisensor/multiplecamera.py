@@ -32,6 +32,9 @@ import zmq
 # Local libraries
 import videosensor
 
+import settings
+logger = logging.getLogger('sensor')
+
 
 class CameraThread(threading.Thread):
     """
@@ -159,7 +162,7 @@ class CameraThread(threading.Thread):
             # Free the ROI tracker if corresponding flag was raised
             if self._reset_flag['1']:
                 self.camera.set_register('FREE_TRACKER', '1')
-                logging.info('{} TRACKER FREED'.format(self.name))
+                logger.info('{} TRACKER FREED'.format(self.name))
                 self._reset_flag = {'1': False}
                 self._triangles.pop('1', None)
             # Sync operations. Write to global variables.
@@ -172,7 +175,7 @@ class CameraThread(threading.Thread):
             # Sleep the rest of the cycle
             while (time.time() - cycle_start_time < self.cycletime):
                 pass
-        logging.debug('shutting down {}'.format(self.name))
+        logger.debug('shutting down {}'.format(self.name))
         self.camera.disconnect_client()
 
 
@@ -191,8 +194,7 @@ class DataFusionThread(threading.Thread):
       the creating of a new ROI tracker in the second camera.
     - Evaluate if an UGV exits a camera, deleting the ROI tracker if 
       it is True.
-    - Merge the information obtained in all the cameras and write it in 
-      a ROS topic
+    - Merge the information obtained in all the cameras.
 
     :param triangles: READ ONLY List containing N dictionaries, where
      N is the number of Camera threads. Each dictionary element is the
@@ -300,7 +302,7 @@ class DataFusionThread(threading.Thread):
                     self._triangles[index2]):
                         self._ntriangles[index2]['1'] = copy.copy(triangle)
                         self._reset_flags[index2]['1'] = False
-                        logging.info("New triangle in Camera{}".format(
+                        logger.info("New triangle in Camera{}".format(
                                 index2))
                     # If the UGV is not in borders, but a tracker is set and is
                     # returning None values, it has to be reset.
@@ -333,12 +335,12 @@ class DataFusionThread(threading.Thread):
                 mpose = [np.asscalar(pose[0]) / 1000,
                          np.asscalar(pose[1]) / 1000,
                          np.asscalar(pose[2])]
-                logging.debug("detected triangle at {}mm and {} radians."
+                logger.debug("detected triangle at {}mm and {} radians."
                                "".format(pose[0:2], pose[2]))
                 pose_msg = {'x': mpose[0], 'y': mpose[1], 'theta': mpose[2]}
                 self.publisher.send_json(pose_msg)
-            logging.info("Triangles at: {}".format(self._triangles))
-            #            rospy.loginfo("Borders: {}".format(self._inborders))
+            logger.info("Triangles at: {}".format(self._triangles))
+            # logger.info("Borders: {}".format(self._inborders))
             # Sleep the rest of the cycle
             while (time.time() - cycle_start_time < self.cycletime):
                 pass
@@ -372,7 +374,7 @@ class UserThread(threading.Thread):
         # Wait until all camera threads start.
         for event in self.begin_events:
             event.wait()
-        logging.info("All cameras were initialized")
+        logger.info("All cameras were initialized")
         while not self.end_event.isSet():
             # Start the cycle timer
             cycle_start_time = time.time()
@@ -391,7 +393,7 @@ def main():
     Read configuration files, initialize variables and set up threads.
     :return: 
     """
-    logging.info("BEGINNING MAIN EXECUTION")
+    logger.info("BEGINNING MAIN EXECUTION")
     # Get the relative path to all the config files stored in /config folder.
     conf_files = glob.glob("./resources/config/*.cfg")
     conf_files.sort()

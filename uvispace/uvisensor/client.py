@@ -14,12 +14,10 @@ import ast
 import errno
 import socket
 from socket import socket as Socket
+import logging
 
-# ROS libraries
-try:
-    import rospy
-except:
-    pass
+import settings
+logger = logging.getLogger("sensor")
 
 
 class Client(Socket):
@@ -104,12 +102,12 @@ class Client(Socket):
             self.write_command('CLOSE_CONNECTION')
             self.close()
             try:
-                rospy.loginfo('Closed the TCP client\n\n{}'.format(75 * '-'))
+                logger.info('Closed the TCP client\n\n{}'.format(75 * '-'))
             except:
                 pass
         else:
             try:
-                rospy.logdebug('Unable to close TCP client. Already closed')
+                logger.debug('Unable to close TCP client. Already closed')
             except:
                 pass
 
@@ -127,8 +125,8 @@ class Client(Socket):
         self.port = port
         self.connect((self.ip, self.port))
         try:
-            rospy.loginfo('Started TCP client with IP: {} '
-                          'and PORT:{}.'.format(self.ip, self.port))
+            logger.info('Started TCP client with IP: {} '
+                        'and PORT:{}.'.format(self.ip, self.port))
         except:
             pass
         # Empty the data buffer, as it contains the 'welcome message'.
@@ -151,15 +149,15 @@ class Client(Socket):
             except socket.timeout:
                 amount = 100 * float(bytes) / size
                 try:
-                    rospy.logwarn('Stopped data acquisition with {:.2f}% '
-                                  'of the data acquired'.format(amount))
+                    logger.warn('Stopped data acquisition with {:.2f}% '
+                                'of the data acquired'.format(amount))
                 except:
                     pass
                 break
             bytes += len(received_package)
             packages.append(received_package)
         try:
-            rospy.logdebug('Received {} bytes of {} ({:.2f}%)\r'.format(
+            logger.debug('Received {} bytes of {} ({:.2f}%)\r'.format(
                     bytes, size, (100 * float(bytes) / size)))
         except:
             pass

@@ -13,16 +13,14 @@ import pylab
 from scipy import misc
 import socket
 import sys
-
-# ROS libraries
-try:
-    import rospy
-except:
-    import logging
+import logging
 
 # Local libraries
 from client import Client
 import imgprocessing
+
+import settings
+logger = logging.getLogger("sensor")
 
 
 def camera_startup(filename):
@@ -160,12 +158,12 @@ class VideoSensor(object):
             self._port = int(self.conf.get('VideoSensor', 'PORT'))
         except NoSectionError:
             try:
-                rospy.logerr('Missing config file: {}'.format(self.filename))
+                logger.error('Missing config file: {}'.format(self.filename))
             except:
                 pass
             return
         try:
-            rospy.logdebug('Opened configuration file. '
+            logger.debug('Opened configuration file. '
                            'Connecting to {}'.format(self._ip))
         except:
             pass
@@ -174,7 +172,7 @@ class VideoSensor(object):
             self._connected = True
         except socket.timeout:
             try:
-                rospy.logwarn('Unable to connect to port. Timeout')
+                logger.warn('Unable to connect to port. Timeout')
             except:
                 pass
 
@@ -186,7 +184,7 @@ class VideoSensor(object):
         """
         if not self._connected:
             try:
-                rospy.logwarn('Cannot disconnect, as it was not connected.')
+                logger.warn('Cannot disconnect, as it was not connected.')
             except:
                 pass
             return
@@ -207,7 +205,7 @@ class VideoSensor(object):
         # Check that the filename is correct
         if not self.conf.sections():
             try:
-                rospy.logerr('Missing config file: {}'.format(self.filename))
+                logger.error('Missing config file: {}'.format(self.filename))
             except:
                 pass
             return
@@ -237,7 +235,7 @@ class VideoSensor(object):
         # If the flag is marked as False, the method stops here.
         if not write2fpga:
             try:
-                rospy.logdebug("Loaded parameters. FPGA wasn't configured")
+                logger.debug("Loaded parameters. FPGA wasn't configured")
             except:
                 pass
             return
@@ -265,7 +263,7 @@ class VideoSensor(object):
         # Send the configuration command to the FPGA
         conf = self._client.write_command('CONFIGURE_CAMERA', True)
         try:
-            rospy.logdebug(repr("Obtained '{}' "
+            logger.debug(repr("Obtained '{}' "
                                 "after 'CONFIGURE_CAMERA'".format(conf)))
         except:
             pass
@@ -385,12 +383,12 @@ class VideoSensor(object):
                 formatted_value = "{},{}".format(formatted_value, item)
         else:
             try:
-                rospy.logwarn("Not valid value type for {}".format(value))
+                logger.warn("Not valid value type for {}".format(value))
             except:
                 pass
         message = self._client.write_register(register, formatted_value)
         try:
-            rospy.logdebug(repr("Obtained '{}' after writing {} on {} register."
+            logger.debug(repr("Obtained '{}' after writing {} on {} register."
                                 "".format(message, formatted_value, register)))
         except:
             pass
@@ -415,7 +413,7 @@ class VideoSensor(object):
         and the FPGA will not recognize them.
         """
         try:
-            rospy.logdebug('Configuring tracker {}'.format(tracker_id))
+            logger.debug('Configuring tracker {}'.format(tracker_id))
         except:
             pass
         self.set_register('SET_WINDOW', '{},{},{},{},{}'
@@ -444,7 +442,7 @@ class VideoSensor(object):
         while message != "Image captured.\n":
             if not tries:
                 try:
-                    rospy.logwarn("Stop waiting for a frame after 20 tries")
+                    logger.warn("Stop waiting for a frame after 20 tries")
                 except:
                     pass
                 sys.exit()
@@ -456,7 +454,7 @@ class VideoSensor(object):
             except socket.timeout:
                 pass
         try:
-            rospy.logdebug(repr("'{}' after {} tries.".format(message, 20 - tries)))
+            logger.debug(repr("'{}' after {} tries.".format(message, 20 - tries)))
         except:
             pass
         # Set dim (dimensions) to the number of components per pixel.
@@ -470,7 +468,7 @@ class VideoSensor(object):
             shape = (self._params['height'], self._params['width'], dim)
         self._client.write_command(command)
         try:
-            rospy.logdebug("'{}' command sent.".format(command))
+            logger.debug("'{}' command sent.".format(command))
         except:
             pass
         # SIZE = Width x Height x Dimensions

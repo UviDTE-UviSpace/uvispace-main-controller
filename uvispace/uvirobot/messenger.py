@@ -41,6 +41,9 @@ from serialcomm import SerMesProtocol
 from speedtransform import Speed
 import plotter
 
+import settings
+logger = logging.getLogger('messenger')
+
 
 def connect_and_check(robot_id, port=None, baudrate=57600):
     """
@@ -96,7 +99,7 @@ def move_robot(data, my_serial, wait_times, speed_calc_times, xbee_times,
     global t2
     t1 = time.time()
     wait_times.append(t1 - t0)
-    logging.info('New set point received')
+    logger.info('New set point received')
     linear = data['linear']
     angular = data['angular']
     t2 = time.time()
@@ -111,11 +114,11 @@ def move_robot(data, my_serial, wait_times, speed_calc_times, xbee_times,
         robot_speed.get_2WD_speeds(wheels_modifiers=[1, 1])
     v_right, v_left = robot_speed.nonlinear_transform(min_A=min_speed,
                                                       max_B=max_speed)
-    logging.info('I am sending R: {} L: {}'.format(v_right, v_left))
+    logger.info('I am sending R: {} L: {}'.format(v_right, v_left))
     my_serial.move([v_right, v_left])
     t0 = time.time()
     xbee_times.append(t0 - t2)
-    logging.info('Transmission ended successfully\n\n')
+    logger.info('Transmission ended successfully\n\n')
 
 
 def stop_vehicle(my_serial, wait_times, speed_calc_times, xbee_times,

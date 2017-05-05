@@ -36,12 +36,13 @@ import cv2
 import numpy as np
 import skimage.measure
 import skimage.morphology
-
-# ROS libraries
-import rospy
+import logging
 
 # Local libraries
 import geometry
+
+import settings
+logger = logging.getLogger("sensor")
 
 
 class Image(object):
@@ -93,7 +94,7 @@ class Image(object):
         # Why is it necessary to divide by 4??
         thr_min = int(red_c[0], 2) / 4
         thr_max = int(red_c[1], 2) / 4
-        rospy.logdebug("Thresholding between {} and {}".format(thr_min,
+        logger.debug("Thresholding between {} and {}".format(thr_min,
                                                                thr_max))
         # The first binary approach is obtained evaluating 2 thresholds
         raw_binarized = cv2.inRange(self.image, thr_min, thr_max)
@@ -112,7 +113,7 @@ class Image(object):
         background = np.argmax(label_count)
         self._binarized = filtered
         self._binarized[labels != background] = 255
-        rospy.logdebug("Image binarization finished")
+        logger.debug("Image binarization finished")
         return self._binarized
 
     def correct_distortion(self, kx=0.035, ky=0.035, only_contours=True):
@@ -179,7 +180,7 @@ class Image(object):
          coordinates of the M vertices of the shape.
         :rtype: list
         """
-        rospy.logdebug("Getting the shapes' vertices in the image")
+        logger.debug("Getting the shapes' vertices in the image")
         # Obtain a list with all the contours in the image, separating each
         # shape in a different element of the list
         if get_contours:
@@ -199,5 +200,5 @@ class Image(object):
                 triangle = geometry.Triangle(np.clip(coords[1:],
                                                      [0, 0], max_coords))
                 self.triangles.append(triangle)
-            rospy.logdebug("A {}-vertices shape was found".format(len(coords)))
+            logger.debug("A {}-vertices shape was found".format(len(coords)))
         return self.triangles
