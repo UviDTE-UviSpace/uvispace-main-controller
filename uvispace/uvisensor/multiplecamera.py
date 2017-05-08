@@ -231,9 +231,9 @@ class DataFusionThread(threading.Thread):
         Class constructor method
         """
         threading.Thread.__init__(self, name=name)
-        # FIXME [floonone-20170503] hardcoded socket bind
         self.publisher = zmq.Context.instance().socket(zmq.PUB)
-        self.publisher.bind("tcp://*:35001")
+        self.publisher.bind("tcp://*:{}".format(
+                settings.position_base_port+1))
         self.cycletime = 0.02
         self.quadrant_limits = quadrant_limits
         # Synchronization variables

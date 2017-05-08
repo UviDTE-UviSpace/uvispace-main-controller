@@ -16,14 +16,21 @@ import getopt
 import numpy as np
 import time
 import zmq
+import logging
 
 # Local libraries
 from robot import RobotController
 import plotter
 
+import settings
+logger = logging.getLogger('controller')
+
 
 def make_a_rectangle(my_robot):
-    """Set the robot path to a rectangle of fixed vertices."""
+    """
+    Set the robot path to a rectangle of fixed vertices.
+    """
+    logger.info("Creating rectangle path")
     point_a = {'x': 1.0, 'y': 1.0}
     point_b = {'x': -1.0, 'y': 1.0}
     point_c = {'x': -1.0, 'y': -1.0}
@@ -36,29 +43,35 @@ def make_a_rectangle(my_robot):
     my_robot.new_goal(point_e)
 
 
-def init_sockets():
+def init_sockets(robot_id):
+    """
+    Initializes the subscriber sockets in charge of listening for data.
+    """
+    logger.debug("Initializing subscriber sockets")
+
     # Open a subscribe socket to listen for position data
     pos_sock = zmq.Context.instance().socket(zmq.SUB)
     pos_sock.setsockopt_string(zmq.SUBSCRIBE, u"")
     pos_sock.setsockopt(zmq.CONFLATE, True)
-    # FIXME [floonone-20170503] hardcoded socket connect
-    pos_sock.connect("tcp://localhost:35001")
+    pos_sock.connect("tcp://localhost:{}".format(
+            settings.position_base_port+robot_id))
 
     # Open a subscribe socket to listen for new goals
     goa_sock = zmq.Context.instance().socket(zmq.SUB)
     goa_sock.setsockopt_string(zmq.SUBSCRIBE, u"")
     pos_sock.setsockopt(zmq.CONFLATE, True)
-    # FIXME [floonone-20170503] hardcoded socket connect
-    goa_sock.connect("tcp://localhost:35021")
+    goa_sock.connect("tcp://localhost:{}".format(
+            settings.goal_base_port+robot_id))
 
     sockets = {
         'position': pos_sock,
         'goal': goa_sock
     }
+
     return sockets
 
 
-def listen(sockets, my_robot):
+def listen_sockets(sockets, my_robot):
     # Initialize poll set
     poller = zmq.Poller()
     poller.register(sockets['position'], zmq.POLLIN)
@@ -71,27 +84,30 @@ def listen(sockets, my_robot):
             if sockets['position'] in socks \
                     and socks[sockets['position']] == zmq.POLLIN:
                 position = sockets['position'].recv_json()
-                print(position)
+                logger.debug("Received new position: {}".format(position))
                 my_robot.set_speed(position)
 
             if sockets['goal'] in socks \
                     and socks[sockets['goal']] == zmq.POLLIN:
                 goal = sockets['goal'].recv_json()
+                logger.debug("Received new goal: {}".format(goal))
                 my_robot.new_goal(goal)
 
     except KeyboardInterrupt:
+        logger.debug("KeyboardInterrupt")
         my_robot.on_shutdown()
     return
 
 
 def main():
+    logger.info("BEGINNING EXECUTION")
     # This exception forces to give the robot_id argument within run command.
     rectangle_path = False
     help_msg = ('Usage: controller.py [-r <robot_id>], [--robotid=<robot_id>], '
                 '[--rectangle]')
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "hr:", ["robotid=",
-                                                         "rectangle"])
+        opts, args = getopt.getopt(sys.argv[1:], "hr:",
+                                   ["robotid=", "rectangle"])
     except getopt.GetoptError:
         print help_msg
         sys.exit()
@@ -110,12 +126,14 @@ def main():
     my_robot = RobotController(robot_id)
 
     # Open listening sockets
-    sockets = init_sockets()
+    sockets = init_sockets(robot_id)
 
     # Until the first pose is not published, the robot instance
     # is not initialized.
     while not my_robot.init:
+        logger.info("Waiting for first position")
         position = sockets['position'].recv_json()
+        logger.debug("Received first position: {}".format(position))
         my_robot.set_speed(position)
 
     # This function sends 4 rectangle points to the robot path.
@@ -123,7 +141,7 @@ def main():
         make_a_rectangle(my_robot)
 
     # Listen sockets
-    listen(sockets, my_robot)
+    listen_sockets(sockets, my_robot)
 
     # Print the log output to files and plot it
     script_path = os.path.dirname(os.path.realpath(__file__))

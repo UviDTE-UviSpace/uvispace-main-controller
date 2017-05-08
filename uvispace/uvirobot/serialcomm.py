@@ -20,6 +20,10 @@ from serial import Serial
 import struct
 import sys
 import time
+import logging
+
+import settings
+logger = logging.getLogger('messenger')
 
 
 class SerMesProtocol(Serial):
@@ -75,7 +79,8 @@ class SerMesProtocol(Serial):
         count = 0
         while not ready:
             if count == tries:
-                print "Unable to connect. Exited after {} tries".format(tries)
+                logger.info("Unable to connect. Exited after {} tries".format(
+                        tries))
                 sys.exit()
             self.send_message(self.READY)
             # wait for the response from the device
@@ -101,8 +106,8 @@ class SerMesProtocol(Serial):
         # Check that the values are correct. Invalid values may crash 
         # the Arduino program.
         while any(x > 255 or x < 0 for x in setpoint):
-            print ('Invalid set points. Please enter 2 values between \
-                    0 and 255 (Decimal values will be rounded)')
+            logger.info('Invalid set points. Please enter 2 values between '
+                        '0 and 255 (Decimal values will be rounded)')
             if any(type(x) == float for x in setpoint):
                 setpoint = [int(round(x)) for x in setpoint]
         # Values casted into C 'char' variables
@@ -144,7 +149,8 @@ class SerMesProtocol(Serial):
                 sent_data=data,
                 etx=self.ETX)
         # sends message.
-        print 'sending... {}'.format(" ".join(hex(ord(n)) for n in message))
+        logger.info('sending... {}'.format(
+                " ".join(hex(ord(n)) for n in message)))
         self.write(message)
 
     def read_message(self):
@@ -176,7 +182,7 @@ class SerMesProtocol(Serial):
             current_time = time.time()
             # Gives the slave 2 seconds to return an answer.
             if current_time - start_time > 2:
-                print 'Error, STX was not found'
+                logger.info('Error, STX was not found')
                 return (Rx_OK, fun_code, length, data)
             _STX = self.read(1)
         # The 2nd and 3rd bytes of transmission correspond to the master 
@@ -190,9 +196,9 @@ class SerMesProtocol(Serial):
         try:
             length = struct.unpack('>H', self.read(2))[0]
         except:
-            print 'Received length bytes are not valid'
+            logger.error('Received length bytes are not valid')
             return (Rx_OK, fun_code, length, data)
-        print ('received data length = {}'.format(length))
+        logger.info('received data length = {}'.format(length))
 
         # Reading of the function code and the main data
         fun_code = self.read(1)
@@ -205,12 +211,12 @@ class SerMesProtocol(Serial):
         # Check of message validity
         if (_STX == self.STX) and (_ETX == self.ETX) \
                 and (id_dest == self.MASTER_ID):
-            print 'Succesfull communication'
+            logger.info('Succesfull communication')
             Rx_OK = True
         elif _ETX != SerMesProtocol.ETX:
-            print 'Error, ETX was not found'
+            logger.error('Error, ETX was not found')
         elif id_dest != self.MASTER_ID:
-            print 'Message for other device'
+            logger.warn('Message for other device')
 
         return (Rx_OK, fun_code, length, data)
 

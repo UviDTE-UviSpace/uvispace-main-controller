@@ -1,6 +1,8 @@
 import os
 import logging.config
 
+
+# Logging configuration
 log_path = os.path.join(os.path.dirname(__file__), 'log')
 
 LOGGING = {
@@ -64,3 +66,8 @@ LOGGING = {
 }
 
 logging.config.dictConfig(LOGGING)
+
+# Communication base ports
+position_base_port = 35000
+speed_base_port = 35010
+goal_base_port = 35020

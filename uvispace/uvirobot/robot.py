@@ -36,8 +36,7 @@ class RobotController(object):
         self.QCTracker = path_tracker.QuadCurveTracker()
 
         pub_vel = zmq.Context.instance().socket(zmq.PUB)
-        # FIXME [floonone-20170428] hardcoded socket bind
-        pub_vel.bind("tcp://*:35011")
+        pub_vel.bind("tcp://*:{}".format(settings.speed_base_port+robot_id))
         self.pub_vel = pub_vel
 
     def set_speed(self, pose):
@@ -57,8 +56,7 @@ class RobotController(object):
             self.init = True
         linear, angular = self.QCTracker.run(
                 pose['x'], pose['y'], pose['theta'])
-        logger.info('\nLocation--> '
-                    'X: {}, Y: {}, theta: {} \n'
+        logger.info('Location--> X: {}, Y: {}, theta: {} - '
                     'Speeds--> Linear: {}, Angular {}'.format(
                             pose['x'], pose['y'], pose['theta'],
                             linear, angular))
@@ -81,13 +79,14 @@ class RobotController(object):
             logger.info('New goal--> X: {}, Y: {}'.format(
                     goal['x'], goal['y']))
         else:
-            logger.info(' The system is not yet initialized. '
-                        'Waiting for a pose to be published ')
+            logger.info('The system is not yet initialized, '
+                        'waiting for a pose to be published.')
 
     def on_shutdown(self):
         """
         Shutdown method. Is called when execution is aborted.
         """
+        logger.info('Shutting down')
         self.speeds['linear'] = 0.0
         self.speeds['angular'] = 0.0
         self.pub_vel.send_json(self.speeds)

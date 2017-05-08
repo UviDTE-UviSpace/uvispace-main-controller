@@ -51,37 +51,42 @@ def connect_and_check(robot_id, port=None, baudrate=57600):
     
     If no port is specified, take the first one available.
     """
+    logger.debug("Checking connection")
     # This exception prevents a crash when no device is connected to CPU.   
     if not port:
         try:
             port = glob.glob('/dev/ttyUSB*')[0]
         except IndexError:
-            print("It was not detected any serial port connected to PC")
+            logger.info("It was not detected any serial port connected to PC")
             sys.exit()
     # Convert the Python id number to the C format 'unsigned byte'
     serialcomm = SerMesProtocol(port=port, baudrate=baudrate)
     serialcomm.SLAVE_ID = struct.pack('>B', robot_id)
     # Check connection to board. If broken, program exits
     if serialcomm.ready():
-        print("The board is ready")
+        logger.info("The board is ready")
     else:
-        print("The board is not ready")
+        logger.info("The board is not ready")
         sys.exit()
     return serialcomm
 
 
-def listen_speed_directives(my_serial, robot_speed, speed_calc_times,
+def listen_speed_set_points(my_serial, robot_id, robot_speed, speed_calc_times,
                             wait_times, xbee_times):
+
+    logger.debug("Initializing subscriber socket")
     # Open a subscribe socket to listen speed directives
     listener = zmq.Context.instance().socket(zmq.SUB)
     listener.setsockopt_string(zmq.SUBSCRIBE, u"")
-    # FIXME [floonone-20170428] hardcoded socket connect
-    listener.connect("tcp://localhost:35011")
+    listener.connect("tcp://localhost:{}".format(
+            settings.speed_base_port+robot_id))
 
+    logger.debug("Listening for speed set points")
     # listen for speed directives until interrupted
     try:
         while True:
             data = listener.recv_json()
+            logger.debug("Received new speed set point: {}".format(data))
             move_robot(data, my_serial, wait_times, speed_calc_times,
                        xbee_times, robot_speed)
     except KeyboardInterrupt:
@@ -99,7 +104,6 @@ def move_robot(data, my_serial, wait_times, speed_calc_times, xbee_times,
     global t2
     t1 = time.time()
     wait_times.append(t1 - t0)
-    logger.info('New set point received')
     linear = data['linear']
     angular = data['angular']
     t2 = time.time()
@@ -118,7 +122,7 @@ def move_robot(data, my_serial, wait_times, speed_calc_times, xbee_times,
     my_serial.move([v_right, v_left])
     t0 = time.time()
     xbee_times.append(t0 - t2)
-    logger.info('Transmission ended successfully\n\n')
+    logger.info('Transmission ended successfully')
 
 
 def stop_vehicle(my_serial, wait_times, speed_calc_times, xbee_times,
@@ -141,14 +145,15 @@ def print_times(wait_times, speed_calc_times, xbee_times):
     wait_mean_time = sum(wait_times) / len(wait_times)
     speed_calc_mean_time = sum(speed_calc_times) / len(speed_calc_times)
     xbee_mean_time = sum(xbee_times) / len(xbee_times)
-    print ('Wait mean time: {wait}\n'
-           'Speed calculation mean time: {speed}\n'
-           'XBee message sending mean time: {xbee}'
-           .format(wait=wait_mean_time, speed=speed_calc_mean_time,
-                   xbee=xbee_mean_time))
+    logger.info('Wait mean time: {wait} - '
+                'Speed calculation mean time: {speed} - '
+                'XBee message sending mean time: {xbee}'
+                .format(wait=wait_mean_time, speed=speed_calc_mean_time,
+                        xbee=xbee_mean_time))
 
 
 def main():
+    logger.info("BEGINNING EXECUTION")
     global t0
     # Main routine
     help_msg = 'Usage: messenger.py [-r <robot_id>], [--robotid=<robot_id>]'
@@ -175,7 +180,7 @@ def main():
     robot_speed = Speed()
     t0 = time.time()
 
-    listen_speed_directives(my_serial, robot_speed, speed_calc_times,
+    listen_speed_set_points(my_serial, robot_id, robot_speed, speed_calc_times,
                             wait_times, xbee_times)
 
     stop_vehicle(my_serial, wait_times, speed_calc_times,
