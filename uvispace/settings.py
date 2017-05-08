@@ -1,5 +1,7 @@
-import logging.config
 import os
+import logging.config
+
+log_path = os.path.join(os.path.dirname(__file__), 'log')
 
 LOGGING = {
     'version': 1,
@@ -10,6 +12,14 @@ LOGGING = {
         },
         'simple': {
             'format': '%(levelname)8s %(module)s:%(lineno)d %(message)s'
+        },
+        'thread_verbose': {
+            'format': '%(asctime)s %(levelname)8s %(name)s '
+                      '(%(threadName)-9s) %(module)s:%(lineno)d %(message)s'
+        },
+        'thread_simple': {
+            'format': '%(levelname)8s (%(threadName)-9s) %(module)s:%(lineno)d '
+                      '%(message)s'
         }
     },
     'handlers': {
@@ -17,19 +27,19 @@ LOGGING = {
             'level': 'DEBUG',
             'formatter': 'verbose',
             'class': 'logging.FileHandler',
-            'filename': '/'.join([os.environ.get('LOG_PATH'), 'controller.log'])
+            'filename': '/'.join([log_path, 'controller.log'])
         },
         'file_messenger': {
             'level': 'DEBUG',
             'formatter': 'verbose',
             'class': 'logging.FileHandler',
-            'filename': '/'.join([os.environ.get('LOG_PATH'), 'messenger.log'])
+            'filename': '/'.join([log_path, 'messenger.log'])
         },
         'file_sensor': {
             'level': 'DEBUG',
-            'formatter': 'verbose',
+            'formatter': 'thread_verbose',
             'class': 'logging.FileHandler',
-            'filename': '/'.join([os.environ.get('LOG_PATH'), 'sensor.log'])
+            'filename': os.path.join(log_path, 'sensor.log')
         },
         'console': {
             'level': 'DEBUG',

@@ -173,7 +173,7 @@ class CameraThread(threading.Thread):
                 self.triangles.clear()
             self.condition.release()
             # Sleep the rest of the cycle
-            while (time.time() - cycle_start_time < self.cycletime):
+            while time.time() - cycle_start_time < self.cycletime:
                 pass
         logger.debug('shutting down {}'.format(self.name))
         self.camera.disconnect_client()
@@ -342,7 +342,7 @@ class DataFusionThread(threading.Thread):
             logger.info("Triangles at: {}".format(self._triangles))
             # logger.info("Borders: {}".format(self._inborders))
             # Sleep the rest of the cycle
-            while (time.time() - cycle_start_time < self.cycletime):
+            while time.time() - cycle_start_time < self.cycletime:
                 pass
 
 
@@ -382,7 +382,7 @@ class UserThread(threading.Thread):
             if i == 'Q':
                 self.end_event.set()
             # Sleep the rest of the cycle
-            while (time.time() - cycle_start_time < self.cycletime):
+            while time.time() - cycle_start_time < self.cycletime:
                 pass
 
 

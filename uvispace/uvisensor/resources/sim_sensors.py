@@ -23,7 +23,7 @@ def main():
     # FIXME [floonone-20170503] hardcoded socket bind
     publisher.bind("tcp://*:35001")
 
-    logger.info("Bound socket")
+    logger.info("Publisher socket bound")
     position = {
         'x': numpy.asscalar(numpy.float32(1.0)),
         'y': numpy.asscalar(numpy.float32(2.4)),

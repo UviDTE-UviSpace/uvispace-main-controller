@@ -94,8 +94,8 @@ class Image(object):
         # Why is it necessary to divide by 4??
         thr_min = int(red_c[0], 2) / 4
         thr_max = int(red_c[1], 2) / 4
-        logger.debug("Thresholding between {} and {}".format(thr_min,
-                                                               thr_max))
+        logger.debug("Thresholding between {} and {}".format(
+                thr_min, thr_max))
         # The first binary approach is obtained evaluating 2 thresholds
         raw_binarized = cv2.inRange(self.image, thr_min, thr_max)
         # A simple erosion gets rid of the whole noise. Dilating the eroded
@@ -138,13 +138,15 @@ class Image(object):
         :param bool only_contours: Specify if the correction is to be 
          applied to the whole image or only to the contours.
         """
-        # Calculate the image center as the middle point of the width and height.
+        # Calculate the image center as the middle point of the
+        # width and height.
         center = np.array(self.image.shape) / 2
         # If contours is an empty list, algorithm is not outperformed.
         if only_contours and self.contours:
             for index, cnt in enumerate(self.contours):
                 distance = cnt - center
-                # Calculate the r distance. First numerator and then denominator.
+                # Calculate the r distance. First numerator and
+                # then denominator.
                 r = (distance ** 2).sum(axis=1).astype(np.float)
                 r /= (center ** 2).sum() * 2
                 coeffs = np.array([r*ky, r*kx]).transpose() + 1
@@ -193,7 +195,8 @@ class Image(object):
             # Sometimes, the initial vertex is repeatead at the end.
             # Thus, if len is 3 and vertex is NOT repeated, it is a triangle
             if len(coords) == 3 and (not np.array_equal(coords[0], coords[-1])):
-                triangle = geometry.Triangle(np.clip(coords, [0, 0], max_coords))
+                triangle = geometry.Triangle(
+                        np.clip(coords, [0, 0], max_coords))
                 self.triangles.append(triangle)
             # If len is 4 and vertex IS repeated, it is a triangle
             if len(coords) == 4 and np.array_equal(coords[0], coords[-1]):

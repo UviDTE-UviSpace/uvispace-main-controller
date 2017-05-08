@@ -83,12 +83,6 @@ def cam_task(begin_loop, end_loop, conf_file):
 
 
 def main():
-    logger.basicConfig(format=('%(asctime)s.%(msecs)03d '
-                                '%(levelname)s:%(message)s'),
-                        level=logger.DEBUG,
-                        datefmt='%H:%M:%S',
-                        filename='./log/main.log')
-    log = logger.getLogger(__name__)
     logger.info("BEGINNING MAIN EXECUTION")
     #
     conf_file = './resources/config/video_sensor2.cfg'

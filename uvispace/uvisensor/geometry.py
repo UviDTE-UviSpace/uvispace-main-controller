@@ -37,7 +37,8 @@ class Triangle(object):
         # These flags indicate the coordinates system that is being used
         self.isglobal = isglobal
         self.cartesian = cartesian
-        # The barycenter X is equal to the sum of the X coordinates divided by 3.
+        # The barycenter X is equal to the sum of the X coordinates
+        # divided by 3.
         self.barycenter = self.vertices.sum(axis=0) / 3
         self.sides = np.zeros([3])
         # base_index is the identifier for the base side in 'sides' array.
@@ -50,10 +51,10 @@ class Triangle(object):
         self._scale = 1
 
     def __str__(self):
-        return ("Triangle\n{}".format(self.vertices))
+        return "Triangle\n{}".format(self.vertices)
 
     def __repr__(self):
-        return ("Triangle\n{}".format(self.vertices))
+        return "Triangle\n{}".format(self.vertices)
 
     def local2global(self, offsets, K=None, image2cartesian=True):
         """
@@ -228,7 +229,8 @@ class Triangle(object):
         if self.cartesian:
             x, y = vertices[self.base_index] - self.midpoint
         else:
-            # The array 'y'(rows) counts downwards, contrary to cartesian system.
+            # The array 'y'(rows) counts downwards, contrary to
+            # cartesian system.
             row, col = vertices[self.base_index] - self.midpoint
             x, y = col, -row
         self.angle = np.arctan2(y, x)
@@ -296,7 +298,8 @@ class Triangle(object):
         points = np.copy(self.vertices)
         # Loop for performing the homography to very 2-D vertex' coordinates.
         for index, row in enumerate(points):
-            # Append '1' to the point vector and perform a matrix product with H.
+            # Append '1' to the point vector and perform a
+            # matrix product with H.
             operand = np.hstack([row, 1])
             product = np.dot(H, operand)
             new_point = product[0:2] / product[2]
@@ -322,7 +325,8 @@ class Triangle(object):
         points = np.copy(self.vertices)
         # Loop for performing the homography to very 2-D vertex' coordinates.
         for index, row in enumerate(points):
-            # Append '1' to the point vector and perform a matrix product with H.
+            # Append '1' to the point vector and perform a
+            # matrix product with H.
             operand = np.hstack([row, 1])
             # Use least squares method to get Y from X=H.Y
             product = np.linalg.lstsq(H, operand)[0]
@@ -358,7 +362,8 @@ class Triangle(object):
                 # Evaluate if the vertex is closer than the tolerance.
                 if dist < tolerance:
                     return True
-        # If any of the vertices wasn't near to any of the segments return False.
+        # If any of the vertices wasn't near to any of the segments
+        # return False.
         return False
 
 

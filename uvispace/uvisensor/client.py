@@ -101,15 +101,9 @@ class Client(Socket):
         if not isinstance(self._sock, socket._closedsocket):
             self.write_command('CLOSE_CONNECTION')
             self.close()
-            try:
-                logger.info('Closed the TCP client\n\n{}'.format(75 * '-'))
-            except:
-                pass
+            logger.info('Closed the TCP client\n\n{}'.format(75 * '-'))
         else:
-            try:
-                logger.debug('Unable to close TCP client. Already closed')
-            except:
-                pass
+            logger.debug('Unable to close TCP client. Already closed')
 
     def open_connection(self, ip, port):
         """Create a TCP/IP socket connection.
@@ -124,11 +118,8 @@ class Client(Socket):
         self.ip = ip
         self.port = port
         self.connect((self.ip, self.port))
-        try:
-            logger.info('Started TCP client with IP: {} '
-                        'and PORT:{}.'.format(self.ip, self.port))
-        except:
-            pass
+        logger.info('Started TCP client with IP: {} and PORT:{}.'.format(
+                self.ip, self.port))
         # Empty the data buffer, as it contains the 'welcome message'.
         self.recv(self.buffer_size)
 
@@ -143,24 +134,18 @@ class Client(Socket):
         bytes = 0
         packages = []
         # Do not stop reading new packages until target 'size' is reached.
-        while (bytes < size):
+        while bytes < size:
             try:
                 received_package = self.recv(self.buffer_size)
             except socket.timeout:
                 amount = 100 * float(bytes) / size
-                try:
-                    logger.warn('Stopped data acquisition with {:.2f}% '
-                                'of the data acquired'.format(amount))
-                except:
-                    pass
+                logger.warn('Stopped data acquisition with {:.2f}% '
+                            'of the data acquired'.format(amount))
                 break
             bytes += len(received_package)
             packages.append(received_package)
-        try:
-            logger.debug('Received {} bytes of {} ({:.2f}%)\r'.format(
-                    bytes, size, (100 * float(bytes) / size)))
-        except:
-            pass
+        logger.debug('Received {} bytes of {} ({:.2f}%)\r'.format(
+                bytes, size, (100 * float(bytes) / size)))
         # Concatenate all the packages in a unique variable
         data = ''.join(packages)
         return data

@@ -32,6 +32,7 @@ def camera_startup(filename):
     # Instantiate VideoSensor class. The filename contains the configuration
     camera = VideoSensor(filename)
     if not camera._connected:
+        logger.error("No connection to specified camera.")
         raise AttributeError("No connection to specified camera.")
     camera.load_configuration()
     # Reset trackers
@@ -157,24 +158,15 @@ class VideoSensor(object):
             self._ip = self.conf.get('VideoSensor', 'IP')
             self._port = int(self.conf.get('VideoSensor', 'PORT'))
         except NoSectionError:
-            try:
-                logger.error('Missing config file: {}'.format(self.filename))
-            except:
-                pass
+            logger.error('Missing config file: {}'.format(self.filename))
             return
-        try:
-            logger.debug('Opened configuration file. '
-                           'Connecting to {}'.format(self._ip))
-        except:
-            pass
+        logger.debug('Opened configuration file. '
+                     'Connecting to {}'.format(self._ip))
         try:
             self._client.open_connection(self._ip, self._port)
             self._connected = True
         except socket.timeout:
-            try:
-                logger.warn('Unable to connect to port. Timeout')
-            except:
-                pass
+            logger.warn('Unable to connect to port. Timeout')
 
     def disconnect_client(self):
         """Close TCP/IP connection with the device.
@@ -183,10 +175,7 @@ class VideoSensor(object):
         be able to be reopened.
         """
         if not self._connected:
-            try:
-                logger.warn('Cannot disconnect, as it was not connected.')
-            except:
-                pass
+            logger.warn('Cannot disconnect, as it was not connected.')
             return
         self.set_register('SYSTEM_OUTPUT', 0)
         self._client.close_connection()
@@ -204,10 +193,7 @@ class VideoSensor(object):
         """
         # Check that the filename is correct
         if not self.conf.sections():
-            try:
-                logger.error('Missing config file: {}'.format(self.filename))
-            except:
-                pass
+            logger.error('Missing config file: {}'.format(self.filename))
             return
         # Sensor color thresholds parameters
         self._params['red_thresholds'] = ast.literal_eval(
@@ -234,10 +220,7 @@ class VideoSensor(object):
         self.get_limits_array()
         # If the flag is marked as False, the method stops here.
         if not write2fpga:
-            try:
-                logger.debug("Loaded parameters. FPGA wasn't configured")
-            except:
-                pass
+            logger.debug("Loaded parameters. FPGA wasn't configured")
             return
         # --------------------------------------------------------------#
         # Write to the FPGA registers the loaded configuration.
@@ -262,11 +245,8 @@ class VideoSensor(object):
         self.set_register('SYSTEM_OUTPUT', self._params['output'])
         # Send the configuration command to the FPGA
         conf = self._client.write_command('CONFIGURE_CAMERA', True)
-        try:
-            logger.debug(repr("Obtained '{}' "
-                                "after 'CONFIGURE_CAMERA'".format(conf)))
-        except:
-            pass
+        logger.debug(repr("Obtained '{}' "
+                          "after 'CONFIGURE_CAMERA'".format(conf)))
 
     def read_conffile(self, filename):
         """
@@ -284,6 +264,7 @@ class VideoSensor(object):
             # Read the value of H as is written on file.
             raw_H = self.conf.get('Misc', 'H')
         except NoSectionError:
+            logger.error("There is no 'H' section in the conf file")
             raise AttributeError("There is no 'H' section in the conf file")
         # Format the value in order to get a 3x3 array.
         tuple_format = ','.join(raw_H.split('\n'))
@@ -299,7 +280,9 @@ class VideoSensor(object):
             # Read the value of H as is written on file.
             raw_L = self.conf.get('Misc', 'limits')
         except NoSectionError:
-            raise AttributeError("There is no 'H' section in the conf file")
+            logger.error("There is no 'limits' section in the conf file")
+            raise AttributeError(
+                    "There is no 'limits' section in the conf file")
         # Format the value in order to get a 3x3 array.
         tuple_format = ','.join(raw_L.split('\n'))
         array_format = ast.literal_eval(tuple_format)
@@ -382,16 +365,10 @@ class VideoSensor(object):
             for item in value[1:]:
                 formatted_value = "{},{}".format(formatted_value, item)
         else:
-            try:
-                logger.warn("Not valid value type for {}".format(value))
-            except:
-                pass
+            logger.warn("Not valid value type for {}".format(value))
         message = self._client.write_register(register, formatted_value)
-        try:
-            logger.debug(repr("Obtained '{}' after writing {} on {} register."
-                                "".format(message, formatted_value, register)))
-        except:
-            pass
+        logger.debug("Obtained '{}' after writing {} on {} register.".format(
+                message, formatted_value, register))
         return message
 
     def configure_tracker(self, tracker_id, min_x, min_y, width, height):
@@ -412,12 +389,9 @@ class VideoSensor(object):
         to the FPGA are integers. Other types like float are not valid
         and the FPGA will not recognize them.
         """
-        try:
-            logger.debug('Configuring tracker {}'.format(tracker_id))
-        except:
-            pass
-        self.set_register('SET_WINDOW', '{},{},{},{},{}'
-                                        ''.format(tracker_id, min_x, min_y, width, height))
+        logger.debug('Configuring tracker {}'.format(tracker_id))
+        self.set_register('SET_WINDOW', '{},{},{},{},{}'.format(
+                tracker_id, min_x, min_y, width, height))
 
     def capture_frame(self, gray=True, tries=20, output_file=''):
         """
@@ -441,10 +415,7 @@ class VideoSensor(object):
         message = self._client.write_command('GET_NEW_FRAME', True)
         while message != "Image captured.\n":
             if not tries:
-                try:
-                    logger.warn("Stop waiting for a frame after 20 tries")
-                except:
-                    pass
+                logger.warn("Stop waiting for a frame after 20 tries")
                 sys.exit()
             tries -= 1
             # Timeout error means that the FPGA buffer is empty. If this
@@ -453,10 +424,7 @@ class VideoSensor(object):
                 message = self._client.recv(self._client.buffer_size)
             except socket.timeout:
                 pass
-        try:
-            logger.debug(repr("'{}' after {} tries.".format(message, 20 - tries)))
-        except:
-            pass
+        logger.debug(repr("'{}' after {} tries.".format(message, 20 - tries)))
         # Set dim (dimensions) to the number of components per pixel.
         if gray:
             command = 'GET_GRAY_IMAGE'
@@ -467,10 +435,7 @@ class VideoSensor(object):
             dim = 3
             shape = (self._params['height'], self._params['width'], dim)
         self._client.write_command(command)
-        try:
-            logger.debug("'{}' command sent.".format(command))
-        except:
-            pass
+        logger.debug("'{}' command sent.".format(command))
         # SIZE = Width x Height x Dimensions
         img_size = self._params['width'] * self._params['height'] * dim
         data = self._client.read_data(img_size)
