@@ -50,3 +50,4 @@
 /DE1-SoC/FPGA_Design/**/*.qws
 /DE1-SoC/FPGA_Design/**/*.sof
 /DE1-SoC/FPGA_Design/**/*.cdf
+/DE1-SoC/FPGA_Design/**/*.stp
