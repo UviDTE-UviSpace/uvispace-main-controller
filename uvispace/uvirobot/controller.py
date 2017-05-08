@@ -79,8 +79,6 @@ def listen(sockets, my_robot):
                 goal = sockets['goal'].recv_json()
                 my_robot.new_goal(goal)
 
-            time.sleep(0.5)
-
     except KeyboardInterrupt:
         my_robot.on_shutdown()
     return
