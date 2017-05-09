@@ -13,6 +13,12 @@ def save_data_spreadsheet(current_time, mpose, filename_spreadsheet):
     """
     Receives poses with its corresponding time and saves them in a
     spreadsheet.
+
+    :param current_time: contains time corresponding to the pose.
+    :param mpose: contains a 2-D position, with 2 cartesian values
+     (x,y) and an angle value (theta).
+    :param filename_spreadsheet: name of spreadsheet where the data
+     will be saved.
     """
     wb = load_workbook(filename_spreadsheet)
     ws = wb.active
@@ -36,9 +42,14 @@ def save_data_textfile(current_time, mpose, filename_textfile):
     """
     Receives poses with its corresponding time and saves them in a
     filetext.
+    :param current_time: contains time corresponding to the pose.
+    :param mpose: contains a 2-D position, with 2 cartesian values
+     (x,y) and an angle value (theta).
+    :param filename_spreadsheet: name of textfile where the data will
+     be saved.
     """
     outfile = open(filename_textfile, 'a')
     text = ("%f \t%f \t%f \t%f \n") % (current_time, mpose[0], mpose[1],
-                                         mpose[2])
-    outfile.write (text)
+                                       mpose[2])
+    outfile.write(text)
     outfile.close()
