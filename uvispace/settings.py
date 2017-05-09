@@ -1,4 +1,5 @@
 import os
+import time
 import logging.config
 
 
@@ -29,19 +30,25 @@ LOGGING = {
             'level': 'DEBUG',
             'formatter': 'verbose',
             'class': 'logging.FileHandler',
-            'filename': '/'.join([log_path, 'controller.log'])
+            'filename': '/'.join([log_path, 'controller_{}.log'.format(
+                    time.strftime("%Y%m%d_%H%M%S"))]),
+            'delay': True
         },
         'file_messenger': {
             'level': 'DEBUG',
             'formatter': 'verbose',
             'class': 'logging.FileHandler',
-            'filename': '/'.join([log_path, 'messenger.log'])
+            'filename': '/'.join([log_path, 'messenger_{}.log'.format(
+                    time.strftime("%Y%m%d_%H%M%S"))]),
+            'delay': True
         },
         'file_sensor': {
             'level': 'DEBUG',
             'formatter': 'thread_verbose',
             'class': 'logging.FileHandler',
-            'filename': os.path.join(log_path, 'sensor.log')
+            'filename': os.path.join(log_path, 'sensor_{}.log'.format(
+                    time.strftime("%Y%m%d_%H%M%S"))),
+            'delay': True
         },
         'console': {
             'level': 'DEBUG',
