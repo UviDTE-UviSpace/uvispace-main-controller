@@ -51,10 +51,10 @@ class Triangle(object):
         self._scale = 1
 
     def __str__(self):
-        return "Triangle\n{}".format(self.vertices)
+        return "Triangle {}".format(self.vertices)
 
     def __repr__(self):
-        return "Triangle\n{}".format(self.vertices)
+        return "Triangle {}".format(self.vertices)
 
     def local2global(self, offsets, K=None, image2cartesian=True):
         """

@@ -101,7 +101,7 @@ class Client(Socket):
         if not isinstance(self._sock, socket._closedsocket):
             self.write_command('CLOSE_CONNECTION')
             self.close()
-            logger.info('Closed the TCP client\n\n{}'.format(75 * '-'))
+            logger.info('Closed the TCP client {}'.format(75 * '-'))
         else:
             logger.debug('Unable to close TCP client. Already closed')
 
@@ -144,7 +144,7 @@ class Client(Socket):
                 break
             bytes += len(received_package)
             packages.append(received_package)
-        logger.debug('Received {} bytes of {} ({:.2f}%)\r'.format(
+        logger.debug('Received {} bytes of {} ({:.2f}%)'.format(
                 bytes, size, (100 * float(bytes) / size)))
         # Concatenate all the packages in a unique variable
         data = ''.join(packages)
@@ -162,7 +162,7 @@ class Client(Socket):
          'EMPTY_BUFFER' is returned.
         """
         data = self._COMMANDS[command]
-        self.send('{}\n'.format(data))
+        self.send('{}'.format(data))
         message = "EMPTY BUFFER"
         if clean_buffer:
             try:
@@ -179,7 +179,7 @@ class Client(Socket):
         :rtype: int or list
         """
         reg = self._REGISTERS[regkey]
-        self.send('r,{}\n'.format(reg))
+        self.send('r,{}'.format(reg))
         try:
             result = self.recv(self.buffer_size)
         except socket.error as (code, msg):
@@ -200,7 +200,7 @@ class Client(Socket):
          register
         """
         reg = self._REGISTERS[regkey]
-        self.send('w,{},{}\n'.format(reg, value))
+        self.send('w,{},{}'.format(reg, value))
         # Sometimes an ACK message is returned. It has to be checked for
         # cleaning the buffer.
         try:

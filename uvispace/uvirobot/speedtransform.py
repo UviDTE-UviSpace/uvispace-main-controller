@@ -13,6 +13,10 @@ The first 127 values represent reverse direction speeds, and the last
 127 direct direction speeds (127 is null speed).
 """
 import numpy as np
+import logging
+
+import settings
+logger = logging.getLogger('controller')
 
 
 class Speed(object):
@@ -222,8 +226,8 @@ class Speed(object):
             raise e
         if not (float(min_A) < float(max_A) < float(scale_zero)
                 < float(min_B) < float(max_B)):
-            raise ValueError("Not valid segment limits. \
-                    min_A < max_A < scale_zero < min_B < max_B")
+            raise ValueError("Not valid segment limits. "
+                             "min_A < max_A < scale_zero < min_B < max_B")
         # Gets the value of the middle point
         zero_value = (self._max_value + self._min_value) / 2.0
         speed = self._speed
@@ -269,7 +273,7 @@ class Speed(object):
         """
         self.rho = rho
         if self.get_format() is '2_wheel_drive':
-            print "The speed type is already '2_wheel_drive'."
+            logger.info("The speed type is already '2_wheel_drive'.")
             return self.get_speed()
         vLinear = self._speed[0]
         vRotation = self._speed[1]

@@ -8,7 +8,6 @@ of 0 radians. The pose is published every 25 milliseconds.
 import logging
 import time
 
-import numpy
 import zmq
 
 import settings
@@ -20,14 +19,14 @@ def main():
 
     logger.info("Start")
     publisher = zmq.Context.instance().socket(zmq.PUB)
-    # FIXME [floonone-20170503] hardcoded socket bind
-    publisher.bind("tcp://*:35001")
+    # Send positions for robot 1
+    publisher.bind("tcp://*:{}".format(settings.position_base_port+1))
 
     logger.info("Publisher socket bound")
     position = {
-        'x': numpy.asscalar(numpy.float32(1.0)),
-        'y': numpy.asscalar(numpy.float32(2.4)),
-        'theta': numpy.asscalar(numpy.float32(-2.9385785723))
+        'x': 1.0,
+        'y': 1.0,
+        'theta': 0.0
     }
     try:
         while True:
