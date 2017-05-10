@@ -8,7 +8,7 @@ import sys
 from openpyxl import Workbook
 from openpyxl import load_workbook
 
-def data_to_spreadsheet(data, filename_spreadsheet):
+def data2spreadsheet(data, filename_spreadsheet):
     """
     Receives poses and time, and saves them in a spreadsheet.
 
@@ -26,15 +26,16 @@ def data_to_spreadsheet(data, filename_spreadsheet):
     # Detects the next empty row.
     while search_empty_row:
         empty_row += 1
-        data = ws.cell(row=empty_row, column=1).value
-        if data is None:
+        data_cell = ws.cell(row=empty_row, column=1).value
+        if data_cell is None:
             search_empty_row = False
     # Write data in empty row.
+#    import pdb; pdb.set_trace()
     for index, element in enumerate(data):
         ws.cell(column=index+1, row=empty_row, value=element)
     wb.save(filename_spreadsheet)
 
-def data_to_textfile(data, filename_textfile):
+def data2textfile(data, filename_textfile):
     """
     Receives poses and time, and saves them in a textfile.
 
@@ -42,10 +43,12 @@ def data_to_textfile(data, filename_textfile):
     :param filename_textfile: name of textfile where the data will
      be saved.
     """
-    outfile = open(filename_textfile, 'a')
-    for index, element in enumerate(data):
-        text = text + "{} \t".format(element)
-    #text = ("{} \t {pose1} \t {pose2} \t {pose3} \n".format(time=current_time,
-                            #mpose[0], mpose[1], mpose[2])
-    outfile.write(text)
-    outfile.close()
+    text = ''
+    with open(filename_textfile, 'a') as outfile:
+        for index, element in enumerate(data):
+            text = text + "{} \t".format(element)
+        #text = ("{} \t {pose1} \t {pose2} \t {pose3} \n".format(time=current_time,
+                                #mpose[0], mpose[1], mpose[2])
+        text = text + "\n"
+        outfile.write(text)
+
