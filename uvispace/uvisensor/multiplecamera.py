@@ -255,6 +255,8 @@ class DataFusionThread(threading.Thread):
 
     def run(self):
         """Main routine of the DataFusionThread."""
+        # Create file name to save data
+        filename = "{:.{prec}}".format(time.time(), prec=0)
         # Wait until all cameras are initialized
         for event in self.begin_events:
             event.wait()
@@ -335,10 +337,15 @@ class DataFusionThread(threading.Thread):
                 pose = triangle.get_pose()
                 # Convert coordinates to meters.
                 mpose = [pose[0] / 1000, pose[1] / 1000, pose[2]]
+                #List to save data
+                data2save = [time.time(), pose[0], pose[1], pose[2]]
                 # Save poses in spreadsheet.
-                save_data_spreadsheet(time.time(), mpose, 'tmp/test.xlsx')
+                data_to_spreadsheet(data=data2save,
+                            filename_spreadsheet="tmp/{}.xlsx".format(filename))
                 # Save poses in textfile.
-                save_data_textfile(time.time(), mpose, 'tmp/test.txt')
+                data_to_textfile(data=data2save,
+                            filename_textfile='tmp/{}.txt'.format(filename))
+                # save_data_textfile(time.time(), mpose, 'tmp/test.txt')
                 rospy.logdebug("detected triangle at {}mm and {} radians."
                                "".format(pose[0:2], pose[2]))
                 self.publisher.publish(Pose2D(mpose[0], mpose[1], mpose[2]))
