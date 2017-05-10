@@ -162,7 +162,7 @@ class Client(Socket):
          'EMPTY_BUFFER' is returned.
         """
         data = self._COMMANDS[command]
-        self.send('{}'.format(data))
+        self.send('{}\n'.format(data))
         message = "EMPTY BUFFER"
         if clean_buffer:
             try:
@@ -179,7 +179,7 @@ class Client(Socket):
         :rtype: int or list
         """
         reg = self._REGISTERS[regkey]
-        self.send('r,{}'.format(reg))
+        self.send('r,{}\n'.format(reg))
         try:
             result = self.recv(self.buffer_size)
         except socket.error as (code, msg):
@@ -200,7 +200,7 @@ class Client(Socket):
          register
         """
         reg = self._REGISTERS[regkey]
-        self.send('w,{},{}'.format(reg, value))
+        self.send('w,{},{}\n'.format(reg, value))
         # Sometimes an ACK message is returned. It has to be checked for
         # cleaning the buffer.
         try:

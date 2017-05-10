@@ -77,7 +77,10 @@ def listen_speed_set_points(my_serial, robot_id, robot_speed, speed_calc_times,
     logger.debug("Initializing subscriber socket")
     # Open a subscribe socket to listen speed directives
     listener = zmq.Context.instance().socket(zmq.SUB)
+    # Set subscribe option to empty so it receives all messages
     listener.setsockopt_string(zmq.SUBSCRIBE, u"")
+    # Set the conflate option to true so it only keeps the last message received
+    listener.setsockopt(zmq.CONFLATE, True)
     listener.connect("tcp://localhost:{}".format(
             settings.speed_base_port+robot_id))
 

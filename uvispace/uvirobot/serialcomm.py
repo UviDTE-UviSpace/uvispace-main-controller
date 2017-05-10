@@ -44,6 +44,19 @@ class SerMesProtocol(Serial):
     :param float timeout: Time to wait to achieve the communication.
     """
 
+    # ---------- CLASS CONSTANTS ---------- #
+
+    # message fields
+    STX = '\x02'
+    ETX = '\x03'
+    # slave-to-master answers
+    ACK_MSG = '\x01'
+    NACK_MSG = '\x02'
+    DONE_MSG = '\x03'
+    # master-to-slave orders
+    READY = '\x04'
+    MOVE = '\x05'
+
     def __init__(self, port,
                  baudrate,
                  stopbits=1,
@@ -54,8 +67,7 @@ class SerMesProtocol(Serial):
                         baudrate=baudrate,
                         stopbits=stopbits,
                         parity=parity,
-                        timeout=timeout
-                        )
+                        timeout=timeout)
         # IDs of the master and slave.                
         self.MASTER_ID = '\x01'
         self.SLAVE_ID = '\x02'
@@ -79,7 +91,7 @@ class SerMesProtocol(Serial):
         count = 0
         while not ready:
             if count == tries:
-                logger.info("Unable to connect. Exited after {} tries".format(
+                logger.error("Unable to connect. Exited after {} tries".format(
                         tries))
                 sys.exit()
             self.send_message(self.READY)
@@ -90,7 +102,7 @@ class SerMesProtocol(Serial):
             count += 1
         return ready
 
-    def move(self, setpoint=[0, 0]):
+    def move(self, setpoint):
         """
         Send a move order to the slave.
 
@@ -106,7 +118,7 @@ class SerMesProtocol(Serial):
         # Check that the values are correct. Invalid values may crash 
         # the Arduino program.
         while any(x > 255 or x < 0 for x in setpoint):
-            logger.info('Invalid set points. Please enter 2 values between '
+            logger.warn('Invalid set points. Please enter 2 values between '
                         '0 and 255 (Decimal values will be rounded)')
             if any(type(x) == float for x in setpoint):
                 setpoint = [int(round(x)) for x in setpoint]
@@ -180,8 +192,8 @@ class SerMesProtocol(Serial):
         start_time = time.time()
         while _STX != self.STX:
             current_time = time.time()
-            # Gives the slave 2 seconds to return an answer.
-            if current_time - start_time > 2:
+            # Gives the slave 0.1 seconds to return an answer.
+            if current_time - start_time > 0.1:
                 logger.info('Error, STX was not found')
                 return (Rx_OK, fun_code, length, data)
             _STX = self.read(1)
@@ -219,16 +231,3 @@ class SerMesProtocol(Serial):
             logger.warn('Message for other device')
 
         return (Rx_OK, fun_code, length, data)
-
-        # ---------- CLASS CONSTANTS ---------- #
-
-    # message fields
-    STX = '\x02'
-    ETX = '\x03'
-    # slave-to-master answers
-    ACK_MSG = '\x01'
-    NACK_MSG = '\x02'
-    DONE_MSG = '\x03'
-    # master-to-slave orders
-    READY = '\x04'
-    MOVE = '\x05'
