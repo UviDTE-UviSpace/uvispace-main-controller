@@ -254,9 +254,9 @@ class DataFusionThread(threading.Thread):
         self._inborders = copy.copy(self.inborders)
         self._reset_flags = copy.copy(self.reset_flags)
         # Name of the output file for the poses historic values.
-        self.filename = "{:.{prec}}".format(time.time(), prec=0)
-        self.array2save = np.empty([0,0,0,0])
-        self.array2save_b = np.empty([0,0,0,0])
+        self.filename = "{}".format(time.strftime("%d_%m_%Y_%H%M"))
+        # Array to save poses historic values.
+        self.array2save = np.array(['time','pos x','pos y','angle'])
 
     def run(self):
         """Main routine of the DataFusionThread."""
@@ -340,12 +340,15 @@ class DataFusionThread(threading.Thread):
                 pose = triangle.get_pose()
                 # Convert coordinates to meters.
                 mpose = [pose[0] / 1000, pose[1] / 1000, pose[2]]
-                data2save = [time.time(), mpose[0],mpose[1],mpose [2]]
-                #List to save data
-                for index, element in enumerate(data2save):
-                    array2save_b[0, index] = element
-                array2save = np.stack((array2save, array2save_b, axis=-1)
-
+                # Differential time variable.
+                diff_time = time.time() - cycle_start_time
+                # Time formatted without decimals.
+                formatted_time = "{:.{prec}}".format(diff_time, prec=0)
+                # Temporary array to save time and pose in meters.
+                temp_array = np.array([formatted_time, mpose[0], mpose[1],
+                                       mpose[2]])
+                # Array to save data.
+                array2save = np.vstack((array2save, temp_array))
                 rospy.logdebug("detected triangle at {}mm and {} radians."
                                "".format(pose[0:2], pose[2]))
                 self.publisher.publish(Pose2D(mpose[0], mpose[1], mpose[2]))
@@ -355,10 +358,15 @@ class DataFusionThread(threading.Thread):
             while (time.time() - cycle_start_time < self.cycletime):
                 pass
         # Instructions to execute after end_event is raised.
+        sLeft = input("sLeft of test \n")
+        sRight = input("sRight of test \n")
         # Save poses in spreadsheet.
-        saveposes.data2spreadsheet(data2save, "tmp/{}.xlsx".format(filename))
+        saveposes.data2spreadsheet(array2save,
+                "tmp/{}-L{}-R{}.xlsx".format(filename, sLeft, sRight))
         # Save poses in textfile.
-        saveposes.data2textfile(data2save, 'tmp/{}.txt'.format(filename))         
+        saveposes.data2textfile(array2save,
+                "tmp/{}-L{}-R{}.txt".format(filename, sLeft, sRight))
+
 
 class UserThread(threading.Thread):
     """
