@@ -19,8 +19,6 @@ def data2spreadsheet(data, filename_spreadsheet):
     :param filename_spreadsheet: name of spreadsheet where the data
      will be saved.
     """
-    print filename_spreadsheet
-    print data
     try:
         wb = load_workbook(filename_spreadsheet)
     except:
@@ -31,9 +29,11 @@ def data2spreadsheet(data, filename_spreadsheet):
     for x in range(0, rows):
         for y in range(0, cols):
             try:
-                ws.cell(column=y+1, row=x+1, value=int(data[x,y]))
+                element = float(data[x,y])
+                element = float("{0:.2f}".format(element))
             except:
-                ws.cell(column=y+1, row=x+1, value=data[x,y])
+                element = data[x,y]
+            ws.cell(column=y+1, row=x+1, value=element)
     wb.save(filename_spreadsheet)
 
 def data2textfile(data, filename_textfile):
@@ -51,9 +51,10 @@ def data2textfile(data, filename_textfile):
         for x in range(0, rows):
             for y in range(0, cols):
                 try:
-                    element=int(data[x,y])
+                    element = float(data[x,y])
+                    element = float("{0:.2f}".format(element))
                 except:
                     element=data[x,y]
-                text = text + "{} \t".format(element)
+                text = text + "{} \t\t".format(element)
             text = text + "\n"
         outfile.write(text)

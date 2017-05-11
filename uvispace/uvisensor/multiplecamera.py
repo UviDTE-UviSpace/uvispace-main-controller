@@ -257,6 +257,10 @@ class DataFusionThread(threading.Thread):
         self.filename = "{}".format(time.strftime("%d_%m_%Y_%H%M"))
         # Array to save poses historic values.
         self.array2save = np.array(['time','pos x','pos y','angle'])
+        # Boolean to save time by detecting first triangle
+        self.first_triangle = True
+        self.initial_time = 0
+        
 
     def run(self):
         """Main routine of the DataFusionThread."""
@@ -336,19 +340,22 @@ class DataFusionThread(threading.Thread):
                 if element.has_key('1'):
                     if element['1'] is not None:
                         triangle = copy.copy(element['1'])
-            if triangle:
+            if triangle:            
                 pose = triangle.get_pose()
                 # Convert coordinates to meters.
                 mpose = [pose[0] / 1000, pose[1] / 1000, pose[2]]
                 # Differential time variable.
-                diff_time = time.time() - cycle_start_time
+                while self.first_triangle:
+                    self.initial_time = time.time()
+                    self.first_triangle = False
+                diff_time = time.time() - self.initial_time
                 # Time formatted without decimals.
-                formatted_time = "{:.{prec}}".format(diff_time, prec=0)
+                formatted_time = "{:.{prec}}".format(diff_time, prec=3)
                 # Temporary array to save time and pose in meters.
-                temp_array = np.array([formatted_time, mpose[0], mpose[1],
-                                       mpose[2]])
+                temp_array = np.array([formatted_time, pose[0], pose[1],
+                                       pose[2]])
                 # Array to save data.
-                array2save = np.vstack((array2save, temp_array))
+                self.array2save = np.vstack((self.array2save, temp_array))
                 rospy.logdebug("detected triangle at {}mm and {} radians."
                                "".format(pose[0:2], pose[2]))
                 self.publisher.publish(Pose2D(mpose[0], mpose[1], mpose[2]))
@@ -358,14 +365,21 @@ class DataFusionThread(threading.Thread):
             while (time.time() - cycle_start_time < self.cycletime):
                 pass
         # Instructions to execute after end_event is raised.
-        sLeft = input("sLeft of test \n")
-        sRight = input("sRight of test \n")
+        self.initial_time = time.time()
+        wait = True
+        # Wait time to enter test speed
+        while wait:
+            if (time.time() - self.initial_time) > 0.2:
+                wait = False
+        # Test speed to filename
+        sLeft = input("Introduce sLeft of test\n")
+        sRight = input("Introduce sRight of test\n")
         # Save poses in spreadsheet.
-        saveposes.data2spreadsheet(array2save,
-                "tmp/{}-L{}-R{}.xlsx".format(filename, sLeft, sRight))
+        saveposes.data2spreadsheet(self.array2save,
+                "tmp/{}-L{}-R{}.xlsx".format(self.filename, sLeft, sRight))
         # Save poses in textfile.
-        saveposes.data2textfile(array2save,
-                "tmp/{}-L{}-R{}.txt".format(filename, sLeft, sRight))
+        saveposes.data2textfile(self.array2save,
+                "tmp/{}-L{}-R{}.txt".format(self.filename, sLeft, sRight))
 
 
 class UserThread(threading.Thread):
