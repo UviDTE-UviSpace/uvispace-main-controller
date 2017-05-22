@@ -21,6 +21,7 @@ instead, it will probably corrupt the TCP/IP socket and the FPGAs will
 have to be reset.
 """
 # Standard libraries
+import os
 import glob
 import copy
 import numpy as np
@@ -233,7 +234,7 @@ class DataFusionThread(threading.Thread):
         threading.Thread.__init__(self, name=name)
         self.publisher = zmq.Context.instance().socket(zmq.PUB)
         self.publisher.bind("tcp://*:{}".format(
-                settings.position_base_port+1))
+                int(os.environ.get("UVISPACE_BASE_PORT_POSITION"))+1))
         self.cycletime = 0.02
         self.quadrant_limits = quadrant_limits
         # Synchronization variables

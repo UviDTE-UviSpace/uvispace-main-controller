@@ -54,14 +54,14 @@ def init_sockets(robot_id):
     pos_sock.setsockopt_string(zmq.SUBSCRIBE, u"")
     pos_sock.setsockopt(zmq.CONFLATE, True)
     pos_sock.connect("tcp://localhost:{}".format(
-            settings.position_base_port+robot_id))
+            int(os.environ.get("UVISPACE_BASE_PORT_POSITION"))+robot_id))
 
     # Open a subscribe socket to listen for new goals
     goa_sock = zmq.Context.instance().socket(zmq.SUB)
     goa_sock.setsockopt_string(zmq.SUBSCRIBE, u"")
     pos_sock.setsockopt(zmq.CONFLATE, True)
     goa_sock.connect("tcp://localhost:{}".format(
-            settings.goal_base_port+robot_id))
+            int(os.environ.get("UVISPACE_BASE_PORT_GOAL"))+robot_id))
 
     sockets = {
         'position': pos_sock,

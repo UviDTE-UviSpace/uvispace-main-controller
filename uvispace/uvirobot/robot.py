@@ -8,6 +8,7 @@ of the *PathTracker*, for calculating and storing the robot navigation
 values.
 """
 # Standard libraries
+import os
 import logging
 import zmq
 
@@ -36,7 +37,8 @@ class RobotController(object):
         self.QCTracker = path_tracker.QuadCurveTracker()
 
         pub_vel = zmq.Context.instance().socket(zmq.PUB)
-        pub_vel.bind("tcp://*:{}".format(settings.speed_base_port+robot_id))
+        pub_vel.bind("tcp://*:{}".format(
+                int(os.environ.get("UVISPACE_BASE_PORT_SPEED"))+robot_id))
         self.pub_vel = pub_vel
 
     def set_speed(self, pose):

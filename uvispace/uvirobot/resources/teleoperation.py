@@ -8,6 +8,7 @@ import select
 import sys
 import tty
 import zmq
+import os
 
 
 def get_key():
@@ -34,7 +35,8 @@ def get_key():
 def main():
     # Init publisher
     publisher = zmq.Context.instance().socket(zmq.PUB)
-    publisher.bind("tcp://*:35011")
+    publisher.bind("tcp://*:{}".format(
+            int(os.environ.get("UVISPACE_BASE_PORT_SPEED"))+1))
     speeds = {
         'linear': 0.0,
         'angular': 0.0

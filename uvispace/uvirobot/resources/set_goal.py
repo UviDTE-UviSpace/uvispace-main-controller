@@ -1,8 +1,8 @@
+import os
 import sys
 import time
 import zmq
 
-import settings
 
 def main():
     goal = {
@@ -11,7 +11,8 @@ def main():
     }
     socket = zmq.Context.instance().socket(zmq.PUB)
     # Send goals for robot 1
-    socket.bind("tcp://*:{}".format(settings.goal_base_port+1))
+    socket.bind("tcp://*:{}".format(
+            int(os.environ.get("UVISPACE_BASE_PORT_GOAL"))+1))
     time.sleep(2)
     socket.send_json(goal)
     return

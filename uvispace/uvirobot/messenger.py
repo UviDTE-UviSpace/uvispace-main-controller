@@ -82,7 +82,7 @@ def listen_speed_set_points(my_serial, robot_id, robot_speed, speed_calc_times,
     # Set the conflate option to true so it only keeps the last message received
     listener.setsockopt(zmq.CONFLATE, True)
     listener.connect("tcp://localhost:{}".format(
-            settings.speed_base_port+robot_id))
+            int(os.environ.get("UVISPACE_BASE_PORT_SPEED"))+robot_id))
 
     logger.debug("Listening for speed set points")
     # listen for speed directives until interrupted

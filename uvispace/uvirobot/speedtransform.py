@@ -16,7 +16,7 @@ import numpy as np
 import logging
 
 import settings
-logger = logging.getLogger('controller')
+logger = logging.getLogger('messenger')
 
 
 class Speed(object):
