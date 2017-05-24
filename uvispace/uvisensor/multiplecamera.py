@@ -21,20 +21,24 @@ instead, it will probably corrupt the TCP/IP socket and the FPGAs will
 have to be reset.
 """
 # Standard libraries
+import copy
 import os
 import glob
-import copy
-import numpy as np
 import threading
 import time
 import logging
+# Third party libraries
+import numpy as np
 import zmq
-
 # Local libraries
 import videosensor
 
+# Logging setup
 import settings
 logger = logging.getLogger('sensor')
+
+import rospy
+rospy.spin()
 
 
 class CameraThread(threading.Thread):

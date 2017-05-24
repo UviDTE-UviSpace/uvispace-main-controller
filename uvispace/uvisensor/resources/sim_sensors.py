@@ -5,18 +5,19 @@ This module simulates the uvisensor package for testing uvirobot.
 A robot is simulated to be placed at the coordinate (1,1) with an angle
 of 0 radians. The pose is published every 25 milliseconds.
 """
+# Standard libraries
 import os
 import logging.config
 import time
-
+# Third party libraries
 import zmq
 
+# Logging setup
 import settings
 logger = logging.getLogger('sensor')
 
 
 def main():
-
     logger.info("Start")
     publisher = zmq.Context.instance().socket(zmq.PUB)
     # Send positions for robot 1

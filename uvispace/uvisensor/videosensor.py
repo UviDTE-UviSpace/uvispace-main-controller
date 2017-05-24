@@ -8,17 +8,18 @@ class and its methods.
 # Standard libraries
 import ast
 import ConfigParser
+import logging
+import socket
+import sys
+# Third party libraries
 import numpy as np
 import pylab
 from scipy import misc
-import socket
-import sys
-import logging
-
 # Local libraries
 from client import Client
 import imgprocessing
 
+# Logging setup
 import settings
 logger = logging.getLogger("sensor")
 

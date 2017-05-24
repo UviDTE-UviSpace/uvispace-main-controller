@@ -10,18 +10,19 @@ id of the desired robot. It must be the same as the one passed to the
 messenger.py module.
 """
 # Standard libraries
-import sys
-import os
 import getopt
-import numpy as np
-import time
-import zmq
 import logging
-
+import os
+import sys
+import time
+# Third party libraries
+import numpy as np
+import zmq
 # Local libraries
-from robot import RobotController
 import plotter
+from robot import RobotController
 
+# Logging setup
 import settings
 logger = logging.getLogger('controller')
 

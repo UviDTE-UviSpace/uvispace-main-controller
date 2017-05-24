@@ -12,9 +12,12 @@ the *Arduino* manages speed values ranging from 0 to 255 for each wheel.
 The first 127 values represent reverse direction speeds, and the last 
 127 direct direction speeds (127 is null speed).
 """
-import numpy as np
+# Standard libraries
 import logging
+# Third party libraries
+import numpy as np
 
+# Logging setup
 import settings
 logger = logging.getLogger('messenger')
 

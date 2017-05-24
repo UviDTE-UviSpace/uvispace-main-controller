@@ -6,7 +6,7 @@ The operations are done in the 2-D space
 It works with 2-D shapes represented by arrays. Thus, the calculations
 are based on matrix operations and linear algebra. 
 """
-# Standard libraries
+# Third party libraries
 import numpy as np
 
 

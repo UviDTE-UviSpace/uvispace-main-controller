@@ -16,12 +16,14 @@ Moreover, it offers methods specific to the UGV operation, as the *move*
 method, that takes a speeds setpoints inputs and sends them correctly 
 formatted to the slave.
 """
+# Standard libraries
+import logging
 from serial import Serial
 import struct
 import sys
 import time
-import logging
 
+# Logging setup
 import settings
 logger = logging.getLogger('messenger')
 

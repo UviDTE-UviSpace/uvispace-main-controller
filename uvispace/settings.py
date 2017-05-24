@@ -1,6 +1,6 @@
+import logging.config
 import os
 import time
-import logging.config
 
 
 # Logging configuration

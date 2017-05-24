@@ -8,13 +8,14 @@ of the *PathTracker*, for calculating and storing the robot navigation
 values.
 """
 # Standard libraries
-import os
 import logging
+import os
+# Third party libraries
 import zmq
-
 # Local libraries
 import path_tracker
 
+# Logging setup
 import settings
 logger = logging.getLogger("controller")
 

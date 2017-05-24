@@ -15,9 +15,10 @@ It has 3 functions:
   of the project to give required updates of the speed values.
 """
 # Standard libraries
+import os
+# Third party libraries
 import matplotlib.pyplot as plt
 import numpy as np
-import os
 
 
 def format_plotting():

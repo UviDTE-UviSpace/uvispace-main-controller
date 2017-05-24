@@ -32,15 +32,16 @@ to an external device, the image representation mentioned above is
 the typical used system.
 """
 # Standard libraries
+import logging
+# Third party libraries
 import cv2
 import numpy as np
 import skimage.measure
 import skimage.morphology
-import logging
-
 # Local libraries
 import geometry
 
+# Logging setup
 import settings
 logger = logging.getLogger("sensor")
 

@@ -3,12 +3,13 @@
 Auxiliary program for controlling the UGV movements through keyboard.
 """
 # Standard libraries
+import os
 import termios
+import tty
 import select
 import sys
-import tty
+# Third party libraries
 import zmq
-import os
 
 
 def get_key():

@@ -27,20 +27,21 @@ When the execution ends, the *plotter* module is called and the time
 delays values are plotted on a graph.
 """
 # Standard libraries
+import getopt
 import glob
+import logging
+import os
 import struct
 import sys
-import getopt
 import time
-import os
-import logging
+# Third party libraries
 import zmq
-
 # Local libraries
+import plotter
 from serialcomm import SerMesProtocol
 from speedtransform import Speed
-import plotter
 
+# Logging setup
 import settings
 logger = logging.getLogger('messenger')
 

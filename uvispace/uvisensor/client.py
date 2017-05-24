@@ -12,10 +12,11 @@ This module contains the Client class, which inherits from socket.socket
 # Standard libraries
 import ast
 import errno
+import logging
 import socket
 from socket import socket as Socket
-import logging
 
+# Logging setup
 import settings
 logger = logging.getLogger("sensor")
 
