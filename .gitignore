@@ -8,10 +8,6 @@
 *.log
 
 ##tmp folder
-#Log files
-**/tmp/*.log
-#Subfolders
-**/tmp/**/**
 #eps files (graphs)
 **/tmp/*.eps
 #tar files
