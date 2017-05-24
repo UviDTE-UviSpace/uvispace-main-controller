@@ -276,7 +276,7 @@ class Speed(object):
         """
         self.rho = rho
         if self.get_format() is '2_wheel_drive':
-            logger.info("The speed type is already '2_wheel_drive'.")
+            logger.warn("The speed type is already '2_wheel_drive'.")
             return self.get_speed()
         vLinear = self._speed[0]
         vRotation = self._speed[1]

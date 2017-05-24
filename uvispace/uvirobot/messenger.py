@@ -74,7 +74,10 @@ def connect_and_check(robot_id, port=None, baudrate=57600):
 
 def listen_speed_set_points(my_serial, robot_id, robot_speed, speed_calc_times,
                             wait_times, xbee_times):
-
+    """
+    Listens for new speed set points messages on the subscriber socket and
+    moves the robot when a new message is received.
+    """
     logger.debug("Initializing subscriber socket")
     # Open a subscribe socket to listen speed directives
     listener = zmq.Context.instance().socket(zmq.SUB)
@@ -120,10 +123,10 @@ def move_robot(data, my_serial, wait_times, speed_calc_times, xbee_times,
     # Get the right and left speeds in case of reverse movement
     else:
         robot_speed.get_2WD_speeds(wheels_modifiers=[1, 1])
-    v_right, v_left = robot_speed.nonlinear_transform(min_A=min_speed,
-                                                      max_B=max_speed)
-    logger.info('I am sending R: {} L: {}'.format(v_right, v_left))
-    my_serial.move([v_right, v_left])
+    sp_right, sp_left = robot_speed.nonlinear_transform(min_A=min_speed,
+                                                        max_B=max_speed)
+    logger.info('I am sending R: {} L: {}'.format(sp_right, sp_left))
+    my_serial.move([sp_right, sp_left])
     t0 = time.time()
     xbee_times.append(t0 - t2)
     logger.info('Transmission ended successfully')

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """ 
-Routine for getting UGV poses and publishing to speed topic
+Routine for getting UGV poses and publishing speed set points.
 
 The module instantiates a RobotController object and uses its methods
 for publishing new speed set points.
@@ -73,6 +73,10 @@ def init_sockets(robot_id):
 
 
 def listen_sockets(sockets, my_robot):
+    """
+    Listens on subscriber sockets for messages of positions and goals, and
+    launches the proper actions when a message is received.
+    """
     # Initialize poll set
     poller = zmq.Poller()
     poller.register(sockets['position'], zmq.POLLIN)
@@ -82,14 +86,14 @@ def listen_sockets(sockets, my_robot):
     try:
         while True:
             socks = dict(poller.poll())
-            if sockets['position'] in socks \
-                    and socks[sockets['position']] == zmq.POLLIN:
+            if (sockets['position'] in socks
+                    and socks[sockets['position']] == zmq.POLLIN):
                 position = sockets['position'].recv_json()
                 logger.debug("Received new position: {}".format(position))
                 my_robot.set_speed(position)
 
-            if sockets['goal'] in socks \
-                    and socks[sockets['goal']] == zmq.POLLIN:
+            if (sockets['goal'] in socks
+                    and socks[sockets['goal']] == zmq.POLLIN):
                 goal = sockets['goal'].recv_json()
                 logger.debug("Received new goal: {}".format(goal))
                 my_robot.new_goal(goal)
@@ -131,11 +135,10 @@ def main():
 
     # Until the first pose is not published, the robot instance
     # is not initialized.
-    while not my_robot.init:
-        logger.info("Waiting for first position")
-        position = sockets['position'].recv_json()
-        logger.debug("Received first position: {}".format(position))
-        my_robot.set_speed(position)
+    logger.info("Waiting for first position")
+    position = sockets['position'].recv_json()
+    logger.debug("Received first position: {}".format(position))
+    my_robot.set_speed(position)
 
     # This function sends 4 rectangle points to the robot path.
     if rectangle_path:

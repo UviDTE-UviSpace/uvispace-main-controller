@@ -52,7 +52,8 @@ class RobotController(object):
         the designed Space consists in a 2-D flat space.
 
         :param pose: contains a 2-D position, with 2 cartesian values (x,y)
-         and an angle value (theta).
+         and an angle value (theta)..
+        :type pose: dict
         """
         if not self.init:
             self.QCTracker.append_point((pose['x'], pose['y']))
@@ -60,9 +61,9 @@ class RobotController(object):
         linear, angular = self.QCTracker.run(
                 pose['x'], pose['y'], pose['theta'])
         logger.info('Location--> X: {}, Y: {}, theta: {} - '
-                    'Speeds--> Linear: {}, Angular {}'.format(
-                            pose['x'], pose['y'], pose['theta'],
-                            linear, angular))
+                    'Speeds--> Linear: {}, Angular {}'
+                    .format(pose['x'], pose['y'], pose['theta'], linear,
+                            angular))
         self.speeds['linear'] = linear
         self.speeds['angular'] = angular
         self.pub_vel.send_json(self.speeds)
@@ -73,14 +74,15 @@ class RobotController(object):
 
         :param goal: contains a 2-D position, with 2 cartesian values (x,y)
          and an angle value (theta).
+        :type goal: dict
         """
         if self.init:
             goal_point = (goal['x'], goal['y'])
             # Adds the new goal to the current path, calculating all the 
             # intermediate points and stacking them to the path array
             self.QCTracker.append_point(goal_point)
-            logger.info('New goal--> X: {}, Y: {}'.format(
-                    goal['x'], goal['y']))
+            logger.info('New goal--> X: {}, Y: {}'
+                        .format(goal['x'], goal['y']))
         else:
             logger.info('The system is not yet initialized, '
                         'waiting for a pose to be published.')
