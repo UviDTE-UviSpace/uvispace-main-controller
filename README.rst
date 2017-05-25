@@ -70,7 +70,7 @@ The *controller* module listens for new positions of the robot, as well as for d
 uvisensor
 =========
 
-The uvisensor package connects via ethernet to external cameras, configures them and acquires images of the uvispace scene so it can calculate the position of the UGVs.
+The uvisensor package connects via ethernet to external cameras, configures them and acquires images of the iSpace scene so it can calculate the position of the UGVs.
 
 multiplecamera
 --------------

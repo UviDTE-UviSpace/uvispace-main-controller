@@ -100,8 +100,7 @@ def set_tracker(camera, image=[]):
 
 
 class VideoSensor(object):
-    """
-    This class contains methods for dealing with FPGA-camera system.
+    """This class contains methods for dealing with FPGA-camera system.
 
     :param str filename: Path to the configuration file of the camera. 
      The path shall be passed relatively to the script directory.
@@ -151,9 +150,7 @@ class VideoSensor(object):
             self.connect_client()
 
     def connect_client(self):
-        """
-        Read TCP/IP parameters in config file and connect to the device. 
-        """
+        """Read TCP/IP parameters in config file and connect to the device. """
         # The IP and PORT parameters are stored in the config file.
         try:
             self._ip = self.conf.get('VideoSensor', 'IP')
@@ -183,8 +180,7 @@ class VideoSensor(object):
         self._connected = False
 
     def load_configuration(self, write2fpga=True):
-        """
-        Load the config file and send the configuration to the FPGA.
+        """Load the config file and send the configuration to the FPGA.
 
         * Read camera and sensor parameters in self.filename. They are 
           then stored in the self._params variable. 
@@ -250,17 +246,13 @@ class VideoSensor(object):
                           "after 'CONFIGURE_CAMERA'".format(conf)))
 
     def read_conffile(self, filename):
-        """
-        Look for a configuration file on the given path and read it.
-        """
+        """Look for a configuration file on the given path and read it."""
         self.filename = filename
         self.conf.read(self.filename)
         return
 
     def get_homography_array(self):
-        """
-        Get an homography array from the configuration file.
-        """
+        """Get an homography array from the configuration file."""
         try:
             # Read the value of H as is written on file.
             raw_H = self.conf.get('Misc', 'H')
@@ -274,9 +266,7 @@ class VideoSensor(object):
         return self._H
 
     def get_limits_array(self):
-        """
-        Get the limits array from the configuration file.
-        """
+        """Get the limits array from the configuration file."""
         try:
             # Read the value of H as is written on file.
             raw_L = self.conf.get('Misc', 'limits')
@@ -291,8 +281,7 @@ class VideoSensor(object):
         return self._limits
 
     def get_offsets(self):
-        """
-        Get the offset of the sensor respect to the iSpace center.
+        """Get the offset of the sensor respect to the iSpace center.
 
         The row offset of the camera images corresponds to the images
         height and the column offset corresponds to the images width.
@@ -333,8 +322,7 @@ class VideoSensor(object):
         return value
 
     def set_register(self, register, value):
-        """
-        Write a value into an FPGA register.
+        """Write a value into an FPGA register.
 
         :param str register: key identifier of valid register name of 
          the FPGA. The full list of valid keys and their associated name
@@ -395,8 +383,7 @@ class VideoSensor(object):
                 tracker_id, min_x, min_y, width, height))
 
     def capture_frame(self, gray=True, tries=20, output_file=''):
-        """
-        This method requests a frame to the FPGA.
+        """This method requests a frame to the FPGA.
 
         :param bool get_gray: if true, a gray-scale image will be 
          requested. If false, the requested image will be RGB.

@@ -1,6 +1,5 @@
 #!/usr/bin/env python
-"""
-This module simulates the uvisensor package for testing uvirobot.
+"""This module simulates the uvisensor package for testing uvirobot.
 
 A robot is simulated to be placed at the coordinate (1,1) with an angle
 of 0 radians. The pose is published every 25 milliseconds.

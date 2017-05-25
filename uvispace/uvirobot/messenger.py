@@ -1,6 +1,5 @@
 #!/usr/bin/env python 
-"""
-This module 'listens' to speed SPs and sends them through serial port.
+"""This module 'listens' to speed SPs and sends them through serial port.
 
 **Usage: messenger.py [-r <robot_id>], [--robotid=<robot_id>]**
 
@@ -47,8 +46,7 @@ logger = logging.getLogger('messenger')
 
 
 def connect_and_check(robot_id, port=None, baudrate=57600):
-    """
-    Return an instance of SerMesProtocol and check it is ready.
+    """Return an instance of SerMesProtocol and check it is ready.
     
     If no port is specified, take the first one available.
     """
@@ -74,10 +72,7 @@ def connect_and_check(robot_id, port=None, baudrate=57600):
 
 def listen_speed_set_points(my_serial, robot_id, robot_speed, speed_calc_times,
                             wait_times, xbee_times):
-    """
-    Listens for new speed set points messages on the subscriber socket and
-    moves the robot when a new message is received.
-    """
+    """Listens for new speed set point messages on a subscriber socket."""
     logger.debug("Initializing subscriber socket")
     # Open a subscribe socket to listen speed directives
     listener = zmq.Context.instance().socket(zmq.SUB)
@@ -103,9 +98,7 @@ def listen_speed_set_points(my_serial, robot_id, robot_speed, speed_calc_times,
 
 def move_robot(data, my_serial, wait_times, speed_calc_times, xbee_times,
                robot_speed, min_speed=70, max_speed=190):
-    """
-    Convert speed msg into 2WD value and send it through port.
-    """
+    """Convert speed msg into 2WD value and send it through port."""
     global t0
     global t1
     global t2
@@ -134,9 +127,7 @@ def move_robot(data, my_serial, wait_times, speed_calc_times, xbee_times,
 
 def stop_vehicle(my_serial, wait_times, speed_calc_times, xbee_times,
                  robot_speed):
-    """
-    Send a null speed to the UGV.
-    """
+    """Send a null speed to the UGV."""
     stop_speed = {
         'linear': 0.0,
         'angular': 0.0
@@ -146,9 +137,7 @@ def stop_vehicle(my_serial, wait_times, speed_calc_times, xbee_times,
 
 
 def print_times(wait_times, speed_calc_times, xbee_times):
-    """
-    Calculate the average time of each part of the process.
-    """
+    """Calculate the average time of each part of the process."""
     wait_mean_time = sum(wait_times) / len(wait_times)
     speed_calc_mean_time = sum(speed_calc_times) / len(speed_calc_times)
     xbee_mean_time = sum(xbee_times) / len(xbee_times)

@@ -1,6 +1,5 @@
 #!/usr/bin/env python
-"""
-This module contain classes and methods with geometrical operations.
+"""This module contain classes and methods with geometrical operations.
 
 The operations are done in the 2-D space
 It works with 2-D shapes represented by arrays. Thus, the calculations
@@ -11,8 +10,7 @@ import numpy as np
 
 
 class Triangle(object):
-    """
-    Class for dealing with geometric operations referred to triangles.
+    """Class for dealing with geometric operations referred to triangles.
 
     An instance of the class represents an isosceles triangle in a 
     2-D space, with the 2 equal sides being bigger than the base one.
@@ -28,9 +26,7 @@ class Triangle(object):
     """
 
     def __init__(self, vertices, isglobal=False, cartesian=False):
-        """
-        Triangle class constructor.
-        """
+        """Triangle class constructor."""
         if len(vertices) is not 3:
             raise ValueError("Expected an array with 3 vertices")
         self.vertices = vertices.astype(np.float32)
@@ -56,8 +52,7 @@ class Triangle(object):
         return "Triangle\n{}".format(self.vertices)
 
     def local2global(self, offsets, K=None, image2cartesian=True):
-        """
-        Convert Triangle coordinates to the global coordinates system.
+        """Convert Triangle coordinates to the global coordinates system.
 
         The function performs 2 transformations:
 
@@ -130,8 +125,7 @@ class Triangle(object):
         self.isglobal = True
 
     def global2local(self, offsets, K=None, cartesian2image=True):
-        """
-        Convert Triangle coordinates to the local coordinates system.
+        """Convert Triangle coordinates to the local coordinates system.
         
         Only absolute coordinates shall be transformed. Lengths and 
         angles are invariant to the coordinate origin.
@@ -190,8 +184,7 @@ class Triangle(object):
         self.isglobal = False
 
     def get_pose(self):
-        """
-        Return triangle's angle and base midpoint, given its vertices.
+        """Return triangle's angle and base midpoint, given its vertices.
 
         The coordinates of 3 vertices defining the triangle are used,
         packed in a single 3x2 array. This method assumes that the
@@ -235,8 +228,7 @@ class Triangle(object):
         return self.midpoint[0], self.midpoint[1], self.angle
 
     def get_window(self, min_value, max_value, k=1.25):
-        """
-        Get the coordinates of a rectangle window around the triangle.
+        """Get the coordinates of a rectangle window around the triangle.
         
         At first, the barycenter of the triangle is calculated. Then, 
         the window is calculated as a square, being its sides' length  
@@ -282,8 +274,7 @@ class Triangle(object):
         return self.window
 
     def homography(self, H):
-        """
-        Perform an homography operation to the Triangle vertices.
+        """Perform an homography operation to the Triangle vertices.
 
         The homography is a geometrical transformation that obtains the 
         projection of certain points from a plain to another. 
@@ -305,8 +296,7 @@ class Triangle(object):
         return self.vertices
 
     def inverse_homography(self, H):
-        """
-        Perform an inverse homography operation to the vertices.
+        """Perform an inverse homography operation to the vertices.
 
         Get :math:`X_u` from the equation 
         :math:`(w \\cdot X) = H \\cdot Y`.
@@ -364,8 +354,7 @@ class Triangle(object):
 
 
 class Segment(object):
-    """
-    This class contains methods for dealing with 2D segments operations.
+    """This class contains methods for dealing with 2D segments operations.
 
     :param point_a: X and Y coordinates of the initial points.
     :param point_b: X and Y coordinates of the  end points.
@@ -374,16 +363,14 @@ class Segment(object):
     """
 
     def __init__(self, point_a, point_b):
-        """Define the segment basic attributes.
-        """
+        """Define the segment basic attributes."""
         self.pointA = np.array(point_a)
         self.pointB = np.array(point_b)
         # Get the segment modulus for further operations.
         self.modulus = np.linalg.norm(self.pointA - self.pointB)
 
     def distance2point(self, point):
-        """
-        Return the distance of a point to the nearest segment's point.
+        """Return the distance of a point to the nearest segment's point.
 
         The calculus is based on the dot (scalar) product. The
         perpendicular projection of a first vector on a second one is

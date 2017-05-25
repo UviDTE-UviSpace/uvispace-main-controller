@@ -21,8 +21,7 @@ logger = logging.getLogger("controller")
 
 
 class RobotController(object):
-    """
-    This class contains methods needed to control a robot's behavior.
+    """This class contains methods needed to control a robot's behavior.
 
     :param int robot_id: Identifier of the robot
     """
@@ -43,8 +42,7 @@ class RobotController(object):
         self.pub_vel = pub_vel
 
     def set_speed(self, pose):
-        """
-        Receives a new pose and calculates the UGV speeds.
+        """Receives a new pose and calculates the UGV speeds.
 
         After calculating the new speed value, the dictionary containing 
         the new speed values is published via the pub_vel socket.
@@ -69,8 +67,7 @@ class RobotController(object):
         self.pub_vel.send_json(self.speeds)
 
     def new_goal(self, goal):
-        """
-        Receives a new goal and calculates the path to reach it.
+        """Receives a new goal and calculates the path to reach it.
 
         :param goal: contains a 2-D position, with 2 cartesian values (x,y)
          and an angle value (theta).
@@ -88,9 +85,7 @@ class RobotController(object):
                         'waiting for a pose to be published.')
 
     def on_shutdown(self):
-        """
-        Shutdown method. Is called when execution is aborted.
-        """
+        """Shutdown method. Is called when execution is aborted."""
         logger.info('Shutting down')
         self.speeds['linear'] = 0.0
         self.speeds['angular'] = 0.0

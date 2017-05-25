@@ -1,6 +1,5 @@
 #!/usr/bin/env python
-"""
-This module contains the Client class, which inherits from socket.socket
+"""This module contains the Client class, which inherits from socket.socket
 
 * socket.socket class source code can be found in the following link:
   https://hg.python.org/cpython/file/2.7/Lib/socket.py
@@ -93,9 +92,7 @@ class Client(Socket):
         self.settimeout(timeout)
 
     def close_connection(self):
-        """
-        Send 'CLOSE_CONNECTION' command to FPGA and close TCP/IP socket.
-        """
+        """Send 'CLOSE_CONNECTION' command to FPGA and close TCP/IP socket."""
         # Check parent class _sock variable,
         # as it changes its class when it is closed.
         # WARNING: not valid method for Python3.
@@ -152,8 +149,7 @@ class Client(Socket):
         return data
 
     def write_command(self, command, clean_buffer=False):
-        """
-        Send a command to the TCP/IP client.
+        """Send a command to the TCP/IP client.
         
         :param str command: FPGA command to be executed.
         :param bool clean_buffer: if True, a clean-up reading of the 

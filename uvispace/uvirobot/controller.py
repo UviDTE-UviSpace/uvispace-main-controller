@@ -1,6 +1,5 @@
 #!/usr/bin/env python
-""" 
-Routine for getting UGV poses and publishing speed set points.
+"""Routine for getting UGV poses and publishing speed set points.
 
 The module instantiates a RobotController object and uses its methods
 for publishing new speed set points.
@@ -28,9 +27,7 @@ logger = logging.getLogger('controller')
 
 
 def make_a_rectangle(my_robot):
-    """
-    Set the robot path to a rectangle of fixed vertices.
-    """
+    """Set the robot path to a rectangle of fixed vertices."""
     logger.info("Creating rectangle path")
     point_a = {'x': 1.0, 'y': 1.0}
     point_b = {'x': -1.0, 'y': 1.0}
@@ -45,9 +42,7 @@ def make_a_rectangle(my_robot):
 
 
 def init_sockets(robot_id):
-    """
-    Initializes the subscriber sockets in charge of listening for data.
-    """
+    """Initializes the subscriber sockets in charge of listening for data."""
     logger.debug("Initializing subscriber sockets")
 
     # Open a subscribe socket to listen for position data
@@ -73,10 +68,7 @@ def init_sockets(robot_id):
 
 
 def listen_sockets(sockets, my_robot):
-    """
-    Listens on subscriber sockets for messages of positions and goals, and
-    launches the proper actions when a message is received.
-    """
+    """Listens on subscriber sockets for messages of positions and goals."""
     # Initialize poll set
     poller = zmq.Poller()
     poller.register(sockets['position'], zmq.POLLIN)

@@ -1,6 +1,5 @@
 #!/usr/bin/env python
-"""
-This module contains the Image class, for image processing operations.
+"""This module contains the Image class, for image processing operations.
 
 The operations implemented in the class methods are focused to the 
 images obtained from the external FPGAs in the UviSpace project. Thus, 
@@ -118,8 +117,7 @@ class Image(object):
         return self._binarized
 
     def correct_distortion(self, kx=0.035, ky=0.035, only_contours=True):
-        """
-        Correct barrel distortion on contours or on the whole image.
+        """Correct barrel distortion on contours or on the whole image.
         
         The distortion is corrected using a 2nd polynomial equation for
         every pixel with coordinates :math:`(X_d, Y_d)`. The resulting 
@@ -155,8 +153,7 @@ class Image(object):
             pass
 
     def get_shapes(self, tolerance=8, get_contours=True):
-        """
-        Get the shapes' vertices in the binarized image.
+        """Get the shapes' vertices in the binarized image.
 
         Update the *self.triangles* attribute.
 

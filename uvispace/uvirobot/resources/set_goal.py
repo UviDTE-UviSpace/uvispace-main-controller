@@ -1,7 +1,5 @@
 #!/usr/bin/env python
-"""
-Auxiliary program to set a new goal for the UGV.
-"""
+"""Auxiliary program to set a new goal for the UGV."""
 # Standard libraries
 import os
 import sys

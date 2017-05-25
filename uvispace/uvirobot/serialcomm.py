@@ -1,6 +1,5 @@
 #!/usr/bin/env python
-"""
-This module contains the class SerMesProtocol().
+"""This module contains the class SerMesProtocol().
 
 The aim is to provide a set of methods for performing communication 
 operations with an external device, using a pair of XBee modules
@@ -29,8 +28,7 @@ logger = logging.getLogger('messenger')
 
 
 class SerMesProtocol(Serial):
-    """
-    This is a child of PySerial class and implements a comm. protocol.
+    """This is a child of PySerial class and implements a comm. protocol.
     
     This class implements a message-based protocol over the serial port
     in Master-slave mode: The master (PC) starts communication with 
@@ -78,8 +76,7 @@ class SerMesProtocol(Serial):
 
     # -------------------MASTER-SLAVE COMMANDS------------------- #
     def ready(self, tries=10):
-        """
-        Check if the communication channel is ready.
+        """Check if the communication channel is ready.
 
         The parameter **tries** specifies the number of attempts before 
         exiting and raising an error message.
@@ -105,8 +102,7 @@ class SerMesProtocol(Serial):
         return ready
 
     def move(self, setpoint):
-        """
-        Send a move order to the slave.
+        """Send a move order to the slave.
 
         :param setpoint: List with UGV speeds, whose elements range from
          0 to 255. The first element corresponds to right wheels, and 
@@ -142,8 +138,7 @@ class SerMesProtocol(Serial):
 
     # -------------MASTER-SLAVE COMMANDS AUXILIAR FUNCTIONS------------- #
     def send_message(self, fun_code, data='', send_delay=0.01):
-        """
-        Send a message to slaves formatted with the defined protocol.
+        """Send a message to slaves formatted with the defined protocol.
 
         :param str fun_code: function code of the command that is going 
          to be sent.
@@ -168,8 +163,7 @@ class SerMesProtocol(Serial):
         self.write(message)
 
     def read_message(self):
-        """
-        Read a message using the serial message protocol. 
+        """Read a message using the serial message protocol. 
 
         When the message is read, check the auxiliary bytes for 
         assuring the consistence of the message.

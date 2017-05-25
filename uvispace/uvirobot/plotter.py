@@ -1,6 +1,5 @@
 #!/usr/bin/env python
-"""
-This module provides utilities for easily drawing plots.
+"""This module provides utilities for easily drawing plots.
 
 It has 3 functions: 
 

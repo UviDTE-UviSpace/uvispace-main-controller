@@ -1,7 +1,5 @@
 #!/usr/bin/env python
-"""
-Auxiliary program for controlling the UGV movements through keyboard.
-"""
+"""Auxiliary program for controlling the UGV movements through keyboard."""
 # Standard libraries
 import os
 import termios

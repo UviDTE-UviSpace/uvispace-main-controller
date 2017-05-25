@@ -1,6 +1,5 @@
 #!/usr/bin/env python
-"""
-Multithreading routine for controlling external FPGAs with cameras.
+"""Multithreading routine for controlling external FPGAs with cameras.
 
 The module creates several parallel threads, in order to optimize the 
 execution time, as it contains several instructions which require 
@@ -42,8 +41,7 @@ rospy.spin()
 
 
 class CameraThread(threading.Thread):
-    """
-    Child class of threading.Thread for capturing frames from a camera.
+    """Child class of threading.Thread for capturing frames from a camera.
 
     The *run* method, where is specified the behavior when the *start* 
     method is called, is overridden. At first, it loads the FPGA 
@@ -185,8 +183,7 @@ class CameraThread(threading.Thread):
 
 
 class DataFusionThread(threading.Thread):
-    """
-    Child class of threading.Thread for merging and processing data.
+    """Child class of threading.Thread for merging and processing data.
 
     The *run* method, where is specified the behavior when the *start* 
     method is called, is overridden. At first, it waits until all cameras 
@@ -352,8 +349,7 @@ class DataFusionThread(threading.Thread):
 
 
 class UserThread(threading.Thread):
-    """
-    Child class of threading.Thread for interacting with user.
+    """Child class of threading.Thread for interacting with user.
 
     The *run* method, where is specified the behavior when the *start* 
     method is called, is overridden. Ask the user for commands through
@@ -392,8 +388,7 @@ class UserThread(threading.Thread):
 
 
 def main():
-    """
-    Main routine for multiplecamera.py
+    """Main routine for multiplecamera.py
     
     Read configuration files, initialize variables and set up threads.
     :return: 
