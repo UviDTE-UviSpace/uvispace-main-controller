@@ -12,6 +12,7 @@ messenger.py module.
 import getopt
 import logging
 import os
+import signal
 import sys
 import time
 # Third party libraries
@@ -24,6 +25,17 @@ from robot import RobotController
 # Logging setup
 import settings
 logger = logging.getLogger('controller')
+
+# Global run flag
+run = True
+
+
+def sigint_handler(signal, frame):
+    global run
+    logger.info("Shutting down")
+    run = False
+    return
+signal.signal(signal.SIGINT, sigint_handler)
 
 
 def make_a_rectangle(my_robot):
@@ -39,6 +51,7 @@ def make_a_rectangle(my_robot):
     my_robot.new_goal(point_c)
     my_robot.new_goal(point_d)
     my_robot.new_goal(point_e)
+    return
 
 
 def init_sockets(robot_id):
@@ -69,31 +82,27 @@ def init_sockets(robot_id):
 
 def listen_sockets(sockets, my_robot):
     """Listens on subscriber sockets for messages of positions and goals."""
+    global run
     # Initialize poll set
     poller = zmq.Poller()
     poller.register(sockets['position'], zmq.POLLIN)
     poller.register(sockets['goal'], zmq.POLLIN)
 
     # listen for position information and new goal points
-    try:
-        while True:
-            socks = dict(poller.poll())
-            if (sockets['position'] in socks
-                    and socks[sockets['position']] == zmq.POLLIN):
-                position = sockets['position'].recv_json()
-                logger.debug("Received new position: {}".format(position))
-                my_robot.set_speed(position)
+    while run:
+        # poll the sockets every second
+        socks = dict(poller.poll(1000))
+        if (sockets['position'] in socks
+                and socks[sockets['position']] == zmq.POLLIN):
+            position = sockets['position'].recv_json()
+            logger.debug("Received new position: {}".format(position))
+            my_robot.set_speed(position)
 
-            if (sockets['goal'] in socks
-                    and socks[sockets['goal']] == zmq.POLLIN):
-                goal = sockets['goal'].recv_json()
-                logger.debug("Received new goal: {}".format(goal))
-                my_robot.new_goal(goal)
-
-    except KeyboardInterrupt:
-        logger.debug("KeyboardInterrupt")
-        my_robot.on_shutdown()
-    return
+        if (sockets['goal'] in socks
+                and socks[sockets['goal']] == zmq.POLLIN):
+            goal = sockets['goal'].recv_json()
+            logger.debug("Received new goal: {}".format(goal))
+            my_robot.new_goal(goal)
 
 
 def main():
@@ -125,12 +134,18 @@ def main():
     # Open listening sockets
     sockets = init_sockets(robot_id)
 
-    # Until the first pose is not published, the robot instance
-    # is not initialized.
+    # Until the first pose is not published, the robot instance is not
+    # initialized. Keep trying to receive the initial position with a
+    # no blocking recv until the instance is initialized or the run flag
+    # has been set to False.
     logger.info("Waiting for first position")
-    position = sockets['position'].recv_json()
-    logger.debug("Received first position: {}".format(position))
-    my_robot.set_speed(position)
+    while run and not my_robot.init:
+        try:
+            position = sockets['position'].recv_json(zmq.NOBLOCK)
+            logger.debug("Received first position: {}".format(position))
+            my_robot.set_speed(position)
+        except zmq.ZMQError:
+            pass
 
     # This function sends 4 rectangle points to the robot path.
     if rectangle_path:
@@ -138,15 +153,20 @@ def main():
 
     # Listen sockets
     listen_sockets(sockets, my_robot)
+    # Once the run flag has been set to False, shutdown
+    my_robot.on_shutdown()
 
-    # Print the log output to files and plot it
-    script_path = os.path.dirname(os.path.realpath(__file__))
-    # A file identifier is generated from the current time value
-    file_id = time.strftime('%Y%m%d_%H%M')
-    with open('{}/tmp/path_{}.log'.format(script_path, file_id), 'a') as f:
-        np.savetxt(f, my_robot.QCTracker.route, fmt='%.2f')
-    # Plots the robot ideal path.
-    plotter.path_plot(my_robot.QCTracker.path, my_robot.QCTracker.route)
+    if my_robot.QCTracker.path is not None:
+        # Print the log output to files and plot it
+        script_path = os.path.dirname(os.path.realpath(__file__))
+        # A file identifier is generated from the current time value
+        file_id = time.strftime('%Y%m%d_%H%M')
+        with open('{}/tmp/path_{}.log'.format(script_path, file_id), 'a') as f:
+            np.savetxt(f, my_robot.QCTracker.route, fmt='%.2f')
+        # Plots the robot ideal path.
+        plotter.path_plot(my_robot.QCTracker.path, my_robot.QCTracker.route)
+
+    return
 
 
 if __name__ == '__main__':
