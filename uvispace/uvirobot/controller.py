@@ -26,17 +26,6 @@ from robot import RobotController
 import settings
 logger = logging.getLogger('controller')
 
-# Global run flag
-run = True
-
-
-def sigint_handler(signal, frame):
-    global run
-    logger.info("Shutting down")
-    run = False
-    return
-signal.signal(signal.SIGINT, sigint_handler)
-
 
 def make_a_rectangle(my_robot):
     """Set the robot path to a rectangle of fixed vertices."""
@@ -107,6 +96,20 @@ def listen_sockets(sockets, my_robot):
 
 def main():
     logger.info("BEGINNING EXECUTION")
+
+    # SIGINT handling:
+    # -Create a global flag to check if the execution should keep running.
+    # -Whenever SIGINT is received, set the global flag to False.
+    global run
+    run = True
+
+    def sigint_handler(signal, frame):
+        global run
+        logger.info("Shutting down")
+        run = False
+        return
+    signal.signal(signal.SIGINT, sigint_handler)
+
     # This exception forces to give the robot_id argument within run command.
     rectangle_path = False
     help_msg = ('Usage: controller.py [-r <robot_id>], [--robotid=<robot_id>], '
@@ -142,10 +145,11 @@ def main():
     while run and not my_robot.init:
         try:
             position = sockets['position'].recv_json(zmq.NOBLOCK)
-            logger.debug("Received first position: {}".format(position))
-            my_robot.set_speed(position)
         except zmq.ZMQError:
             pass
+        else:
+            logger.debug("Received first position: {}".format(position))
+            my_robot.set_speed(position)
 
     # This function sends 4 rectangle points to the robot path.
     if rectangle_path:
