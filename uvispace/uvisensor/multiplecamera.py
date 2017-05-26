@@ -36,9 +36,6 @@ import videosensor
 import settings
 logger = logging.getLogger('sensor')
 
-import rospy
-rospy.spin()
-
 
 class CameraThread(threading.Thread):
     """Child class of threading.Thread for capturing frames from a camera.
