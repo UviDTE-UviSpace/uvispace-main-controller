@@ -1,6 +1,5 @@
 #!/usr/bin/env python 
-"""
-This module 'listens' to speed SPs and sends them through serial port.
+"""This module 'listens' to speed SPs and sends them through serial port.
 
 **Usage: messenger.py [-r <robot_id>], [--robotid=<robot_id>]**
 
@@ -27,21 +26,23 @@ When the execution ends, the *plotter* module is called and the time
 delays values are plotted on a graph.
 """
 # Standard libraries
+import getopt
 import glob
+import logging
+import os
 import struct
 import sys
-import getopt
 import time
-import os
-
-# ROS libraries
-import rospy
-from geometry_msgs.msg import Twist
-
+# Third party libraries
+import zmq
 # Local libraries
+import plotter
 from serialcomm import SerMesProtocol
 from speedtransform import Speed
-import plotter
+
+# Logging setup
+import settings
+logger = logging.getLogger('messenger')
 
 
 def connect_and_check(robot_id, port=None, baudrate=57600):
@@ -49,74 +50,90 @@ def connect_and_check(robot_id, port=None, baudrate=57600):
     
     If no port is specified, take the first one available.
     """
+    logger.debug("Checking connection")
     # This exception prevents a crash when no device is connected to CPU.   
     if not port:
         try:
             port = glob.glob('/dev/ttyUSB*')[0]
         except IndexError:
-            print 'It was not detected any serial port connected to PC'
+            logger.info("It was not detected any serial port connected to PC")
             sys.exit()
     # Convert the Python id number to the C format 'unsigned byte'
     serialcomm = SerMesProtocol(port=port, baudrate=baudrate)
     serialcomm.SLAVE_ID = struct.pack('>B', robot_id)
     # Check connection to board. If broken, program exits
     if serialcomm.ready():
-        print "The board is ready"
+        logger.info("The board is ready")
     else:
-        print "The board is not ready"
+        logger.info("The board is not ready")
         sys.exit()
     return serialcomm
 
 
-def listener(robot_id, robot_speed, serial):
-    """Create a node and subscribe to its robot 'cmd_vel' topic."""
+def listen_speed_set_points(my_serial, robot_id, robot_speed, speed_calc_times,
+                            wait_times, xbee_times):
+    """Listens for new speed set point messages on a subscriber socket."""
+    logger.debug("Initializing subscriber socket")
+    # Open a subscribe socket to listen speed directives
+    listener = zmq.Context.instance().socket(zmq.SUB)
+    # Set subscribe option to empty so it receives all messages
+    listener.setsockopt_string(zmq.SUBSCRIBE, u"")
+    # Set the conflate option to true so it only keeps the last message received
+    listener.setsockopt(zmq.CONFLATE, True)
+    listener.connect("tcp://localhost:{}".format(
+            int(os.environ.get("UVISPACE_BASE_PORT_SPEED"))+robot_id))
+
+    logger.debug("Listening for speed set points")
+    # listen for speed directives until interrupted
     try:
-        rospy.init_node('robot{}_messenger'.format(robot_id), anonymous=True)
-    except rospy.exceptions.ROSException:
+        while True:
+            data = listener.recv_json()
+            logger.debug("Received new speed set point: {}".format(data))
+            move_robot(data, my_serial, wait_times, speed_calc_times,
+                       xbee_times, robot_speed)
+    except KeyboardInterrupt:
         pass
-    rospy.Subscriber('/robot_{}/cmd_vel'.format(robot_id), Twist,
-                     move_robot, callback_args=serial,
-                     queue_size=1)
+    return
 
 
-def move_robot(data, my_serial, min_speed=70, max_speed=190):
-    """Convert Twist msg into 2WD value and send it through port."""
-    # Change proposal. In order to accept all the parameters
-    #    my_serial = args[0]
-    #    robot_speed = args[1]
+def move_robot(data, my_serial, wait_times, speed_calc_times, xbee_times,
+               robot_speed, min_speed=70, max_speed=190):
+    """Convert speed msg into 2WD value and send it through port."""
     global t0
     global t1
     global t2
     t1 = time.time()
     wait_times.append(t1 - t0)
-    rospy.loginfo('New set point received')
-    linear = data.linear.x
-    angular = data.angular.z
+    linear = data['linear']
+    angular = data['angular']
     t2 = time.time()
     speed_calc_times.append(t2 - t1)
     robot_speed.set_speed([linear, angular], 'linear_angular')
     # Get the right and left speeds in case of direct movement
-    # The coeficients were found empirically
-    if (robot_speed.get_speed()[0] > 0):
+    # The coefficients were found empirically
+    if robot_speed.get_speed()[0] > 0:
         robot_speed.get_2WD_speeds(wheels_modifiers=[0.53, 1])
     # Get the right and left speeds in case of reverse movement
     else:
         robot_speed.get_2WD_speeds(wheels_modifiers=[1, 1])
-    vRight, vLeft = robot_speed.nonlinear_transform(min_A=min_speed,
-                                                    max_B=max_speed)
-    rospy.loginfo('I am sending R: {} L: {}'.format(vRight, vLeft))
-    my_serial.move([vRight, vLeft])
+    sp_right, sp_left = robot_speed.nonlinear_transform(min_A=min_speed,
+                                                        max_B=max_speed)
+    logger.info('I am sending R: {} L: {}'.format(sp_right, sp_left))
+    my_serial.move([sp_right, sp_left])
     t0 = time.time()
     xbee_times.append(t0 - t2)
-    rospy.loginfo('Transmission ended succesfully\n\n')
+    logger.info('Transmission ended successfully')
 
 
-def stop_vehicle(my_serial):
+def stop_vehicle(my_serial, wait_times, speed_calc_times, xbee_times,
+                 robot_speed):
     """Send a null speed to the UGV."""
-    stop_speed = Twist()
-    stop_speed.linear.x = 0.0
-    stop_speed.angular.z = 0.0
-    move_robot(stop_speed, my_serial)
+    stop_speed = {
+        'linear': 0.0,
+        'angular': 0.0
+    }
+    move_robot(stop_speed, my_serial, wait_times, speed_calc_times, xbee_times,
+               robot_speed)
 
 
 def print_times(wait_times, speed_calc_times, xbee_times):
@@ -124,15 +141,16 @@ def print_times(wait_times, speed_calc_times, xbee_times):
     wait_mean_time = sum(wait_times) / len(wait_times)
     speed_calc_mean_time = sum(speed_calc_times) / len(speed_calc_times)
     xbee_mean_time = sum(xbee_times) / len(xbee_times)
-    print ('Wait mean time: {wait}\n'
-           'Speed calculation mean time: {speed}\n'
-           'XBee message sending mean time: {xbee}'
-           .format(wait=wait_mean_time, speed=speed_calc_mean_time,
-                   xbee=xbee_mean_time)
-           )
+    logger.info('Wait mean time: {wait} - '
+                'Speed calculation mean time: {speed} - '
+                'XBee message sending mean time: {xbee}'
+                .format(wait=wait_mean_time, speed=speed_calc_mean_time,
+                        xbee=xbee_mean_time))
 
 
-if __name__ == "__main__":
+def main():
+    logger.info("BEGINNING EXECUTION")
+    global t0
     # Main routine
     help_msg = 'Usage: messenger.py [-r <robot_id>], [--robotid=<robot_id>]'
     # This try/except clause forces to give the robot_id argument.
@@ -157,10 +175,12 @@ if __name__ == "__main__":
     my_serial = connect_and_check(robot_id)
     robot_speed = Speed()
     t0 = time.time()
-    listener(robot_id, robot_speed, my_serial)
-    # Keep Python from exiting until this node is stopped.
-    rospy.spin()
-    stop_vehicle(my_serial)
+
+    listen_speed_set_points(my_serial, robot_id, robot_speed, speed_calc_times,
+                            wait_times, xbee_times)
+
+    stop_vehicle(my_serial, wait_times, speed_calc_times,
+                 xbee_times, robot_speed)
     print_times(wait_times, speed_calc_times, xbee_times)
 
     # Print the log output to files and plot it
@@ -175,3 +195,7 @@ if __name__ == "__main__":
             print>> f, '{0:.5f}'.format(item)
     # Plots the robot ideal path.
     plotter.times_plot(xbee_times, wait_times)
+
+
+if __name__ == '__main__':
+    main()

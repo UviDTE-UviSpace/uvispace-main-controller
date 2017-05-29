@@ -1,17 +1,13 @@
 #!/usr/bin/env python
-"""
-Auxiliary program for controlling the UGV movements through keyboard.
-"""
+"""Auxiliary program for controlling the UGV movements through keyboard."""
 # Standard libraries
+import os
 import termios
+import tty
 import select
 import sys
-import time
-import tty
-
-# ROS libraries
-from geometry_msgs.msg import Twist
-import rospy
+# Third party libraries
+import zmq
 
 
 def get_key():
@@ -36,11 +32,14 @@ def get_key():
 
 
 def main():
-    # Init node and publisher handler.
-    rospy.init_node('teleop_keyboard')
-    pub_vel = rospy.Publisher('/robot_1/cmd_vel', Twist, queue_size=1)
-    speeds = Twist()
-    init_time = time.time()
+    # Init publisher
+    publisher = zmq.Context.instance().socket(zmq.PUB)
+    publisher.bind("tcp://*:{}".format(
+            int(os.environ.get("UVISPACE_BASE_PORT_SPEED"))+1))
+    speeds = {
+        'linear': 0.0,
+        'angular': 0.0
+    }
     # instructions for moving the UGV.
     print ('\n\r'
            'Teleoperation program initialized. Available commands:\n\r'
@@ -56,7 +55,6 @@ def main():
     # this initialization is necessary to update the previous state variable
     # key (prev_key) the first time.
     key = ''
-    # print ('\n\r'.join(message))
     while True:
         # variables key pressed now and key previously pressed
         prev_key = key
@@ -64,44 +62,44 @@ def main():
         # Move forward.
         if key in ('w', 'W'):
             message = 'moving forward'
-            speeds.linear.x = 190
-            speeds.angular.z = 0
-            pub_vel.publish(speeds)
+            speeds['linear'] = 190
+            speeds['angular'] = 0
+            publisher.send_json(speeds)
         # Move backwards.
         elif key in ('s', 'S'):
             message = 'moving backwards'
-            speeds.linear.x = -300
-            speeds.angular.z = 0
-            pub_vel.publish(speeds)
+            speeds['linear'] = -300
+            speeds['angular'] = 0
+            publisher.send_json(speeds)
         # Move left.
         elif key in ('a', 'A'):
             message = 'moving left'
-            speeds.angular.x = 0
-            speeds.angular.z = 10
-            pub_vel.publish(speeds)
+            speeds['linear'] = 0
+            speeds['angular'] = 10
+            publisher.send_json(speeds)
         # Move right.
         elif key in ('d', 'D'):
             message = 'moving right'
-            speeds.angular.x = 0
-            speeds.angular.z = -10
-            pub_vel.publish(speeds)
+            speeds['linear'] = 0
+            speeds['angular'] = -10
+            publisher.send_json(speeds)
         # Stop moving and exit.
         elif key in ('q', 'Q'):
             print ('Stop and exiting program. Have a good day! =)')
-            speeds.linear.x = 0
-            speeds.angular.z = 0
-            pub_vel.publish(speeds)
+            speeds['linear'] = 0
+            speeds['angular'] = 0
+            publisher.send_json(speeds)
             break
         # Stop moving.
         else:
             message = 'stop moving'
-            speeds.linear.x = 0
-            speeds.angular.z = 0
-            pub_vel.publish(speeds)
-        # if key pressed now and key pressed previously are different, update
-        # message
+            speeds['linear'] = 0
+            speeds['angular'] = 0
+            publisher.send_json(speeds)
+        # if key pressed now and key pressed previously are different,
+        # update message
         if prev_key != key:
-            print 'Currently %s. \n\r' % message
+            print('Currently %s. \n\r' % message)
 
 
 if __name__ == '__main__':

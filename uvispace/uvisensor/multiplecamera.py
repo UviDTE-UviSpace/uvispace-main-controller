@@ -1,6 +1,5 @@
 #!/usr/bin/env python
-"""
-Multithreading routine for controlling external FPGAs with cameras.
+"""Multithreading routine for controlling external FPGAs with cameras.
 
 The module creates several parallel threads, in order to optimize the 
 execution time, as it contains several instructions which require 
@@ -21,23 +20,25 @@ instead, it will probably corrupt the TCP/IP socket and the FPGAs will
 have to be reset.
 """
 # Standard libraries
-import glob
 import copy
-import numpy as np
+import os
+import glob
 import threading
 import time
-
-# ROS libraries
-from geometry_msgs.msg import Pose2D
-import rospy
-
+import logging
+# Third party libraries
+import numpy as np
+import zmq
 # Local libraries
 import videosensor
 
+# Logging setup
+import settings
+logger = logging.getLogger('sensor')
+
 
 class CameraThread(threading.Thread):
-    """
-    Child class of threading.Thread for capturing frames from a camera.
+    """Child class of threading.Thread for capturing frames from a camera.
 
     The *run* method, where is specified the behavior when the *start* 
     method is called, is overridden. At first, it loads the FPGA 
@@ -161,7 +162,7 @@ class CameraThread(threading.Thread):
             # Free the ROI tracker if corresponding flag was raised
             if self._reset_flag['1']:
                 self.camera.set_register('FREE_TRACKER', '1')
-                rospy.loginfo('{} TRACKER FREED'.format(self.name))
+                logger.info('{} TRACKER FREED'.format(self.name))
                 self._reset_flag = {'1': False}
                 self._triangles.pop('1', None)
             # Sync operations. Write to global variables.
@@ -174,13 +175,12 @@ class CameraThread(threading.Thread):
             # Sleep the rest of the cycle
             while (time.time() - cycle_start_time < self.cycletime):
                 pass
-        rospy.logdebug('shutting down {}'.format(self.name))
+        logger.debug('shutting down {}'.format(self.name))
         self.camera.disconnect_client()
 
 
 class DataFusionThread(threading.Thread):
-    """
-    Child class of threading.Thread for merging and processing data.
+    """Child class of threading.Thread for merging and processing data.
 
     The *run* method, where is specified the behavior when the *start* 
     method is called, is overridden. At first, it waits until all cameras 
@@ -193,8 +193,7 @@ class DataFusionThread(threading.Thread):
       the creating of a new ROI tracker in the second camera.
     - Evaluate if an UGV exits a camera, deleting the ROI tracker if 
       it is True.
-    - Merge the information obtained in all the cameras and write it in 
-      a ROS topic
+    - Merge the information obtained in all the cameras.
 
     :param triangles: READ ONLY List containing N dictionaries, where
      N is the number of Camera threads. Each dictionary element is the
@@ -218,9 +217,6 @@ class DataFusionThread(threading.Thread):
     :param end_event: *threading.Event* object that is set to True when 
      the *UserThread* detects an 'end' order from the user.
 
-    :param publisher: *rospy.Publisher* object for sending pose values to 
-     a ROS topic, that can be read by other ROS nodes.
-
     :param reset_flags: List containing N dictionaries whose entries are
      flags set to True when a ROI tracker in specified FPGA to be reset.
 
@@ -229,12 +225,14 @@ class DataFusionThread(threading.Thread):
 
     def __init__(self, triangles, ntriangles, conditions, inborders,
                  quadrant_limits, begin_events, end_event, reset_flags,
-                 publisher, name='Fusion Thread'):
+                 name='Fusion Thread'):
         """
         Class constructor method
         """
         threading.Thread.__init__(self, name=name)
-        self.publisher = publisher
+        self.publisher = zmq.Context.instance().socket(zmq.PUB)
+        self.publisher.bind("tcp://*:{}".format(
+                int(os.environ.get("UVISPACE_BASE_PORT_POSITION"))+1))
         self.cycletime = 0.02
         self.quadrant_limits = quadrant_limits
         # Synchronization variables
@@ -303,7 +301,7 @@ class DataFusionThread(threading.Thread):
                     self._triangles[index2]):
                         self._ntriangles[index2]['1'] = copy.copy(triangle)
                         self._reset_flags[index2]['1'] = False
-                        rospy.loginfo("New triangle in Camera{}".format(
+                        logger.info("New triangle in Camera{}".format(
                                 index2))
                     # If the UGV is not in borders, but a tracker is set and is
                     # returning None values, it has to be reset.
@@ -333,20 +331,22 @@ class DataFusionThread(threading.Thread):
             if triangle:
                 pose = triangle.get_pose()
                 # Convert coordinates to meters.
-                mpose = [pose[0] / 1000, pose[1] / 1000, pose[2]]
-                rospy.logdebug("detected triangle at {}mm and {} radians."
+                mpose = [np.asscalar(pose[0]) / 1000,
+                         np.asscalar(pose[1]) / 1000,
+                         np.asscalar(pose[2])]
+                logger.debug("detected triangle at {}mm and {} radians."
                                "".format(pose[0:2], pose[2]))
-                self.publisher.publish(Pose2D(mpose[0], mpose[1], mpose[2]))
-            rospy.loginfo("Triangles at: {}".format(self._triangles))
-            #            rospy.loginfo("Borders: {}".format(self._inborders))
+                pose_msg = {'x': mpose[0], 'y': mpose[1], 'theta': mpose[2]}
+                self.publisher.send_json(pose_msg)
+            logger.info("Triangles at: {}".format(self._triangles))
+            # logger.info("Borders: {}".format(self._inborders))
             # Sleep the rest of the cycle
             while (time.time() - cycle_start_time < self.cycletime):
                 pass
 
 
 class UserThread(threading.Thread):
-    """
-    Child class of threading.Thread for interacting with user.
+    """Child class of threading.Thread for interacting with user.
 
     The *run* method, where is specified the behavior when the *start* 
     method is called, is overridden. Ask the user for commands through
@@ -372,7 +372,7 @@ class UserThread(threading.Thread):
         # Wait until all camera threads start.
         for event in self.begin_events:
             event.wait()
-        rospy.loginfo("All cameras were initialized")
+        logger.info("All cameras were initialized")
         while not self.end_event.isSet():
             # Start the cycle timer
             cycle_start_time = time.time()
@@ -385,15 +385,12 @@ class UserThread(threading.Thread):
 
 
 def main():
-    """
-    Main routine for multiplecamera.py
+    """Main routine for multiplecamera.py
     
     Read configuration files, initialize variables and set up threads.
     :return: 
     """
-    rospy.init_node('uvisensor')
-    publisher = rospy.Publisher('/robot_1/pose2d', Pose2D, queue_size=1)
-    rospy.loginfo("BEGINNING MAIN EXECUTION")
+    logger.info("BEGINNING MAIN EXECUTION")
     # Get the relative path to all the config files stored in /config folder.
     conf_files = glob.glob("./resources/config/*.cfg")
     conf_files.sort()
@@ -427,7 +424,7 @@ def main():
     # Thread for merging the data obtained at every CameraThread.
     threads.append(DataFusionThread(triangles, ntriangles, conditions,
                                     inborders, quadrant_limits, begin_events,
-                                    end_event, reset_flags, publisher))
+                                    end_event, reset_flags))
     # Thread for getting user input.
     threads.append(UserThread(begin_events, end_event))
     # start threads

@@ -1,6 +1,5 @@
 #!/usr/bin/env python 
-"""
-Module with a class that deals with the formatting of speed values.
+"""Module with a class that deals with the formatting of speed values.
 
 An instance of the *Speed* class represents the speeds of 2WD (2-Wheel-
 Drive) UGVs, and the attributes and operations related to them. They 
@@ -12,12 +11,18 @@ the *Arduino* manages speed values ranging from 0 to 255 for each wheel.
 The first 127 values represent reverse direction speeds, and the last 
 127 direct direction speeds (127 is null speed).
 """
+# Standard libraries
+import logging
+# Third party libraries
 import numpy as np
+
+# Logging setup
+import settings
+logger = logging.getLogger('messenger')
 
 
 class Speed(object):
-    """
-    This class manages the speed values compatible with a 2WD vehicle.
+    """This class manages the speed values compatible with a 2WD vehicle.
     
     The default speed format is *linear_angular*. This means that the 
     speed is a 2-values array, whose items corresponds to the linear 
@@ -106,11 +111,11 @@ class Speed(object):
         return self._speed
 
     def get_min_value(self):
-        """ Return the minimum allowed value for a linear scale."""
+        """Return the minimum allowed value for a linear scale."""
         return self._min_value
 
     def get_max_value(self):
-        """ Return the maximum allowed value for a linear scale."""
+        """Return the maximum allowed value for a linear scale."""
         return self._max_value
 
     def _set_format(self, new_format):
@@ -173,8 +178,7 @@ class Speed(object):
     def nonlinear_transform(self, min_A=30, max_A=100,
                             min_B=160, max_B=220,
                             scale_zero=127):
-        """ 
-        Make a non-linear conversion of speed values.
+        """Make a non-linear conversion of speed values.
         
         Intended to avoid the useless values near to 0 speed on a real 
         UGV, and extreme values that implies high power. It translates 
@@ -222,8 +226,8 @@ class Speed(object):
             raise e
         if not (float(min_A) < float(max_A) < float(scale_zero)
                 < float(min_B) < float(max_B)):
-            raise ValueError("Not valid segment limits. \
-                    min_A < max_A < scale_zero < min_B < max_B")
+            raise ValueError("Not valid segment limits. "
+                             "min_A < max_A < scale_zero < min_B < max_B")
         # Gets the value of the middle point
         zero_value = (self._max_value + self._min_value) / 2.0
         speed = self._speed
@@ -243,8 +247,7 @@ class Speed(object):
         return self._speed
 
     def get_2WD_speeds(self, rho=0.065, L=0.150, wheels_modifiers=[1, 1]):
-        """
-        Obtain two speeds components, one for each side of the vehicle.
+        """Obtain two speeds components, one for each side of the vehicle.
         
         It calculates the speed component for each side, when  the
         linear and angular velocities of the vehicle are given.
@@ -269,7 +272,7 @@ class Speed(object):
         """
         self.rho = rho
         if self.get_format() is '2_wheel_drive':
-            print "The speed type is already '2_wheel_drive'."
+            logger.warn("The speed type is already '2_wheel_drive'.")
             return self.get_speed()
         vLinear = self._speed[0]
         vRotation = self._speed[1]
