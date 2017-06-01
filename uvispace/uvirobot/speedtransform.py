@@ -16,8 +16,13 @@ import logging
 # Third party libraries
 import numpy as np
 
-# Logging setup
-import settings
+try:
+    # Logging setup.
+    import settings
+except ImportError:
+    # Exit program if the settings module can't be found.
+    sys.exit("Can't find settings module. Maybe environment variables are not"
+             "set. Run the environment .sh script at the project root folder.")
 logger = logging.getLogger('messenger')
 
 
