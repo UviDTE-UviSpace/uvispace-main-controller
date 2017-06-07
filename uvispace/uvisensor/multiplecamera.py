@@ -240,6 +240,7 @@ class DataFusionThread(threading.Thread):
                 int(os.environ.get("UVISPACE_BASE_PORT_POSITION"))+1))
         self.cycletime = 0.02
         self.quadrant_limits = quadrant_limits
+        self.step = 0
         # Synchronization variables
         self.conditions = conditions
         self.begin_events = begin_events
@@ -327,7 +328,8 @@ class DataFusionThread(threading.Thread):
                     self.reset_flags[index2].update(self._reset_flags[index2])
                     self.conditions[index2].release()
             # TODO merge the content of every dictionary in triangle
-
+            # Increment the iterations counter.
+            self.step += 1
             # Scan for detected triangle and publish it.
             for element in self._triangles:
                 if element.has_key('1'):
@@ -341,10 +343,10 @@ class DataFusionThread(threading.Thread):
                          np.asscalar(pose[2])]
                 logger.debug("detected triangle at {}mm and {} radians."
                                "".format(pose[0:2], pose[2]))
-                pose_msg = {'x': mpose[0], 'y': mpose[1], 'theta': mpose[2]}
+                pose_msg = {'x': mpose[0], 'y': mpose[1], 'theta': mpose[2],
+                            'step': self.step}
                 self.publisher.send_json(pose_msg)
             logger.info("Triangles at: {}".format(self._triangles))
-            # logger.info("Borders: {}".format(self._inborders))
             # Sleep the rest of the cycle
             while (time.time() - cycle_start_time < self.cycletime):
                 pass
