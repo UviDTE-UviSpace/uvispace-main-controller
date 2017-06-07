@@ -65,25 +65,24 @@ def init_sockets(robot_id):
     pos_sock.setsockopt(zmq.CONFLATE, True)
     goa_sock.connect("tcp://localhost:{}".format(
             int(os.environ.get("UVISPACE_BASE_PORT_GOAL"))+robot_id))
-
+    # Construct the sockets dictionary
     sockets = {
         'position': pos_sock,
         'goal': goa_sock
     }
-
     return sockets
 
 
 def listen_sockets(sockets, my_robot):
     """Listens on subscriber sockets for messages of positions and goals."""
-    global run
+    global run_program
     # Initialize poll set
     poller = zmq.Poller()
     poller.register(sockets['position'], zmq.POLLIN)
     poller.register(sockets['goal'], zmq.POLLIN)
 
     # listen for position information and new goal points
-    while run:
+    while run_program:
         # poll the sockets every second
         socks = dict(poller.poll(1000))
         if (sockets['position'] in socks
@@ -105,13 +104,13 @@ def main():
     # SIGINT handling:
     # -Create a global flag to check if the execution should keep running.
     # -Whenever SIGINT is received, set the global flag to False.
-    global run
-    run = True
+    global run_program
+    run_program = True
 
     def sigint_handler(signal, frame):
-        global run
+        global run_program
         logger.info("Shutting down")
-        run = False
+        run_program = False
         return
     signal.signal(signal.SIGINT, sigint_handler)
 
@@ -147,7 +146,7 @@ def main():
     # no blocking recv until the instance is initialized or the run flag
     # has been set to False.
     logger.info("Waiting for first position")
-    while run and not my_robot.init:
+    while run_program and not my_robot.init:
         try:
             position = sockets['position'].recv_json(zmq.NOBLOCK)
         except zmq.ZMQError:
