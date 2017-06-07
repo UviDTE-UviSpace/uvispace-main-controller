@@ -37,14 +37,14 @@ class RobotController(object):
         self.init = False
         self.speeds = {
             'linear': 0.0,
-            'angular': 0.0
+            'angular': 0.0,
+            'step': 0
         }
         self.QCTracker = path_tracker.QuadCurveTracker()
-
-        pub_vel = zmq.Context.instance().socket(zmq.PUB)
-        pub_vel.bind("tcp://*:{}".format(
+        # Publishing socket instantiation.
+        self.pub_vel = zmq.Context.instance().socket(zmq.PUB)
+        self.pub_vel.bind("tcp://*:{}".format(
                 int(os.environ.get("UVISPACE_BASE_PORT_SPEED"))+robot_id))
-        self.pub_vel = pub_vel
 
     def set_speed(self, pose):
         """Receives a new pose and calculates the UGV speeds.
@@ -69,6 +69,7 @@ class RobotController(object):
                             angular))
         self.speeds['linear'] = linear
         self.speeds['angular'] = angular
+        self.speeds['step'] = pose['step']
         self.pub_vel.send_json(self.speeds)
 
     def new_goal(self, goal):
