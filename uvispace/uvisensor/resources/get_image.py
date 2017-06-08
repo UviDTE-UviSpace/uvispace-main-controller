@@ -7,13 +7,13 @@ def main():
     s = socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM)
     address = ("172.19.5.213", 36000)
     s.connect(address)
-    s.send("get_image\n")
+    s.send("get_color\n")
     try:
-        message = recv_data(s, 307200)
+        message = recv_data(s, 307200*3)
     except socket.timeout:
         print("timeout")
     else:
-        shape = (480, 640)
+        shape = (480, 640, 3)
         image = pylab.fromstring(message, dtype=pylab.uint8).reshape(shape)
         misc.imsave("image.png", image)
 
