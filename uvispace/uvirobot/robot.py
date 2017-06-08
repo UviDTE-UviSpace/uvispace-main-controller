@@ -63,10 +63,10 @@ class RobotController(object):
             self.init = True
         linear, angular = self.QCTracker.run(
                 pose['x'], pose['y'], pose['theta'])
-        logger.info('Location--> X: {}, Y: {}, theta: {} - '
-                    'Speeds--> Linear: {}, Angular {}'
+        logger.info('Pose--> X: {:1.4f}, Y: {:1.4f}, theta: {:1.4f} - '
+                    'Speeds--> Linear: {:4.2f}, Angular {:4.2f}, Step {}'
                     .format(pose['x'], pose['y'], pose['theta'], linear,
-                            angular))
+                            angular, pose['step']))
         self.speeds['linear'] = linear
         self.speeds['angular'] = angular
         self.speeds['step'] = pose['step']
