@@ -21,11 +21,12 @@ have to be reset.
 """
 # Standard libraries
 import copy
-import os
 import glob
+import logging
+import os
+import sys
 import threading
 import time
-import logging
 # Third party libraries
 import numpy as np
 import zmq
@@ -351,21 +352,22 @@ class DataFusionThread(threading.Thread):
                          np.asscalar(pose[2])]
                 logger.info("Detected triangle at {}mm and {} radians."
                                "".format(pose[0:2], pose[2]))
+                # TODO Update Kalman filter and obtain filtered pose.
                 pose_msg = {'x': mpose[0], 'y': mpose[1], 'theta': mpose[2],
                             'step': self.step}
                 self.publisher.send_json(pose_msg)
             logger.debug("Triangles at: {}".format(self._triangles))
             # Allow to poll only during the remaining cycletime.
             polling_time = self.cycletime - (time.time()-cycle_start_time)
-            socks = dict(self.poller.poll(polling_time))
-            if (self.spd_sock in socks and socks[self.spd_sock] == zmq.POLLIN):
+            events = dict(self.poller.poll(polling_time))
+            if (self.spd_sock in events 
+                    and events[self.spd_sock] == zmq.POLLIN):
                 speeds = self.spd_sock.recv_json()
                 logger.debug("Received new speed set point: {}".format(speeds))
             else:
                 # Set speeds to None in order to ignore Kalman prediction step.
                 speeds = None
                 logger.debug("Not received any speed set point from controller")
-            # TODO Update Kalman filter and obtain filtered pose.
             # Sleep the rest of the cycle
             while (time.time() - cycle_start_time < self.cycletime):
                 pass

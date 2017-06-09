@@ -84,15 +84,15 @@ def listen_sockets(sockets, my_robot):
     # listen for position information and new goal points
     while run_program:
         # poll the sockets every second
-        socks = dict(poller.poll(1000))
-        if (sockets['position'] in socks
-                and socks[sockets['position']] == zmq.POLLIN):
+        events = dict(poller.poll(1000))
+        if (sockets['position'] in events
+                and events[sockets['position']] == zmq.POLLIN):
             position = sockets['position'].recv_json()
             logger.debug("Received new position: {}".format(position))
             my_robot.set_speed(position)
 
-        if (sockets['goal'] in socks
-                and socks[sockets['goal']] == zmq.POLLIN):
+        if (sockets['goal'] in events
+                and events[sockets['goal']] == zmq.POLLIN):
             goal = sockets['goal'].recv_json()
             logger.debug("Received new goal: {}".format(goal))
             my_robot.new_goal(goal)
