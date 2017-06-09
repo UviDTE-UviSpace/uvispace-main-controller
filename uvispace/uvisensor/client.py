@@ -14,6 +14,7 @@ import errno
 import logging
 import socket
 from socket import socket as Socket
+import sys
 
 try:
     # Logging setup.

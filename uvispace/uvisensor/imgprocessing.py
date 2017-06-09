@@ -32,6 +32,7 @@ the typical used system.
 """
 # Standard libraries
 import logging
+import sys
 # Third party libraries
 import cv2
 import numpy as np

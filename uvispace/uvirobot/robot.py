@@ -10,6 +10,7 @@ values.
 # Standard libraries
 import logging
 import os
+import sys
 # Third party libraries
 import zmq
 # Local libraries

@@ -13,6 +13,7 @@ The first 127 values represent reverse direction speeds, and the last
 """
 # Standard libraries
 import logging
+import sys
 # Third party libraries
 import numpy as np
 
