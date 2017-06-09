@@ -35,17 +35,18 @@ class Kalman(object):
         """
         self._variables_dim = var_dim
         self._input_dim = input_dim
+        self._step = 0
         # Measurement equation matrix.
-        self.measurement = np.zeros([var_dim, 1])
+        self.measurements = np.zeros([var_dim, 1])
         self.H = np.eye(var_dim)
         self.observation_noise = np.zeros([var_dim, 1])
         # Actual and predicted states vectors.
-        self.state = np.zeros([var_dim, 1])
-        self.pred_state = np.zeros([var_dim, 1])
+        self.states = np.zeros([var_dim, 1])
+        self.pred_states = np.zeros([var_dim, 1])
         # State equation matrices.
         self.F = np.eye(var_dim)
         self.B = np.array([[np.cos(self.state[2]), 0], 
-                           [np.sin(self.state[2]), 0],
+                           [np.sin(self.states[2]), 0],
                            [0, 1]])
         # Actual and predicted states covariance matrices.
         self.P = np.eye(var_dim) * np.array([100**2, 100**2, (5*np.pi/180)**2])
@@ -54,7 +55,7 @@ class Kalman(object):
         self.Q = np.eye(var_dim) * np.array([100**2, 100**2, (5*np.pi/180)**2])
         self.R = np.eye(var_dim) * np.array([100**2, 100**2, (5*np.pi/180)**2])
         # Kalman gain.
-        self.K = np.zeros([var_dim, var_dim])
+        self.K = np.ones([var_dim, var_dim])
 
     def predict(self, ext_input, delta_t):
         """
@@ -67,11 +68,13 @@ class Kalman(object):
         affect on the new position (x,y) of the object, as the time is
         considered small enough between iterations.
         """
-        self.B = delta_t * np.array([[np.cos(self.state[2,-1]), 0], 
-                                     [np.sin(self.state[2,-1]), 0],
+        self.B = delta_t * np.array([[np.cos(self.states[2,-1]), 0], 
+                                     [np.sin(self.states[2,-1]), 0],
                                      [0, 1]])
-        pred_state = np.dot(self.F, self.state[:,-1]) + np.dot(self.B, ext_input)
-        self.pred_state = np.hstack((self.pred_state, pred_state))
+        # The array has to be reshaped in order to obtain a column vector.
+        previous_state = self.states[:,-1].reshape([self._variables_dim,1])
+        pred_state = np.dot(self.F, previous_state) + np.dot(self.B, ext_input)
+        self.pred_states = np.hstack((self.pred_states, pred_state))
         # Predict the new covariances matrix.
         self.pred_P = np.dot(np.dot(self.F, self.P), np.transpose(self.F))
         self.pred_P += self.Q
@@ -79,17 +82,17 @@ class Kalman(object):
 
     def update(self, measurement):
         # Estimated value of the measurement and its error.
-        pred_measure = np.dot(self.H, self.pred_state[:,-1])
+        pred_state = self.pred_states[:,-1].reshape([self._variables_dim,1])
+        pred_measure = np.dot(self.H, pred_state)
         meas_error = measurement - pred_measure
-        self.measurment = np.hstack((self.measurment, pred_measure))
+        self.measurements = np.hstack((self.measurements, measurement))
         # Innovation (or residual) covariance
         S = np.dot(np.dot(self.H, self.pred_P), np.transpose(self.H)) + self.R
         S_inv = np.linalg.inv(S)
         # Calculate the Kalman gain (K).
         self.K = np.dot(np.dot(self.pred_P, np.transpose(self.H)), S_inv)
-        import pdb; pdb.set_trace()
         # Get the updated state covariance matrix.
         self.P = self.pred_P - np.dot(np.dot(self.K, self.H), self.pred_P)
-        state = self.pred_state[:,-1] + np.dot(self.K, meas_error)
-        self.state = np.hstack((self.state, state))
+        state = pred_state + np.dot(self.K, meas_error)
+        self.states = np.hstack((self.states, state))
         return (state, self.P)
