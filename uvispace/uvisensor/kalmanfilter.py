@@ -30,12 +30,13 @@ class Kalman(object):
         F is the prediction matrix
         B is the control matrix
         P is the state covariance matrix
-        R is the measurement error
-        Q is the state error
+        R is the measurement noise covariance matrix
+        Q is the process noise covariance matrix
         """
         self._variables_dim = var_dim
         self._input_dim = input_dim
         # Measurement equation matrix.
+        self.measurement = np.zeros([var_dim, 1])
         self.H = np.eye(var_dim)
         self.observation_noise = np.zeros([var_dim, 1])
         # Actual and predicted states vectors.
@@ -49,9 +50,9 @@ class Kalman(object):
         # Actual and predicted states covariance matrices.
         self.P = np.eye(var_dim) * np.array([100**2, 100**2, (5*np.pi/180)**2])
         self.pred_P = np.zeros([var_dim, var_dim])
-        # State and Measurement error matrices.
+        # State and Measurement noise covariance matrix.
         self.Q = np.eye(var_dim) * np.array([100**2, 100**2, (5*np.pi/180)**2])
-        self.R = np.zeros([var_dim, var_dim])
+        self.R = np.eye(var_dim) * np.array([100**2, 100**2, (5*np.pi/180)**2])
         # Kalman gain.
         self.K = np.zeros([var_dim, var_dim])
 
@@ -63,30 +64,32 @@ class Kalman(object):
         the input vector to the previous state.
 
         Hypothesis: The angular speed between two iterations does not
-        affect on the position (x,y) of the object, as the time is
-        considered small enough.
+        affect on the new position (x,y) of the object, as the time is
+        considered small enough between iterations.
         """
-        self.B = delta_t * np.array([[np.cos(self.state[2]), 0], 
-                                     [np.sin(self.state[2]), 0],
+        self.B = delta_t * np.array([[np.cos(self.state[2,-1]), 0], 
+                                     [np.sin(self.state[2,-1]), 0],
                                      [0, 1]])
-        self.pred_state = np.dot(self.F, self.state) + np.dot(self.B, ext_input)
+        pred_state = np.dot(self.F, self.state[:,-1]) + np.dot(self.B, ext_input)
+        self.pred_state = np.hstack((self.pred_state, pred_state))
         # Predict the new covariances matrix.
         self.pred_P = np.dot(np.dot(self.F, self.P), np.transpose(self.F))
         self.pred_P += self.Q
-        return (self.pred_state, self.pred_P)
+        return (pred_state, self.pred_P)
 
     def update(self, measurement):
         # Estimated value of the measurement and its error.
-        pred_measure = np.dot(self.H, self.pred_state)
+        pred_measure = np.dot(self.H, self.pred_state[:,-1])
         meas_error = measurement - pred_measure
-        # Update measurement covariance
-        self.R = self.R
-        # Calculate the Kalman gain (K).
+        self.measurment = np.hstack((self.measurment, pred_measure))
+        # Innovation (or residual) covariance
         S = np.dot(np.dot(self.H, self.pred_P), np.transpose(self.H)) + self.R
         S_inv = np.linalg.inv(S)
+        # Calculate the Kalman gain (K).
         self.K = np.dot(np.dot(self.pred_P, np.transpose(self.H)), S_inv)
         import pdb; pdb.set_trace()
         # Get the updated state covariance matrix.
         self.P = self.pred_P - np.dot(np.dot(self.K, self.H), self.pred_P)
-        self.state = self.pred_state + np.dot(self.K, meas_error)
-        return (self.state, self.P)
+        state = self.pred_state[:,-1] + np.dot(self.K, meas_error)
+        self.state = np.hstack((self.state, state))
+        return (state, self.P)
