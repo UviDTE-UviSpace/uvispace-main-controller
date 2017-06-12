@@ -1,28 +1,28 @@
-#!/usr/bin/env python 
+#!/usr/bin/env python
 """This module 'listens' to speed SPs and sends them through serial port.
 
 **Usage: messenger.py [-r <robot_id>], [--robotid=<robot_id>]**
 
-To communicate with the external slaves, the data has to be packed using 
-a prearranged protocol, in order to be unpacked and understood 
+To communicate with the external slaves, the data has to be packed using
+a prearranged protocol, in order to be unpacked and understood
 correctly by the slave.
 
-If it is run as main script, it creates an instance of the class 
+If it is run as main script, it creates an instance of the class
 *SerMesProtocol* for managing the serial port. T
 
-When a new speed SP is received, it is sent to the target UGV using the 
+When a new speed SP is received, it is sent to the target UGV using the
 instanced object.
 
 **Speed formatting:**
 
 
-The *move_robot* function has the default speed limit set to [89-165]. 
-These limits are needed when the robot is connected to a DC source with 
+The *move_robot* function has the default speed limit set to [89-165].
+These limits are needed when the robot is connected to a DC source with
 a small intensity limit.
-If the program is run when the UGV is powered through a USB-B cable, it 
+If the program is run when the UGV is powered through a USB-B cable, it
 will move slowly, as the limit is too small to be able to move properly.
 
-When the execution ends, the *plotter* module is called and the time 
+When the execution ends, the *plotter* module is called and the time
 delays values are plotted on a graph.
 """
 # Standard libraries
@@ -38,7 +38,7 @@ import zmq
 # Local libraries
 import plotter
 from serialcomm import SerMesProtocol
-from speedtransform import Speed
+from speedtransform import Speed##
 
 try:
     # Logging setup.
@@ -52,11 +52,11 @@ logger = logging.getLogger('messenger')
 
 def connect_and_check(robot_id, port=None, baudrate=57600):
     """Return an instance of SerMesProtocol and check it is ready.
-    
+
     If no port is specified, take the first one available.
     """
     logger.debug("Checking connection")
-    # This exception prevents a crash when no device is connected to CPU.   
+    # This exception prevents a crash when no device is connected to CPU.
     if not port:
         try:
             port = glob.glob('/dev/ttyUSB*')[0]
@@ -75,8 +75,8 @@ def connect_and_check(robot_id, port=None, baudrate=57600):
     return serialcomm
 
 
-def listen_speed_set_points(my_serial, robot_id, robot_speed, speed_calc_times,
-                            wait_times, xbee_times):
+def listen_speed_set_points(my_serial, robot_id, speed_calc_times, wait_times,
+                            xbee_times):
     """Listens for new speed set point messages on a subscriber socket."""
     logger.debug("Initializing subscriber socket")
     # Open a subscribe socket to listen speed directives
@@ -95,34 +95,22 @@ def listen_speed_set_points(my_serial, robot_id, robot_speed, speed_calc_times,
             data = listener.recv_json()
             logger.debug("Received new speed set point: {}".format(data))
             move_robot(data, my_serial, wait_times, speed_calc_times,
-                       xbee_times, robot_speed)
+                       xbee_times)
     except KeyboardInterrupt:
         pass
     return
 
 
-def move_robot(data, my_serial, wait_times, speed_calc_times, xbee_times,
-               robot_speed, min_speed=70, max_speed=190):
+def move_robot(data, my_serial, wait_times, speed_calc_times, xbee_times):
     """Convert speed msg into 2WD value and send it through port."""
     global t0
     global t1
     global t2
     t1 = time.time()
     wait_times.append(t1 - t0)
-    linear = data['linear']
-    angular = data['angular']
     t2 = time.time()
     speed_calc_times.append(t2 - t1)
-    robot_speed.set_speed([linear, angular], 'linear_angular')
-    # Get the right and left speeds in case of direct movement
-    # The coefficients were found empirically
-    if robot_speed.get_speed()[0] > 0:
-        robot_speed.get_2WD_speeds(wheels_modifiers=[0.53, 1])
-    # Get the right and left speeds in case of reverse movement
-    else:
-        robot_speed.get_2WD_speeds(wheels_modifiers=[1, 1])
-    sp_right, sp_left = robot_speed.nonlinear_transform(min_A=min_speed,
-                                                        max_B=max_speed)
+    sp_right, sp_left = data
     logger.info('I am sending R: {} L: {}'.format(sp_right, sp_left))
     my_serial.move([sp_right, sp_left])
     t0 = time.time()
@@ -133,12 +121,12 @@ def move_robot(data, my_serial, wait_times, speed_calc_times, xbee_times,
 def stop_vehicle(my_serial, wait_times, speed_calc_times, xbee_times,
                  robot_speed):
     """Send a null speed to the UGV."""
+    ##########
     stop_speed = {
-        'linear': 0.0,
-        'angular': 0.0
+        'sp_right': 127,
+        'sp_left': 127
     }
-    move_robot(stop_speed, my_serial, wait_times, speed_calc_times, xbee_times,
-               robot_speed)
+    move_robot(stop_speed, my_serial, wait_times, speed_calc_times, xbee_times)
 
 
 def print_times(wait_times, speed_calc_times, xbee_times):
@@ -178,11 +166,10 @@ def main():
     xbee_times = []
     # Create an instance of SerMesProtocol and check connection to port.
     my_serial = connect_and_check(robot_id)
-    robot_speed = Speed()
     t0 = time.time()
 
-    listen_speed_set_points(my_serial, robot_id, robot_speed, speed_calc_times,
-                            wait_times, xbee_times)
+    listen_speed_set_points(my_serial, robot_id, speed_calc_times, wait_times,
+                            xbee_times)
 
     stop_vehicle(my_serial, wait_times, speed_calc_times,
                  xbee_times, robot_speed)

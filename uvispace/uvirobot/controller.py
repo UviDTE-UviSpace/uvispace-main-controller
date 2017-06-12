@@ -4,7 +4,7 @@
 The module instantiates a RobotController object and uses its methods
 for publishing new speed set points.
 
-When calling the module, one argument must be passed, representing the 
+When calling the module, one argument must be passed, representing the
 id of the desired robot. It must be the same as the one passed to the
 messenger.py module.
 """
@@ -66,9 +66,16 @@ def init_sockets(robot_id):
     goa_sock.connect("tcp://localhost:{}".format(
             int(os.environ.get("UVISPACE_BASE_PORT_GOAL"))+robot_id))
     # Construct the sockets dictionary
+    spd_sock = zmq.Context.instance().socket(zmq.SUB)
+    spd_sock.setsockopt_string(zmq.SUBSCRIBE, u"")
+    spd_sock.setsockopt(zmq.CONFLATE, True)
+    spd_sock.connect("tcp://localhost:{}".format(
+            int(os.environ.get("UVISPACE_BASE_PORT_SPEED"))+robot_id))
+
     sockets = {
         'position': pos_sock,
-        'goal': goa_sock
+        'goal': goa_sock,
+        'speed' : spd_sock
     }
     return sockets
 
@@ -80,6 +87,7 @@ def listen_sockets(sockets, my_robot):
     poller = zmq.Poller()
     poller.register(sockets['position'], zmq.POLLIN)
     poller.register(sockets['goal'], zmq.POLLIN)
+    poller.register(sockets['speed'], zmq.POLLIN)
 
     # listen for position information and new goal points
     while run_program:
@@ -97,6 +105,28 @@ def listen_sockets(sockets, my_robot):
             logger.debug("Received new goal: {}".format(goal))
             my_robot.new_goal(goal)
 
+        if (sockets['speed'] in socks
+                and socks[sockets['speed']] == zmq.POLLIN):
+            speed = sockets['speed'].recv_json()
+            logger.debug("Received new speed: {}".format(speed))
+            sp_right, sp_left = get_setpoints(speed)
+    return sp_right, sp_left
+
+def get_setpoints(data, min_speed=70, max_speed=190):
+    """Convert speed msg into 2WD value and send it through port."""
+    linear = data['linear']
+    angular = data['angular']
+    robot_speed.set_speed([linear, angular], 'linear_angular')
+    # Get the right and left speeds in case of direct movement
+    # The coefficients were found empirically
+    if robot_speed.get_speed()[0] > 0:
+        robot_speed.get_2WD_speeds(wheels_modifiers=[0.53, 1])
+    # Get the right and left speeds in case of reverse movement
+    else:
+        robot_speed.get_2WD_speeds(wheels_modifiers=[1, 1])
+    sp_right, sp_left = robot_speed.nonlinear_transform(min_A=min_speed,
+                                                        max_B=max_speed)
+    return sp_right, sp_left
 
 def main():
     logger.info("BEGINNING EXECUTION")
@@ -141,12 +171,14 @@ def main():
     # Open listening sockets
     sockets = init_sockets(robot_id)
 
+    robot_speed = Speed()
+
     # Until the first pose is not published, the robot instance is not
     # initialized. Keep trying to receive the initial position with a
     # no blocking recv until the instance is initialized or the run flag
     # has been set to False.
     logger.info("Waiting for first position")
-    while run_program and not my_robot.init:
+    while run and not my_robot.init:
         try:
             position = sockets['position'].recv_json(zmq.NOBLOCK)
         except zmq.ZMQError:
