@@ -38,7 +38,6 @@ import zmq
 # Local libraries
 import plotter
 from serialcomm import SerMesProtocol
-from speedtransform import Speed##
 
 try:
     # Logging setup.
@@ -75,7 +74,7 @@ def connect_and_check(robot_id, port=None, baudrate=57600):
     return serialcomm
 
 
-def listen_speed_set_points(my_serial, robot_id, speed_calc_times, wait_times,
+def listen_speed_set_points(my_serial, robot_id, wait_times, speed_calc_times,
                             xbee_times):
     """Listens for new speed set point messages on a subscriber socket."""
     logger.debug("Initializing subscriber socket")
@@ -94,40 +93,39 @@ def listen_speed_set_points(my_serial, robot_id, speed_calc_times, wait_times,
         while True:
             data = listener.recv_json()
             logger.debug("Received new speed set point: {}".format(data))
-            move_robot(data, my_serial, wait_times, speed_calc_times,
-                       xbee_times)
+            move_robot(data, my_serial, wait_times, speed_calc_times, xbee_times)
     except KeyboardInterrupt:
         pass
     return
 
 
 def move_robot(data, my_serial, wait_times, speed_calc_times, xbee_times):
-    """Convert speed msg into 2WD value and send it through port."""
+    """Send setpoints through port."""
     global t0
     global t1
     global t2
     t1 = time.time()
     wait_times.append(t1 - t0)
+    sp_left = data['sp_left']
+    sp_right = data['sp_right']
     t2 = time.time()
     speed_calc_times.append(t2 - t1)
-    sp_right, sp_left = data
-    logger.info('I am sending R: {} L: {}'.format(sp_right, sp_left))
+    logger.info('I am sending L: {} R: {}'.format(sp_left, sp_right))
     my_serial.move([sp_right, sp_left])
     t0 = time.time()
     xbee_times.append(t0 - t2)
     logger.info('Transmission ended successfully')
+    return
 
 
-def stop_vehicle(my_serial, wait_times, speed_calc_times, xbee_times,
-                 robot_speed):
+def stop_vehicle(my_serial, wait_times, speed_calc_times, xbee_times):
     """Send a null speed to the UGV."""
-    ##########
     stop_speed = {
+        'sp_left': 127,
         'sp_right': 127,
-        'sp_left': 127
     }
     move_robot(stop_speed, my_serial, wait_times, speed_calc_times, xbee_times)
-
+    return
 
 def print_times(wait_times, speed_calc_times, xbee_times):
     """Calculate the average time of each part of the process."""
@@ -139,7 +137,7 @@ def print_times(wait_times, speed_calc_times, xbee_times):
                 'XBee message sending mean time: {xbee}'
                 .format(wait=wait_mean_time, speed=speed_calc_mean_time,
                         xbee=xbee_mean_time))
-
+    return
 
 def main():
     logger.info("BEGINNING EXECUTION")
@@ -168,11 +166,11 @@ def main():
     my_serial = connect_and_check(robot_id)
     t0 = time.time()
 
-    listen_speed_set_points(my_serial, robot_id, speed_calc_times, wait_times,
+    listen_speed_set_points(my_serial, robot_id, wait_times, speed_calc_times,
                             xbee_times)
 
-    stop_vehicle(my_serial, wait_times, speed_calc_times,
-                 xbee_times, robot_speed)
+    stop_vehicle(my_serial, wait_times, speed_calc_times, xbee_times)
+
     print_times(wait_times, speed_calc_times, xbee_times)
 
     # Print the log output to files and plot it

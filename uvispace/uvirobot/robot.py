@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 """This module communicates with user and sensors for finding paths.
 
-It contains a class, *RobotController*, that represents a real UGV, and 
-contains functionality for publishing new speed values, UGVs 
-attributes, such as the *robot_id*, its speed values, or an instance 
-of the *PathTracker*, for calculating and storing the robot navigation 
+It contains a class, *RobotController*, that represents a real UGV, and
+contains functionality for publishing new speed values, UGVs
+attributes, such as the *robot_id*, its speed values, or an instance
+of the *PathTracker*, for calculating and storing the robot navigation
 values.
 """
 # Standard libraries
@@ -15,6 +15,7 @@ import sys
 import zmq
 # Local libraries
 import path_tracker
+from speedtransform import Speed
 
 try:
     # Logging setup.
@@ -39,7 +40,9 @@ class RobotController(object):
         self.speeds = {
             'linear': 0.0,
             'angular': 0.0,
-            'step': 0
+            'step': 0,
+            'sp_left' : 127,
+            'sp_right' : 127,
         }
         self.QCTracker = path_tracker.QuadCurveTracker()
         # Publishing socket instantiation.
@@ -47,12 +50,13 @@ class RobotController(object):
         self.pub_vel.bind("tcp://*:{}".format(
                 int(os.environ.get("UVISPACE_BASE_PORT_SPEED"))+robot_id))
 
-    def set_speed(self, pose):
+
+    def set_speed(self, pose, min_speed=70, max_speed=190):
         """Receives a new pose and calculates the UGV speeds.
 
-        After calculating the new speed value, the dictionary containing 
+        After calculating the new speed value, the dictionary containing
         the new speed values is published via the pub_vel socket.
-        Only the values X, Y and theta of the *Pose2D* type are used, as 
+        Only the values X, Y and theta of the *Pose2D* type are used, as
         the designed Space consists in a 2-D flat space.
 
         :param pose: contains a 2-D position, with 2 cartesian values (x,y)
@@ -71,6 +75,19 @@ class RobotController(object):
         self.speeds['linear'] = linear
         self.speeds['angular'] = angular
         self.speeds['step'] = pose['step']
+        self.robot_speed_transform = Speed()
+        robot_speed_transform.set_speed([linear, angular], 'linear_angular')
+        # Get the right and left speeds in case of direct movement
+        # The coefficients were found empirically
+        if robot_speed_transform.get_speed()[0] > 0:
+            robot_speed_transform.get_2WD_speeds(wheels_modifiers=[0.53, 1])
+        # Get the right and left speeds in case of reverse movement
+        else:
+            robot_speed_transform.get_2WD_speeds(wheels_modifiers=[1, 1])
+        sp_right, sp_left = robot_speed.nonlinear_transform(min_A=min_speed,
+                                                            max_B=max_speed)
+        self.speeds['sp_left'] = sp_left
+        self.speeds['sp_right'] = sp_right
         self.pub_vel.send_json(self.speeds)
 
     def new_goal(self, goal):
@@ -82,7 +99,7 @@ class RobotController(object):
         """
         if self.init:
             goal_point = (goal['x'], goal['y'])
-            # Adds the new goal to the current path, calculating all the 
+            # Adds the new goal to the current path, calculating all the
             # intermediate points and stacking them to the path array
             self.QCTracker.append_point(goal_point)
             logger.info('New goal--> X: {}, Y: {}'
