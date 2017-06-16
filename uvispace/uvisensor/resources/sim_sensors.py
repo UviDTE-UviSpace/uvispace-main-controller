@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 """This module simulates the uvisensor package for testing uvirobot.
 
-A robot is simulated to be placed at pose introduced by the user. The pose is
-published every 25 milliseconds.
+A robot is simulated to be placed at the pose introduced by the user.
+The pose is published every 25 milliseconds.
 """
 # Standard libraries
 import getopt
@@ -24,12 +24,11 @@ logger = logging.getLogger('sensor')
 
 
 def main():
-    logger.info("Start")
     ## Get arguments
     # Main routine
-    help_msg = """Usage: sim_sensors.py [-x <pose_x>], [--pose_x=<pose_x>],
-               [-y <pose_y>], [--pose_y=<pose_y>], [-theta <pose_theta>],
-               [--pose_theta=<pose_theta>]"""
+    help_msg = ("Usage: sim_sensors.py [-x <pose_x>], [--pose_x=<pose_x>],"
+               "[-y <pose_y>], [--pose_y=<pose_y>], [-t <pose_theta>],"
+               "[--pose_theta=<pose_theta>]")
     # This try/except clause forces to give the robot_id argument.
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hx:y:t:", ["pose_x=",
@@ -50,6 +49,7 @@ def main():
             pose_y = float(arg)
         elif opt in ("-t", "--pose_theta"):
             pose_theta = float(arg)
+    logger.info("Start")
     publisher = zmq.Context.instance().socket(zmq.PUB)
     # Send positions for robot 1
     publisher.bind("tcp://*:{}".format(
