@@ -93,9 +93,11 @@ def listen_speed_set_points(my_serial, robot_id, wait_times, speed_calc_times,
         while True:
             data = listener.recv_json()
             logger.debug("Received new speed set point: {}".format(data))
+            #import pdb; pdb.set_trace()
             move_robot(data, my_serial, wait_times, speed_calc_times, xbee_times)
     except KeyboardInterrupt:
         pass
+    listener.close()
     return
 
 

@@ -8,6 +8,9 @@ of the *PathTracker*, for calculating and storing the robot navigation
 values.
 """
 # Standard libraries
+import ast
+import ConfigParser
+import glob
 import logging
 import os
 import sys
@@ -33,26 +36,37 @@ class RobotController(object):
     :param int robot_id: Identifier of the robot
     """
 
-    def __init__(self, robot_id=1):
+    def __init__(self, robot_id=1, conf_file=""):
         """Class constructor method"""
         self.robot_id = robot_id
         self.init = False
-        self.speeds = {
+        self.pub_message = {
             'linear': 0.0,
             'angular': 0.0,
             'step': 0,
-            'sp_left' : 127,
-            'sp_right' : 127,
+            'sp_left': 127,
+            'sp_right': 127,
         }
         self.QCTracker = path_tracker.QuadCurveTracker()
+        self.robot_speed = Speed()
+        # Load the config file and read the polynomial coeficients
+        self.conf = ConfigParser.ConfigParser()
+        self.conf_file = glob.glob("./resources/config/robot.cfg")
+        self.conf.read(self.conf_file)
+        self.coefs_left = ast.literal_eval(self.conf.get('Coefficients',
+                                                         'coefs_left'))
+        self.coefs_right = ast.literal_eval(self.conf.get('Coefficients',
+                                                          'coefs_right'))
+        # Send the coeficients to the polynomial solver objects
+        self.robot_speed.poly_solver_left.update_coefs(self.coefs_left)
+        self.robot_speed.poly_solver_right.update_coefs(self.coefs_right)
         # Publishing socket instantiation.
         self.pub_vel = zmq.Context.instance().socket(zmq.PUB)
         self.pub_vel.bind("tcp://*:{}".format(
                 int(os.environ.get("UVISPACE_BASE_PORT_SPEED"))+robot_id))
 
-
     def set_speed(self, pose, min_speed=70, max_speed=190):
-        """Receives a new pose and calculates the UGV speeds.
+        """Receives a new pose and calculates the UGV pub_message.
 
         After calculating the new speed value, the dictionary containing
         the new speed values is published via the pub_vel socket.
@@ -72,23 +86,16 @@ class RobotController(object):
                     'Speeds--> Linear: {:4.2f}, Angular {:4.2f}, Step {}'
                     .format(pose['x'], pose['y'], pose['theta'], linear,
                             angular, pose['step']))
-        self.speeds['linear'] = linear
-        self.speeds['angular'] = angular
-        self.speeds['step'] = pose['step']
-        self.robot_speed_transform = Speed()
-        robot_speed_transform.set_speed([linear, angular], 'linear_angular')
+        self.pub_message['linear'] = linear
+        self.pub_message['angular'] = angular
+        self.pub_message['step'] = pose['step']
+        self.robot_speed.set_speed([linear, angular], 'linear_angular')
         # Get the right and left speeds in case of direct movement
-        # The coefficients were found empirically
-        if robot_speed_transform.get_speed()[0] > 0:
-            robot_speed_transform.get_2WD_speeds(wheels_modifiers=[0.53, 1])
-        # Get the right and left speeds in case of reverse movement
-        else:
-            robot_speed_transform.get_2WD_speeds(wheels_modifiers=[1, 1])
-        sp_right, sp_left = robot_speed.nonlinear_transform(min_A=min_speed,
-                                                            max_B=max_speed)
-        self.speeds['sp_left'] = sp_left
-        self.speeds['sp_right'] = sp_right
-        self.pub_vel.send_json(self.speeds)
+        sp_left = self.robot_speed.poly_solver_left.solve(linear, angular)
+        sp_right = self.robot_speed.poly_solver_right.solve(linear, angular)
+        self.pub_message['sp_left'] = sp_left
+        self.pub_message['sp_right'] = sp_right
+        self.pub_vel.send_json(self.pub_message)
 
     def new_goal(self, goal):
         """Receives a new goal and calculates the path to reach it.
@@ -111,6 +118,7 @@ class RobotController(object):
     def on_shutdown(self):
         """Shutdown method. Is called when execution is aborted."""
         logger.info('Shutting down')
-        self.speeds['linear'] = 0.0
-        self.speeds['angular'] = 0.0
-        self.pub_vel.send_json(self.speeds)
+        self.pub_message['linear'] = 0.0
+        self.pub_message['angular'] = 0.0
+        self.pub_vel.send_json(self.pub_message)
+        self.pub_vel.close()

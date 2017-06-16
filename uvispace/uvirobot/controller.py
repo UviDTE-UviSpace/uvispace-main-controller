@@ -174,6 +174,8 @@ def main():
         # Plots the robot ideal path.
         plotter.path_plot(my_robot.QCTracker.path, my_robot.QCTracker.route)
 
+    for socket in sockets:
+        socket.close()
     return
 
 
