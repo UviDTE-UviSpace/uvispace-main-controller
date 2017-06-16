@@ -47,33 +47,29 @@ class PolySpeedSolver(object):
         "f(x,y) = c0 + c1*x + c2*y + c3*x^2 + c4*x*y + c5*y^2"
         self._coefs = coefs
         self.sp = 0
+        self.thresholds = (0, 127, 255)
 
     def solve(self, linear, angular):
-        """Obtaining a setpoint from angular and linear velocity.
+        """Obtain setpoint values from angular and linear velocities.
 
-        Input of linear and angular speed value. Returns the setpoint value
-        obtained after the second degree equation is solved from the input
-        variables.
+        Apply a polynomial equation to the input, using the class' 
+        coeficients, in order to obtain a setpoint for the desired UGV.
+
+        Note that the polynomial function can have a maximum grade of 2.
 
         :param float linear: linear speed value.
         :param float angular: angular speed value.
+        :return: physical vehicle setpoint.
+        :rtype: 0 to 255 int
         """
-        self.sp = 0
-        addend = [0, 0, 0, 0, 0, 0]
-        addend[0] = self._coefs[0]
-        addend[1] = self._coefs[1] * linear
-        addend[2] = self._coefs[2] * angular
-        addend[3] = self._coefs[3] * linear ** 2
-        addend[4] = self._coefs[4] * linear * angular
-        addend[5] = self._coefs[5] * angular ** 2
-        for x in range (0, 6):
-            self.sp += addend[x]
-            self.sp = int(self.sp)
-        if self.sp > 255:
-            self.sp = 255
-        if self.sp < 160:
-            self.sp = 160
-        if linear < 0:
+        # Solve the poly function as a outer product between the coeficients and
+        # the independent variables.
+        variables = [1, linear, angular, linear**2, linear*angular, angular**2]
+        sp = np.dot(np.array(self._coefs), np.array(variables.reshape(1, 6)))
+        # Format the obtained value to the UGV setpoints scale.
+        if linear >= 0:
+            self.sp = np.clip(int(sp), thresholds[1], thresholds[2])
+        else:
             self.sp = 40
         return self.sp
 
@@ -81,7 +77,7 @@ class PolySpeedSolver(object):
         """Update the coefficients of the equation.
 
         :param coefs: coefficients of the second degree polynomial.
-        :type coefs: tuple(6 elemens float).
+        :type coefs: tuple(6 elements float).
         """
         self._coefs = coefs
         return self._coefs
