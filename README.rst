@@ -3,17 +3,24 @@ UviSpace
 ========
 
 :Author:
-    Javier López Randulfe,
+    Department of Electronic Technology,
 
     University of Vigo
 
-:Version: 1.0.0-alpha 
+:Version: 1.0.0
 
 The project contains two main packages:
 
 * uvirobot
 
 * uvisensor
+
+=====================
+Project documentation
+=====================
+
+The oficial documentation about the UviSpace project is hosted at
+.. _this website: http://uvispace.readthedocs.io/en/latest/
 
 ========
 uvirobot
