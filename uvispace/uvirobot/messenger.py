@@ -93,8 +93,8 @@ def listen_speed_set_points(my_serial, robot_id, wait_times, speed_calc_times,
         while True:
             data = listener.recv_json()
             logger.debug("Received new speed set point: {}".format(data))
-            #import pdb; pdb.set_trace()
-            move_robot(data, my_serial, wait_times, speed_calc_times, xbee_times)
+            move_robot(data, my_serial, wait_times, speed_calc_times, 
+                       xbee_times)
     except KeyboardInterrupt:
         pass
     listener.close()
@@ -167,12 +167,12 @@ def main():
     # Create an instance of SerMesProtocol and check connection to port.
     my_serial = connect_and_check(robot_id)
     t0 = time.time()
-
+    # Infinite loop for parsing setpoint values and sending to the UGV.
     listen_speed_set_points(my_serial, robot_id, wait_times, speed_calc_times,
                             xbee_times)
-
+    # Send to the UGV setpoints for making it stop moving.
     stop_vehicle(my_serial, wait_times, speed_calc_times, xbee_times)
-
+    # Calculate and print the average execution times
     print_times(wait_times, speed_calc_times, xbee_times)
 
     # Print the log output to files and plot it
