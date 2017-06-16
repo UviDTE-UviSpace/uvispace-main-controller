@@ -29,17 +29,19 @@ def main():
     # vehicle speed: linear=100mm/s, angular=1rad/s
     # initial pose to X=0mm, Y=0mm and theta=0rad.
     time_step = 0.02
-    steps = 20
+    steps = 1000
     linear = 100
-    angular = 1
+    angular = 0.1
+    # Sensors standard deviation
+    sensor_n = 50
     u = np.array([linear, angular]).reshape(2,1)
     real_poses = np.array([0, 0, 0]).reshape([3, 1])
-    ideal_poses = np.array([0, 0, 0]).reshape([3, 1])
+    ideal_poses = np.array([0, 0, 0]).reshape([3,  1])
     pose_noise = np.zeros([3,1])
     # Kalman filter object
     kalman = kalmanfilter.Kalman()
-    Q = np.eye(3) * np.array([100**2, 100**2, (5*np.pi/180)**2])
-    R = np.eye(3) * np.array([100**2, 100**2, (5*np.pi/180)**2])
+    Q = np.eye(3) * np.array([1**2, 1**2, (0.5*np.pi/180)**2])
+    R = np.eye(3) * np.array([sensor_n**2, sensor_n**2, (2*np.pi/180)**2])
     kalman.set_prediction_noise(Q)
     kalman.set_measurement_noise(R)
     estimates = np.array([0, 0, 0]).reshape(3,1)
@@ -64,6 +66,7 @@ def main():
         pose_noise[0:2] = np.random.normal(0,.2,(2,1))
         pose_noise[2] = np.random.normal(0, .05)
         noisy_pose = new_pose + pose_noise
+        noisy_pose = new_pose
         ideal_poses = np.hstack([ideal_poses, new_ideal_pose])
         real_poses = np.hstack([real_poses, noisy_pose])
         # Kalman second stage
@@ -71,8 +74,8 @@ def main():
         if step in range(6,10):
             R = (10000000000, 10000000000, 10000000000)
         else:
-            measurement = noisy_pose + np.random.normal(0,.2,(3,1))
-            R = (100**2, 100**2, (5*np.pi/180)**2)
+            measurement = noisy_pose + np.random.normal(0,50,(3,1))
+            R = (sensor_n**2, sensor_n**2, (5*np.pi/180)**2)
         kalman.set_measurement_noise(R)
         measurements = np.hstack([measurements, measurement])
         filtered, _ = kalman.update(measurement)
