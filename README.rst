@@ -19,6 +19,10 @@ The project contains two main packages:
 Project documentation
 =====================
 
+.. image:: https://readthedocs.org/projects/uvispace/badge/?version=latest
+:target: http://uvispace.readthedocs.io/en/latest/?badge=latest
+:alt: Documentation Status
+
 The oficial documentation about the UviSpace project is hosted at
 .. _this website: http://uvispace.readthedocs.io/en/latest/
 
