@@ -6,15 +6,15 @@ import sys
 import matplotlib.pyplot as plt
 import numpy as np
 #Local libraries
-import uvisensor.kalmanfilter as kalmanfilter
-
 try:
-    # Logging setup.
-    import settings
+    import uvisensor.kalmanfilter as kalmanfilter
 except ImportError:
     # Exit program if the settings module can't be found.
-    sys.exit("Can't find settings module. Maybe environment variables are not"
+    sys.exit("Can't find uvisensor package. Maybe environment variables are not"
              "set. Run the environment .sh script at the project root folder.")
+
+# Logging setup.
+import settings
 
 def main():
     """ 
@@ -67,7 +67,13 @@ def main():
         ideal_poses = np.hstack([ideal_poses, new_ideal_pose])
         real_poses = np.hstack([real_poses, noisy_pose])
         # Kalman second stage
-        measurement = noisy_pose + np.random.normal(0,.2,(3,1))
+        # Simulate losing detection during 4 steps.
+        if step in range(6,10):
+            R = (10000000000, 10000000000, 10000000000)
+        else:
+            measurement = noisy_pose + np.random.normal(0,.2,(3,1))
+            R = (100**2, 100**2, (5*np.pi/180)**2)
+        kalman.set_measurement_noise(R)
         measurements = np.hstack([measurements, measurement])
         filtered, _ = kalman.update(measurement)
         filtered_values = np.hstack([filtered_values, filtered])
@@ -78,14 +84,23 @@ def main():
         marker_f = (3, 0, -90 + filtered[2]*180/np.pi)
         # Plot the values
         plt.plot(noisy_pose[0], noisy_pose[1], marker=marker, markersize=12, 
-                 color='red')
+                 color='red', label='UGV Real route')
         plt.plot(estimated[0], estimated[1], marker=marker, markersize=12, 
-                 color='green')
+                 color='green', label='Model estimation')
         plt.plot(measurement[0], measurement[1], marker=marker, markersize=12, 
-                 color='blue')
+                 color='blue', label='Sensors measurement')
         plt.plot(filtered[0], filtered[1], marker=marker, markersize=12, 
-                 color='yellow')
-    # Plot the result
+                 color='yellow', label='Kalman filtered prediction')
+        # Add a customized legend at the first iteration.
+        if step == 0:
+            legend = plt.legend(loc='upper left', shadow=False)
+            # Set the legend fontsize
+            for label in legend.get_texts():
+                label.set_fontsize('large')
+            # Set the legend line width
+            for label in legend.get_lines():
+                label.set_linewidth(1.5)
+            # Plot the result
     # plt.plot(real_poses[0], real_poses[1], marker=markers, 
     #          markersize=12, color='red')
     plt.plot(ideal_poses[0], ideal_poses[1])
@@ -93,6 +108,9 @@ def main():
     plt.ylabel('Y axis (mm)')
     plt.title('Simulated Kalman filter')
     plt.grid(True)
+    # The frame is matplotlib.patches.Rectangle instance surrounding the legend.
+    frame = legend.get_frame()
+    frame.set_facecolor('0.90')
     plt.show()
     return real_poses
 
