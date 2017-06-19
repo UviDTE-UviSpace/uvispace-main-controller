@@ -1,18 +1,19 @@
 #!/usr/bin/env python
-"""Auxiliary program for controlling the UGV movements through keyboard."""
+"""Auxiliary program for controlling the UGV movements through keyboard"""
 # Standard libraries
 import ast
 import ConfigParser
+import getopt
 import glob
+import logging
 import os
-import termios
-import tty
+import signal
 import select
 import sys
+import termios
+import tty
 # Third party libraries
 import zmq
-# Local libraries
-from uvirobot.speedtransform import Speed
 
 try:
     # Logging setup.
@@ -21,6 +22,11 @@ except ImportError:
     # Exit program if the settings module can't be found.
     sys.exit("Can't find settings module. Maybe environment variables are not"
              "set. Run the environment .sh script at the project root folder.")
+
+# Local libraries
+from uvirobot.speedtransform import Speed
+
+
 
 def get_key():
     """Return key pressed."""
@@ -44,21 +50,49 @@ def get_key():
 
 
 def main():
+    # SIGINT handling:
+    # -Create a global flag to check if the execution should keep running.
+    # -Whenever SIGINT is received, set the global flag to False.
+    global run_program
+    run_program = True
+
+    def sigint_handler(signal, frame):
+        global run_program
+        run_program = False
+        return
+    signal.signal(signal.SIGINT, sigint_handler)
+    # This exception forces to give the robot_id argument within run command.
+    help_msg = ('Usage: teleoperation.py [-r <robot_id>],'
+                '[--robotid=<robot_id>]')
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], "hr:", ["robotid="])
+    except getopt.GetoptError:
+        print help_msg
+        sys.exit()
+    if not opts:
+        print help_msg
+        sys.exit()
+    for opt, arg in opts:
+        if opt == '-h':
+            print help_msg
+            sys.exit()
+        if opt in ("-r", "--robotid"):
+            robot_id = int(arg)
     # Init publisher
     publisher = zmq.Context.instance().socket(zmq.PUB)
     publisher.bind("tcp://*:{}".format(
             int(os.environ.get("UVISPACE_BASE_PORT_SPEED"))+1))
     pub_message = {
+        'step': 0,
         'linear': 0.0,
         'angular': 0.0,
-        'step': 0,
         'sp_left': 127,
-        'sp_right': 127,
+        'sp_right': 127
     }
     robot_spd = Speed()
     # Read configuration file coefficients.
     conf = ConfigParser.ConfigParser()
-    conf_file = glob.glob("./config/robot.cfg")
+    conf_file = glob.glob("./config/robot{}.cfg".format(robot_id))
     conf.read(conf_file)
     coefs_left = ast.literal_eval(conf.get('Coefficients', 'coefs_left'))
     coefs_right = ast.literal_eval(conf.get('Coefficients', 'coefs_right'))
@@ -101,26 +135,28 @@ def main():
         elif key in ('a', 'A'):
             screen_message = 'moving left'
             pub_message['sp_left'] = robot_spd.poly_solver_left.solve(200, 0.5)
-            pub_message['sp_right'] = robot_spd.poly_solver_right.solve(200, 0.5)
+            pub_message['sp_right'] = robot_spd.poly_solver_right.solve(200,
+                                                                        0.5)
             publisher.send_json(pub_message)
         # Move right.
         elif key in ('d', 'D'):
             screen_message = 'moving right'
             pub_message['sp_left'] = robot_spd.poly_solver_left.solve(200, -0.5)
-            pub_message['sp_right'] = robot_spd.poly_solver_right.solve(200, -0.5)
+            pub_message['sp_right'] = robot_spd.poly_solver_right.solve(200,
+                                                                        -0.5)
             publisher.send_json(pub_message)
         # Stop moving and exit.
         elif key in ('q', 'Q'):
             print ('Stop and exiting program. Have a good day! =)')
-            pub_message['sp_left'] = 127
-            pub_message['sp_right'] = 127
+            pub_message['sp_left'] = robot_spd.poly_solver_left.solve(0, 0)
+            pub_message['sp_right'] = robot_spd.poly_solver_right.solve(0, 0)
             publisher.send_json(pub_message)
             break
         # Stop moving.
         else:
             screen_message = 'stop moving'
-            pub_message['sp_left'] = 127
-            pub_message['sp_right'] = 127
+            pub_message['sp_left'] = robot_spd.poly_solver_left.solve(0, 0)
+            pub_message['sp_right'] = robot_spd.poly_solver_right.solve(0, 0)
             publisher.send_json(pub_message)
         # if key pressed now and key pressed previously are different,
         # update message

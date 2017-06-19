@@ -8,6 +8,7 @@ The pose is published every 25 milliseconds.
 import getopt
 import logging.config
 import os
+import signal
 import sys
 import time
 # Third party libraries
@@ -24,7 +25,21 @@ logger = logging.getLogger('sensor')
 
 
 def main():
-    ## Get arguments
+    logger.info("BEGINNING EXECUTION")
+
+    # SIGINT handling:
+    # -Create a global flag to check if the execution should keep running.
+    # -Whenever SIGINT is received, set the global flag to False.
+    global run_program
+    run_program = True
+
+    def sigint_handler(signal, frame):
+        global run_program
+        logger.info("Shutting down")
+        run_program = False
+        return
+    signal.signal(signal.SIGINT, sigint_handler)
+
     # Main routine
     help_msg = ("Usage: sim_sensors.py [-x <pose_x>], [--pose_x=<pose_x>],"
                "[-y <pose_y>], [--pose_y=<pose_y>], [-t <pose_theta>],"
@@ -63,7 +78,7 @@ def main():
         'step': step
     }
     try:
-        while True:
+        while run_program:
             step += 1
             position['step'] = step
             publisher.send_json(position)

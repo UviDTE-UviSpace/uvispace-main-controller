@@ -1,10 +1,10 @@
 #!/usr/bin/env python
-"""Module with classes to format speed and calculation of equation setpoint.
+"""Module with classes to format speed and to calculate setpoint.
 
-An instance of the *PolySpeedSolver* class allows to obtain the speed reference
-in the range (0, 255) from the resolution of an equation whose coefficients are
-obtained from a configuration file, and from the values of linear and angular
-velocity .
+An instance of the *PolySpeedSolver* class allows to obtain the speed
+reference in the range (0, 255) from the resolution of an equation
+whose coefficients are obtained from a configuration file, and from the
+values of linear and angular velocity .
 
 An instance of the *Speed* class represents the speeds of 2WD (2-Wheel-
 Drive) UGVs, and the attributes and operations related to them. They
@@ -33,18 +33,26 @@ logger = logging.getLogger('messenger')
 
 
 class PolySpeedSolver(object):
-    """This class solves a polynomial of two variables in the second degree.
+    """This class solves a polynomial to get setpoints.
 
-    From the coefficients obtained from the configuration file, an equation is
-    solved to obtain the speed setpoint from the desired linear and angular
-    velocities.
+    From the coefficients obtained from the configuration file, an
+    equation of two variables in the second degree is solved to obtain
+    the speed setpoint from the desired linear and angular speeds.
 
     :param coefs: coefficients of the second degree polynomial.
     :type coefs: tuple(6 elemens float).
-    :param sp: float speed setpoint.
+    :param int sp: speed setpoint.
+    :param thresholds: speed setpoint thresholds.
+    :type thresholds tuple (3 elements int).
     """
     def __init__(self, coefs=(0, 0, 0, 0, 0, 0)):
-        "f(x,y) = c0 + c1*x + c2*y + c3*x^2 + c4*x*y + c5*y^2"
+        """Coefficients of a polynomial of two variables of sp funcion.
+
+        sp(v,w) = c0 + c1*v + c2*w + c3*v^2 + c4*v*w + c5*w^2
+        v: linear speed
+        w: angular speed
+        coefs = (c0, c1, c2, c3, c4, c5)
+        """
         self._coefs = coefs
         self.sp = 0
         self.thresholds = (0, 127, 255)
@@ -52,10 +60,10 @@ class PolySpeedSolver(object):
     def solve(self, linear, angular):
         """Obtain setpoint values from angular and linear velocities.
 
-        Apply a polynomial equation to the input, using the class' 
+        Apply a polynomial equation to the input, using the class'
         coeficients, in order to obtain a setpoint for the desired UGV.
 
-        Note that the polynomial function can have a maximum grade of 2.
+        That the polynomial function can have a maximum degree of 2.
 
         :param float linear: linear speed value.
         :param float angular: angular speed value.
@@ -65,10 +73,12 @@ class PolySpeedSolver(object):
         # Solve the poly function as a outer product between the coeficients and
         # the independent variables.
         variables = [1, linear, angular, linear**2, linear*angular, angular**2]
-        sp = np.dot(np.array(self._coefs), np.array(variables.reshape(1, 6)))
+        sp = np.dot(np.array(self._coefs), np.array(variables))
         # Format the obtained value to the UGV setpoints scale.
-        if linear >= 0:
-            self.sp = np.clip(int(sp), thresholds[1], thresholds[2])
+        if linear > 0:
+            self.sp = np.clip(int(sp), self.thresholds[1], self.thresholds[2])
+        elif linear == 0 and angular == 0:
+            self.sp = 127
         else:
             self.sp = 40
         return self.sp
