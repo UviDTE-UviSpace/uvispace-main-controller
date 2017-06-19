@@ -7,8 +7,8 @@ import getopt
 import glob
 import logging
 import os
-import signal
 import select
+import signal
 import sys
 import termios
 import tty
@@ -17,15 +17,11 @@ import zmq
 
 try:
     # Logging setup.
-    import settings
+    from uvirobot.speedtransform import Speed
 except ImportError:
     # Exit program if the settings module can't be found.
     sys.exit("Can't find settings module. Maybe environment variables are not"
              "set. Run the environment .sh script at the project root folder.")
-
-# Local libraries
-from uvirobot.speedtransform import Speed
-
 
 
 def get_key():

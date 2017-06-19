@@ -77,16 +77,13 @@ def main():
         'theta': pose_theta,
         'step': step
     }
-    try:
-        while run_program:
-            step += 1
-            position['step'] = step
-            publisher.send_json(position)
-            logger.info("Sent {}".format(position))
-            time.sleep(0.025)
-    except KeyboardInterrupt:
-        publisher.close()
-        logger.info("End")
+    # The loop is exited after the sigint_handler function is called.
+    while run_program:
+        step += 1
+        position['step'] = step
+        publisher.send_json(position)
+        logger.info("Sent {}".format(position))
+        time.sleep(0.025)
 
 
 if __name__ == '__main__':

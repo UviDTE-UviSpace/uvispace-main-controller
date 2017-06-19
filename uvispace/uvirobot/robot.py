@@ -67,8 +67,8 @@ class RobotController(object):
         self.pub_vel.bind("tcp://*:{}".format(
                 int(os.environ.get("UVISPACE_BASE_PORT_SPEED"))+robot_id))
 
-    def get_speed(self, pose, min_speed=70, max_speed=190):
-        """Receives a new pose and calculate a speed value.
+    def set_speed(self, pose, min_speed=70, max_speed=190):
+        """Receive a new pose and calculate a speed value.
 
         After calculating the new speed value, call the get_setpoint
         function to transform the speed value into setpoints.
@@ -82,29 +82,26 @@ class RobotController(object):
             self.init = True
         linear, angular = self.QCTracker.run(
                 pose['x'], pose['y'], pose['theta'])
+        self.robot_speed.set_speed([linear, angular], 'linear_angular')
         logger.info('Pose--> X: {:1.4f}, Y: {:1.4f}, theta: {:1.4f} - '
                     'Speeds--> Linear: {:4.2f}, Angular {:4.2f}, Step {}'
                     .format(pose['x'], pose['y'], pose['theta'], linear,
                             angular, pose['step']))
-        self.get_setpoints(pose['step'], linear, angular)
+        sp_left, sp_right = self.get_setpoints(linear, angular)
+        self.publish_message(pose['step'], linear, angular, sp_left, sp_right)
         return
 
-    def get_setpoints(self, step, linear, angular):
-        """Receives speed value and transform it into setpoints.
-
-        After calculating the setpoints, call the publish_message
-        function to post speeds message.
+    def get_setpoints(self, linear, angular):
+        """Receive speed value and transform it into setpoints.
 
         :param int step: kalman filter iterator counter.
         :param float linear: linear speed value.
         :param float angular: angular speed value.
         """
-        self.robot_speed.set_speed([linear, angular], 'linear_angular')
         # Get the right and left speeds in case of direct movement
         sp_left = self.robot_speed.poly_solver_left.solve(linear, angular)
         sp_right = self.robot_speed.poly_solver_right.solve(linear, angular)
-        self.publish_message(step, linear, angular, sp_left, sp_right)
-        return
+        return (sp_left, sp_right)
 
     def publish_message(self, step, linear, angular, sp_left, sp_right):
         """Receives speeds and setpoints and publish them.

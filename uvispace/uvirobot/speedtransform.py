@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Module with classes to format speed and to calculate setpoint.
+"""Module with classes to format speed and calculate setpoint.
 
 An instance of the *PolySpeedSolver* class allows to obtain the speed
 reference in the range (0, 255) from the resolution of an equation
@@ -63,7 +63,7 @@ class PolySpeedSolver(object):
         Apply a polynomial equation to the input, using the class'
         coeficients, in order to obtain a setpoint for the desired UGV.
 
-        That the polynomial function can have a maximum degree of 2.
+        The polynomial function can have a maximum degree of 2.
 
         :param float linear: linear speed value.
         :param float angular: angular speed value.
@@ -73,7 +73,7 @@ class PolySpeedSolver(object):
         # Solve the poly function as a outer product between the coeficients and
         # the independent variables.
         variables = [1, linear, angular, linear**2, linear*angular, angular**2]
-        sp = np.dot(np.array(self._coefs), np.array(variables))
+        sp = np.dot(np.array(self._coefs), np.array(variables).reshape(6, 1))
         # Format the obtained value to the UGV setpoints scale.
         if linear > 0:
             self.sp = np.clip(int(sp), self.thresholds[1], self.thresholds[2])
