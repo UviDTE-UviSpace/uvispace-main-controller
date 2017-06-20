@@ -368,11 +368,11 @@ class DataFusionThread(threading.Thread):
             if (self.sockets['speed_subscriber'] in events
                     and events[self.sockets['speed_subscriber']] == zmq.POLLIN):
                 speeds = self.sockets['speed_subscriber'].recv_json()
-                logger.warn("Received new speed set point: {}".format(speeds))
+                logger.debugwa("Received new speed set point: {}".format(speeds))
             else:
                 # Set speeds to None in order to ignore Kalman prediction step.
                 speeds = None
-                logger.warn("Not received any speed set point from controller")
+                logger.debug("Not received any speed set point from controller")
             # Sleep the rest of the cycle
             while (time.time() - cycle_start_time < self.cycletime):
                 pass
