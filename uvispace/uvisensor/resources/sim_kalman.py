@@ -5,7 +5,7 @@ import sys
 # Third party libraries
 import matplotlib.pyplot as plt
 import numpy as np
-#Local libraries
+# Local libraries
 try:
     import uvisensor.kalmanfilter as kalmanfilter
 except ImportError:
@@ -15,6 +15,7 @@ except ImportError:
 
 # Logging setup.
 import settings
+
 
 def main():
     """ 

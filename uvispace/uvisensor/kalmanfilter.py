@@ -21,6 +21,7 @@ kleeman_kalman_basics.pdf
 # Third party libraries
 import numpy as np
 
+
 class Kalman(object):
     """Class for implementing a linear Kalman Filter."""
 
