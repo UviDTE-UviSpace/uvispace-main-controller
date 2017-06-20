@@ -1,14 +1,17 @@
 #!/usr/bin/env python
 """Module for implementing a Kalman filter.
 
-The Kalman filter is a well-known algorithm for imrpoving the
+The Kalman filter is a well-known algorithm for improving the
 localization of an object given measures of its position and a model of
 its behaviour.
-The algorithm is defined by two main equations, namely the state
-equation, that predicts the state (position) of the object given the
-previous one and the value of the input variables; and the measurement
-equation, that stimates the value that a sensor should obtain, given the
-state prediction.
+
+The algorithm is defined by two main stages, namely the state
+prediction, that estimates the state (position) of the object given the
+previous one and the value of the input variables; and the fusion with
+the measurements, that filters the values obtained by the sensors and
+the prediction calculated on the previous stage.
+estimates the value that a sensor should obtain, given 
+the state prediction.
 
 Relevant documentation:
 * http://www.bzarg.com/p/how-a-kalman-filter-works-in-pictures/
@@ -22,10 +25,21 @@ kleeman_kalman_basics.pdf
 import numpy as np
 
 class Kalman(object):
-    """Class for implementing a linear Kalman Filter."""
+    """Class for implementing a linear Kalman Filter.
+
+    It contains two methods for implementing the two stages of the
+    Kalman filter (predict and update), that should be run alternating
+    each one.
+
+    Besides, the noise distributions can be changed before the update
+    stage, and the Kalman gain will vary accordingly.
+    """
 
     def __init__(self, var_dim=3, input_dim=2):
         """Initialize the Kalman filter instance
+
+        The matrices present in the algorithm's main formulas are the
+        following:
 
         * F is the prediction matrix
         * B is the control matrix
@@ -34,6 +48,26 @@ class Kalman(object):
         * Q is the process noise covariance matrix
         * K is the Kalman gain. The bigger it is, the more importance is
         given to the measurement, and less to the prediction.
+
+
+
+        Algorithm workflow:
+        -------------------
+
+        * (optional) Before calling the prediction method, **update the
+         process noise** (many processes have a constant process noise).
+        * Once the previous iteration was finished, and known the time
+         step until the next iteration, **call the predict method**,
+          which will estimate the new position of the vehicle.
+        * (optional) Before updating the filter with the input
+         measurements, **update the measurement noise**. This is usually
+         updated when there are detectable changes on the state of the
+         sensors i.e. If GPS is being used and the vehicle enters a
+         tunnel; or if any obstacle intercedes between an imaging sensor
+         and the vehicle.
+        * Once the measurements input is obtained, **call the update
+         method**, that will merge the predicted position with the one
+         given by the sensors.
         """
         self._variables_dim = var_dim
         self._input_dim = input_dim
@@ -71,6 +105,11 @@ class Kalman(object):
 
         Note that the input dimensions must coincide with the dimensions
         of the system state variables.
+
+        :param noise: new values for the process noise.
+        :type noise: var_dim length list or tuple; or a
+         np.array(shape = (var_dim x var_dim))
+        :return: the new process error matrix.
         """
         # Routine for a list or tuple input, that results on a diagonal matrix.
         if type(noise) in (list, tuple):
@@ -101,6 +140,11 @@ class Kalman(object):
 
         Note that the input dimensions must coincide with the dimensions
         of the system state variables.
+
+        :param noise: new values for the measurement noise.
+        :type noise: var_dim length list or tuple; or a
+         np.array(shape = (var_dim x var_dim))
+        :return: the new measurement error matrix.
         """
         # Routine for a list or tuple input, that results on a diagonal matrix.
         if type(noise) in (list, tuple):
@@ -123,12 +167,31 @@ class Kalman(object):
         """
         Estimate the new position given the external input vector.
 
-        The function predicts the new position of the object, applying
-        the input vector to the previous state.
+        The matrix B, that maps input values to the corresponding state
+        change, is directly proportional to the time step since the last
+        iteration.
 
-        Hypothesis: The angular speed between two iterations does not
-        affect on the new position (x,y) of the object, as the time is
-        considered small enough between iterations.
+        The function predicts the new position of the object, applying
+        the input vector to the previous state. The function resolves
+        the predicted position using 2 equations, one for the mean value
+        and the other one for the covariance matrix:
+
+        .. math::
+
+            x(t+1|t) &= F \\cdot x(t) + B \\cdot u(t) \\
+
+            P(t+1|t) &= F  \\cdot P(t)  \\cdot F'
+
+        **Hypothesis:** The angular speed between two iterations does
+        not affect on the new position (x,y) of the object, as the time
+        is considered small enough between iterations.
+
+        :param ext_input: values of the control variables.
+        :type ext_input: np.array(shape = (input_dim x 1))
+        :param float delta_t: time step between the current iteration
+         and the previous one.
+        :return: The predicted state means, and the predicted covariance
+         matrix.
         """
         self.B = delta_t * np.array([[np.cos(self.states[2,-1]), 0], 
                                      [np.sin(self.states[2,-1]), 0],
@@ -143,18 +206,45 @@ class Kalman(object):
         return (pred_state, self._pred_P)
 
     def update(self, measurement):
-        # Estimated value of the measurement and its error.
+        """
+        Update the UGV position, merging the measurement and prediction
+
+        This is the second stage of the Kalman filter. Prior to applying
+        it, the 'predict' stage has to be run, in order to obtain an
+        estimated position and compare with the given measurement ('z').
+
+        .. math::
+            S(t+1) &= H \\cdot P(t+1|t) \\cdot H' + R(t+1) \\
+
+            K(t+1) &= P(t+1|t) \\cdot H' \\cdot S^{-1}(t+1) \\
+
+            x(t+1) &= x(t+1|t) + K(t+1) \\cdot (z - H \\cdot x(t+1|t)) \\
+
+            P(t+1) &= P(t+1|t) - K(t+1) \\cdot H \\cdot P(t+1|t)
+
+        The final filtered position will be a compromise between both
+        the prediction and the measurement, and the weight of each one
+        will be given by the kalman gain ('K'), which depends, among
+        other variables, on the value of the process and measurement
+        noises.
+
+        :param measurement: value of the sensors input.
+        :type measurement: np.array(shape = (var_dim x 1))
+        :return: The filtered state means, and the filtered
+         covariance matrix.
+        """
         pred_state = self.pred_states[:,-1].reshape([self._variables_dim,1])
+        # Estimated value of the measurement and its error.
         pred_measure = np.dot(self._H, pred_state)
         meas_error = measurement - pred_measure
         self.measurements = np.hstack((self.measurements, measurement))
-        # Innovation (or residual) covariance
+        # Innovation (or residual) covariance, and its inverse.
         S = np.dot(np.dot(self._H, self._pred_P), 
                    np.transpose(self._H)) + self._R
         S_inv = np.linalg.inv(S)
         # Calculate the Kalman gain (K).
         self._K = np.dot(np.dot(self._pred_P, np.transpose(self._H)), S_inv)
-        # Get the updated state covariance matrix.
+        # Get the updated state mean and covariance matrix.
         self._P = self._pred_P - np.dot(np.dot(self._K, self._H), self._pred_P)
         state = pred_state + np.dot(self._K, meas_error)
         self.states = np.hstack((self.states, state))
