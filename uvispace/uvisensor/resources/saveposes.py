@@ -19,7 +19,7 @@ import re
 from scipy import stats
 import sys
 import time
-#Excel read/write library
+# Excel read/write library
 import openpyxl
 
 def format_spreadsheet(cell):
@@ -28,32 +28,32 @@ def format_spreadsheet(cell):
 
     :param cell: type of format desired.
     """
-    #Types of text alignment.
+    # Types of text alignment.
     if cell == 'center_al':
         format_cell = openpyxl.styles.Alignment(horizontal='center',
                                                 vertical='center')
     elif cell == 'right_al':
         format_cell = openpyxl.styles.Alignment(horizontal='right',
                                                 vertical='center')
-    #Types of font.
+    # Types of font.
     elif cell == 'title_ft':
         format_cell = openpyxl.styles.Font(color='FFFFFFFF', size=20, bold=True)
     elif cell == 'white_ft':
-    #Types of border.
+    # Types of border.
         format_cell = openpyxl.styles.Font(color='FFFFFFFF', bold=True)
     elif cell == 'thick_bd':
         format_cell = openpyxl.styles.Border(
                                 top=openpyxl.styles.Side(border_style='thick',
                                                          color='FF4143CA'),
-                                bottom=openpyxl.styles.Side(border_style='thick',
-                                                            color='FF4143CA'))
+                                bottom=openpyxl.styles.Side(
+                                        border_style='thick', color='FF4143CA'))
     elif cell == 'thin_bd':
         format_cell = openpyxl.styles.Border(
                                 top=openpyxl.styles.Side(border_style='thin',
                                                          color='FF83C6D6'),
                                 bottom=openpyxl.styles.Side(border_style='thin',
                                                             color='FF83C6D6'))
-    #Types of fill.
+    # Types of fill.
     elif cell == 'blue_fill':
         format_cell = openpyxl.styles.PatternFill(fill_type='solid',
                                                   start_color='FF2F79E6',
@@ -68,50 +68,76 @@ def format_spreadsheet(cell):
                                                   end_color='FFFFFFFF')
     return format_cell
 
-def read_data(filename_spreadsheet="datatemp/31_05_2017_61-L160-R210.xlsx", analyze=True):
-    """
-    It allows to read poses and time of spreadsheet to analyze or save them.
+def read_data(name_spreadsheet="datatemp/31_05_2017_61-L160-R210.xlsx",
+              save=True, analyze=True):
+    """It allows to read poses and time of spreadsheet.
 
-    :param filename_spreadsheet: name of spreadsheet that contain the data to
-    be read.
+    These data are stored in the "data" matrix. They can be analyzed
+    and/or saved later in a text file and/or in a spreadsheet.
+
+    Each group of data is composed to 4 elements: time, position "x",
+    position "y" and angle "theta".
+
+    :param str name_spreadsheet: name of spreadsheet that contain the
+    data to be read.
+    :param bool save: boolean that allows you to save the data later if
+    it is true.
+    :param bool analyze: boolean that allows you to analyze the data
+    later if it is true.
+    :returns: matrix dimentions Mx4 with read data. M is the number of
+    rows corresponding to the number of data read.
+    :rtype: numpy.array(shape=Mx4)
     """
+    # Open spreadsheet
     try:
-        wb = openpyxl.load_workbook(filename_spreadsheet)
+        wb = openpyxl.load_workbook(name_spreadsheet)
     except IOError:
         wb = openpyxl.Workbook()
     ws = wb.active
-    #Initialization of matrices for data.
+    # Initialization of matrixes for data.
     data = np.array([0, 0, 0, 0]).astype(np.float64)
     last_data = np.array([0, 0, 0, 0]).astype(np.float64)
     new_data = np.array([0, 0, 0, 0]).astype(np.float64)
-    #The first row is the header, and the second is a set of zeros (already
-    #initialized in the matrix). Begins to read row 3.
+    # Rows 1 and 2 are for the file name, the next three rows describe the
+    # experiment parameters, and the 6 is the header in any type file.
+    # Start reading in row 7.
     row = 7
-    #Number of columns in the matrix.
+    # Number of columns in the matrix.
     cols = data.shape[0]
-    #Loop for reading data.
-    current_row_data = True
-    while current_row_data:
+    # Loop for reading data.
+    data_in_this_row = True
+    while data_in_this_row:
         element = ws.cell(column=1, row=row).value
+        # "Sum differerential data:" is the value of the next row to the last
+        # data.
         if element == 'Sum differential data:':
-            current_row_data = False
+            data_in_this_row = False
         else:
-            new = False
-            #import pdb; pdb.set_trace()
+            # New data is correct when the 3 values ​​of pose are different, when
+            # different_values is 3.
+            different_values = 0
             for y in range (0, cols):
                 element = ws.cell(column=y+1, row=row).value
                 new_data[y] = element
                 if y > 0 :
                     if new_data[y] != last_data [y]:
-                        new = True
-            if new == True:
+                        different_values += 1
+            if different_values == 3:
                 last_data = np.copy(new_data)
                 data = np.vstack([data, new_data])
             row +=1
     formatted_data = np.round(data, 2)
     #Call to save and analyze data.
-    save_data(filename_spreadsheet, formatted_data, analyze=analyze)
+    #TODO revisar!!!! INCOMPLETO
+    if analyze:
+        analyzed_data = analyze_data(formatted_data)
+        data_to_returned = analyzed_data
+    else:
+        data_to_returned = formatted_data
+    if save_data:
+        save_data(name_spreadsheet, data_to_returned)
     return formatted_data
+
 def save_data(data, analyze=False):
     """
     Receives poses and time of matrix to analyze and/or save them.
@@ -123,7 +149,7 @@ def save_data(data, analyze=False):
     time.sleep(0.2)
     #Delete first row data (row of zeros).
     data = data[1:data.shape[0], :]
-    
+
 
     data_2 = np.array([0, 0, 0, 0]).astype(np.float64)
     last_data_2 = np.array([0, 0, 0, 0]).astype(np.float64)
@@ -131,15 +157,16 @@ def save_data(data, analyze=False):
     #Number of columns in the matrix.
     rows, cols = data.shape
     #Loop for reading data.
+    #TODO unnecesary
     current_row_data = True
     for x in range (0, rows):
-        new = False
+        same_previous_data = False
         for y in range (0, cols):
             new_data_2[y] = data[x,y]
             if y > 0 :
                 if new_data_2[y] != last_data_2 [y]:
-                    new = True
-        if new == True:
+                    same_previous_data = True
+        if same_previous_data == True:
             last_data_2 = np.copy(new_data_2)
             data_2 = np.vstack([data_2, new_data_2])
     data = data_2
@@ -148,7 +175,7 @@ def save_data(data, analyze=False):
 
     #First sample, time zero.
     data[0:data.shape[0], 0] = data[0:data.shape[0], 0] - data[0, 0]
-    #numbers_filename = re.findall(r'\d+', filename_spreadsheet)
+    #numbers_filename = re.findall(r'\d+', name_spreadsheet)
     #sp_left = int(numbers_filename[4])
     #sp_right = int(numbers_filename[5])
     # #TODO Try, except correct value.
@@ -470,7 +497,7 @@ def main():
     for y in range (0, o_index-1):
         #import pdb; pdb.set_trace()
         print names[y]
-        read_data(filename_spreadsheet='datatemp/' + names[y], analyze=True)
+        read_data(name_spreadsheet='datatemp/' + names[y], analyze=True)
 
 
 if __name__ == '__main__':
