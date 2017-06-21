@@ -108,7 +108,7 @@ class VideoSensor(object):
     """This class contains methods for dealing with FPGA-camera system.
 
     :param str filename: Path to the configuration file of the camera. 
-     The path shall be passed relatively to the script directory.
+     The path shall be passed relative to this script directory.
 
     :param float scale: scale ratio of the camera. relationship between the 
      full resolution of the FPGA and the actual resolution that is being

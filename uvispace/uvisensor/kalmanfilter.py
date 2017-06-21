@@ -1,25 +1,25 @@
 #!/usr/bin/env python
-"""Module for implementing a Kalman filter.
+"""Module with a class for implementing a Kalman filter.
 
 The Kalman filter is a well-known algorithm for improving the
 localization of an object given measures of its position and a model of
 its behaviour.
 
-The algorithm is defined by two main stages, namely the state
+The algorithm is defined by two main stages, i.e.: the state
 prediction, that estimates the state (position) of the object given the
 previous one and the value of the input variables; and the fusion with
 the measurements, that filters the values obtained by the sensors and
 the prediction calculated on the previous stage.
-estimates the value that a sensor should obtain, given 
-the state prediction.
 
 Relevant documentation:
-* http://www.bzarg.com/p/how-a-kalman-filter-works-in-pictures/
-* http://www.cl.cam.ac.uk/~rmf25/papers
-/Understanding%20the%20Basis%20of%20the%20Kalman%20Filter.pdf
+-----------------------
 
-* http://biorobotics.ri.cmu.edu/papers/sbp_papers/integrated3/
-kleeman_kalman_basics.pdf
+* http://www.bzarg.com/p/how-a-kalman-filter-works-in-pictures/
+* `<http://www.cl.cam.ac.uk/~rmf25/papers
+  /Understanding%20the%20Basis%20of%20the%20Kalman%20Filter.pdf>`_
+
+* `<http://biorobotics.ri.cmu.edu/papers/sbp_papers/integrated3
+  /kleeman_kalman_basics.pdf>`_
 """
 # Third party libraries
 import numpy as np
@@ -30,9 +30,9 @@ class Kalman(object):
 
     It contains two methods for implementing the two stages of the
     Kalman filter (predict and update), that should be run alternating
-    each one.
+    each one; and two methods for updating the noise matrices.
 
-    Besides, the noise distributions can be changed before the update
+    The noise distributions can be changed before the update
     stage, and the Kalman gain will vary accordingly.
     """
 
@@ -108,7 +108,7 @@ class Kalman(object):
         of the system state variables.
 
         :param noise: new values for the process noise.
-        :type noise: var_dim length list or tuple; or a
+        :type noise: 'var_dim' length list or tuple; or a
          np.array(shape = (var_dim x var_dim))
         :return: the new process error matrix.
         """
@@ -143,7 +143,7 @@ class Kalman(object):
         of the system state variables.
 
         :param noise: new values for the measurement noise.
-        :type noise: var_dim length list or tuple; or a
+        :type noise: 'var_dim' length list or tuple; or a
          np.array(shape = (var_dim x var_dim))
         :return: the new measurement error matrix.
         """
