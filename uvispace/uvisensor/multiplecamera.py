@@ -240,17 +240,22 @@ class DataFusionThread(threading.Thread):
         self.quadrant_limits = quadrant_limits
         self.step = 0
         # Publishing socket instantiation.
-        self.publisher = zmq.Context.instance().socket(zmq.PUB)
-        self.publisher.bind("tcp://*:{}".format(
+        pose_publisher = zmq.Context.instance().socket(zmq.PUB)
+        pose_publisher.bind("tcp://*:{}".format(
                 int(os.environ.get("UVISPACE_BASE_PORT_POSITION")) + 1))
         # Open a subscribe socket and poller to listen for speed set points.
-        self.spd_sock = zmq.Context.instance().socket(zmq.SUB)
-        self.spd_sock.setsockopt_string(zmq.SUBSCRIBE, u"")
-        self.spd_sock.setsockopt(zmq.CONFLATE, True)
-        self.spd_sock.connect("tcp://localhost:{}".format(
+        speed_subscriber = zmq.Context.instance().socket(zmq.SUB)
+        speed_subscriber.setsockopt_string(zmq.SUBSCRIBE, u"")
+        speed_subscriber.setsockopt(zmq.CONFLATE, True)
+        speed_subscriber.connect("tcp://localhost:{}".format(
                 int(os.environ.get("UVISPACE_BASE_PORT_SPEED")) + 1))
+        # Store sockets in dictionary
         self.poller = zmq.Poller()
-        self.poller.register(self.spd_sock, zmq.POLLIN)
+        self.poller.register(speed_subscriber, zmq.POLLIN)
+        self.sockets = {
+            'pose_publisher': pose_publisher,
+            'speed_subscriber': speed_subscriber,
+        }
         # Synchronization variables
         self.conditions = conditions
         self.begin_events = begin_events
@@ -313,21 +318,21 @@ class DataFusionThread(threading.Thread):
                             self.quadrant_limits[index2])
                     # Update triangles[index2] if there is not any tracker
                     # initialized and UGV is within borders of the Camera.
-                    if (self._inborders[index2]['1'] and not
-                    self._triangles[index2]):
+                    if (self._inborders[index2]['1']
+                          and not self._triangles[index2]):
                         self._ntriangles[index2]['1'] = copy.copy(triangle)
                         self._reset_flags[index2]['1'] = False
                         logger.info("New triangle in Camera{}".format(index2))
                     # If the UGV is not in borders, but a tracker is set and is
                     # returning None values, it has to be reset.
-                    elif (not self._inborders[index2]['1'] and
-                                  self._triangles[index2].get('1', False) is None):
+                    elif (not self._inborders[index2]['1']
+                          and self._triangles[index2].get('1', False) is None):
                         self._reset_flags[index2]['1'] = True
                         self._ntriangles[index2].pop('1', None)
                     # If the UGV is not in borders and any tracker was detected,
                     # the reset flag has to be cleared.
-                    elif (not self._inborders[index2]['1'] and
-                                  self._triangles[index2].get('1', False) is False):
+                    elif (not self._inborders[index2]['1']
+                          and self._triangles[index2].get('1', False) is False):
                         self._reset_flags[index2]['1'] = False
                         self._ntriangles[index2].pop('1', None)
                     # Sync operations. Write to global variables
@@ -341,7 +346,7 @@ class DataFusionThread(threading.Thread):
             self.step += 1
             # Scan for detected triangle and publish it.
             for element in self._triangles:
-                if element.has_key('1'):
+                if '1' in element:
                     if element['1'] is not None:
                         triangle = copy.copy(element['1'])
             if triangle:
@@ -355,15 +360,15 @@ class DataFusionThread(threading.Thread):
                 # TODO Update Kalman filter and obtain filtered pose.
                 pose_msg = {'x': mpose[0], 'y': mpose[1], 'theta': mpose[2],
                             'step': self.step}
-                self.publisher.send_json(pose_msg)
+                self.sockets['pose_publisher'].send_json(pose_msg)
             logger.debug("Triangles at: {}".format(self._triangles))
             # Allow to poll only during the remaining cycletime.
             polling_time = self.cycletime - (time.time()-cycle_start_time)
             events = dict(self.poller.poll(polling_time))
-            if (self.spd_sock in events 
-                    and events[self.spd_sock] == zmq.POLLIN):
-                speeds = self.spd_sock.recv_json()
-                logger.debug("Received new speed set point: {}".format(speeds))
+            if (self.sockets['speed_subscriber'] in events
+                    and events[self.sockets['speed_subscriber']] == zmq.POLLIN):
+                speeds = self.sockets['speed_subscriber'].recv_json()
+                logger.debugwa("Received new speed set point: {}".format(speeds))
             else:
                 # Set speeds to None in order to ignore Kalman prediction step.
                 speeds = None
