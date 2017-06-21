@@ -10,13 +10,19 @@ values.
 # Standard libraries
 import logging
 import os
+import sys
 # Third party libraries
 import zmq
 # Local libraries
 import path_tracker
 
-# Logging setup
-import settings
+try:
+    # Logging setup.
+    import settings
+except ImportError:
+    # Exit program if the settings module can't be found.
+    sys.exit("Can't find settings module. Maybe environment variables are not"
+             "set. Run the environment .sh script at the project root folder.")
 logger = logging.getLogger("controller")
 
 
@@ -32,14 +38,14 @@ class RobotController(object):
         self.init = False
         self.speeds = {
             'linear': 0.0,
-            'angular': 0.0
+            'angular': 0.0,
+            'step': 0
         }
         self.QCTracker = path_tracker.QuadCurveTracker()
-
-        pub_vel = zmq.Context.instance().socket(zmq.PUB)
-        pub_vel.bind("tcp://*:{}".format(
+        # Publishing socket instantiation.
+        self.pub_vel = zmq.Context.instance().socket(zmq.PUB)
+        self.pub_vel.bind("tcp://*:{}".format(
                 int(os.environ.get("UVISPACE_BASE_PORT_SPEED"))+robot_id))
-        self.pub_vel = pub_vel
 
     def set_speed(self, pose):
         """Receives a new pose and calculates the UGV speeds.
@@ -58,12 +64,13 @@ class RobotController(object):
             self.init = True
         linear, angular = self.QCTracker.run(
                 pose['x'], pose['y'], pose['theta'])
-        logger.info('Location--> X: {}, Y: {}, theta: {} - '
-                    'Speeds--> Linear: {}, Angular {}'
+        logger.info('Pose--> X: {:1.4f}, Y: {:1.4f}, theta: {:1.4f} - '
+                    'Speeds--> Linear: {:4.2f}, Angular {:4.2f}, Step {}'
                     .format(pose['x'], pose['y'], pose['theta'], linear,
-                            angular))
+                            angular, pose['step']))
         self.speeds['linear'] = linear
         self.speeds['angular'] = angular
+        self.speeds['step'] = pose['step']
         self.pub_vel.send_json(self.speeds)
 
     def new_goal(self, goal):

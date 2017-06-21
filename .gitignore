@@ -5,13 +5,10 @@
 **~
 
 # Log files
-*.log
+**.log
 
-##tmp folder
-#eps files (graphs)
-**/tmp/*.eps
-#tar files
-**/tmp/*.tar
+##tmp folders
+**/tmp/**
 
 # Setuptools distribution folder.
 /dist/

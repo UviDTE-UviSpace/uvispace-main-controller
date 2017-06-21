@@ -52,7 +52,7 @@ LOGGING = {
             'delay': True
         },
         'console': {
-            'level': 'DEBUG',
+            'level': 'INFO',
             'formatter': 'simple',
             'class': 'logging.StreamHandler'
         }
