@@ -4,7 +4,8 @@ import time
 
 
 # Logging configuration
-log_path = os.environ.get("UVISPACE_LOG_PATH")
+parent_path = os.path.dirname(__file__)
+log_path = ("{}/log".format(parent_path))
 
 LOGGING = {
     'version': 1,
