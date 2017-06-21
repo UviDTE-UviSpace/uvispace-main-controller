@@ -14,14 +14,16 @@ import termios
 import tty
 # Third party libraries
 import zmq
-
+#Local libraries
 try:
-    # Logging setup.
     from uvirobot.speedtransform import Speed
 except ImportError:
-    # Exit program if the settings module can't be found.
-    sys.exit("Can't find settings module. Maybe environment variables are not"
+    # Exit program if the uvirobot package can't be found.
+    sys.exit("Can't find uvirobot module. Maybe environment variables are not"
              "set. Run the environment .sh script at the project root folder.")
+
+# Logging setup.
+import settings
 
 
 def get_key():
