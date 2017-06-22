@@ -6,7 +6,7 @@ The pose is published every 25 milliseconds.
 """
 # Standard libraries
 import getopt
-import logging.config
+import logging
 import os
 import signal
 import sys
@@ -42,15 +42,14 @@ def main():
 
     # Main routine
     help_msg = ("Usage: sim_sensors.py [-x <pose_x>], [--pose_x=<pose_x>],"
-               "[-y <pose_y>], [--pose_y=<pose_y>], [-t <pose_theta>],"
-               "[--pose_theta=<pose_theta>]")
+                "[-y <pose_y>], [--pose_y=<pose_y>], [-t <pose_theta>],"
+                "[--pose_theta=<pose_theta>]")
     # This try/except clause forces to give the robot_id argument.
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hx:y:t:", ["pose_x=",
                                    "pose_y", "pose_theta="])
     except getopt.GetoptError:
-        print help_msg
-        sys.exit()
+        print(help_msg)
     if not opts:
         print help_msg
         sys.exit()
@@ -65,9 +64,9 @@ def main():
         elif opt in ("-t", "--pose_theta"):
             pose_theta = float(arg)
     logger.info("Start")
-    publisher = zmq.Context.instance().socket(zmq.PUB)
+    pose_publisher = zmq.Context.instance().socket(zmq.PUB)
     # Send positions for robot 1
-    publisher.bind("tcp://*:{}".format(
+    pose_publisher.bind("tcp://*:{}".format(
             int(os.environ.get("UVISPACE_BASE_PORT_POSITION"))+1))
     step = 0
     logger.info("Publisher socket bound")
@@ -81,9 +80,13 @@ def main():
     while run_program:
         step += 1
         position['step'] = step
-        publisher.send_json(position)
+        pose_publisher.send_json(position)
         logger.info("Sent {}".format(position))
         time.sleep(0.025)
+    # Cleanup resources
+    pose_publisher.close()
+
+    return
 
 
 if __name__ == '__main__':

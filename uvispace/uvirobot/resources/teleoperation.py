@@ -14,7 +14,7 @@ import termios
 import tty
 # Third party libraries
 import zmq
-#Local libraries
+# Local libraries
 try:
     from uvirobot.speedtransform import Speed
 except ImportError:
@@ -77,15 +77,15 @@ def main():
         if opt in ("-r", "--robotid"):
             robot_id = int(arg)
     # Init publisher
-    publisher = zmq.Context.instance().socket(zmq.PUB)
-    publisher.bind("tcp://*:{}".format(
+    speed_publisher = zmq.Context.instance().socket(zmq.PUB)
+    speed_publisher.bind("tcp://*:{}".format(
             int(os.environ.get("UVISPACE_BASE_PORT_SPEED"))+1))
-    pub_message = {
+    speed_message = {
         'step': 0,
         'linear': 0.0,
         'angular': 0.0,
         'sp_left': 127,
-        'sp_right': 127
+        'sp_right': 127,
     }
     robot_spd = Speed()
     # Read configuration file coefficients.
@@ -97,7 +97,7 @@ def main():
     # Send the coeficients to the polynomial solver objects.
     robot_spd.poly_solver_left.update_coefs(coefs_left)
     robot_spd.poly_solver_right.update_coefs(coefs_right)
-    #import pdb; pdb.set_trace()
+    # import pdb; pdb.set_trace()
     # instructions for moving the UGV.
     print ('\n\r'
            'Teleoperation program initialized. Available commands:\n\r'
@@ -120,46 +120,56 @@ def main():
         # Move forward.
         if key in ('w', 'W'):
             screen_message = 'moving forward'
-            pub_message['sp_left'] = robot_spd.poly_solver_left.solve(400, 0)
-            pub_message['sp_right'] = robot_spd.poly_solver_right.solve(400, 0)
-            publisher.send_json(pub_message)
+            speed_message['sp_left'] = robot_spd.poly_solver_left.solve(400,
+                                                                        0)
+            speed_message['sp_right'] = robot_spd.poly_solver_right.solve(400,
+                                                                          0)
+            speed_publisher.send_json(speed_message)
         # Move backwards.
         elif key in ('s', 'S'):
             screen_message = 'moving backwards'
-            pub_message['sp_left'] = robot_spd.poly_solver_left.solve(-200, 0)
-            pub_message['sp_right'] = robot_spd.poly_solver_right.solve(-200, 0)
-            publisher.send_json(pub_message)
+            speed_message['sp_left'] = robot_spd.poly_solver_left.solve(-200,
+                                                                        0)
+            speed_message['sp_right'] = robot_spd.poly_solver_right.solve(-200,
+                                                                          0)
+            speed_publisher.send_json(speed_message)
         # Move left.
         elif key in ('a', 'A'):
             screen_message = 'moving left'
-            pub_message['sp_left'] = robot_spd.poly_solver_left.solve(200, 0.5)
-            pub_message['sp_right'] = robot_spd.poly_solver_right.solve(200,
+            speed_message['sp_left'] = robot_spd.poly_solver_left.solve(200,
                                                                         0.5)
-            publisher.send_json(pub_message)
+            speed_message['sp_right'] = robot_spd.poly_solver_right.solve(200,
+                                                                          0.5)
+            speed_publisher.send_json(speed_message)
         # Move right.
         elif key in ('d', 'D'):
             screen_message = 'moving right'
-            pub_message['sp_left'] = robot_spd.poly_solver_left.solve(200, -0.5)
-            pub_message['sp_right'] = robot_spd.poly_solver_right.solve(200,
+            speed_message['sp_left'] = robot_spd.poly_solver_left.solve(200,
                                                                         -0.5)
-            publisher.send_json(pub_message)
+            speed_message['sp_right'] = robot_spd.poly_solver_right.solve(200,
+                                                                          -0.5)
+            speed_publisher.send_json(speed_message)
         # Stop moving and exit.
         elif key in ('q', 'Q'):
             print ('Stop and exiting program. Have a good day! =)')
-            pub_message['sp_left'] = robot_spd.poly_solver_left.solve(0, 0)
-            pub_message['sp_right'] = robot_spd.poly_solver_right.solve(0, 0)
-            publisher.send_json(pub_message)
+            speed_message['sp_left'] = robot_spd.poly_solver_left.solve(0, 0)
+            speed_message['sp_right'] = robot_spd.poly_solver_right.solve(0, 0)
+            speed_publisher.send_json(speed_message)
             break
         # Stop moving.
         else:
             screen_message = 'stop moving'
-            pub_message['sp_left'] = robot_spd.poly_solver_left.solve(0, 0)
-            pub_message['sp_right'] = robot_spd.poly_solver_right.solve(0, 0)
-            publisher.send_json(pub_message)
+            speed_message['sp_left'] = robot_spd.poly_solver_left.solve(0, 0)
+            speed_message['sp_right'] = robot_spd.poly_solver_right.solve(0, 0)
+            speed_publisher.send_json(speed_message)
         # if key pressed now and key pressed previously are different,
         # update message
         if prev_key != key:
             print('Currently %s. \n\r' % screen_message)
+
+    # Cleanup resources before end
+    speed_publisher.close()
+    return
 
 
 if __name__ == '__main__':

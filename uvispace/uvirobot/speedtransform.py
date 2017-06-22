@@ -204,7 +204,7 @@ class Speed(object):
           the velocity of the right wheel and *v_left* corresponds to
           the velocity of the left wheel.
         """
-        if not new_format in self.SPEEDFORMATS:
+        if new_format not in self.SPEEDFORMATS:
             raise ValueError("Not a valid format type: {}".format(new_format))
         if (self._format is '2_wheel_drive' and new_format is 'linear_angular'):
             self._max_value *= self.rho
@@ -223,7 +223,7 @@ class Speed(object):
         * 'linear'
         * 'non-linear'
         """
-        if not new_scale in self.SPEEDSCALES:
+        if new_scale not in self.SPEEDSCALES:
             raise ValueError("Not a valid scale type: {}".format(new_scale))
         self._scale = new_scale
 

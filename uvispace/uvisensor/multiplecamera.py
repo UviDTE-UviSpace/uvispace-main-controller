@@ -376,6 +376,10 @@ class DataFusionThread(threading.Thread):
             # Sleep the rest of the cycle
             while (time.time() - cycle_start_time < self.cycletime):
                 pass
+        # Cleanup resources
+        for socket in self.sockets:
+            self.sockets[socket].close()
+        return
 
 
 class UserThread(threading.Thread):

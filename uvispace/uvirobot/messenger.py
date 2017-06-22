@@ -79,25 +79,26 @@ def listen_speed_set_points(my_serial, robot_id, wait_times, speed_calc_times,
     """Listens for new speed set point messages on a subscriber socket."""
     logger.debug("Initializing subscriber socket")
     # Open a subscribe socket to listen speed directives
-    listener = zmq.Context.instance().socket(zmq.SUB)
+    speed_subscriber = zmq.Context.instance().socket(zmq.SUB)
     # Set subscribe option to empty so it receives all messages
-    listener.setsockopt_string(zmq.SUBSCRIBE, u"")
+    speed_subscriber.setsockopt_string(zmq.SUBSCRIBE, u"")
     # Set the conflate option to true so it only keeps the last message received
-    listener.setsockopt(zmq.CONFLATE, True)
-    listener.connect("tcp://localhost:{}".format(
+    speed_subscriber.setsockopt(zmq.CONFLATE, True)
+    speed_subscriber.connect("tcp://localhost:{}".format(
             int(os.environ.get("UVISPACE_BASE_PORT_SPEED"))+robot_id))
 
     logger.debug("Listening for speed set points")
     # listen for speed directives until interrupted
     try:
         while True:
-            data = listener.recv_json()
+            data = speed_subscriber.recv_json()
             logger.debug("Received new speed set point: {}".format(data))
             move_robot(data, my_serial, wait_times, speed_calc_times, 
                        xbee_times)
     except KeyboardInterrupt:
         pass
-    listener.close()
+    # Cleanup resources
+    speed_subscriber.close()
     return
 
 
@@ -129,6 +130,7 @@ def stop_vehicle(my_serial, wait_times, speed_calc_times, xbee_times):
     move_robot(stop_speed, my_serial, wait_times, speed_calc_times, xbee_times)
     return
 
+
 def print_times(wait_times, speed_calc_times, xbee_times):
     """Calculate the average time of each part of the process."""
     wait_mean_time = sum(wait_times) / len(wait_times)
@@ -140,6 +142,7 @@ def print_times(wait_times, speed_calc_times, xbee_times):
                 .format(wait=wait_mean_time, speed=speed_calc_mean_time,
                         xbee=xbee_mean_time))
     return
+
 
 def main():
     logger.info("BEGINNING EXECUTION")

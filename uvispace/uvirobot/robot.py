@@ -40,7 +40,7 @@ class RobotController(object):
         """Class constructor method"""
         self.robot_id = robot_id
         self.init = False
-        self.pub_message = {
+        self.speed_status = {
             # Kalman filter iterator counter.
             'step': 0,
             'linear': 0.0,
@@ -49,7 +49,6 @@ class RobotController(object):
             'sp_right': 127,
         }
         self.QCTracker = path_tracker.QuadCurveTracker()
-        self.robot_speed = Speed()
         # Load the config file and read the polynomial coeficients
         self.conf = ConfigParser.ConfigParser()
         self.conf_file = glob.glob(
@@ -60,14 +59,15 @@ class RobotController(object):
         self._coefs_right = ast.literal_eval(self.conf.get('Coefficients',
                                                            'coefs_right'))
         # Send the coeficients to the polynomial solver objects
+        self.robot_speed = Speed()
         self.robot_speed.poly_solver_left.update_coefs(self._coefs_left)
         self.robot_speed.poly_solver_right.update_coefs(self._coefs_right)
         # Publishing socket instantiation.
-        self.pub_vel = zmq.Context.instance().socket(zmq.PUB)
-        self.pub_vel.bind("tcp://*:{}".format(
+        self.speed_publisher = zmq.Context.instance().socket(zmq.PUB)
+        self.speed_publisher.bind("tcp://*:{}".format(
                 int(os.environ.get("UVISPACE_BASE_PORT_SPEED"))+robot_id))
 
-    def set_speed(self, pose, min_speed=70, max_speed=190):
+    def set_speed(self, pose):
         """Receive a new pose and calculate a speed value.
 
         After calculating the new speed value, call the get_setpoint
@@ -94,7 +94,6 @@ class RobotController(object):
     def get_setpoints(self, linear, angular):
         """Receive speed value and transform it into setpoints.
 
-        :param int step: kalman filter iterator counter.
         :param float linear: linear speed value.
         :param float angular: angular speed value.
         """
@@ -112,12 +111,12 @@ class RobotController(object):
         :param int sp_left: setpoint left value.
         :param int sp_right: setpoint right value.
         """
-        self.pub_message['step'] = step
-        self.pub_message['linear'] = linear
-        self.pub_message['angular'] = angular
-        self.pub_message['sp_left'] = sp_left
-        self.pub_message['sp_right'] = sp_right
-        self.pub_vel.send_json(self.pub_message)
+        self.speed_status['step'] = step
+        self.speed_status['linear'] = linear
+        self.speed_status['angular'] = angular
+        self.speed_status['sp_left'] = sp_left
+        self.speed_status['sp_right'] = sp_right
+        self.speed_publisher.send_json(self.speed_status)
         return
 
     def new_goal(self, goal):
@@ -141,7 +140,9 @@ class RobotController(object):
     def on_shutdown(self):
         """Shutdown method. Is called when execution is aborted."""
         logger.info('Shutting down')
-        self.pub_message['sp_left'] = 127
-        self.pub_message['sp_right'] = 127
-        self.pub_vel.send_json(self.pub_message)
-        self.pub_vel.close()
+        sp_left, sp_right = self.get_setpoints(0, 0)
+        self.publish_message(self.speed_status['step']+1, 0, 0, sp_left,
+                             sp_right)
+        # Cleanup resources
+        self.speed_publisher.close()
+        return
