@@ -76,7 +76,7 @@ def connect_and_check(robot_id, port=None, baudrate=57600):
 
 
 def listen_speed_set_points(my_serial, robot_id, robot_speed, speed_calc_times,
-                            wait_times, xbee_times):
+                            wait_times, xbee_times, soc_read_interval=5):
     """Listens for new speed set point messages on a subscriber socket."""
     logger.debug("Initializing subscriber socket")
     # Open a subscribe socket to listen speed directives
@@ -89,6 +89,8 @@ def listen_speed_set_points(my_serial, robot_id, robot_speed, speed_calc_times,
             int(os.environ.get("UVISPACE_BASE_PORT_SPEED"))+robot_id))
 
     logger.debug("Listening for speed set points")
+    # Initialize the time for checking if the soc has to be read.
+    soc_time = time.time()
     # listen for speed directives until interrupted
     try:
         while True:
@@ -96,6 +98,10 @@ def listen_speed_set_points(my_serial, robot_id, robot_speed, speed_calc_times,
             logger.debug("Received new speed set point: {}".format(data))
             move_robot(data, my_serial, wait_times, speed_calc_times,
                        xbee_times, robot_speed)
+            # Read the battery state-of-charge after regular seconds intervals.
+            if (time.time()-soc_time) > soc_read_interval:
+                read_battery_soc(my_serial)
+                soc_time = time.time()
     except KeyboardInterrupt:
         pass
     return
@@ -139,6 +145,16 @@ def stop_vehicle(my_serial, wait_times, speed_calc_times, xbee_times,
     }
     move_robot(stop_speed, my_serial, wait_times, speed_calc_times, xbee_times,
                robot_speed)
+
+
+def read_battery_soc(my_serial):
+    """Send a petition to the slave for returning the battery SOC"""
+    soc = my_serial.get_soc()
+    if soc is not None:
+        logger.info("The current battery state of charge is {}%".format(soc))
+    else:
+        loger.warn("Unable to get the battery state of charge")
+    return soc
 
 
 def print_times(wait_times, speed_calc_times, xbee_times):
