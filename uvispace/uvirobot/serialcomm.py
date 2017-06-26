@@ -54,13 +54,13 @@ class SerMesProtocol(Serial):
     # message fields
     STX = '\x02'
     ETX = '\x03'
-    # slave-to-master answers
+    # slave-to-master function codes
     ACK_MSG = '\x01'
-    NACK_MSG = '\x02'
-    DONE_MSG = '\x03'
-    # master-to-slave orders
+    SOC_MSG = '\x02'
+    # master-to-slave function codes
     READY = '\x04'
     MOVE = '\x05'
+    GET_SOC = '\x06'
 
     def __init__(self, port,
                  baudrate,
@@ -131,15 +131,29 @@ class SerMesProtocol(Serial):
         # send configuration messager
         self.send_message(SerMesProtocol.MOVE, char_sp)
         # wait for the response from the device
-        result = self.read_message()
-        if (result == 0):  # if an error was detected
-            return 0
+        Rx_OK, fun_code, length, data = self.read_message()
+        # If the Rx_OK field was not asserted, raise an error
+        if Rx_OK is False:
+            logger.error('Unsuccessfull communication')
+            return False
         else:  # no errors
-            fun_code = result[1]
-            if fun_code:
+            if fun_code == self.ACK_MSG:
                 return True
             else:
                 return False
+
+    def get_soc(self):
+        """Get the State of Charge (SoC) of the vehicle battery."""
+        soc = None
+        self.send_message(self.GET_SOC)
+        Rx_OK, fun_code, length, data = self.read_message()
+        # If the Rx_OK field was not asserted, raise an error
+        if Rx_OK is False:
+            logger.error('Unsuccessfull communication')
+        else:
+            if fun_code == self.SOC_MSG:
+                soc = data
+        return soc
 
     # -------------MASTER-SLAVE COMMANDS AUXILIAR FUNCTIONS------------- #
     def send_message(self, fun_code, data='', send_delay=0.01):
@@ -208,6 +222,7 @@ class SerMesProtocol(Serial):
         # is data available in the 2 length bytes.
         try:
             length = struct.unpack('>H', self.read(2))[0]
+        # TODO specify the exception.
         except:
             logger.error('Received length bytes are not valid')
             return (Rx_OK, fun_code, length, data)
@@ -222,9 +237,8 @@ class SerMesProtocol(Serial):
         _ETX = self.read(1)
 
         # Check of message validity
-        if (_STX == self.STX) and (_ETX == self.ETX) \
-                and (id_dest == self.MASTER_ID):
-            logger.info('Succesfull communication')
+        if (_ETX == self.ETX) and (id_dest == self.MASTER_ID):
+            logger.debug('Succesfull communication')
             Rx_OK = True
         elif _ETX != SerMesProtocol.ETX:
             logger.error('Error, ETX was not found')
