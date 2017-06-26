@@ -153,7 +153,7 @@ def read_battery_soc(my_serial):
     if soc is not None:
         logger.info("The current battery state of charge is {}%".format(soc))
     else:
-        loger.warn("Unable to get the battery state of charge")
+        logger.warn("Unable to get the battery state of charge")
     return soc
 
 
