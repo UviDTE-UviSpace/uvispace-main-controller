@@ -75,7 +75,7 @@ class SerMesProtocol(Serial):
                         timeout=timeout)
         # IDs of the master and slave.                
         self.MASTER_ID = '\x01'
-        self.SLAVE_ID = '\x02'
+        self.SLAVE_ID = '\x01'
         if self._isOpen:
             self.flushInput()
 
