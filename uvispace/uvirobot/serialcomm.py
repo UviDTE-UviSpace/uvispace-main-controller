@@ -231,7 +231,7 @@ class SerMesProtocol(Serial):
         # Reading of the function code and the main data
         fun_code = self.read(1)
         for i in range(length):
-            data = '{previous_data} {new_data}'.format(previous_data=data,
+            data = '{previous_data}{new_data}'.format(previous_data=data,
                                                        new_data=self.read(1))
         # Reading of the last byte, corresponding to end of transmission check.
         _ETX = self.read(1)
