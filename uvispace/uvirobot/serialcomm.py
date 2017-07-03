@@ -177,7 +177,7 @@ class SerMesProtocol(Serial):
                 sent_data=data,
                 etx=self.ETX)
         # sends message.
-        logger.info('sending... {}'.format(
+        logger.debug('sending... {}'.format(
                 " ".join(hex(ord(n)) for n in message)))
         self.write(message)
 
@@ -226,7 +226,7 @@ class SerMesProtocol(Serial):
         except:
             logger.error('Received length bytes are not valid')
             return (Rx_OK, fun_code, length, data)
-        logger.info('received data length = {}'.format(length))
+        logger.debug('received data length = {}'.format(length))
 
         # Reading of the function code and the main data
         fun_code = self.read(1)
