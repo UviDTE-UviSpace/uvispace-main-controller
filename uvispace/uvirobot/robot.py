@@ -78,11 +78,15 @@ class RobotController(object):
         self.path = np.array([None, None]).reshape(1,2)
         self.route = np.array([None, None]).reshape(1,2)
         self.beta = 0
+        self.prev_epsilon = 0
         self.epsilon = 0
+        self.linear = 0
+        self.angular = 0
         self.max_valid_angle = max_valid_angle*np.pi / 180
+        self.prev_distance = 0
         self.distance = 0
         self.max_valid_distance = max_valid_distance
-        # Load the config file and read the polynomial coeficients
+        # Load the config file and read the polynomial coeficients.
         self.conf = ConfigParser.ConfigParser()
         self.conf_file = glob.glob("./resources/config/robot{}.cfg"
                                    .format(self.robot_id))
@@ -97,16 +101,38 @@ class RobotController(object):
                 'Coefficients_turn', 'coefs_left'))
         self._right_turn_coefs = ast.literal_eval(self.conf.get(
                 'Coefficients_turn', 'coefs_right'))
-        # Send the coeficients to the polynomial solver objects
+        # Send the coeficients to the polynomial solver objects.
         self.robot_speed = Speed()
         self.robot_speed.left_fwd_solver.update_coefs(self._left_fwd_coefs)
         self.robot_speed.right_fwd_solver.update_coefs(self._right_fwd_coefs)
         self.robot_speed.left_turn_solver.update_coefs(self._left_turn_coefs)
         self.robot_speed.right_turn_solver.update_coefs(self._right_turn_coefs)
+        # Load the config file and read the fuzzy sets (fs).
+        self.conf_raw = ConfigParser.RawConfigParser()
+        self.conf_raw.read(self.conf_file)
+        self.fs_diff_angle = self.get_fuzzyset_array('Diff_angle', 'fuzzysets')
+        self.fs_diff_angle_var = self.get_fuzzyset_array('Diff_angle_var',
+                                                         'fuzzysets')
+        self.st_ang_spd = self.get_fuzzyset_array('Ang_spd', 'singletons')
+        self.fs_distance_fuzzy = self.get_fuzzyset_array('Distance',
+                                                         'fuzzysets')
+        self.fs_distance_var_fuzzy = self.get_fuzzyset_array('Distance_var',
+                                                             'fuzzysets')
+        self.st_inc_lin_spd = self.get_fuzzyset_array('Inc_lin_spd',
+                                                      'singletons')
+        self.fuzzy = pathtracker.FuzzyController()
         # Publishing socket instantiation.
         self.speed_publisher = zmq.Context.instance().socket(zmq.PUB)
         self.speed_publisher.bind("tcp://*:{}".format(
                 int(os.environ.get("UVISPACE_BASE_PORT_SPEED"))+robot_id))
+
+    def get_fuzzyset_array(self, section, item):
+        raw_fuzzyset = self.conf_raw.get(section, item)
+        # Format the value in order to get an array.
+        tuple_format = ','.join(raw_fuzzyset.split('\n'))
+        array_format = ast.literal_eval(tuple_format)
+        fuzzyset_read = np.array(array_format)
+        return fuzzyset_read
 
     def set_speed(self, pose):
         """Receive a new pose and calculate a speed value.
@@ -118,10 +144,11 @@ class RobotController(object):
         (x,y) and an angle value (theta).
         :type pose: dict
         """
+        prev_spd_linear = self.linear
         if not self.init:
             self.init = True
-            linear = 0
-            angular = 0
+            self.linear = 0
+            self.angular = 0
         if self.goal_points.all() is not None:
             # There is a goal point.
             current_point = (pose['x'], pose['y'])
@@ -133,31 +160,94 @@ class RobotController(object):
             segment = next_point - current_point
             self.beta = np.arctan2(segment[1], segment[0])
             self.theta = pose['theta']
+            self.prev_epsilon = self.epsilon
             # Correct UGV orientation.
             delta = self.beta - self.theta
             self.epsilon = np.where(np.abs(delta) < np.pi, delta,
                                     delta - 2*np.pi*np.sign(delta))
-            linear, angular = pathtracker.get_turn_spd(self.epsilon)
+            delta_ep = self.epsilon - self.prev_epsilon
+            delta_epsilon = np.where(np.abs(delta_ep) < np.pi, delta_ep,
+                                    delta_ep - 2*np.pi*np.sign(delta_ep))
+            self.linear, self.angular = self.get_turn_spd(delta_epsilon)
+            self.prev_distance = self.distance
             # Calculate distance to next goal point.
             self.distance = np.linalg.norm(next_point - current_point)
             # Check distance to next goal point.
             if self.distance < self.max_valid_distance:
                 self.delete_goal()
             # Straight movement if the angle is correct.
+            delta_distance = self.distance - self.prev_distance
             if np.abs(self.epsilon) < self.max_valid_angle:
-                linear, angular = pathtracker.get_fwd_spd(self.distance)
+                self.linear, self.angular = self.get_fwd_spd(
+                                        delta_distance, prev_spd_linear)
+            # Temporary.
+            print 'goal: {}'.format(self.goal_points[0, :])
+            print 'goals: {}'.format(self.goal_points)
+            print 'distance: {}'.format(self.distance)
+            print 'prev_distance: {}'.format(self.prev_distance)
+            print 'delta_distance: {}'.format(delta_distance)
+            print 'beta: {}'.format(self.beta)
+            print 'theta: {}'.format(self.theta)
+            print 'epsilon: {}'.format(self.epsilon)
+            print 'delta_epsilon: {}'.format(delta_epsilon)
+            print 'prev_spd_linear: {}'.format(prev_spd_linear)
+            print 'linear: {}'.format(self.linear)
+            print 'angular: {}'.format(self.angular)
         else:
-            linear = 0
-            angular = 0
+            self.linear = 0
+            self.angular = 0
             logger.info('Waiting for a goal...')
-        self.robot_speed.set_speed([linear, angular], 'linear_angular')
+        self.robot_speed.set_speed([self.linear, self.angular], 'linear_angular')
         logger.info('Pose--> X: {:1.4f}, Y: {:1.4f}, theta: {:1.4f} - '
                     'Speeds--> Linear: {:4.2f}, Angular {:4.2f}, Step {}'
-                    .format(pose['x'], pose['y'], pose['theta'], linear,
-                            angular, pose['step']))
-        sp_left, sp_right = self.get_setpoints(linear, angular)
-        self.publish_message(pose['step'], linear, angular, sp_left, sp_right)
+                    .format(pose['x'], pose['y'], pose['theta'], self.linear,
+                            self.angular, pose['step']))
+        sp_left, sp_right = self.get_setpoints(self.linear, self.angular)
+        self.publish_message(pose['step'], self.linear, self.angular, sp_left,
+                             sp_right)
         return
+
+    def get_turn_spd(self, delta_epsilon):
+        """Calculate the speeds to get the correct orientation of the UGV.
+
+        :return: linear and angular speed values.
+        :rtype: (float, float)
+        """
+        dmem1, mem1, dmem2, mem2 = self.fuzzy.get_output(self.epsilon,
+                                                         self.fs_diff_angle)
+        dmem3, mem3, dmem4, mem4 = self.fuzzy.get_output(delta_epsilon,
+                                                         self.fs_diff_angle_var)
+        d_membership = np.array([dmem1, dmem2, dmem3, dmem4])
+        member = np.array([mem1, mem2, mem3, mem4])
+
+        w = self.fuzzy.get_weighted_arith_mean(d_membership, member,
+                                               self.st_ang_spd)
+        angular = w
+        if np.abs(angular) < 0.7:
+            angular = np.sign(w)*0.7
+        linear = 20
+        return (linear, angular)
+
+    def get_fwd_spd(self, delta_distance, prev_spd_linear):
+        """Calculate the speeds depending on the distance to the goal.
+
+        :return: linear and angular speed values.
+        :rtype: (float, float)
+        """
+        dmem1, mem1, dmem2, mem2 = self.fuzzy.get_output(self.distance,
+                                                         self.fs_distance_fuzzy)
+        dmem3, mem3, dmem4, mem4 = self.fuzzy.get_output(delta_distance,
+                                                     self.fs_distance_var_fuzzy)
+        array_membership = np.array([dmem1, dmem2, dmem3, dmem4])
+        array_member = np.array([mem1, mem2, mem3, mem4])
+
+        delta_v = self.fuzzy.get_weighted_arith_mean(d_membership, member,
+                                       self.st_inc_lin_spd)
+        linear = prev_spd_linear + delta_v
+        if linear > 200:
+            linear = 200
+        angular = 0
+        return (linear, angular)
 
     def get_setpoints(self, linear, angular):
         """Receive speed value and transform it into setpoints.
