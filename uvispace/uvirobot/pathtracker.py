@@ -1,76 +1,103 @@
 #!/usr/bin/env python
-"""Module with functions to allow the UGV to reach the goal points.
+"""Module that allow the UGV choose the right speed.
 
-It contains functions to selecction correct speed depending on the
-position of the UGV and its goal.
+It contains a class *FuzzyController*, that represents a controller type
+(as its name indicates, the fuzzy controller).
 """
-# Standard libraries
-import ast
-import ConfigParser
-import glob
 # Third party libraries
 import numpy as np
 
 class FuzzyController(object):
+    """This class contains methods to choose the right speed for UGV.
 
-    def get_output(var_in, fuzzyset):
-        value_max = max([np.abs(fuzzyset.max()),np.abs(fuzzyset.min())])
-        work_var_in = var_in / value_max
-        work_fuzzyset = fuzzyset / value_max
-        which_membership1 = np.greater_equal(work_var_in, work_fuzzyset[:, 0])
-        if np.any(which_membership1 == True):
-            membership_index1 = (np.where(which_membership1 == True)[0]).max()
-            membership1 = work_fuzzyset[membership_index1]
-            which_zone1 = np.greater_equal(work_var_in, membership1)
-            zone_index = (np.where(which_zone1 == True)[0]).max()
-            if zone_index == 0:
-                degree_of_membership1 = ((work_var_in - membership1[0]) /
-                                         (membership1[1]-membership1[0]))
-            elif zone_index == 1:
-                degree_of_membership1 = 1
+    """
+    def __init__(self):
+        pass
+
+    def fuzzyfication(self, input_value, sets):
+        """Fuzzify all input values into fuzzy membership functions.
+
+        :param float input_value: input_value in fuzzy sets.
+        :param float sets: fuzzy sets.
+        :returns: [set_index_array, m_degree_array]
+          * *set_index_array* array with the indexes of the sets to
+            which the input values correspond.
+          * *m_degree_array* array with the degree of membership of the
+            input value in the sets.
+        :rtype: [float64 (shape=2), float64 (shape=2)]
+        """
+        # Convert input_value and sets to range (-1, 1).
+        max_input_value = max([np.abs(sets.max()),np.abs(sets.min())])
+        work_value = input_value / max_input_value
+        work_sets = sets / max_input_value
+        # Check that the value belongs to some set, that will be called set1.
+        set1_membership = np.greater_equal(work_value, work_sets[:, 0])
+        if np.any(set1_membership == True):
+            # Index of set1.
+            set1_index = (np.where(set1_membership == True)[0]).max()
+            set1 = work_sets[set1_index]
+            # Zone of set1.
+            set1_zone = np.greater_equal(work_value, set1)
+            set1_zone_index = (np.where(set1_zone == True)[0]).max()
+            # Obtain the degree of membership to the set1.
+            if set1_zone_index == 0:
+                set1_m_degree = ((work_value - set1[0]) / (set1[1] - set1[0]))
+            elif set1_zone_index == 1:
+                set1_m_degree = 1
             else:
-                degree_of_membership1 = 0
+                set1_m_degree = 0
         else:
-            degree_of_membership1 = 0
-            membership_index1 = 0
-
-
-        which_membership2 = np.less_equal(work_var_in, work_fuzzyset[:, 3])
-        if np.any(which_membership2 == True):
-            membership_index2 = (np.where(which_membership2 == True)[0]).min()
-            membership2 = work_fuzzyset[membership_index2]
-            which_zone2 = np.less_equal(work_var_in, membership2)
-            zone_index2 = (np.where(which_zone2 == True)[0]).min()
-            if zone_index2 == 3:
-                degree_of_membership2 = ((membership2[3] - work_var_in) /
-                                       (membership2[3]-membership2[2]))
-            elif zone_index2 == 2:
-                degree_of_membership2 = 1
+            set1_index = 0
+            set1_m_degree = 0
+        # Check that the value belongs to some set, that will be called set2.
+        set2_membership = np.less_equal(work_value, work_sets[:, 3])
+        if set1_m_degree == 1 or (np.all(set2_membership == False)):
+            set2_index = 0
+            set2_m_degree = 0
+        else:
+            # Index of set2.
+            set2_index = (np.where(set2_membership == True)[0]).min()
+            set2 = work_sets[set2_index]
+            # Zone of set2.
+            set2_zone = np.less_equal(work_value, set2)
+            set2_zone_index = (np.where(set2_zone == True)[0]).min()
+            # Obtain the degree of membership to the set2.
+            if set2_zone_index == 3:
+                set2_m_degree = ((set2[3] - work_value) / (set2[3] - set2[2]))
+            elif set2_zone_index == 2:
+                set2_m_degree = 1
             else:
-                degree_of_membership2 = 0
+                set2_m_degree = 0
+        set_index_array = np.array([set1_index, set2_index])
+        m_degree_array = np.array([set1_m_degree, set2_m_degree])
+        return set_index_array, m_degree_array
+
+    def defuzzyfication(self, set_index, m_degree, singletons):
+        """Obtain output using the weighted average method.
+
+        :param set_index: Array of floats64 with indexes of sets.
+        :type set_index: numpy.array float64 (shape=4).
+        :param m_degree: Array of floats64 with grade of membership of
+         the input value in the sets.
+        :type m_degree: numpy.array float64 (shape=4).
+        :param singletons: Array of floats64 with singletons set.
+        :type singletons: numpy.array float64 (shape=MxN).
+        :return: output value of speed.
+        :rtype: float
+        """
+        weight_array = np.array([min([m_degree[0], m_degree[2]]),
+                                 min([m_degree[0], m_degree[3]]),
+                                 min([m_degree[1], m_degree[2]]),
+                                 min([m_degree[1], m_degree[3]])])
+        singletons_array = np.array([singletons[set_index[0], set_index[2]],
+                                     singletons[set_index[0], set_index[3]],
+                                     singletons[set_index[1], set_index[2]],
+                                     singletons[set_index[1], set_index[3]]])
+        # Calculate the weighted arithmetic mean.
+        if weight_array.sum(axis=0) == 0:
+            # Consider zero denominator in division.
+            output = 0
         else:
-            degree_of_membership2 = 0
-            membership_index2 = 0
-
-        if degree_of_membership1 == 1:
-            degree_of_membership2 = 0
-
-        return (degree_of_membership1, membership_index1,
-                degree_of_membership2, membership_index2)
-
-    def get_weighted_arith_mean(d_mem, mem, singletons):
-
-        a = min([d_mem[1], d_mem[3]])
-        a1 = a * singletons[mem[1], mem[3]]
-        b = min([d_mem[1], d_mem[4]])
-        b1 = b * singletons[mem[1], mem[4]]
-        c = min([d_mem[2], d_mem[3])
-        c1 = c * singletons[mem[2], mem[3]]
-        d = min([d_mem[2], d_mem[4]])
-        d1 = d * singletons[mem[2], mem[4]]
-
-        weighted_arith_mean = (a1 + b1 + c1 + d1) / (a + b + c + d)
-        if (a+b+c+d) == 0:
-            weighted_arith_mean = 0
-
-        return weighted_arith_mean
+            output = (np.dot(weight_array, singletons_array) /
+                      weight_array.sum(axis=0))
+        return output
