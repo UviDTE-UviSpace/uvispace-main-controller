@@ -13,63 +13,30 @@ Overview
 General  overview
 -----------------
 
-The project is aimed to control an indoor intelligent space where several
-unmanned vehicles are simultaneously observed and controlled through a
-distributed vision system, a central controller and an Arduino board embedded
-at each vehicle. The physical system was set up in the university in order to
-run tests and try new algorithms and solutions.
+UviSpace Main Controller is part of the UviSpace project, whose aim is to control
+an indoor intelligent space where several unmanned vehicles are simultaneously observed
+and controlled through a distributed vision system.
 
-Hence, the whole system can be divided into three different elements:
+The Main Controller should be executed in a PC or embedded SoC (for example, ZedBoard)
+that has visibility of the whole system, so it can control the different parts.
 
-- The *main controller*, which consists in a CPU e.g. a PC or an embedded
-  SoC (ZedBoard) that controls the whole system. The *uvispace* software project
-  is executed there, whose main tasks are:
+The purpose of Main Controller is to decide the actions vehicles have to take in order
+to achieve their goals, based on the data obtained through the vision system. To
+accomplish this, the main tasks are:
 
     - Communicate with the FPGA-based localization nodes, using the Ethernet
       LAN network.
     - Merge the data obtained from the localization nodes.
     - Get the global coordinates of the UGVs.
-    - Given the destination of the UGVs, calculate the optimal path.
+    - Given the destination of the UGVs, calculate the optimal paths.
     - Calculate the UGVs speed, using a navigation model.
-    - Communicate with the Arduino boards, using the XBee protocol, and
+    - Communicate with the vehicles boards, using the XBee protocol, and
       send them the speed set points.
-
-- The 4 *localization nodes*. Their main component is an FPGA, with a camera
-  peripheral. Each camera frame is processed in the FPGA, and the obtained
-  results are sent to the *main controller* through the Ethernet LAN network.
-
-- The *Arduino boards*, that control each UGV's sensors and actuators. They
-  receive orders from the *main controller* through the data received
-  from the serial port, connected to a XBee transceiver.
-
-..  image:: /_static/uvispace_elements.png
-    :width: 750px
-    :align: center
-
-The main structure of the system can be observed in the diagram below, where the
-communications between the three different elements aforementioned are
-represented. The system communications master is the *main controller*,
-which controls the *Arduino boards* using an IEEE 802.15.4-based protocol,
-namely a variation of the ZigBee specification. It controls as well the *image
-localization nodes* using the Internet protocol through the Ethernet network.
-
-..  image:: /_static/general_diagram.png
-    :width: 750px
-    :align: center
-
-Regarding the control workflow, the system can be considered a closed loop,
-where the position of the UGV read by the cameras is fed back to the main
-navigator that, along with the goal position, are used to determine the
-speed output sent to the UGV. The corresponding diagram can be seen below.
-
-..  image:: /_static/workflow_control_diagram.png
-    :align: center
 
 Software project
 ----------------
 
-The software subproject inside the UviSpace project is called uvispace as well.
-It is a **Python2.7** project, and it is structured into 2 main packages, namely
+UviSpace Main Controller is written in **Python2**, and it is structured into 2 main packages,
 *uvirobot* and *uvisensor*.
 
 The *uvirobot* package deals with the classes and functions needed to implement
