@@ -17,19 +17,16 @@ observed by a network of FPGA-based camera devices.
 This subsystem is in charge of obtaining camera data, processing it, and give the
 proper movement orders to the vehicles.
 
+The project is developed by a team of researchers at the *Electronic Technology
+Department* in the `University of Vigo <http://uvigo.gal/uvigo_en/index.html>`_.
+
 
 Source Code
 ===========
 
-.. image:: /_static/GitHub_Logo.png
-    :target: https://github.com/UviDTE-UviSpace/uvispace-main-controller
-    :width: 250px
-    :align: left
-    :alt: link to the GitHub repository
-
 UviSpace Main Controller source code is available on `GitHub
-<https://github.com/UviDTE-UviSpace/uvispace-main-controller>`_. Anybody is welcome to clone it and
-work with it. If you wish to collaborate, just contact us.
+<https://github.com/UviDTE-UviSpace/uvispace-main-controller>`_.
+Anybody is welcome to clone it and work with it. If you wish to collaborate, just contact us.
 
 
 Documentation
