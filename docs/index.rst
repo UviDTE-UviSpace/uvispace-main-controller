@@ -27,7 +27,6 @@ Source Code
     :align: left
     :alt: link to the GitHub repository
 
-
 UviSpace Main Controller source code is available on `GitHub
 <https://github.com/UviDTE-UviSpace/uvispace-main-controller>`_. Anybody is welcome to clone it and
 work with it. If you wish to collaborate, just contact us.
@@ -39,9 +38,9 @@ Documentation
 ..  toctree::
     :titlesonly:
 
-    Introduction
-    Getting Started         <Starting>
+    Overview                <overview>
+    Getting Started         <starting>
     Uvirobot package        <uvirobot>
     Uvisensor package       <uvisensor>
-    Tutorials               <Tutorials>
-    Release Notes           <Release_Notes>
+    Tutorials               <tutorials>
+    Release Notes           <release-notes>
