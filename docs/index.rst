@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-..  image:: /_static/portada2.jpg
+..  image:: /_static/cover1.jpg
     :width: 1100px
     :align: center
 

@@ -1,4 +1,4 @@
-..  image:: /_static/portada.jpg
+..  image:: /_static/cover2.jpg
     :width: 1100px
     :align: center
 
