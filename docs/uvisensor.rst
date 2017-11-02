@@ -1,5 +1,5 @@
-The uvisensor package
-=====================
+Uvisensor package
+=================
 
 ..  toctree::
     :maxdepth: 2
@@ -96,4 +96,3 @@ kalmanfilter.py
 
 .. autoclass:: uvisensor.kalmanfilter.Kalman
    :members:
-

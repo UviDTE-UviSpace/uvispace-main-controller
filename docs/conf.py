@@ -26,7 +26,7 @@ class Mock(MagicMock):
     def __getattr__(cls, name):
             return MagicMock()
 
-MOCK_MODULES = ['cv2', 'skimage', 'skimage.measure', 'skimage.morphology', 
+MOCK_MODULES = ['cv2', 'skimage', 'skimage.measure', 'skimage.morphology',
                 'path_tracker', 'matplotlib', 'matplotlib.pyplot', 'pylab']
 sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
@@ -61,9 +61,9 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'UviSpace'
-copyright = u'2016, Dept. of Electronic Technology -- University of Vigo'
-author = u'Javier López-Randulfe'
+project = u'UviSpace Main Controller'
+copyright = u'2017, Electronic Technology Department - University of Vigo'
+author = u'Electronic Technology Department'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -247,7 +247,7 @@ html_static_path = ['_static']
 # html_search_scorer = 'scorer.js'
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'UviSpacedoc'
+htmlhelp_basename = 'UviSpaceMainControllerdoc'
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -273,8 +273,8 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'UviSpace.tex', u'UviSpace Documentation',
-     u'Javier Lopez-Randulfe', 'manual'),
+    (master_doc, 'UviSpaceMainController.tex', u'UviSpace Main Controller Documentation',
+     u'Electronic Technology Department', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -315,7 +315,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'uvispace', u'UviSpace Documentation',
+    (master_doc, 'uvispace-main-controller', u'UviSpace Main Controller Documentation',
      [author], 1)
 ]
 
@@ -330,8 +330,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'UviSpace', u'UviSpace Documentation',
-     author, 'UviSpace', 'One line description of project.',
+    (master_doc, 'UviSpace Main Controller', u'UviSpace Main Controller Documentation',
+     author, 'UviSpace Main Controller', 'One line description of project.',
      'Miscellaneous'),
 ]
 
