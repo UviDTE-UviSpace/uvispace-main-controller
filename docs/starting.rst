@@ -91,20 +91,6 @@ writing Python code, if they haven't yet:
   Python programming. Anyway, it proposes several coding techniques that improve
   the code readability with little effort.
 
-git
-^^^
-
-The project uses *git* for doing the version control of the project. There
-is a practical guide book in their webpage [4]_. It is recommended to read
-at least the first 2 chapters for learning the basic working of *Git*.
-
-In order to practice with test repositories, GitHub provides a web tutorial [5]_
-which helps to solidify knowledge of git terms and operation.
-
-Regarding the versions naming convention, it has been followed the *Semantic
-Versioning 2.0.0* [6]_. In its web there is a detailed explanation about the
-rules for assigning a tag to a new version.
-
 |
 
 .. rubric:: **Bibliography**
@@ -112,8 +98,5 @@ rules for assigning a tag to a new version.
 .. [1] Think Python, 1st edition (2012) `<http://greenteapress.com/wp/think-python/>`_
 .. [2] PEP 8 -- Style Guide for Python Code `<https://www.python.org/dev/peps/pep-0008/>`_
 .. [3] Writing Idiomatic Python `<https://jeffknupp.com/writing-idiomatic-python-ebook>`_
-.. [4] Pro Git book, 2nd edition (2014). `<https://git-scm.com/book/en/v2>`_
-.. [5] Try Git `<https://try.github.io>`_
-.. [6] Semantic Versioning 2.0.0 `<http://semver.org/>`_
 
 |
