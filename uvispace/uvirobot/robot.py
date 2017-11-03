@@ -47,31 +47,25 @@ class RobotController(object):
     :param route: array that stores the P points of the route made by
      the UGV.
     :type route: numpy.array float64 (shape=Px2).
-    :param float beta: angle of the line between the UGV and the next
-     goal point.
-    :param float epsilon: difference between beta angle and UGV angle
-     (theta). Angle error to correct.
-    :param float prev_epsilon: epsilon angle of the previous iteration.
+    :param float epsilon: difference between angle beta and UGV angle
+     (theta). Angle error to correct. (See 'control_decision' function)
     :param float delta_epsilon: difference between the epsilon angles of
      the current and previous iteration.
-    :param float linear: linear speed of UGV.
-    :param float prev_linear: linear speed of UGV in previous iteration.
-    :param float angular: angular speed of UGV.
     :param float max_valid_angle: accepted value of angle error to
-     consider that there is nomaximo error. The value entered in the method
+     consider that there is no error. The value entered in the method
      call is in degrees, and it is transformed into initialization to
      radians.
     :param float distance: distance between UGV and the next goal point.
-    :param float prev_distance: distance between UGV and the next goal
-     point in previous iteration.
+    :param float delta_distance: difference between the distances of
+     the current and previous iteration.
     :param float max_valid_distance: accepted value of distance between
      UGV and the next goal point to consider that there is no error.
 
     NOTE: The units used in the script are: For linear speed, mm/s; for
     angular speed, rad/s; for distance mm.
     """
-    def __init__(self, robot_id=1, max_valid_angle=10,
-                 max_valid_distance=60):
+    def __init__(self, robot_id=1, max_valid_angle=5,
+                 max_valid_distance=40):
         """Class constructor method"""
         self.robot_id = robot_id
         self.init = False
@@ -86,16 +80,11 @@ class RobotController(object):
         self.goal_points = np.array([None, None]).reshape(1,2)
         self.path = np.array([None, None]).reshape(1,2)
         self.route = np.array([None, None]).reshape(1,2)
-        self.beta = 0
         self.epsilon = 0
-        self.prev_epsilon = 0
         self.delta_epsilon = 0
-        self.linear = 0
-        self.prev_linear = 0
-        self.angular = 0
         self.max_valid_angle = max_valid_angle*np.pi / 180
         self.distance = 0
-        self.prev_distance = 0
+        self.delta_distance = 0
         self.max_valid_distance = max_valid_distance
         # Load the config file and read the polynomial coeficients.
         self.conf = ConfigParser.ConfigParser()
@@ -118,57 +107,33 @@ class RobotController(object):
         self.robot_speed.right_fwd_solver.update_coefs(self._right_fwd_coefs)
         self.robot_speed.left_turn_solver.update_coefs(self._left_turn_coefs)
         self.robot_speed.right_turn_solver.update_coefs(self._right_turn_coefs)
-        # Load the config file and read the fuzzy sets (fs) and singleton sets.
-        self.conf_raw = ConfigParser.RawConfigParser()
-        self.conf_raw.read(self.conf_file)
-        self.fs_diff_angle = self.get_set_array('Fuzzy_sets', 'diff_angle')
-        self.fs_diff_angle_var = self.get_set_array('Fuzzy_sets',
-                                                    'diff_angle_var')
-        self.st_ang_spd = self.get_set_array('Singletons', 'ang_spd')
-        self.fs_distance = self.get_set_array('Fuzzy_sets', 'distance')
-        self.fs_distance_var = self.get_set_array('Fuzzy_sets', 'distance_var')
-        self.st_inc_lin_spd = self.get_set_array('Singletons', 'inc_lin_spd',)
         # Instance of the used controller.
-        self.controller = pathtracker.FuzzyController()
+        self.onlyturn_controller = pathtracker.FuzzyController('diff_angle',
+                'diff_angle_var', 'ang_spd')
+        self.fwd_controller = pathtracker.FuzzyController('distance',
+                                                          'distance_var',
+                                                          'lin_spd')
         # Publishing socket instantiation.
         self.speed_publisher = zmq.Context.instance().socket(zmq.PUB)
         self.speed_publisher.bind("tcp://*:{}".format(
                 int(os.environ.get("UVISPACE_BASE_PORT_SPEED"))+robot_id))
 
-    def get_set_array(self, section, item):
-        """Read set of a file and store them into array.
-
-        :param str section: name of the section to be read in the configuration
-         file.
-        :param str item: name of the item to be read in the configuration file.
-        :return: set converted into array.
-        :rtype: numpy.array float64
-        """
-        raw_set = self.conf_raw.get(section, item)
-        # Format the value in order to get an array.
-        tuple_format = ','.join(raw_set.split('\n'))
-        array_format = ast.literal_eval(tuple_format)
-        set_read = np.array(array_format)
-        return set_read
-
-    def set_speed(self, pose):
+    def control_decision(self, pose):
         """Receive a new pose and obtain a speed value.
 
-        This method calls the 'get_spd_motion' function to calculate the
-        speed. After calculating the new speed value, call the
-        'get_setpoint' function to transform the speed value into
-        setpoints.
+        This method calls the 'get_spd_fwd' or the 'get_spd_onlyturn'
+        function to calculate the speed. After calculating the new speed
+        value, call the 'get_setpoints' function to transform the speed
+        value into setpoints.
 
         :param pose: contains a 2-D position, with 2 cartesian values
         (x,y) and an angle value (theta).
         :type pose: dict
         """
-        # Save linear speed of UGV in previous iteration.
-        self.prev_linear = self.linear
         if not self.init:
             self.init = True
-            self.linear = 0
-            self.angular = 0
+            linear = 0
+            angular = 0
         if self.goal_points.all() is not None:
             # There is a goal point.
             current_point = (pose['x'], pose['y'])
@@ -176,93 +141,98 @@ class RobotController(object):
                 self.route = np.array([current_point]).reshape(1,2)
             else:
                 self.route = np.vstack((self.route, current_point))
+            # The next point is the first point of the goal_points.
             next_point = self.goal_points[0, :]
-            segment = next_point - current_point
-            self.beta = np.arctan2(segment[1], segment[0])
-            self.theta = pose['theta']
-            self.prev_epsilon = self.epsilon
-            # Correct UGV orientation.
-            # 'kappa' is an uncorrected epsilon angle.
-            kappa = self.beta - self.theta
-            self.epsilon = np.where(np.abs(kappa) < np.pi, kappa,
-                                    kappa - 2*np.pi*np.sign(kappa))
-            # 'rho' is an uncorrected delta_epsilon angle.
-            rho = self.epsilon - self.prev_epsilon
-            self.delta_epsilon = np.where(np.abs(rho) < np.pi, rho,
-                                          rho - 2*np.pi*np.sign(rho))
-            # The movement is a rotation.
-            turn_motion = True
-            self.linear, self.angular = self.get_spd_motion(turn_motion)
-            # Save distance between UGV and the next goal point in previous
-            # iteration.
-            self.prev_distance = self.distance
+            # Save distance between UGV and the next goal point in
+            # previous iteration.
+            prev_distance = self.distance
             # Calculate distance to next goal point.
             self.distance = np.linalg.norm(next_point - current_point)
-            self.delta_distance = self.distance - self.prev_distance
             # Check distance to next goal point.
             if self.distance < self.max_valid_distance:
                 self.delete_goal()
-            # Straight movement if the angle is correct.
-            if np.abs(self.epsilon) < self.max_valid_angle:
-                # The movement is forward.
-                turn_motion = False
-                self.linear, self.angular = self.get_spd_motion(turn_motion)
+                linear = 0
+                angular = 0
+            else:
+                segment = next_point - current_point
+                # Angle of the line between the UGV and the next goal
+                # point.
+                beta = np.arctan2(segment[1], segment[0])
+                # Save angle epsilon in previous iteration.
+                prev_epsilon = self.epsilon
+                # Correct UGV orientation.
+                # 'kappa' is an uncorrected epsilon angle.
+                kappa = beta - pose['theta']
+                self.epsilon = np.where(np.abs(kappa) < np.pi, kappa,
+                                        kappa - 2*np.pi*np.sign(kappa))
+                # Straight movement if the angle is correct.
+                if np.abs(self.epsilon) < self.max_valid_angle:
+                    # The movement is forward.
+                    linear, angular = self.get_spd_fwd()
+                    self.delta_distance = self.distance - prev_distance
+                else:
+                    # 'rho' is an uncorrected delta_epsilon angle.
+                    rho = self.epsilon - prev_epsilon
+                    self.delta_epsilon = np.where(np.abs(rho) < np.pi, rho,
+                                                  rho - 2*np.pi*np.sign(rho))
+                    # The movement is a rotation.
+                    linear, angular = self.get_spd_onlyturn()
         else:
-            self.linear = 0
-            self.angular = 0
+            linear = 0
+            angular = 0
             logger.info('Waiting for a goal...')
-        self.robot_speed.set_speed([self.linear, self.angular],
-                                   'linear_angular')
+        self.robot_speed.set_speed([linear, angular], 'linear_angular')
         logger.info('Pose--> X: {:1.4f}, Y: {:1.4f}, theta: {:1.4f} - '
                     'Speeds--> Linear: {:4.2f}, Angular {:4.2f}, Step {}'
-                    .format(pose['x'], pose['y'], pose['theta'], self.linear,
-                            self.angular, pose['step']))
-        sp_left, sp_right = self.get_setpoints(self.linear, self.angular)
-        self.publish_message(pose['step'], self.linear, self.angular, sp_left,
-                             sp_right)
+                    .format(pose['x'], pose['y'], pose['theta'], linear,
+                            angular, pose['step']))
+        sp_left, sp_right = self.get_setpoints(linear, angular)
+        self.publish_message(pose['step'], linear, angular, sp_left, sp_right)
         return
 
-    def get_spd_motion(self, turn_motion):
+    def get_spd_onlyturn(self):
         """Calculate of speed of the UGV with fuzzylogic controller.
 
-        :param bool turn_motion: this parameter determines if the
-         movement of UGV is only-turn or not.
         :return: linear and angular speed values.
         :rtype: (float, float)
         """
         # Obtain of indexes of sets and degree of membership at the sets
         # acording to rules one and two in calculate of speed.
-        if turn_motion:
-            set_index1, m_degree1 = self.controller.fuzzyfication(self.epsilon,
-                    self.fs_diff_angle)
-            set_index2, m_degree2 = self.controller.fuzzyfication(
-                    self.delta_epsilon, self.fs_diff_angle_var)
-        else:
-            set_index1, m_degree1 = self.controller.fuzzyfication(self.distance,
-                    self.fs_distance)
-            set_index2, m_degree2 = self.controller.fuzzyfication(
-                    self.delta_distance, self.fs_distance_var)
+        set_index1, m_degree1 = self.onlyturn_controller.fuzzyfication(
+                self.epsilon, 1)
+        set_index2, m_degree2 = self.onlyturn_controller.fuzzyfication(
+                self.delta_epsilon, 2)
         # Union of the results of the two rules.
         set_index_array = np.hstack((set_index1, set_index2))
         m_degree_array = np.hstack((m_degree1, m_degree2))
         # Output from both rules.
-        if turn_motion:
-            angular = self.controller.defuzzyfication(set_index_array,
-                                                      m_degree_array,
-                                                      self.st_ang_spd)
-            # Minimum angular speed value is 0.7 rad/s.
-            if np.abs(angular) < 0.7:
-                angular = np.sign(angular)*0.7
-            linear = 20
-        else:
-            inc_linear = self.controller.defuzzyfication(set_index_array,
-                                                         m_degree_array,
-                                                         self.st_inc_lin_spd)
-            linear = self.prev_linear + inc_linear
-            # Maximum angular speed value is 250 mm/s.
-            if linear > 250:
-                linear = 250
-            angular = 0
+        angular = self.onlyturn_controller.defuzzyfication(set_index_array,
+                                                           m_degree_array)
+        # Minimum angular speed value is 0.7 rad/s.
+        if np.abs(angular) < 0.7:
+            angular = np.sign(angular)*0.7
+        linear = 30
+        return (linear, angular)
+
+    def get_spd_fwd(self):
+        """Calculate of speed of the UGV with fuzzylogic controller.
+
+        :return: linear and angular speed values.
+        :rtype: (float, float)
+        """
+        # Obtain of indexes of sets and degree of membership at the sets
+        # acording to rules one and two in calculate of speed.
+        set_index1, m_degree1 = self.fwd_controller.fuzzyfication(self.distance,
+                                                                  1)
+        set_index2, m_degree2 = self.fwd_controller.fuzzyfication(
+                self.delta_distance, 2)
+        # Union of the results of the two rules.
+        set_index_array = np.hstack((set_index1, set_index2))
+        m_degree_array = np.hstack((m_degree1, m_degree2))
+        # Output from both rules.
+        linear = self.fwd_controller.defuzzyfication(set_index_array,
+                                                     m_degree_array)
+        angular = 0
         return (linear, angular)
 
     def get_setpoints(self, linear, angular):

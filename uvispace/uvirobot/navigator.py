@@ -87,7 +87,7 @@ def listen_sockets(sockets, my_robot):
                 and events[sockets['pose_subscriber']] == zmq.POLLIN):
             position = sockets['pose_subscriber'].recv_json()
             logger.debug("Received new pose: {}".format(position))
-            my_robot.set_speed(position)
+            my_robot.control_decision(position)
 
         if (sockets['goal_subscriber'] in events
                 and events[sockets['goal_subscriber']] == zmq.POLLIN):
@@ -155,7 +155,7 @@ def main():
             pass
         else:
             logger.debug("Received first position: {}".format(position))
-            my_robot.set_speed(position)
+            my_robot.control_decision(position)
 
     # This function sends 4 rectangle points to the robot path.
     if rectangle_path:
