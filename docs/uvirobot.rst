@@ -1,5 +1,5 @@
-The uvirobot package
-====================
+Uvirobot package
+================
 
 ..  toctree::
     :maxdepth: 2

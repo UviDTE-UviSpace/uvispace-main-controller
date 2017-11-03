@@ -3,46 +3,41 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-..  image:: /_static/portada2.jpg
+..  image:: /_static/cover1.jpg
     :width: 1100px
     :align: center
 
-UviSpace
-========
+UviSpace Main Controller
+========================
 
-UviSpace is an open-source hardware and software project developed at the
-*Electronic Technology  Department* in the `University of Vigo
-<http://uvigo.gal/uvigo_en/index.html>`_. It consists in a system for remotely
+The UviSpace Main Controller is part of the UviSpace project, a system for remotely
 controlling Unmanned Ground Vehicles (UGVs) moving inside a delimited space and
 observed by a network of FPGA-based camera devices.
+
+This subsystem is in charge of obtaining camera data, processing it, and give the
+proper movement orders to the vehicles.
+
+The project is developed by a team of researchers at the *Electronic Technology
+Department* in the `University of Vigo <http://uvigo.gal/uvigo_en/index.html>`_.
+
 
 Source Code
 ===========
 
-.. image:: /_static/GitHub_Logo.png
-    :target: https://github.com/jlrandulfe/UviSpace
-    :width: 250px
-    :align: left
-    :alt: link to the GitHub repository
+UviSpace Main Controller source code is available on `GitHub
+<https://github.com/UviDTE-UviSpace/uvispace-main-controller>`_.
+Anybody is welcome to clone it and work with it. If you wish to collaborate, just contact us.
 
-The project's source code is publicly held on `GitHub
-<https://github.com/jlrandulfe/UviSpace>`_. Anybody is welcome to clone it and
-work with it. If you wish to collaborate, just contact us.
-
-For more information about getting the source code, go to our
-:ref:`download-source` section.
 
 Documentation
 =============
 
 ..  toctree::
-    :maxdepth: 2
+    :titlesonly:
 
-    Introduction
-    Getting Started         <Starting>
+    Overview                <overview>
+    Getting Started         <starting>
     Uvirobot package        <uvirobot>
     Uvisensor package       <uvisensor>
-    Hardware design         <Hardware>
-    Arduino controller      <Arduino>
-    Tutorials               <Tutorials>
-    Release Notes           <Release_Notes>
+    Tutorials               <tutorials>
+    Release Notes           <release-notes>
