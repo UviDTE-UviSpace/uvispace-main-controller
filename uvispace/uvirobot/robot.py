@@ -111,9 +111,9 @@ class RobotController(object):
         self.robot_speed.right_turn_solver.update_coefs(self._right_turn_coefs)
         # Instance of the used controller.
         self.onlyturn_controller = pathtracker.FuzzyController(
-                'fuzzysets_onlyturn')
+                'sets_onlyturn')
         self.forward_controller = pathtracker.FuzzyController(
-                'fuzzysets_forward')
+                'sets_forward')
         # Publishing socket instantiation.
         self.speed_publisher = zmq.Context.instance().socket(zmq.PUB)
         self.speed_publisher.bind("tcp://*:{}".format(

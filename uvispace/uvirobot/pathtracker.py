@@ -41,11 +41,11 @@ class FuzzyController(object):
         set_read = np.array(array_format)
         return set_read
 
-    def fuzzyfication(self, input_value, input_set):
+    def fuzzyfication(self, input_value, input_sets):
         """Fuzzify all input values into fuzzy membership functions.
 
         :param float input_value: input_value in fuzzy sets.
-        :param int input_set: value for choose fuzzysets_1 or
+        :param int input_sets: value for choose fuzzysets_1 or
          fuzzysets_2
         :returns: [set_index_array, m_degree_array]
           * *set_index_array* array with the indexes of the sets to
@@ -54,7 +54,7 @@ class FuzzyController(object):
             input value in the sets.
         :rtype: [float64 (shape=2), float64 (shape=2)]
         """
-        if input_set == 1:
+        if input_sets == 1:
             sets = self._fuzzysets_1
         else:
             sets = self._fuzzysets_2
