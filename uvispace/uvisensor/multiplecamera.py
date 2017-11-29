@@ -115,7 +115,7 @@ class CameraThread(threading.Thread):
                 self.__triangles["1"].local2global(self.camera.offsets, K=4)
                 self.__triangles["1"].homography(self.camera.h)
             else:
-                del self.__triangles["1"]
+                self.__triangles["1"] = None
             # Sync operations. Write to global variables.
             self.__camera_lock.acquire()
             if "1" in self.__triangles:
@@ -172,7 +172,7 @@ class DataFusionThread(threading.Thread):
         Class constructor method
         """
         threading.Thread.__init__(self, name=name)
-        self.cycletime = 0.5
+        self.cycletime = 0.02
         self.quadrant_limits = quadrant_limits
         self.step = 0
         # Publishing socket instantiation.
