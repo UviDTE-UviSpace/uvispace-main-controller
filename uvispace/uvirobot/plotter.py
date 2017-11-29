@@ -1,16 +1,16 @@
 #!/usr/bin/env python
 """This module provides utilities for easily drawing plots.
 
-It has 3 functions: 
+It has 3 functions:
 
-* *format_plotting*: sets the configuration parameters of the plots, in 
+* *format_plotting*: sets the configuration parameters of the plots, in
   order to use a common format for all the plots.
-* *path_plot*: draws 2 plots in the same graph, representing the ideal 
-  path of an UGV and the real route it follows. The X and Y axes 
+* *path_plot*: draws 2 plots in the same graph, representing the ideal
+  path of an UGV and the real route it follows. The X and Y axes
   represent the 2-D coordinates of the working real space.
-* *times_plot*: Draws the time delays during execution. It is intended 
-  to draw 2 plots, one representing the communication delays with the 
-  slave, and the other representing the waiting times for other modules 
+* *times_plot*: Draws the time delays during execution. It is intended
+  to draw 2 plots, one representing the communication delays with the
+  slave, and the other representing the waiting times for other modules
   of the project to give required updates of the speed values.
 """
 # Standard libraries
@@ -53,7 +53,7 @@ def format_plotting():
 
 
 def path_plot(input_path, real_route):
-    """Draw on a figure the desired and real paths."""
+    """Draw on a figure the ideal and real paths."""
     x1, y1 = input_path[:,0], input_path[:,1]
     # If there is only one point in the array, an IndexError will be raised.
     try:
@@ -64,14 +64,16 @@ def path_plot(input_path, real_route):
     format_plotting()
     ax = plt.subplot(111)
     # Plotting of the 2 lines, with 'point' markers and blue and red colours
-    ax.plot(x1, y1, 'b.-')
-    ax.plot(x2, y2, 'r.-')
+    ax.plot(x1, y1, 'b.-', label='Ideal path')
+    ax.plot(x2, y2, 'r.-', label='Real path')
     ax.grid()
     ax.axis('equal')
     ax.set_xlim([-2000, 2000])
     ax.set_ylim([-2000, 2000])
-    ax.set_xlabel('X Axis')
-    ax.set_ylabel('Y Axis')
+    ax.set_xlabel('X Axis (mm)')
+    ax.set_ylabel('Y Axis (mm)')
+    plt.title('Ideal and real path of UGV')
+    plt.legend(shadow=True)
     script_path = os.path.dirname(os.path.realpath(__file__))
     plt.savefig('{}/tmp/path_plot.eps'.format(script_path), bbox_inches='tight')
     plt.show()
@@ -80,10 +82,10 @@ def path_plot(input_path, real_route):
 
 def times_plot(comm_times, wait_times):
     """Draw the history of communication times with the XBee modules.
-    
+
     The input are 2 lists with the process times history.
-    The plot data is a 2xN array, where N is the number of requests sent 
-    to the XBee module through serial port. 
+    The plot data is a 2xN array, where N is the number of requests sent
+    to the XBee module through serial port.
     The first element of each pair is the sending number and the second
     element is the time it took to receive back the acknowledge message.
     """
@@ -108,6 +110,7 @@ def times_plot(comm_times, wait_times):
     ax.set_ylim(bottom=0)
     ax.set_xlabel('Communication number')
     ax.set_ylabel('Time (s)')
+    plt.title('Communication times with the XBee modules')
     plt.legend(shadow=True)
     script_path = os.path.dirname(os.path.realpath(__file__))
 

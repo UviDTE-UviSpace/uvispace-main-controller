@@ -87,7 +87,7 @@ def listen_sockets(sockets, my_robot):
                 and events[sockets['pose_subscriber']] == zmq.POLLIN):
             position = sockets['pose_subscriber'].recv_json()
             logger.debug("Received new pose: {}".format(position))
-            my_robot.set_speed(position)
+            my_robot.control_decision(position)
 
         if (sockets['goal_subscriber'] in events
                 and events[sockets['goal_subscriber']] == zmq.POLLIN):
@@ -155,7 +155,7 @@ def main():
             pass
         else:
             logger.debug("Received first position: {}".format(position))
-            my_robot.set_speed(position)
+            my_robot.control_decision(position)
 
     # This function sends 4 rectangle points to the robot path.
     if rectangle_path:
@@ -168,15 +168,15 @@ def main():
     for socket in sockets:
         sockets[socket].close()
     # Plot results
-    if my_robot.path.all() is not None:
+    if my_robot.ideal_path.all() is not None:
         # Print the log output to files and plot it
         script_path = os.path.dirname(os.path.realpath(__file__))
         # A file identifier is generated from the current time value
         file_id = time.strftime('%Y%m%d_%H%M')
         with open('{}/tmp/path_{}.log'.format(script_path, file_id), 'a') as f:
-            np.savetxt(f, my_robot.route, fmt='%.2f')
+            np.savetxt(f, my_robot.real_path, fmt='%.2f')
         # Plots the robot ideal path.
-        plotter.path_plot(my_robot.path, my_robot.route)
+        plotter.path_plot(my_robot.ideal_path, my_robot.real_path)
     return
 
 if __name__ == '__main__':
