@@ -41,28 +41,32 @@ class RobotController(object):
     :param goal_points: array that stores the following M goal points
      for the UGV.
     :type goal_points: numpy.array float64 (shape=Mx2).
-    :param path: array that stores the ideal path for the robot, with N
-     goal_points.
-    :type path: numpy.array float64 (shape=Nx2).
-    :param route: array that stores the P points of the route made by
-     the UGV.
-    :type route: numpy.array float64 (shape=Px2).
-    :param float beta: angle of the line between the UGV and the next
-     goal point. The value is in radians.
-    :param float epsilon: difference between beta angle and UGV angle
-     (theta). Angle error to correct. The value is in radians.
-    :param float max_valid_angle: accepted value of angle error to
-     consider that there is no error. The value entered in the method
-     call is in degrees, and it is transformed into initialization to
-     radians.
-    :param float distance: distance between UGV and the next goal point
-     in millimeters.
-    :param float max_valid_distance: accepted value of distance between
-     UGV and the next goal point to consider that there is no error. The
-     value is in millimeters.
+    :param ideal_path: array that stores the desired path for the
+     robot, with N goal_points.
+    :type ideal_path: numpy.array float64 (shape=Nx2).
+    :param real_path: array that stores the P points of the real_path
+     made by the UGV.
+    :type real_path: numpy.array float64 (shape=Px2).
+    :param float epsilon: difference between angle beta and UGV angle
+     (theta). Angle error to correct. (See 'control_decision' function)
+    :param float delta_epsilon: difference between the epsilon angles of
+     the current and previous iteration.
+    :param float allowed_orientation_error: accepted value of angle
+     error to consider that there is no error. The value entered in the
+     method call is in degrees, and it is transformed into
+     initialization to radians.
+    :param float distance: distance between UGV and the next goal point.
+    :param float delta_distance: difference between the distances of
+     the current and previous iteration.
+    :param float max_clear_goal_distance: accepted value of distance
+     between UGV and the next goal point to consider that there is no
+     error.
+
+    NOTE: The units used in the script are: For linear speed, mm/s; for
+    angular speed, rad/s; for distance mm.
     """
-    def __init__(self, robot_id=1, max_valid_angle=10,
-                 max_valid_distance=70):
+    def __init__(self, robot_id=1, allowed_orientation_error=8,
+                 max_clear_goal_distance=25):
         """Class constructor method"""
         self.robot_id = robot_id
         self.init = False
@@ -75,14 +79,16 @@ class RobotController(object):
         }
         # Path and vehicle distances and angles.
         self.goal_points = np.array([None, None]).reshape(1,2)
-        self.path = np.array([None, None]).reshape(1,2)
-        self.route = np.array([None, None]).reshape(1,2)
-        self.beta = 0
+        self.ideal_path = np.array([None, None]).reshape(1,2)
+        self.real_path = np.array([None, None]).reshape(1,2)
         self.epsilon = 0
-        self.max_valid_angle = max_valid_angle*np.pi / 180
+        self.delta_epsilon = 0
+        self.allowed_orientation_error = (allowed_orientation_error *
+                                         np.pi / 180)
         self.distance = 0
-        self.max_valid_distance = max_valid_distance
-        # Load the config file and read the polynomial coeficients
+        self.delta_distance = 0
+        self.max_clear_goal_distance = max_clear_goal_distance
+        # Load the config file and read the polynomial coeficients.
         self.conf = ConfigParser.ConfigParser()
         self.conf_file = glob.glob("./resources/config/robot{}.cfg"
                                    .format(self.robot_id))
@@ -97,21 +103,28 @@ class RobotController(object):
                 'Coefficients_turn', 'coefs_left'))
         self._right_turn_coefs = ast.literal_eval(self.conf.get(
                 'Coefficients_turn', 'coefs_right'))
-        # Send the coeficients to the polynomial solver objects
+        # Send the coeficients to the polynomial solver objects.
         self.robot_speed = Speed()
         self.robot_speed.left_fwd_solver.update_coefs(self._left_fwd_coefs)
         self.robot_speed.right_fwd_solver.update_coefs(self._right_fwd_coefs)
         self.robot_speed.left_turn_solver.update_coefs(self._left_turn_coefs)
         self.robot_speed.right_turn_solver.update_coefs(self._right_turn_coefs)
+        # Instance of the used controller.
+        self.onlyturn_controller = pathtracker.FuzzyController(
+                'sets_onlyturn')
+        self.forward_controller = pathtracker.FuzzyController(
+                'sets_forward')
         # Publishing socket instantiation.
         self.speed_publisher = zmq.Context.instance().socket(zmq.PUB)
         self.speed_publisher.bind("tcp://*:{}".format(
                 int(os.environ.get("UVISPACE_BASE_PORT_SPEED"))+robot_id))
 
-    def set_speed(self, pose):
-        """Receive a new pose and calculate a speed value.
+    def control_decision(self, pose):
+        """Receive a new pose and obtain a speed value.
 
-        After calculating the new speed value, call the get_setpoint
+        This method calls the 'get_speed_forward' or the
+        'get_speed_onlyturn' function to calculate the speed. After
+        calculating the new speed value, call the 'get_setpoints'
         function to transform the speed value into setpoints.
 
         :param pose: contains a 2-D position, with 2 cartesian values
@@ -125,27 +138,55 @@ class RobotController(object):
         if self.goal_points.all() is not None:
             # There is a goal point.
             current_point = (pose['x'], pose['y'])
-            if self.route.all() is None:
-                self.route = np.array([current_point]).reshape(1,2)
+            if self.real_path.all() is None:
+                self.real_path = np.array([current_point]).reshape(1,2)
             else:
-                self.route = np.vstack((self.route, current_point))
+                self.real_path = np.vstack((self.real_path, current_point))
+            # The next point is the first point of the goal_points.
             next_point = self.goal_points[0, :]
-            segment = next_point - current_point
-            self.beta = np.arctan2(segment[1], segment[0])
-            self.theta = pose['theta']
-            # Correct UGV orientation.
-            delta = self.beta - self.theta
-            self.epsilon = np.where(np.abs(delta) < np.pi, delta,
-                                    delta - 2*np.pi*np.sign(delta))
-            linear, angular = pathtracker.get_turn_spd(self.epsilon)
+            # Save distance between UGV and the next goal point in
+            # previous iteration.
+            prev_distance = self.distance
             # Calculate distance to next goal point.
             self.distance = np.linalg.norm(next_point - current_point)
             # Check distance to next goal point.
-            if self.distance < self.max_valid_distance:
+            if self.distance < self.max_clear_goal_distance:
                 self.delete_goal()
-            # Straight movement if the angle is correct.
-            if np.abs(self.epsilon) < self.max_valid_angle:
-                linear, angular = pathtracker.get_fwd_spd(self.distance)
+                linear = 0
+                angular = 0
+            else:
+                segment = next_point - current_point
+                # Angle of the line between the UGV and the next goal
+                # point.
+                beta = np.arctan2(segment[1], segment[0])
+                # Save angle epsilon in previous iteration.
+                prev_epsilon = self.epsilon
+                # Correct UGV orientation.
+                # 'kappa' is an uncorrected epsilon angle.
+                kappa = beta - pose['theta']
+                self.epsilon = np.where(np.abs(kappa) < np.pi, kappa,
+                                        kappa - 2*np.pi*np.sign(kappa))
+                # Straight movement if the angle is correct.
+                if np.abs(self.epsilon) < self.allowed_orientation_error:
+                    # The movement is forward.
+                    self.delta_distance = self.distance - prev_distance
+                    linear = self.forward_controller.get_speed(self.distance,
+                            self.delta_distance)
+                    if np.abs(linear) < 110:
+                        linear = 110
+                    angular = 0
+                else:
+                    # 'rho' is an uncorrected delta_epsilon angle.
+                    rho = self.epsilon - prev_epsilon
+                    self.delta_epsilon = np.where(np.abs(rho) < np.pi, rho,
+                                                  rho - 2*np.pi*np.sign(rho))
+                    # The movement is a rotation.
+                    angular = self.onlyturn_controller.get_speed(self.epsilon,
+                            self.delta_epsilon)
+                    # Minimum angular speed value is 0.7 rad/s.
+                    if np.abs(angular) < 0.7:
+                        angular = np.sign(angular)*0.7
+                    linear = 30
         else:
             linear = 0
             angular = 0
@@ -218,14 +259,14 @@ class RobotController(object):
 
         The current goal point is in the first row of the array. It is
         deleted when the destination is reached. The goal destination
-        points are stored in the path array.
+        points are stored in the ideal_path array.
         """
         data_array = self.goal_points
-        # Array that stores the ideal path for the robot.
-        if self.path.all() is None:
-            self.path = data_array[0, :]
+        # Array that stores the desired path for the robot.
+        if self.ideal_path.all() is None:
+            self.ideal_path = data_array[0, :]
         else:
-            self.path = np.vstack((self.path, data_array[0, :]))
+            self.ideal_path = np.vstack((self.ideal_path, data_array[0, :]))
         if data_array.shape[0] == 1:
             # If the data matrix only contain one data.
             data_array = np.array([None, None]).reshape(1,2)

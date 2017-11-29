@@ -39,7 +39,7 @@ def main():
     help_msg = ("Usage: set_goal.py [-x <goal_x>], [--goal_x=<goal_x>],"
                 "[-y <goal_y>], [--goal_y=<goal_y>]")
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "hx:y:", ["goal_x=", "goal_y"])
+        opts, args = getopt.getopt(sys.argv[1:], "hx:y:", ["goal_x=", "goal_y="])
     except getopt.GetoptError:
         print(help_msg)
     if not opts:
