@@ -168,15 +168,15 @@ def main():
     for socket in sockets:
         sockets[socket].close()
     # Plot results
-    if my_robot.path.all() is not None:
+    if my_robot.ideal_path.all() is not None:
         # Print the log output to files and plot it
         script_path = os.path.dirname(os.path.realpath(__file__))
         # A file identifier is generated from the current time value
         file_id = time.strftime('%Y%m%d_%H%M')
         with open('{}/tmp/path_{}.log'.format(script_path, file_id), 'a') as f:
-            np.savetxt(f, my_robot.route, fmt='%.2f')
+            np.savetxt(f, my_robot.real_path, fmt='%.2f')
         # Plots the robot ideal path.
-        plotter.path_plot(my_robot.path, my_robot.route)
+        plotter.path_plot(my_robot.ideal_path, my_robot.real_path)
     return
 
 if __name__ == '__main__':
