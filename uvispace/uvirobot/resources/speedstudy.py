@@ -29,7 +29,7 @@ from uvirobot.robot import RobotController
 from uvirobot.speedtransform import PolySpeedSolver
 
 try:
-    from uvirobot import messenger
+    import messenger
 except ImportError:
     # Exit program if the uvirobot package can't be found.
     sys.exit("Can't find uvirobot module. Maybe environment variables are not"
@@ -76,7 +76,7 @@ def main():
     # my_robot = RobotController(robot_id)
     if mode == 'lin_ang':
         conf = ConfigParser.ConfigParser()
-        conf_file = glob.glob("./config/modelrobot.cfg")
+        conf_file = glob.glob("./resources/config/modelrobot.cfg")
         conf.read(conf_file)
         # Coefficients for a movement.
         left_coefs = ast.literal_eval(conf.get('Coefficients', 'coefs_left'))
@@ -84,15 +84,17 @@ def main():
         # Equation degrees linear velocity 2 and angular velocity 2.
         left_solver = PolySpeedSolver(coefs=left_coefs)
         right_solver = PolySpeedSolver(coefs=right_coefs)
-        #TODO Check correct values
-        linear = float(raw_input("Enter the linear speed value\n"))
-        angular = float(raw_input("Enter the angular speed value\n"))
+        linear = check_value("Enter the linear speed value\n", mode, False)
+        angular = check_value("Enter the angular speed value\n", mode, False)
         sp_left = left_solver.solve(linear, angular)
         sp_right = right_solver.solve(linear, angular)
     else:
-        sp_left = input("Enter value of sp_left between 0 and 255\n")
-        sp_right = input("Enter value of sp_right between 0 and 255\n")
-    operatingtime = float(raw_input("Enter the time to move in seconds\n"))
+        sp_left = check_value("Enter value of sp_left between 0 and 255\n",
+                              mode, False)
+        sp_right = check_value("Enter value of sp_right between 0 and 255\n",
+                               mode, False)
+    operatingtime = check_value("Enter the time to move in seconds\n",
+                                mode, True)
     init_time = time.time()
     logger.info("Sent to UGV ({}, {})".format(sp_left, sp_right))
     while (time.time() - init_time) < operatingtime:
@@ -104,6 +106,37 @@ def main():
     logger.info("Sent to UGV ({}, {})".format(sp_left, sp_right))
     logger.info("Shutting down")
     return
+
+def check_value(message, mode, check_time):
+    """Check if the value introduced by the user is correct.
+
+    :param str message: message about the value to enter.
+    :param str mode: mode of operation.
+    :param bool check_time: boolean to check if the value to be corrected is
+     time or not.
+    :return: correct value
+    :rtype: int or float. It depends on the checkup.
+    """
+    while True:
+        value = raw_input(message)
+        try:
+            if (mode == 'lin_ang' and check_time == False):
+                value = float(value)
+                return value
+            elif (mode == 'setpoints' and check_time == False):
+                value = int(value)
+                if (value > 255 or value < 0):
+                    logger.info("The value is not correct")
+                else:
+                    return value
+            else:
+                value = float(value)
+                if value < 0:
+                    logger.info("The value is not correct")
+                else:
+                    return value
+        except ValueError:
+            logger.info("The value is not correct")
 
 if __name__ == '__main__':
     main()
