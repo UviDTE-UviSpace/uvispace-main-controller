@@ -6,13 +6,15 @@ The localization node can be accessed through TCP/IP.
 """
 import numpy as np
 from scipy import misc
-
 import zmq
 
 
 def main():
     receiver = zmq.Context.instance().socket(zmq.SUB)
-    receiver.connect("tcp://172.19.5.213:33000")
+    #bin
+    #receiver.connect("tcp://172.19.5.213:33000")
+    #gray
+    receiver.connect("tcp://172.19.5.213:33001")
     receiver.setsockopt_string(zmq.SUBSCRIBE, u"")
     receiver.setsockopt(zmq.CONFLATE, True)
 
