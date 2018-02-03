@@ -8,6 +8,8 @@ import numpy as np
 from scipy import misc
 import zmq
 
+IMG_WIDTH = 640;
+IMG_HEIGHT = 468;
 
 def main():
     receiver = zmq.Context.instance().socket(zmq.SUB)
@@ -19,7 +21,7 @@ def main():
     receiver.setsockopt(zmq.CONFLATE, True)
 
     message = receiver.recv()
-    image = np.fromstring(message, dtype=np.uint8).reshape((480, 640))
+    image = np.fromstring(message, dtype=np.uint8).reshape((IMG_HEIGHT, IMG_WIDTH))
     misc.imsave("image.png", image)
 
 if __name__ == '__main__':

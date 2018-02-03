@@ -8,6 +8,8 @@ import cv2
 import numpy as np
 import zmq
 
+IMG_WIDTH = 640;
+IMG_HEIGHT = 468;
 
 def main():
     receiver = zmq.Context.instance().socket(zmq.SUB)
@@ -19,11 +21,11 @@ def main():
     receiver.setsockopt(zmq.CONFLATE, True)
 
     fourcc = cv2.VideoWriter_fourcc(*'XVID')
-    videowriter = cv2.VideoWriter('output.avi', fourcc, 6.0, (640, 480))
+    videowriter = cv2.VideoWriter('output.avi', fourcc, 6.0, (IMG_WIDTH, IMG_HEIGHT))
 
     for frame in range(10000):
         message = receiver.recv()
-        image = np.fromstring(message, dtype=np.uint8).reshape((480, 640))
+        image = np.fromstring(message, dtype=np.uint8).reshape((IMG_HEIGHT, IMG_WIDTH))
         cv2.imshow('stream', image)
         cv2.waitKey(1)
         videowriter.write(image)
