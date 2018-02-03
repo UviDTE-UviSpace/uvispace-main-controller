@@ -16,7 +16,7 @@ def main():
     #bin
     #receiver.connect("tcp://172.19.5.213:33000")
     #gray
-    receiver.connect("tcp://172.19.5.213:33001")
+    receiver.connect("tcp://172.19.5.213:34000")
     receiver.setsockopt_string(zmq.SUBSCRIBE, u"")
     receiver.setsockopt(zmq.CONFLATE, True)
 
