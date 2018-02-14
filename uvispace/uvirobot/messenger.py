@@ -138,7 +138,7 @@ def read_battery_soc(my_serial):
         logger.warn("Fuel gauge PCB not detected")
     else:
         # The soc variable are 4 bytes, but the data is stored on the last 2.
-        soc = struct.unpack('>H', raw_soc[1]+raw_soc[3])[0]
+        soc = struct.unpack('<B', raw_soc)[0]
         logger.info("The current battery soc is {}%".format(soc))
     return soc
 
