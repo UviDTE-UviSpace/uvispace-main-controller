@@ -10,3 +10,4 @@ sphinx-autobuild==0.6.0
 virtualenv==15.0.3
 scikit-image==0.13.0
 pyzmq==16.0.2
+opencv-python==3.4.0.12

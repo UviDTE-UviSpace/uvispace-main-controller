@@ -127,6 +127,7 @@ class CameraThread(threading.Thread):
             while (time.time() - cycle_start_time) < self.cycletime:
                 pass
 
+        self.camera.shutdown()
         logger.debug("Shutting down {}".format(self.name))
 
 

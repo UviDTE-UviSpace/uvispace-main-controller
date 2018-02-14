@@ -70,12 +70,23 @@ class VideoSensor:
         self.__socket.connect("tcp://{}:{}".format(self.__ip, self.__port))
         self.__socket.setsockopt_string(zmq.SUBSCRIBE, u"")
         self.__socket.setsockopt(zmq.CONFLATE, True)
+        self.__poller = zmq.Poller()
+        self.__poller.register(self.__socket, zmq.POLLIN)
 
     def find_triangles(self):
         triangles = []
-        # TODO [floonone-20171128] change to polling mode
-        figures = self.__socket.recv_json()
-        for figure in figures:
-            triangle = geometry.Triangle(np.array(figure))
-            triangles.append(triangle)
+
+        events = dict(self.__poller.poll(200))
+        if (self.__socket in events
+                and events[self.__socket] == zmq.POLLIN):
+            figures = self.__socket.recv_json()
+            for figure in figures:
+                triangle = geometry.Triangle(np.array(figure))
+                triangles.append(triangle)
+
         return triangles
+
+    def shutdown(self):
+        self.__socket.close()
+        self.__socket = None
+        return
