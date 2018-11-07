@@ -22,15 +22,15 @@ class App(QWidget, loadfilesinterface.Ui_Form):
         # Opens a .csv file and then displays the array in a textEdit Widget
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        fileName, _ = QFileDialog.getOpenFileName(self, "QFileDialog.getOpenFileName()", "",
+        fileName, _ = QFileDialog.getOpenFileName(self, "Open file...", "",
                                                   "CSV files (*.csv);;All Files(*)", options=options)
         if fileName:
             print(fileName)
-            coordenadas = np.loadtxt(open(fileName, "r"), delimiter=";")
-            # print(coordenadas)
+            coordinates = np.loadtxt(open(fileName, "r"), delimiter=";")
+            # print(coordinates)
             print("Fila 9 Columna 1")
-            print(coordenadas[9, 1])
-            self.textEdit.setText(str(coordenadas))
+            print(coordinates[9, 1])
+            self.textEdit.setText(str(coordinates))
         return
 
 
