@@ -1,23 +1,25 @@
 """Ventana principal del GUI
 
 """
-# librerias PyQt5
+import sys
+import logging
+import configparser
+import os
+
+
+# PyQt5 libraries
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtCore import QRegularExpression, QTimer
 from PyQt5.QtWidgets import QLabel, QMessageBox
 from PyQt5.QtGui import QIcon, QPixmap
-# librerias
-import sys
-import logging
-import os
 
-# librerias propias
+
+# propietary libraries
 import mainwindowinterface
 import image_procesing
 import load_csv
 
 # Create the application logger
-logger = logging.getLogger('view')
 
 
 class AppLogHandler(logging.Handler):
@@ -25,20 +27,20 @@ class AppLogHandler(logging.Handler):
     Customized logging handler class, for printing on a PyQt Widget
     """
     def __init__(self, widget):
-        logging.Handler.__init__(self)
+        super().__init__()
         self.widget = widget
         self.setLevel(logging.DEBUG)
-        formatter = logging.Formatter(" %(asctime)s.%(msecs)03d %(levelname)8s:" " %(message)s", "%H:%M:%S")
-        self.setFormatter(formatter)
+        
+
         # Log messages colours.
-        self.levelcolours = {
+        """self.levelcolours = {
             logging.DEBUG: 'black',
             logging.INFO: 'blue',
             logging.WARN: 'orange',
             logging.ERROR: 'red',
         }
         # Paths to the log icons.
-        parent_path = os.path.dirname(__file__)
+         parent_path = os.path.dirname(__file__)
         self.logsymbols = {
             logging.DEBUG: "{}/icons/debug.png".format(parent_path),
             logging.INFO: "{}/icons/info.png".format(parent_path),
@@ -51,25 +53,20 @@ class AppLogHandler(logging.Handler):
             logging.INFO: True,
             logging.WARN: True,
             logging.ERROR: True,
-        }
-
-        def emit(self, record):
-            """Override the logging.Handler.emit method.
+        }"""
+    def emit(self, record):
+        """Override the logging.Handler.emit method.
 
             The received log message will be printed on the specified
             widget, typically a TextBox.
             """
-            # Only print on the log the enabled log levels.
-            if not self.enabled[record.levelno]:
-                return
-            new_log = self.format(record)
-            self.widget.insertHtml('<img src={img} height="14" width="14"/>'
-                                   '<font color="{colour}">{log_msg}</font><br />'
-                                   .format(img=self.logsymbols[record.levelno],
-                                           colour=self.levelcolours[record.levelno],
-                                           log_msg=new_log))
-            self.widget.moveCursor(QtGui.QTextCursor.End)
-            return
+        msg = self.format(record)
+        self.widget.insertText(msg)
+        new_log = self.format(record)
+        self.widget.insertHtml('{log_msg}<br />'
+                               .format(log_msg=new_log))
+        self.widget.moveCursor(QtGui.QTextCursor.End)
+        return
 
 
 class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
@@ -78,15 +75,15 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         # super(MainWindow, self).__init__()
         self.setupUi(self)
         self.popup = None
-        # Configure the logger, assigning an instance of AppLogHandler.
-        self.log_handler = AppLogHandler(self.LoggerBrowser)
-        logger.addHandler(self.log_handler)
-        logger.info("Initialized the Frequency-Meter Application")
-        # Log console level selection buttons
-        self.DebugCheck.clicked.connect(self.update_logger_level)
-        self.InfoCheck.clicked.connect(self.update_logger_level)
-        self.WarnCheck.clicked.connect(self.update_logger_level)
-        self.ErrorCheck.clicked.connect(self.update_logger_level)
+
+        # Initialise the logger
+        handler = AppLogHandler(self.LoggerBrowser)
+        handler.setFormatter(logging.Formatter('%(asctime)s : %(levelname)s - %(message)s'))
+        file_handler = logging.FileHandler('loger.log')
+        logger.addHandler(file_handler)
+
+        logger.info("Logger iniciado")
+
         # initialise the QTimer to update the cameras image
         self.__actualizar_imagen = QTimer()
         t_refresco = 100
@@ -94,12 +91,35 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         self.__actualizar_imagen.timeout.connect(self.__imagen_actualizar)
         # menu actions
         self.actionSalir.triggered.connect(self.close)  # close the app
-        self.actionSobre.triggered.connect(self.about_message)
+        self.action_about.triggered.connect(self.about_message)
         self.actionOpen_csv.triggered.connect(self.__loadfileswindow)
-        # activate the run mode, show the vehicle properties
-        self.rb_runmode.clicked.connect(self.activate_run_mode)
-        # activate the train mode
-        self.rb_trainmode.clicked.connect(self.activate_train_mode)
+        # load cameras IP
+        self.cameras_IPs = image_procesing.loadips()
+        print(self.cameras_IPs)
+        #load cameras size
+        self.cameras_size = image_procesing.load_image_size()
+        print(self.cameras_size)
+
+
+
+    def __change_img_type(self):
+        """
+        Checks the radio buttons state, to especify the image type to show in the viewer
+        :return: string, can be BIN, GRAY, BLACK or RGB
+        """
+
+        if self.gray_rb.isChecked():
+            img_type = "GRAY"
+        elif self.bin_rb.isChecked():
+            img_type = "BIN"
+        elif self.rgb_rb.isChecked():
+            img_type = "RGB"
+        else:
+            img_type = "BLACK"
+        return img_type
+
+
+
 
     def __loadfileswindow(self):
         # opens a new window to load a .csv file
@@ -109,13 +129,20 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         return
 
     def __imagen_actualizar(self):
-        # refresh the image
-        width = self.label.width()
-        height = self.label.height()
-        image_procesing.image_stack()
-        # show the image on the label
-        pixmap = QPixmap('salida.jpg').scaled(width, height, QtCore.Qt.KeepAspectRatio)
+        """ refresh the image label
+            calls the image_stack method to join the four camera images
+
+        """
+        image_procesing.image_stack(self.cameras_IPs, self.cameras_size, self.__change_img_type())
+        # get the new image
+        pixmap = QPixmap('salida.jpg').scaled(self.label.size(),
+                                              aspectRatioMode= QtCore.Qt.KeepAspectRatio,
+                                              transformMode = QtCore.Qt.SmoothTransformation)
+
         self.label.setPixmap(pixmap)
+        #self.label.resize(width, height)
+        self.label.adjustSize()
+        self.label.setScaledContents(True)
         logger.info("Imagen actualizada")
 
     def about_message(self):
@@ -123,22 +150,6 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         link = "https://uvispace.readthedocs.io/en/latest/"
         message = "App for the uvispace project <br> <a href='%s'>Project Web</a>" % link
         about = QMessageBox.about(self, "About...", message)
-
-    def activate_run_mode(self):
-        self.label_2.show()
-        self.label_3.show()
-        self.label_4.show()
-        self.label_5.show()
-        self.label_6.show()
-        self.label_7.show()
-
-    def activate_train_mode(self):
-        self.label_2.hide()
-        self.label_3.hide()
-        self.label_4.hide()
-        self.label_5.hide()
-        self.label_6.hide()
-        self.label_7.hide()
 
     def update_logger_level(self):
         """Evaluate the check boxes states and update logger level."""
@@ -148,6 +159,8 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         self.log_handler.enabled[logging.ERROR] = self.ErrorCheck.isChecked()
         return
 
+
+logger = logging.getLogger('view')
 
 app = QtWidgets.QApplication(sys.argv)
 form = MainWindow()
