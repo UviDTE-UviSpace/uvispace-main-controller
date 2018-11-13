@@ -1,6 +1,5 @@
 import numpy as np
 import sys
-from PyQt5 import QtCore, QtWidgets, QtGui
 from PyQt5.QtWidgets import QFileDialog, QWidget, QApplication
 
 
@@ -27,12 +26,8 @@ class App(QWidget, loadfilesinterface.Ui_Form):
         if fileName:
             print(fileName)
             coordinates = np.loadtxt(open(fileName, "r"), delimiter=";")
-            # print(coordinates)
-            print("Fila 9 Columna 1")
-            print(coordinates[9, 1])
             self.textEdit.setText(str(coordinates))
         return
-
 
     def sendCoordinates(self):
         # Connects to the controller and send the new coordinates loaded

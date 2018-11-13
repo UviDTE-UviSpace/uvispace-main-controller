@@ -40,8 +40,6 @@ def loadips():
 
 def load_image_size():
     """
-
-    :param img_size: array where the iamge dimensions are stored
     :return:
 
     Load the image size from a .cfg file. Because all the cameras have the same size,
@@ -55,29 +53,28 @@ def load_image_size():
     return img_size
 
 
-
 def image_stack(cameras_ips, img_size, img_type):
     """
-    Loads the four images and stacks them. Also writes the stackes image
-    :param widht:
-    :param height:
+    Loads the four images and stacks them. Also writes the stacked image
+
     :param cameras_ips:
     :param img_size:
+    :param img_type:
     :return:
     """
     # load the four images
-    print(img_type)
-    image1 = get_images(cameras_ips[0], img_type, img_size)
-    image2 = get_images(cameras_ips[1], img_type, img_size)
-    image3 = get_images(cameras_ips[2], img_type, img_size)
-    image4 = get_images(cameras_ips[3], img_type, img_size)
+    image_array = []
+    for i in range(0, 4):
+        image_array.append(get_images(cameras_ips[i], img_type, img_size))
+
     #image1 = cv2.cvtColor(cv2.imread('imagen1.jpg'), cv2.COLOR_RGB2GRAY)
     #image2 = cv2.cvtColor(cv2.imread('imagen2.jpg'), cv2.COLOR_RGB2GRAY)
     #image3 = cv2.cvtColor(cv2.imread('imagen3.jpg'), cv2.COLOR_RGB2GRAY)
     #image4 = cv2.cvtColor(cv2.imread('imagen4.jpg'), cv2.COLOR_RGB2GRAY)
-    # Stack the matrix using concatenate
-    output12 = np.concatenate((image2, image1), axis=1)  # apila las matrices 1 y 2
-    output34 = np.concatenate((image3, image4), axis=1)  # apila las matrices 3 y 4
+    # Stack the array using concatenate
+    output12 = np.concatenate((image_array[2-1], image_array[1-1]), axis=1)  # apila las matrices 1 y 2
+    output34 = np.concatenate((image_array[3-1], image_array[4-1]), axis=1)  # apila las matrices 3 y 4
+
     output = np.concatenate((output12, output34), axis=0)  # resultante final
     #resized = cv2.resize(output, (widht, height), interpolation=cv2.INTER_AREA)
     cv2.imwrite('salida.jpg', output)  # saves the image as jpg
@@ -95,20 +92,20 @@ def get_images(cam_ip, img_type, img_size):
     :param img_size: integer list with the height and the width of the image
     :return:
     """
-    # Check the number of arguments passed to set resolution and img type
+    img_type = "BLACK"
+    if img_type == "BLACK":
+        # Create a black image
+        image = np.zeros([img_size[1], img_size[0]], dtype=np.uint8)
+    else: # read images from cameras using pyzmq
+        receiver = zmq.Context.instance().socket(zmq.SUB)
+        if img_type == "BIN":
+            receiver.connect("tcp://" + cam_ip + ":33000")
+        else:  # "GRAY" and "RGB"
+            receiver.connect("tcp://" + cam_ip + ":34000")
+        receiver.setsockopt_string(zmq.SUBSCRIBE, u"")
+        receiver.setsockopt(zmq.CONFLATE, True)
 
-    receiver = zmq.Context.instance().socket(zmq.SUB)
-    if img_type == "BIN":
-        receiver.connect("tcp://" + cam_ip + ":33000")
-    else:  # "GRAY" and "RGB"
-        receiver.connect("tcp://" + cam_ip + ":34000")
-    receiver.setsockopt_string(zmq.SUBSCRIBE, u"")
-    receiver.setsockopt(zmq.CONFLATE, True)
-
-    message = receiver.recv()
-    image = np.fromstring(message, dtype=np.uint8).reshape((img_size[1], img_size[0]))
+        message = receiver.recv()
+        image = np.fromstring(message, dtype=np.uint8).reshape((img_size[1], img_size[0]))
 
     return image
-
-
-
