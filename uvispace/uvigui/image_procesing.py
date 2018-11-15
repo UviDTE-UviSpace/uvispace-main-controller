@@ -71,17 +71,18 @@ def image_stack(cameras_ips, img_size, img_type):
     #image2 = cv2.cvtColor(cv2.imread('imagen2.jpg'), cv2.COLOR_RGB2GRAY)
     #image3 = cv2.cvtColor(cv2.imread('imagen3.jpg'), cv2.COLOR_RGB2GRAY)
     #image4 = cv2.cvtColor(cv2.imread('imagen4.jpg'), cv2.COLOR_RGB2GRAY)
+
     # Stack the array using concatenate
     output12 = np.concatenate((image_array[2-1], image_array[1-1]), axis=1)  # apila las matrices 1 y 2
     output34 = np.concatenate((image_array[3-1], image_array[4-1]), axis=1)  # apila las matrices 3 y 4
 
-    output = np.concatenate((output12, output34), axis=0)  # resultante final
-    #resized = cv2.resize(output, (widht, height), interpolation=cv2.INTER_AREA)
-    cv2.imwrite('salida.jpg', output)  # saves the image as jpg
-    # show the image
-    #   cv2.imshow('Imagen', salida_red)
-    #  cv2.waitKey(0)
-    #  cv2.destroyAllWindows()
+    output = np.concatenate((output12, output34), axis=0)  # resultante image
+
+    #cv2.imwrite('salida.jpg', output)  # saves the image as jpg
+
+    return_image = QImage(output.data, img_size[0],  img_size[1], QImage.Format_Grayscale8)
+    #retuns the image as QImage
+    return return_image
 
 
 def get_images(cam_ip, img_type, img_size):
@@ -92,7 +93,7 @@ def get_images(cam_ip, img_type, img_size):
     :param img_size: integer list with the height and the width of the image
     :return:
     """
-    img_type = "BLACK"
+    #img_type = "BLACK"
     if img_type == "BLACK":
         # Create a black image
         image = np.zeros([img_size[1], img_size[0]], dtype=np.uint8)

@@ -1,12 +1,13 @@
 import numpy as np
 import sys
-from PyQt5.QtWidgets import QFileDialog, QWidget, QApplication
+from PyQt5.QtWidgets import QFileDialog, QWidget, QApplication, QMessageBox
 
 
 import loadfilesinterface
 """
-    Class used to load csv files with a list of coordinates for the controller.
-    Opens a new window. The new window also shows the coordinate list after the file is loaded
+    Module used to load csv files with a list of coordinates for the controller.
+    Opens a new window. The new window also shows the coordinate list after the file is loaded.
+    The Loadedfile class stores the coordinates array and the filename
 """
 
 
@@ -15,7 +16,26 @@ class App(QWidget, loadfilesinterface.Ui_Form):
         super().__init__()
         self.setupUi(self)
         self.button_openfile.clicked.connect(self.openFileNameDialog)
-        self.button_send.clicked.connect(self.sendCoordinates)
+        self.button_save.clicked.connect(self.sendCoordinates)
+        self.button_acept.clicked.connect(self.aceptCoordinates)
+        self.button_cancel.clicked.connect(self.cancelCoordinates)
+        self.file_csv = ""
+
+    def aceptCoordinates(self):
+        # acept the coordinates
+        self.close()
+
+    def cancelCoordinates(self):
+        """
+        shows a question message when user clicks on cancel. If Yes is selected, closes the window.
+        If No is selected, nothing hapens
+        :return:
+        """
+
+        message = QMessageBox.question(self, 'Cancel', "Do you want to cancel the modifications?",
+                                       QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        if message == QMessageBox.Yes:
+            self.close()
 
     def openFileNameDialog(self):
         # Opens a .csv file and then displays the array in a textEdit Widget
@@ -27,6 +47,8 @@ class App(QWidget, loadfilesinterface.Ui_Form):
             print(fileName)
             coordinates = np.loadtxt(open(fileName, "r"), delimiter=";")
             self.textEdit.setText(str(coordinates))
+            self.file_csv = fileName
+
         return
 
     def sendCoordinates(self):

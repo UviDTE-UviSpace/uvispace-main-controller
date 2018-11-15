@@ -10,7 +10,7 @@ import os
 # PyQt5 libraries
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtCore import QRegularExpression, QTimer
-from PyQt5.QtWidgets import QLabel, QMessageBox, QWidget, QPlainTextEdit
+from PyQt5.QtWidgets import QLabel, QMessageBox, QWidget, QPlainTextEdit, QListWidgetItem
 from PyQt5.QtGui import QIcon, QPixmap
 
 
@@ -31,7 +31,7 @@ class AppLogHandler(logging.Handler):
         logging.Handler.__init__(self)
         logging.basicConfig(filename="loger.log")
         self.widget = widget
-        self.setLevel(logging.DEBUG)
+        #logging.setLevel(logging.DEBUG)
         formatter = logging.Formatter(" %(asctime)s.%(msecs)03d %(levelname)8s:"
                                       " %(message)s", "%H:%M:%S")
         self.setFormatter(formatter)
@@ -45,14 +45,14 @@ class AppLogHandler(logging.Handler):
         # Paths to the log icons.
         parent_path = os.path.dirname(__file__)
         self.logsymbols = {
-            logging.DEBUG: "{}/icons/debug.png".format(parent_path),
-            logging.INFO: "{}/icons//info.png".format(parent_path),
-            logging.WARN: "{}/icons//warning.png".format(parent_path),
-            logging.ERROR: "{}/icons//error.png".format(parent_path),
+            logging.DEBUG: "icons/debug.png",#.format(parent_path),
+            logging.INFO: "icons/info.png",#.format(parent_path),
+            logging.WARN: "icons/warning.png",#.format(parent_path),
+            logging.ERROR: "icons/error.png",#.format(parent_path),
         }
         # The True levels are the ones that are printed on the log.
         self.enabled = {
-            logging.DEBUG: False,
+            logging.DEBUG: True,
             logging.INFO: True,
             logging.WARN: True,
             logging.ERROR: True,
@@ -69,8 +69,8 @@ class AppLogHandler(logging.Handler):
             return
         new_log = self.format(record)
         #self.widget.appendPlainText(new_log)
-
-        self.widget.insertHtml('<img src={img} height="14" width="14"/>'
+        parent_path = os.path.dirname(__file__)
+        self.widget.insertHtml('<img src="{img}" height="14" width="14"/>'
                                '<font color="{colour}">{log_msg}</font><br />'
                                .format(img=self.logsymbols[record.levelno],
                                        colour=self.levelcolours[record.levelno],
@@ -79,6 +79,10 @@ class AppLogHandler(logging.Handler):
         return
 
 class CarWidget(QWidget):
+    """
+    Custom PyQt5 Widget, for showing the UGV properties.
+    Includes the position (x,y,z), the battery status, the name of the UGV and an icon representing the UGV
+    """
     def __init__(self, parent=None):
         QWidget.__init__(self, parent=parent)
         self.resize(270, 122)
@@ -149,9 +153,13 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         # Configure the logger
 
         self.log_handler = AppLogHandler(self.LoggerBrowser)
+        logger.setLevel(5)
         logger.addHandler(self.log_handler)
-        logger.info("Logger iniciado")
+        logger.info("Info")
         logger.error("Error")
+        logger.debug("Debug")
+        logger.warning("Warning")
+
         # Log console level selection buttons
         self.DebugCheck.clicked.connect(self.update_logger_level)
         self.InfoCheck.clicked.connect(self.update_logger_level)
@@ -164,25 +172,32 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         self.__actualizar_imagen.start(t_refresco)
         self.__actualizar_imagen.timeout.connect(self.__imagen_actualizar)
         # menu actions
-        self.actionSalir.triggered.connect(self.close)  # close the app
+        self.actionExit.triggered.connect(self.close)  # close the app
         self.action_about.triggered.connect(self.about_message)
         self.actionOpen_csv.triggered.connect(self.__loadfileswindow)
         # load cameras IP
         self.cameras_IPs = image_procesing.loadips()
+        logger.info("Cameras IPs loaded")
         print(self.cameras_IPs)
         #load cameras size
         self.cameras_size = image_procesing.load_image_size()
+        logger.info("Cameras size loaded")
         print(self.cameras_size)
+        # file button event
+        self.file_Button.clicked.connect(self.__loadfileswindow)
+        coordinates_array = []  # stores the coordinates to send to the UGV
+        self.filename = ""  # stores the filaname from where the coordinates are read
 
+        # add Car Widget using QlistWidget
+        itemN = QListWidgetItem(self.listWidget)
+        widget = CarWidget()
+        itemN.setSizeHint(widget.size())
+        self.listWidget.addItem(itemN)
+        self.listWidget.setItemWidget(itemN, widget)
+        # testing the widget ...
+        widget.label_x.setText("20")
+        widget.progressBar_battery.setProperty('value', 90)
 
-        # add Car Widget
-        #self.car1 = CarWidget(self)
-        #self.formLayout.addRow(QLabel("Coche 1"))
-        #self.formLayout.addRow(self.car1, CarWidget())
-        #rows = self.formLayout.rowCount()
-        #self.formLayout.setWidget(rows, QtWidgets.QFormLayout.SpanningRole, self.car1)
-        #self.formLayout.setWidget(rows - 2, QtWidgets.QFormLayout.SpanningRole, self.car1)
-        #self.formLayout.rowWrapPolicy = self.formLayout.WrapLongRows
 
     def update_logger_level(self):
         """Evaluate the check boxes states and update logger level."""
@@ -213,6 +228,9 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         logger.debug("Opening file loading window")
         self.popup = load_csv.App()
         self.popup.show()
+        #change the lineEdit text
+        self.filename = self.popup.file_csv
+        self.lineEdit.setText(self.filename)
         return
 
     def __imagen_actualizar(self):
@@ -220,9 +238,10 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
             calls the image_stack method to join the four camera images
 
         """
-        image_procesing.image_stack(self.cameras_IPs, self.cameras_size, self.__check_img_type())
+        image_np = image_procesing.image_stack(self.cameras_IPs, self.cameras_size, self.__check_img_type())
+
         # get the new image
-        pixmap = QPixmap('salida.jpg').scaled(self.label.size(),
+        pixmap = QPixmap.fromImage(image_np).scaled(self.label.size(),
                                               aspectRatioMode= QtCore.Qt.KeepAspectRatio,
                                               transformMode = QtCore.Qt.SmoothTransformation)
 
@@ -230,23 +249,13 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         # self.label.resize(width, height)
         self.label.adjustSize()
         self.label.setScaledContents(True)
-        logger.info("Imagen actualizada")
+
 
     def about_message(self):
         # about message with a link to the main project web
         link = "https://uvispace.readthedocs.io/en/latest/"
         message = "App for the uvispace project <br> <a href='%s'>Project Web</a>" % link
         about = QMessageBox.about(self, "About...", message)
-
-    def update_logger_level(self):
-        """Evaluate the check boxes states and update logger level."""
-        self.log_handler.enabled[logging.DEBUG] = self.DebugCheck.isChecked()
-        self.log_handler.enabled[logging.INFO] = self.InfoCheck.isChecked()
-        self.log_handler.enabled[logging.WARN] = self.WarnCheck.isChecked()
-        self.log_handler.enabled[logging.ERROR] = self.ErrorCheck.isChecked()
-        return
-
-
 
 
 app = QtWidgets.QApplication(sys.argv)

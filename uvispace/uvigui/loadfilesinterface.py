@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\curra\Google Drive\TFG\GUI\untitled\loadfilesinterface.ui'
+# Form implementation generated from reading ui file 'loadfilesinterface.ui'
 #
-# Created by: PyQt5 UI code generator 5.11.3
+# Created by: PyQt5 UI code generator 5.5.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -14,20 +14,29 @@ class Ui_Form(object):
         Form.resize(400, 223)
         self.gridLayout = QtWidgets.QGridLayout(Form)
         self.gridLayout.setObjectName("gridLayout")
+        self.textEdit = QtWidgets.QTextEdit(Form)
+        self.textEdit.setObjectName("textEdit")
+        self.gridLayout.addWidget(self.textEdit, 1, 1, 2, 2)
         self.verticalLayout = QtWidgets.QVBoxLayout()
         self.verticalLayout.setObjectName("verticalLayout")
         self.button_openfile = QtWidgets.QPushButton(Form)
         self.button_openfile.setObjectName("button_openfile")
         self.verticalLayout.addWidget(self.button_openfile)
-        self.button_send = QtWidgets.QPushButton(Form)
-        self.button_send.setObjectName("button_send")
-        self.verticalLayout.addWidget(self.button_send)
-        self.gridLayout.addLayout(self.verticalLayout, 0, 0, 1, 1)
+        self.button_save = QtWidgets.QPushButton(Form)
+        self.button_save.setObjectName("button_save")
+        self.verticalLayout.addWidget(self.button_save)
+        self.gridLayout.addLayout(self.verticalLayout, 1, 0, 1, 1)
         spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout.addItem(spacerItem, 1, 0, 1, 1)
-        self.textEdit = QtWidgets.QTextEdit(Form)
-        self.textEdit.setObjectName("textEdit")
-        self.gridLayout.addWidget(self.textEdit, 0, 1, 2, 1)
+        self.gridLayout.addItem(spacerItem, 2, 0, 1, 1)
+        self.button_cancel = QtWidgets.QPushButton(Form)
+        self.button_cancel.setObjectName("button_cancel")
+        self.gridLayout.addWidget(self.button_cancel, 3, 2, 1, 1)
+        self.button_acept = QtWidgets.QPushButton(Form)
+        self.button_acept.setObjectName("button_acept")
+        self.gridLayout.addWidget(self.button_acept, 3, 1, 1, 1)
+        self.label = QtWidgets.QLabel(Form)
+        self.label.setObjectName("label")
+        self.gridLayout.addWidget(self.label, 0, 1, 1, 1)
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
@@ -36,15 +45,8 @@ class Ui_Form(object):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "Open file"))
         self.button_openfile.setText(_translate("Form", "Open .csv file"))
-        self.button_send.setText(_translate("Form", "Send coordinates"))
-
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    Form = QtWidgets.QWidget()
-    ui = Ui_Form()
-    ui.setupUi(Form)
-    Form.show()
-    sys.exit(app.exec_())
+        self.button_save.setText(_translate("Form", "Save"))
+        self.button_cancel.setText(_translate("Form", "Cancel"))
+        self.button_acept.setText(_translate("Form", "Acept"))
+        self.label.setText(_translate("Form", "Trayectory points:"))
 
