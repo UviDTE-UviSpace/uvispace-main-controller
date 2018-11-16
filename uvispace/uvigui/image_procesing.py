@@ -3,9 +3,8 @@ import numpy as np
 import cv2
 import zmq
 import configparser
-from  PyQt5.QtGui import QImage, QPixmap
-import datetime
-import sys
+from PyQt5.QtGui import QImage, QPixmap
+
 
 """
     Images are treated as arrays in cv2. Therefore, they can be formated with the numpy library.
