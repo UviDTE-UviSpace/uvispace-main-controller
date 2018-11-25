@@ -7,7 +7,8 @@ from PyQt5.QtGui import QImage, QPixmap
 
 
 """
-    Images are treated as arrays in cv2. Therefore, they can be formated with the numpy library.
+    Images are treated as arrays in cv2. Therefore, they can be formatted with 
+    the numpy library.
     Images are stacked using the given path:
     Image2         Image1
     
@@ -20,7 +21,6 @@ from PyQt5.QtGui import QImage, QPixmap
 
 def loadips():
     """
-        :param cameras_IPs: array where the cameras IP are stored
         Load the cameras IPs from the .cfg files
         Uses the configparser lib to read .cfg files
     """
@@ -41,8 +41,8 @@ def load_image_size():
     """
     :return:
 
-    Load the image size from a .cfg file. Because all the cameras have the same size,
-    only reads one config file
+    Load the image size from a .cfg file. Because all the cameras have the same
+    size, only reads one config file
     """
     size = configparser.ConfigParser()
     rel_path = '../uvisensor/resources/config/video_sensor1.cfg'
@@ -66,21 +66,17 @@ def image_stack(cameras_ips, img_size, img_type):
     for i in range(0, 4):
         image_array.append(get_images(cameras_ips[i], img_type, img_size))
 
-    #image1 = cv2.cvtColor(cv2.imread('imagen1.jpg'), cv2.COLOR_RGB2GRAY)
-    #image2 = cv2.cvtColor(cv2.imread('imagen2.jpg'), cv2.COLOR_RGB2GRAY)
-    #image3 = cv2.cvtColor(cv2.imread('imagen3.jpg'), cv2.COLOR_RGB2GRAY)
-    #image4 = cv2.cvtColor(cv2.imread('imagen4.jpg'), cv2.COLOR_RGB2GRAY)
-
-    # Stack the array using concatenate
-    output12 = np.concatenate((image_array[2-1], image_array[1-1]), axis=1)  # apila las matrices 1 y 2
-    output34 = np.concatenate((image_array[3-1], image_array[4-1]), axis=1)  # apila las matrices 3 y 4
-
-    output = np.concatenate((output12, output34), axis=0)  # resultante image
+    # Stack the array using concatenate, first stacks horizontally,
+    # then, one on top of the other
+    output12 = np.concatenate((image_array[2-1], image_array[1-1]), axis=1)
+    output34 = np.concatenate((image_array[3-1], image_array[4-1]), axis=1)
+    output = np.concatenate((output12, output34), axis=0)  # final image
 
     #cv2.imwrite('salida.jpg', output)  # saves the image as jpg
 
-    return_image = QImage(output.data, img_size[0],  img_size[1], QImage.Format_Grayscale8)
-    #retuns the image as QImage
+    return_image = QImage(output.data, img_size[0],  img_size[1],
+                          QImage.Format_Grayscale8)
+    # retuns the image as QImage
     return return_image
 
 
@@ -92,11 +88,11 @@ def get_images(cam_ip, img_type, img_size):
     :param img_size: integer list with the height and the width of the image
     :return:
     """
-    #img_type = "BLACK"
+
     if img_type == "BLACK":
         # Create a black image
         image = np.zeros([img_size[1], img_size[0]], dtype=np.uint8)
-    else: # read images from cameras using pyzmq
+    else:  # read images from cameras using pyzmq
         receiver = zmq.Context.instance().socket(zmq.SUB)
         if img_type == "BIN":
             receiver.connect("tcp://" + cam_ip + ":33000")
@@ -106,6 +102,7 @@ def get_images(cam_ip, img_type, img_size):
         receiver.setsockopt(zmq.CONFLATE, True)
 
         message = receiver.recv()
-        image = np.fromstring(message, dtype=np.uint8).reshape((img_size[1], img_size[0]))
+        image = np.fromstring(message, dtype=np.uint8).reshape((img_size[1],
+                                                                img_size[0]))
 
     return image

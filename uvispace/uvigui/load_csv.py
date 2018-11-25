@@ -6,7 +6,8 @@ from PyQt5.QtWidgets import QFileDialog, QWidget, QApplication, QMessageBox
 import loadfilesinterface
 """
     Module used to load csv files with a list of coordinates for the controller.
-    Opens a new window. The new window also shows the coordinate list after the file is loaded.
+    Opens a new window. The new window also shows the coordinate list after the
+    file is loaded.
     The Loadedfile class stores the coordinates array and the filename
 """
 
@@ -27,13 +28,16 @@ class App(QWidget, loadfilesinterface.Ui_Form):
 
     def cancelCoordinates(self):
         """
-        shows a question message when user clicks on cancel. If Yes is selected, closes the window.
-        If No is selected, nothing hapens
+        Shows a question message when user clicks on cancel. If Yes is selected,
+        closes the window.
+        If No is selected, nothing happens
         :return:
         """
 
-        message = QMessageBox.question(self, 'Cancel', "Do you want to cancel the modifications?",
-                                       QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        message = QMessageBox.question(self, 'Cancel',
+                                       "Do you want to cancel the modifications?",
+                                       QMessageBox.Yes | QMessageBox.No,
+                                       QMessageBox.No)
         if message == QMessageBox.Yes:
             self.close()
 
@@ -42,7 +46,8 @@ class App(QWidget, loadfilesinterface.Ui_Form):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         fileName, _ = QFileDialog.getOpenFileName(self, "Open file...", "",
-                                                  "CSV files (*.csv);;All Files(*)", options=options)
+                                                  "CSV files (*.csv);;All Files(*)",
+                                                  options=options)
         if fileName:
             print(fileName)
             coordinates = np.loadtxt(open(fileName, "r"), delimiter=";")
@@ -62,6 +67,3 @@ if __name__ == '__main__':
     form = App()
     form.show()
     sys.exit(app.exec_())
-
-
-

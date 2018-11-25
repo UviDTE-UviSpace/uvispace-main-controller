@@ -1,20 +1,19 @@
-"""Ventana principal del GUI
-
+"""
+    GUI main window
 """
 import sys
 import logging
-import configparser
 import os
 
 
 # PyQt5 libraries
 from PyQt5 import QtWidgets, QtCore, QtGui
-from PyQt5.QtCore import QRegularExpression, QTimer
-from PyQt5.QtWidgets import QLabel, QMessageBox, QWidget, QPlainTextEdit, QListWidgetItem
-from PyQt5.QtGui import QIcon, QPixmap
+from PyQt5.QtCore import QTimer
+from PyQt5.QtWidgets import QLabel, QMessageBox, QWidget, QListWidgetItem
+from PyQt5.QtGui import QPixmap
 
 
-# propietary libraries
+# proprietary libraries
 import mainwindowinterface
 import image_procesing
 import load_csv
@@ -29,7 +28,10 @@ class AppLogHandler(logging.Handler):
     """
     def __init__(self, widget):
         logging.Handler.__init__(self)
-        logging.basicConfig(filename="loger.log")
+        logging.basicConfig(filename="loger.log",
+                            format="%(asctime)s.%(msecs)03d %(levelname)8s:"
+                            " %(message)s",
+                            datefmt="%H:%M:%S")
         self.widget = widget
         #logging.setLevel(logging.DEBUG)
         formatter = logging.Formatter(" %(asctime)s.%(msecs)03d %(levelname)8s:"
@@ -68,8 +70,7 @@ class AppLogHandler(logging.Handler):
         if not self.enabled[record.levelno]:
             return
         new_log = self.format(record)
-        #self.widget.appendPlainText(new_log)
-        parent_path = os.path.dirname(__file__)
+        #parent_path = os.path.dirname(__file__)
         self.widget.insertHtml('<img src="{img}" height="14" width="14"/>'
                                '<font color="{colour}">{log_msg}</font><br />'
                                .format(img=self.logsymbols[record.levelno],
@@ -144,8 +145,6 @@ class CarWidget(QWidget):
         self.label_y.setText("TextLabel")
         self.label_z.setText("TextLabel")
 
-coord_filename = ""
-coord = []
 
 class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
     def __init__(self):
@@ -174,7 +173,7 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         self.__actualizar_imagen = QTimer()
         t_refresco = 100
         self.__actualizar_imagen.start(t_refresco)
-        self.__actualizar_imagen.timeout.connect(self.__imagen_actualizar)
+        self.__actualizar_imagen.timeout.connect(self.__update_image)
         # menu actions
         self.actionExit.triggered.connect(self.close)  # close the app
         self.action_about.triggered.connect(self.about_message)
@@ -189,10 +188,6 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         print(self.cameras_size)
         # file button event
         self.file_Button.clicked.connect(self.__loadfileswindow)
-
-
-        #coordinates_array = []  # stores the coordinates to send to the UGV
-        #self.filename = ""  # stores the filaname from where the coordinates are read
 
         # add Car Widget using QlistWidget
         itemN = QListWidgetItem(self.listWidget)
@@ -221,7 +216,6 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         self.listWidget.setItemWidget(item2, widget3)
         widget3.label_UGV.setText("Coche 3")
         logger.info("Car 3 added")
-
 
     def update_logger_level(self):
         """Evaluate the check boxes states and update logger level."""
@@ -258,20 +252,23 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         self.lineEdit.setText(coord_filename)
         return
 
-    def __imagen_actualizar(self):
-        """ refresh the image label
-            calls the image_stack method to join the four camera images
+    def __update_image(self):
+        """
+        refresh the image label
+        calls the image_stack method to join the four camera images
 
         """
-        image_np = image_procesing.image_stack(self.cameras_IPs, self.cameras_size, self.__check_img_type())
+        # get the image
+        image_np = image_procesing.image_stack(self.cameras_IPs,
+                                               self.cameras_size,
+                                               self.__check_img_type())
 
-        # get the new image
+        # update the image label
         pixmap = QPixmap.fromImage(image_np).scaled(self.label.size(),
                                               aspectRatioMode= QtCore.Qt.KeepAspectRatio,
                                               transformMode = QtCore.Qt.SmoothTransformation)
 
         self.label.setPixmap(pixmap)
-        # self.label.resize(width, height)
         self.label.adjustSize()
         self.label.setScaledContents(True)
 
