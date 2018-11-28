@@ -5,7 +5,7 @@ The VideoSensor class allows to request the triangles found in a camera.
 """
 # Standard libraries
 import ast
-import ConfigParser
+import configparser
 import logging
 import sys
 # Third party libraries

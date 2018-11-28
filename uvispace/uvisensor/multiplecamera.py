@@ -365,7 +365,7 @@ class UserThread(threading.Thread):
         while not self.__end_execution.isSet():
             # Start the cycle timer
             cycle_start_time = time.time()
-            i = raw_input("Press 'Q' to stop the script... ")
+            i = input("Press 'Q' to stop the script... ")
             if i in ("q", "Q"):
                 self.__end_execution.set()
             # Sleep the rest of the cycle

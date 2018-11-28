@@ -18,7 +18,7 @@ from scipy import stats
 import sys
 import time
 # Local libraries
-import workbookfunctions as wf
+import resources.workbookfunctions as wf
 
 class DataAnalyzer(object):
     """Receives time and poses of matrix to filter, analyze and save.
