@@ -8,7 +8,7 @@ attributes such as the *robot_id* or its speed values. It imports
 """
 # Standard libraries
 import ast
-import ConfigParser
+import configparser
 import glob
 import logging
 import os
@@ -89,7 +89,7 @@ class RobotController(object):
         self.delta_distance = 0
         self.max_clear_goal_distance = max_clear_goal_distance
         # Load the config file and read the polynomial coeficients.
-        self.conf = ConfigParser.ConfigParser()
+        self.conf = configparser.ConfigParser()
         self.conf_file = glob.glob("./resources/config/robot{}.cfg"
                                    .format(self.robot_id))
         self.conf.read(self.conf_file)

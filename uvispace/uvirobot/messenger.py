@@ -146,8 +146,8 @@ def read_battery_soc(my_serial):
 def stop_vehicle(my_serial, wait_times, speed_calc_times, xbee_times):
     """Send a null speed to the UGV."""
     stop_speed = {
-        'sp_left': 127,
-        'sp_right': 127,
+        'sp_left': 170,
+        'sp_right': 170,
     }
     move_robot(stop_speed, my_serial, wait_times, speed_calc_times, xbee_times)
     return
@@ -175,14 +175,14 @@ def main():
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hr:", ["robotid="])
     except getopt.GetoptError:
-        print help_msg
+        print(help_msg)
         sys.exit()
     if not opts:
-        print help_msg
+        print(help_msg)
         sys.exit()
     for opt, arg in opts:
         if opt == '-h':
-            print help_msg
+            print(help_msg)
             sys.exit()
         elif opt in ("-r", "--robotid"):
             robot_id = int(arg)
@@ -192,6 +192,7 @@ def main():
     # Create an instance of SerMesProtocol and check connection to port.
     my_serial = connect_and_check(robot_id)
     t0 = time.time()
+
     # Infinite loop for parsing setpoint values and sending to the UGV.
     listen_speed_set_points(my_serial, robot_id, wait_times, speed_calc_times,
                             xbee_times)
