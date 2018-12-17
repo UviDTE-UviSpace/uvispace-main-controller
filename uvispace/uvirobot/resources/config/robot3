@@ -1,0 +1,27 @@
+# Coefficients of a polynomial equation with two "sp" variables.
+# sp(v,w) = c0 + c1*v + c2*w + c3*v^2 + c4*v*w + c5*w^2
+# v: linear speed
+# w: angular speed
+# coefs_left, coefs_right = (c0, c1, c2, c3, c4, c5)
+
+# Coefficients of a equation for forward motion.
+# Degree 2 in linear speed, and degree 2 in angular speed.
+[Coefficients_fwd]
+coefs_left = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+coefs_right = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+
+# Coefficients of a equation for "only-turn" motion.
+# Degree 2 in linear speed, and degree 2 in angular speed.
+[Coefficients_turn]
+coefs_left = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+coefs_right = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+
+
+[Robot_chassis]
+ugv_type = lego_42039
+
+[Communication]
+protocol_type = wifi
+ip = 192.168.0.53
+port = 31000
+zigbee_adress = 1
