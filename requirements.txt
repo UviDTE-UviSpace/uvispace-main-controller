@@ -1,3 +1,4 @@
+PyQt5==5.11.3
 cython==0.29.1
 sphinx==1.8.2
 matplotlib==3.0.2
@@ -11,3 +12,4 @@ scikit-image==0.14.1
 pyzmq==17.1.2
 openpyxl==2.5.11
 configparser==3.5.0
+opencv-python==3.4.0.12

@@ -88,6 +88,16 @@ def listen_speed_set_points(my_serial, robot_id, speed_calc_times,
             int(os.environ.get("UVISPACE_BASE_PORT_SPEED"))+robot_id))
 
     logger.debug("Listening for speed set points")
+
+    #uncomment to print som state-of-charge from the battery
+    # while True:
+    #     soc=read_battery_soc(my_serial)
+    #     text_file = open("battery charging SOC.txt", "a")
+    #     text_file.write("{}\n".format(soc))
+    #     text_file.close()
+    #     time.sleep(10)
+
+
     # Initialize the time for checking if the soc has to be read.
     soc_time = time.time()
     # listen for speed directives until interrupted
@@ -138,7 +148,7 @@ def read_battery_soc(my_serial):
         logger.warn("Fuel gauge PCB not detected")
     else:
         # The soc variable are 4 bytes, but the data is stored on the last 2.
-        soc = struct.unpack('>H', raw_soc[1]+raw_soc[3])[0]
+        soc = struct.unpack('<B', raw_soc)[0]
         logger.info("The current battery soc is {}%".format(soc))
     return soc
 
