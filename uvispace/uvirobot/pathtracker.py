@@ -17,7 +17,7 @@ class FuzzyController(object):
     """
     def __init__(self, cfg_name):
         # Load the config file and read the fuzzy sets (fs) and singleton sets.
-        self._conf_file = glob.glob("./resources/config/{}.cfg"
+        self._conf_file = glob.glob("uvirobot/resources/config/{}.cfg"
                                     .format(cfg_name))
         self._conf_raw = configparser.RawConfigParser()
         self._conf_raw.read(self._conf_file)

@@ -90,7 +90,7 @@ class RobotController(object):
         self.max_clear_goal_distance = max_clear_goal_distance
         # Load the config file and read the polynomial coeficients.
         self.conf = configparser.ConfigParser()
-        self.conf_file = glob.glob("./resources/config/robot{}.cfg"
+        self.conf_file = glob.glob("uvirobot/resources/config/robot{}.cfg"
                                    .format(self.robot_id))
         self.conf.read(self.conf_file)
         # Coefficients for a forward movement.

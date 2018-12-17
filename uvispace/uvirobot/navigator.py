@@ -151,6 +151,7 @@ def main():
     while run_program and not my_robot.init:
         try:
             position = sockets['pose_subscriber'].recv_json(zmq.NOBLOCK)
+            print(position)
         except zmq.ZMQError:
             pass
         else:

@@ -14,9 +14,9 @@ IMG_HEIGHT = 468;
 def main():
     receiver = zmq.Context.instance().socket(zmq.SUB)
     #bin
-    #receiver.connect("tcp://172.19.5.214:33000")
+    receiver.connect("tcp://192.168.0.11:33000")
     #gray
-    receiver.connect("tcp://172.19.5.214:34000")
+    #receiver.connect("tcp://192.168.0.11:34000")
     receiver.setsockopt_string(zmq.SUBSCRIBE, u"")
     receiver.setsockopt(zmq.CONFLATE, True)
 
