@@ -59,7 +59,7 @@ def image_stack(cameras_ips, img_size, img_type):
     :param cameras_ips:
     :param img_size:
     :param img_type:
-    :return:
+    :return: numpy array with the four images stacked
     """
     # load the four images
     image_array = []
@@ -74,19 +74,19 @@ def image_stack(cameras_ips, img_size, img_type):
 
     #cv2.imwrite('salida.jpg', output)  # saves the image as jpg
 
-    return_image = QImage(output.data, img_size[0],  img_size[1],
-                          QImage.Format_Grayscale8)
+    #return_image = QImage(output.data, img_size[0],  img_size[1],
+                          #QImage.Format_Grayscale8)
     # retuns the image as QImage
-    return return_image
+    return output
 
 
 def get_images(cam_ip, img_type, img_size):
     """
     Get video streaming from the cameras. Access throug TCP/IP
     :param cam_ip: string with the IP
-    :param img_type: string with the image type. It could be "BIN" or "GRAY"
+    :param img_type: string with the image type. It could be "BIN", "GRAY" or "BLACK"
     :param img_size: integer list with the height and the width of the image
-    :return:
+    :return: numpy array with the image
     """
 
     if img_type == "BLACK":
@@ -102,7 +102,6 @@ def get_images(cam_ip, img_type, img_size):
         receiver.setsockopt(zmq.CONFLATE, True)
 
         message = receiver.recv()
-        image = np.fromstring(message, dtype=np.uint8).reshape((img_size[1],
-                                                                img_size[0]))
+        image = np.fromstring(message, dtype=np.uint8).reshape((img_size[1], img_size[0]))
 
     return image

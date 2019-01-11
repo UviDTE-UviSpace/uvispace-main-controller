@@ -10,13 +10,17 @@ import os
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import QLabel, QMessageBox, QWidget, QListWidgetItem
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QPixmap, QImage
 
+# PIL libraries
+from PIL import Image, ImageQt
 
 # proprietary libraries
 import mainwindowinterface
 import image_procesing
 import load_csv
+
+
 
 # Create the application logger
 logger = logging.getLogger('view')
@@ -33,7 +37,7 @@ class AppLogHandler(logging.Handler):
                             " %(message)s",
                             datefmt="%H:%M:%S")
         self.widget = widget
-        #logging.setLevel(logging.DEBUG)
+        # logging.setLevel(logging.DEBUG)
         formatter = logging.Formatter(" %(asctime)s.%(msecs)03d %(levelname)8s:"
                                       " %(message)s", "%H:%M:%S")
         self.setFormatter(formatter)
@@ -171,13 +175,14 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
 
         # initialise the QTimer to update the cameras image
         self.__actualizar_imagen = QTimer()
-        t_refresco = 100
-        self.__actualizar_imagen.start(t_refresco)
+        t_refresh = 500
+        self.__actualizar_imagen.start(t_refresh)
         self.__actualizar_imagen.timeout.connect(self.__update_image)
         # menu actions
         self.actionExit.triggered.connect(self.close)  # close the app
         self.action_about.triggered.connect(self.about_message)
         self.actionOpen_csv.triggered.connect(self.__loadfileswindow)
+
         # load cameras IP
         self.cameras_IPs = image_procesing.loadips()
         logger.info("Cameras IPs loaded")
@@ -264,9 +269,20 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
                                                self.__check_img_type())
 
         # update the image label
-        pixmap = QPixmap.fromImage(image_np).scaled(self.label.size(),
+
+        ############    test
+
+        pilimage = Image.fromarray(image_np) # type:Image
+        qim = ImageQt.ImageQt(pilimage)  # type: ImageQt
+        qima = QImage(qim)
+
+
+        pixmap = QPixmap.fromImage(qima).scaled(self.label.size(),
                                               aspectRatioMode= QtCore.Qt.KeepAspectRatio,
                                               transformMode = QtCore.Qt.SmoothTransformation)
+        """pixmap = QPixmap('salida.jpg').scaled(self.label.size(),
+                                              aspectRatioMode=QtCore.Qt.KeepAspectRatio,
+                                              transformMode=QtCore.Qt.SmoothTransformation)"""
 
         self.label.setPixmap(pixmap)
         self.label.adjustSize()
@@ -277,6 +293,8 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         link = "https://uvispace.readthedocs.io/en/latest/"
         message = "App for the uvispace project <br> <a href='%s'>Project Web</a>" % link
         about = QMessageBox.about(self, "About...", message)
+
+
 
 
 app = QtWidgets.QApplication(sys.argv)
