@@ -7,13 +7,13 @@ import math
 
 GRID_WIDTH = 15
 GRID_HEIGHT = 15
-x_trajectory = [5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0]
-y_trajectory = [5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0]
+x_trajectory = np.linspace(5.0, 5.0, 11)
+y_trajectory = np.linspace(5.0, 10.0, 11)
 EPISODES = 500
 
 
 class UgvEnv:
-    def __init__(self):
+    def __init__(self, m1, m2):
         # Size of the space
         self.max_x = GRID_WIDTH
         self.max_y = GRID_HEIGHT
@@ -22,12 +22,16 @@ class UgvEnv:
         self.ro = 0.0325  # [m]
         self.diameter = 0.133  # [m]
         self.time = (1 / 30)  # frames per second
+        self.m1 = m1
+        self.m2 = m2
+        self.x_edge = 2.0
+        self.y_edge = 2.0
 
     def reset(self):
         # Reset the environment (start a new episode)
-        self.x = 0
+        self.x = 5.0
         self.y = 0
-        self.theta = 0
+        # self.theta = 0
         self.state = np.matrix([self.x, self.y])
         return self.state
 
@@ -47,20 +51,36 @@ class UgvEnv:
         self.y = self.v_linear * math.sin(self.w_angular * self.time) * self.time
 
         # Calculate reward
+        if self._distance(self.x, self.y) > \
+                math.sqrt(self.x_edge * self.x_edge + self.y_edge * self.y_edge):
+            # Outside of borders
+            reward = -100
+            self.x = 5.0
+            self.y = 0.0
+        else:
+            reward = - (self._distance(self.x, self.y))
 
         # Calculate done
+        if (self.x == x_trajectory[len(x_trajectory) - 1]) and \
+                (self.y == y_trajectory[len(y_trajectory) - 1]):
+            done = 1
+        else:
+            done = 0
 
         return self.state, reward, done, None
 
-    def _distance(self, x, y):
-        if (y == 0) and (x > 0) and (x < (self.max_x - 1)):
+    def _distance(self, x, y):  # TO DO
+        return
+
+    """ def _outside_border(self, x, y):
+        if (x < 3) or (x > 7):  # TO DO
             return True
         else:
-            return False
+            return False """
 
 
 class Agent:
-    def __init__(self, agent_type = "SARSA"):
+    def __init__(self, agent_type="SARSA"):
         self.agent_type = agent_type
         self._build_model()
 
@@ -84,7 +104,7 @@ class Agent:
                     if not ((y == 0) and (x == (GRID_WIDTH - 1))):
                         self.model[x, y, action] = -12  # np.random.rand()*-100
 
-    def _choose_action(self, state):
+    def _choose_action(self, state):  # We need to do the action here
         if np.random.rand() <= self.epsilon:
             action = random.randrange(4)
         else:
@@ -111,10 +131,10 @@ class Agent:
             new_action = self._choose_action(new_state)
 
             # Q(S;A)<-Q(S;A) + alfa[R + ganma*Q(S';A') - Q(S;A)]
-            self.model[state[0,0], state[0,1], action] \
-                += self.ALFA* \
+            self.model[state[0, 0], state[0, 1], action] \
+                += self.ALFA * \
                 (reward + self.GANMA*self.predict(new_state)[new_action]
-                - self.predict(state)[action])
+                 - self.predict(state)[action])
             state = new_state
             action = new_action
             episode_reward += reward
@@ -132,10 +152,10 @@ class Agent:
             new_state, reward, done, _ = env.step(action)
 
             # Q(S;A)<-Q(S;A) + alfa[R + ganma*maxQ(S';a) - Q(S;A)]
-            self.model[state[0,0], state[0,1], action] \
-                += self.ALFA* \
+            self.model[state[0, 0], state[0, 1], action] \
+                += self.ALFA * \
                 (reward + self.GANMA*np.amax(self.predict(new_state))
-                - self.predict(state)[action])
+                 - self.predict(state)[action])
             state = new_state
             episode_reward += reward
         self.epsilon *= self.EPSILON_DECAY
@@ -153,10 +173,10 @@ class Agent:
             new_action = self._choose_action(new_state)
 
             # Q(S;A)<-Q(S;A) + alfa[R + E[Q(S';A')|S'] - Q(S;A)]
-            self.model[state[0,0], state[0,1], action] \
-                += self.ALFA* \
+            self.model[state[0, 0], state[0, 1], action] \
+                += self.ALFA * \
                 (reward + self.GANMA*(1/4)*np.sum(self.predict(new_state))
-                - self.predict(state)[action])
+                 - self.predict(state)[action])
             state = new_state
             action = new_action
             episode_reward += reward
@@ -177,14 +197,14 @@ class Agent:
         S.append(state)
         A.append(action)
         T = float("inf")
-        t=0
+        t = 0
         while not done:
             new_state, reward, done, _ = env.step(action)
             episode_reward += reward
             R.append(reward)
             S.append(new_state)
             if done:  # if St+1 terminal
-                T = t + 1;
+                T = t + 1
             else:
                 action = self._choose_action(new_state)
                 A.append(action)
@@ -192,17 +212,17 @@ class Agent:
             tau = t - N + 1
             if tau >= 0:
                 G = 0.0
-                for i in range(tau+1, min(tau+N,T)):
+                for i in range(tau+1, min(tau+N, T)):
                     G += (self.GANMA**(i-tau-1)) * R[i]
-                if (tau + N < T):
+                if tau + N < T:
                     G = G + (self.GANMA**N)*self.predict(S[tau+N])[A[tau+N]]
 
                     # Q(S;A)<-Q(S;A) + alfa[R + ganma*Q(S';A') - Q(S;A)]
-                    self.model[S[tau][0,0], S[tau][0,1], A[tau]] \
-                    += self.ALFA* (G - self.predict(S[tau])[A[tau]])
+                    self.model[S[tau][0, 0], S[tau][0, 1], A[tau]] \
+                        += self.ALFA * (G - self.predict(S[tau])[A[tau]])
 
             if tau == T - 1:
-              break
+                break
 
             # Count the time
             t += 1
@@ -219,22 +239,23 @@ class Agent:
 
 if __name__ == "__main__":
 
-    agent_types = ["SARSA","Q-Learning","Expected SARSA"]
+    agent_types = ["SARSA", "Q-Learning", "Expected SARSA"]
     # agent_types = ["n-step SARSA"]
 
     # Train
     rewards = {}
     rewards_average = {}
     for i in range(len(agent_types)):
-        env = UgvEnv()
+        env = UgvEnv()  # Rellenar parámetros de m1 y m2
         agent = Agent(agent_types[i])
         rewards[i] = np.zeros([EPISODES])
         rewards_average[i] = np.zeros([EPISODES])
         for e in range(EPISODES):
             episode_reward, epsilon = agent.train_episode(env)
             rewards[i][e] = episode_reward
-            rewards_average[i][e] = np.mean(rewards[i][max(0,e-20):e])
-            print("episode: {} epsilon:{} reward:{} averaged reward:{}".format(e, epsilon, rewards[i][e], rewards_average[i][e]))
+            rewards_average[i][e] = np.mean(rewards[i][max(0, e-20):e])
+            print(f"episode: {e} epsilon:{epsilon} reward:{rewards[i][e]} "
+                  f"averaged reward:{rewards_average[i][e]}")
 
     # Plot
     fig, ax = plt.subplots()
