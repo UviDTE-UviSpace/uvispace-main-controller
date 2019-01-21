@@ -7,16 +7,24 @@ import math
 
 GRID_WIDTH = 15
 GRID_HEIGHT = 15
-x_trajectory = np.linspace(5.0, 5.0, 11)
-y_trajectory = np.linspace(5.0, 10.0, 11)
+x_trajectory = np.linspace(5.0, 5.0, 21)
+y_trajectory = np.linspace(5.0, 6.0, 21) # 5cm
 EPISODES = 500
 
 
 class UgvEnv:
+    time = ...  # type: float
+    a = int
+
     def __init__(self, m1, m2):
         # Size of the space
         self.max_x = GRID_WIDTH
         self.max_y = GRID_HEIGHT
+        self.x = float
+        self.y = float
+        self.v_linear = float
+        self.w_ang = float
+        self.state = []
         self.x_goal = x_trajectory
         self.y_goal = y_trajectory
         self.ro = 0.0325  # [m]
@@ -24,8 +32,10 @@ class UgvEnv:
         self.time = (1 / 30)  # frames per second
         self.m1 = m1
         self.m2 = m2
-        self.x_edge = 2.0
-        self.y_edge = 2.0
+        self.x_edge = 0.1
+        self.y_edge = 0.1
+        self.distance = float
+
 
     def reset(self):
         # Reset the environment (start a new episode)
@@ -44,19 +54,18 @@ class UgvEnv:
 
         # Calculate linear and angular velocity
         self.v_linear = (wm2 + wm1) * (self.ro / 2)
-        self.w_angular = (wm2 - wm1) * (self.diameter / (4 * self.ro))
+        self.w_ang = (wm2 - wm1) * (self.diameter / (4 * self.ro))
 
         # Calculate position
-        self.x = self.v_linear * math.cos(self.w_angular * self.time) * self.time
-        self.y = self.v_linear * math.sin(self.w_angular * self.time) * self.time
+        self.x = self.v_linear * math.cos(self.w_ang * self.time) * self.time
+        self.y = self.v_linear * math.sin(self.w_ang * self.time) * self.time
 
         # Calculate reward
-        if self._distance(self.x, self.y) > \
-                math.sqrt(self.x_edge * self.x_edge + self.y_edge * self.y_edge):
+        if self._distance(self.x, self.y) > (self.x_edge**2 + self.y_edge**2):
             # Outside of borders
             reward = -100
             self.x = 5.0
-            self.y = 0.0
+            self.y = 5.0
         else:
             reward = - (self._distance(self.x, self.y))
 
@@ -70,13 +79,10 @@ class UgvEnv:
         return self.state, reward, done, None
 
     def _distance(self, x, y):  # TO DO
-        return
-
-    """ def _outside_border(self, x, y):
-        if (x < 3) or (x > 7):  # TO DO
-            return True
-        else:
-            return False """
+        self.distance = (x_trajectory[self.a]**2 + y_trajectory[self.a]**2) - \
+                        (x**2 + y**2)
+        self.a += 1
+        return self.distance
 
 
 class Agent:
@@ -254,8 +260,8 @@ if __name__ == "__main__":
             episode_reward, epsilon = agent.train_episode(env)
             rewards[i][e] = episode_reward
             rewards_average[i][e] = np.mean(rewards[i][max(0, e-20):e])
-            print(f"episode: {e} epsilon:{epsilon} reward:{rewards[i][e]} "
-                  f"averaged reward:{rewards_average[i][e]}")
+            print("episode: {} epsilon:{} reward:{} averaged reward:{}"
+                  .format(e, epsilon, rewards[i][e], rewards_average[i][e]))
 
     # Plot
     fig, ax = plt.subplots()
