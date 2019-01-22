@@ -17,7 +17,7 @@ from PIL import Image, ImageQt
 
 # proprietary libraries
 import mainwindowinterface
-import image_procesing
+import image_load
 import load_csv
 
 
@@ -184,15 +184,20 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         self.actionOpen_csv.triggered.connect(self.__loadfileswindow)
 
         # load cameras IP
-        self.cameras_IPs = image_procesing.loadips()
+        self.cameras_IPs = image_load.loadips()
         logger.info("Cameras IPs loaded")
         print(self.cameras_IPs)
+
         # load cameras size
-        self.cameras_size = image_procesing.load_image_size()
+        self.cameras_size = image_load.load_image_size()
         logger.info("Cameras size loaded")
         print(self.cameras_size)
+
         # file button event
         self.file_Button.clicked.connect(self.__loadfileswindow)
+
+        #options checks
+        #self.grid_check.clicked.connect(self.options_checks)
 
         # add Car Widget using QlistWidget
         itemN = QListWidgetItem(self.listWidget)
@@ -221,6 +226,8 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         self.listWidget.setItemWidget(item2, widget3)
         widget3.label_UGV.setText("Coche 3")
         logger.info("Car 3 added")
+
+
 
     def update_logger_level(self):
         """Evaluate the check boxes states and update logger level."""
@@ -264,9 +271,15 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
 
         """
         # get the image
-        image_np = image_procesing.image_stack(self.cameras_IPs,
-                                               self.cameras_size,
-                                               self.__check_img_type())
+        image_np = image_load.image_stack(self.cameras_IPs,
+                                          self.cameras_size,
+                                          self.__check_img_type())
+
+        #checks the grid, car or path ckecks and draws them if neccesary
+        if self.grid_check.isChecked():
+            image_load.draw_grid(image_np)
+
+
 
         # update the image label
 
@@ -276,10 +289,9 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         qim = ImageQt.ImageQt(pilimage)  # type: ImageQt
         qima = QImage(qim)
 
-
         pixmap = QPixmap.fromImage(qima).scaled(self.label.size(),
-                                              aspectRatioMode= QtCore.Qt.KeepAspectRatio,
-                                              transformMode = QtCore.Qt.SmoothTransformation)
+                                                aspectRatioMode= QtCore.Qt.KeepAspectRatio,
+                                                transformMode = QtCore.Qt.SmoothTransformation)
         """pixmap = QPixmap('salida.jpg').scaled(self.label.size(),
                                               aspectRatioMode=QtCore.Qt.KeepAspectRatio,
                                               transformMode=QtCore.Qt.SmoothTransformation)"""
@@ -288,13 +300,15 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         self.label.adjustSize()
         self.label.setScaledContents(True)
 
+        # //TODO options checks for grid, ugv and path
+
+        # //TODO draw car function
+
     def about_message(self):
         # about message with a link to the main project web
         link = "https://uvispace.readthedocs.io/en/latest/"
         message = "App for the uvispace project <br> <a href='%s'>Project Web</a>" % link
         about = QMessageBox.about(self, "About...", message)
-
-
 
 
 app = QtWidgets.QApplication(sys.argv)
