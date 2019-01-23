@@ -6,20 +6,19 @@ import matplotlib.pyplot as plt
 import math
 
 GRID_WIDTH = 15
-GRID_HEIGHT = 15
-x_trajectory = np.linspace(5.0, 5.0, 21)
-y_trajectory = np.linspace(5.0, 6.0, 21) # 5cm
+GRID_HEIGHT = 15  # Change
+x_trajectory = np.linspace(5.0, 5.0, 21)  # Change
+y_trajectory = np.linspace(5.0, 6.0, 21)  # 5cm
 EPISODES = 500
 
 
 class UgvEnv:
-    time = ...  # type: float
     a = int
 
     def __init__(self, m1, m2):
         # Size of the space
-        self.max_x = GRID_WIDTH
-        self.max_y = GRID_HEIGHT
+        self.max_x = 4
+        self.max_y = 3
         self.x = float
         self.y = float
         self.v_linear = float
@@ -35,7 +34,8 @@ class UgvEnv:
         self.x_edge = 0.1
         self.y_edge = 0.1
         self.distance = float
-
+        self.steps = int
+        self.max_steps = 100
 
     def reset(self):
         # Reset the environment (start a new episode)
@@ -51,6 +51,8 @@ class UgvEnv:
         real_m2 = m2 - 127
         wm1 = (42.77 * real_m1 / 128)
         wm2 = (42.77 * real_m2 / 128)
+
+        self.steps += 1
 
         # Calculate linear and angular velocity
         self.v_linear = (wm2 + wm1) * (self.ro / 2)
@@ -73,6 +75,13 @@ class UgvEnv:
         if (self.x == x_trajectory[len(x_trajectory) - 1]) and \
                 (self.y == y_trajectory[len(y_trajectory) - 1]):
             done = 1
+            self.steps = 0
+        elif (self.x > self.max_x) or (self.y > self.max_y):
+            done = 1
+            self.steps = 0
+        elif self.steps >= self.max_steps:
+            done = 1
+            self.steps = 0
         else:
             done = 0
 
@@ -99,7 +108,7 @@ class Agent:
         # Reset the training variables
         self.epsilon = 1.0
 
-    def _build_model(self):
+    def _build_model(self):  # Re do the size of the table
         # Create the model all with zeros
         self.model = np.zeros([GRID_WIDTH, GRID_HEIGHT, 4])
 
@@ -128,10 +137,13 @@ class Agent:
             return self._train_nstep_sarsa(env)
 
     def _train_sarsa(self, env):
+        # Init of the function -------------------------------------------------
         state = env.reset
         action = self._choose_action(state)
         done = False
         episode_reward = 0
+
+        # ----------------------------------------------------------------------
         while not done:
             new_state, reward, done, _ = env.step(action)
             new_action = self._choose_action(new_state)
@@ -144,15 +156,20 @@ class Agent:
             state = new_state
             action = new_action
             episode_reward += reward
+
+        # ----------------------------------------------------------------------
         self.epsilon *= self.EPSILON_DECAY
         if self.epsilon < self.EPSILON_MIN:
             self.epsilon = self.EPSILON_MIN
         return episode_reward, self.epsilon
 
     def _train_qlearning(self, env):
+        # Init of the function -------------------------------------------------
         state = env.reset
         done = False
         episode_reward = 0
+
+        # ----------------------------------------------------------------------
         while not done:
             action = self._choose_action(state)
             new_state, reward, done, _ = env.step(action)
@@ -164,16 +181,21 @@ class Agent:
                  - self.predict(state)[action])
             state = new_state
             episode_reward += reward
+
+        # ----------------------------------------------------------------------
         self.epsilon *= self.EPSILON_DECAY
         if self.epsilon < self.EPSILON_MIN:
             self.epsilon = self.EPSILON_MIN
         return episode_reward, self.epsilon
 
     def _train_expected_sarsa(self, env):
+        # Init of the function -------------------------------------------------
         state = env.reset
         action = self._choose_action(state)
         done = False
         episode_reward = 0
+
+        # ----------------------------------------------------------------------
         while not done:
             new_state, reward, done, _ = env.step(action)
             new_action = self._choose_action(new_state)
@@ -186,12 +208,15 @@ class Agent:
             state = new_state
             action = new_action
             episode_reward += reward
+
+        # ----------------------------------------------------------------------
         self.epsilon *= self.EPSILON_DECAY
         if self.epsilon < self.EPSILON_MIN:
             self.epsilon = self.EPSILON_MIN
         return episode_reward, self.epsilon
 
     def _train_nstep_sarsa(self, env):
+        # Init of the function -------------------------------------------------
         N = 3
         R = deque()
         A = deque()
@@ -204,6 +229,8 @@ class Agent:
         A.append(action)
         T = float("inf")
         t = 0
+
+        # ----------------------------------------------------------------------
         while not done:
             new_state, reward, done, _ = env.step(action)
             episode_reward += reward
@@ -226,13 +253,13 @@ class Agent:
                     # Q(S;A)<-Q(S;A) + alfa[R + ganma*Q(S';A') - Q(S;A)]
                     self.model[S[tau][0, 0], S[tau][0, 1], A[tau]] \
                         += self.ALFA * (G - self.predict(S[tau])[A[tau]])
-
             if tau == T - 1:
                 break
 
             # Count the time
             t += 1
 
+        # ----------------------------------------------------------------------
         self.epsilon *= self.EPSILON_DECAY
         if self.epsilon < self.EPSILON_MIN:
             self.epsilon = self.EPSILON_MIN
