@@ -7,8 +7,8 @@ import math
 
 GRID_WIDTH = 15
 GRID_HEIGHT = 15  # Change
-x_trajectory = np.linspace(5.0, 5.0, 21)  # Change
-y_trajectory = np.linspace(5.0, 6.0, 21)  # 5cm
+x_trajectory = np.linspace(0.2, 0.2, 201)
+y_trajectory = np.linspace(0.2, 1.2, 201)  # 5mm
 EPISODES = 500
 
 
@@ -17,7 +17,7 @@ class UgvEnv:
 
     def __init__(self, m1, m2):
         # Size of the space
-        self.max_x = 4
+        self.max_x = 4  # [m]
         self.max_y = 3
         self.x = float
         self.y = float
