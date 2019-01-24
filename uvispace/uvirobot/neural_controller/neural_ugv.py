@@ -36,6 +36,10 @@ class UgvEnv:
         self.distance = float
         self.steps = int
         self.max_steps = 100
+        self.zone = int
+        self.zone_0_limit = 0.00045  # [m]
+        self.zone_1_limit = 0.0032  # [m]
+        self.zone_2_limit = 0.0050  # [m]
 
     def reset(self):
         # Reset the environment (start a new episode)
@@ -52,8 +56,6 @@ class UgvEnv:
         wm1 = (42.77 * real_m1 / 128)
         wm2 = (42.77 * real_m2 / 128)
 
-        self.steps += 1
-
         # Calculate linear and angular velocity
         self.v_linear = (wm2 + wm1) * (self.ro / 2)
         self.w_ang = (wm2 - wm1) * (self.diameter / (4 * self.ro))
@@ -62,7 +64,9 @@ class UgvEnv:
         self.x = self.v_linear * math.cos(self.w_ang * self.time) * self.time
         self.y = self.v_linear * math.sin(self.w_ang * self.time) * self.time
 
-        # Calculate reward
+        self.steps += 1
+
+        # Calculate reward CAMBIARRRRRRRRRRRR
         if self._distance(self.x, self.y) > (self.x_edge**2 + self.y_edge**2):
             # Outside of borders
             reward = -100
@@ -75,23 +79,44 @@ class UgvEnv:
         if (self.x == x_trajectory[len(x_trajectory) - 1]) and \
                 (self.y == y_trajectory[len(y_trajectory) - 1]):
             done = 1
+            reward = 10
             self.steps = 0
         elif (self.x > self.max_x) or (self.y > self.max_y):
             done = 1
             self.steps = 0
+            reward = -10
         elif self.steps >= self.max_steps:
             done = 1
             self.steps = 0
+            reward = -10
+        elif self.zone == 3:  # se non se chamou á función que o calcula, queda gardado o valor anterior?
+            done = 1
+            self.steps = 0
+            reward = -10
         else:
             done = 0
 
         return self.state, reward, done, None
 
-    def _distance(self, x, y):  # TO DO
+    def _distance_next(self, x, y):  # TO DO FALTA RECORRER O ARRAY DOS PUNTOS E VER CAL É O MÁIS CERCANO, CHEGARÍA CON RECORRER OS 5 ANTERIORES E OS 10 POSTERIORES DESDE ONDE ESTÁS TI
         self.distance = (x_trajectory[self.a]**2 + y_trajectory[self.a]**2) - \
                         (x**2 + y**2)
         self.a += 1
-        return self.distance
+
+        if self.distance < self.zone_0_limit:
+            self.zone = -1
+        elif self.distance < self.zone_1_limit:
+            self.zone = 1
+        elif self.distance < self.zone_2_limit:
+            self.zone = 2
+        else:
+            self.zone = 3
+        return self.zone
+
+    def _distance_covered(self, x, y):
+
+        # Se calcula la distancia recorrida respecto al punto anterior
+        return self.gap
 
 
 class Agent:
