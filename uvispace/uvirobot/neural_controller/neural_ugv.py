@@ -18,9 +18,10 @@ class UgvEnv:
     def __init__(self, m1, m2):
         # Size of the space
         self.max_x = 4  # [m]
-        self.max_y = 3
+        self.max_y = 3  # [m]
         self.x = float
         self.y = float
+        # self.theta = float  # Ojo, funciones en radianes
         self.v_linear = float
         self.w_ang = float
         self.state = []
@@ -44,9 +45,9 @@ class UgvEnv:
     def reset(self):
         # Reset the environment (start a new episode)
         self.x = 5.0
-        self.y = 0
+        self.y = 5.0
         # self.theta = 0
-        self.state = np.matrix([self.x, self.y])
+        # self.state = np.matrix([self.x, self.y])
         return self.state
 
     def step(self, m1, m2):  # m1 = left_motor, m2 = right_motor
@@ -66,16 +67,7 @@ class UgvEnv:
 
         self.steps += 1
 
-        # Calculate reward CAMBIARRRRRRRRRRRR
-        if self._distance(self.x, self.y) > (self.x_edge**2 + self.y_edge**2):
-            # Outside of borders
-            reward = -100
-            self.x = 5.0
-            self.y = 5.0
-        else:
-            reward = - (self._distance(self.x, self.y))
-
-        # Calculate done
+        # Calculate done and reward
         if (self.x == x_trajectory[len(x_trajectory) - 1]) and \
                 (self.y == y_trajectory[len(y_trajectory) - 1]):
             done = 1
@@ -95,6 +87,7 @@ class UgvEnv:
             reward = -10
         else:
             done = 0
+            reward = - (self._distance(self.x, self.y))
 
         return self.state, reward, done, None
 
@@ -111,11 +104,13 @@ class UgvEnv:
             self.zone = 2
         else:
             self.zone = 3
-        return self.zone
+        return self.zone, self.distance
 
     def _distance_covered(self, x, y):
-
-        # Se calcula la distancia recorrida respecto al punto anterior
+        # Calculation of distance traveled compared to the previous point
+        self.gap = (x**2 + y**2) - (self.x_ant**2 + self.y_ant**2)
+        self.x_ant = x
+        self.y_ant = y
         return self.gap
 
 
