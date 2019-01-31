@@ -23,7 +23,7 @@ class PlotUgv:
         self.period = period
 
     def _begin(self):
-        
+
         self.ax.set_ylim(self.y_origin-0.5,
                          self.yellow_back_y + self.y_origin+0.5)
 
