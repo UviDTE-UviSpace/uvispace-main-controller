@@ -10,7 +10,7 @@ from collections import deque
 import matplotlib.pyplot as plt
 import math
 
-import plot_ugv
+from plot_ugv import PlotUgv
 
 # Size of Uvispace area
 SPACE_X = 4
@@ -33,9 +33,10 @@ ZONE1_LIMIT = 0.0032  # Up to 5.6 cm
 ZONE2_LIMIT = 0.0050  # Up to 7.1 cm
 # Init to zero?
 INIT_TO_ZERO = False
-
+# Define trajectory
 x_trajectory = np.linspace(0.2, 0.2, 201)
 y_trajectory = np.linspace(0.2, 1.2, 201)  # 5mm
+# Number of episodes
 EPISODES = 500
 
 
@@ -43,49 +44,43 @@ class UgvEnv:
     a = int
 
     def __init__(self):
+
         # Size of the space
         self.max_x = SPACE_X / 2  # [m]
         self.max_y = SPACE_Y / 2  # [m]
-        self.x = float
-        self.y = float
-        self.theta = float  # Ojo, funciones en radianes
-        self.v_linear = float
-        self.w_ang = float
         self.state = []
         self.x_goal = x_trajectory
         self.y_goal = y_trajectory
         self.ro = 0.0325  # [m]
         self.diameter = 0.133  # [m]
         self.time = PERIOD  # frames per second
-        self.distance = float
-        self.steps = int
         self.max_steps = MAX_STEPS
-        self.zone = int
         self.constant = -0.1
+        self.x_ant = 0.0
+        self.y_ant = 0.0
         # Sqr of the limit distance
         self.zone_0_limit = ZONE0_LIMIT
         self.zone_1_limit = ZONE1_LIMIT
         self.zone_2_limit = ZONE2_LIMIT
-        self.last_index = int
 
     def reset(self):
+
         # Reset the environment (start a new episode)
         self.y = 0.2
         self.x = 0.2
         self.theta = 0
         self.steps = 0
-        # self.state = np.matrix([self.x, self.y])
         self.index = 0
 
-        self.state = [self.x, self.y, self.theta]
         self._distance_next()
         self._calc_delta_theta()
 
         # discretize state for the agent to control
         self._discretize_agent_state()
+
         self.agent_state = [self.discrete_distance, self.discrete_delta_theta]
 
-        ## create state x,y,theta)
+        # Create state (x,y,theta)
         self.state = [self.x, self.y, self.theta]
 
         return self.state, self.agent_state
@@ -103,15 +98,15 @@ class UgvEnv:
         self.w_ang = (wm2 - wm1) * (self.diameter / (4 * self.ro))
 
         # Calculate position and theta
-        self.x = self.x + self.v_linear * math.cos(self.w_ang * self.time) * self.time
-        self.y = self.y + self.v_linear * math.sin(self.w_ang * self.time) * self.time
+        self.x = self.x + self.v_linear * math.cos(self.w_ang
+                                                   * self.time) * self.time
+        self.y = self.y + self.v_linear * math.sin(self.w_ang
+                                                   * self.time) * self.time
         self.theta = self.theta + self.w_ang * self.time
 
-        self.steps += 1
-
-        # Calculate the distance to the closest point in trajectory, zone
-        # depending on distance, delta theta (ugv to trajectory) and
-        # distance covered in this step
+        # Calculate the distance to the closest point in trajectory,
+        # depending on distance, delta theta (ugv to trajectory) and distance
+        # covered in this step
         self._distance_next()
         self._calc_zone()
         self._calc_delta_theta()
@@ -122,7 +117,8 @@ class UgvEnv:
             done = 1
             reward = 20
 
-        elif (self.x > self.max_x) or (self.x < -self.max_x) or (self.y < -self.max_y) or (self.y > self.max_y):
+        elif (self.x > self.max_x) or (self.x < -self.max_x) or \
+                (self.y < -self.max_y) or (self.y > self.max_y):
             done = 1
             reward = -10
 
@@ -130,23 +126,23 @@ class UgvEnv:
             done = 1
             reward = -20
 
-        elif self.zone == 3:
+        elif self.zone_reward == 3:
             done = 1
             reward = -10
 
         else:
             done = 0
-            reward = (-1 * BETA_DIST * self.distance) + BETA_GAP * self.gap - BETA_ZONE * self.zone_reward
+            reward = (-1 * BETA_DIST * self.distance) + BETA_GAP * self.gap \
+                     - BETA_ZONE * self.zone_reward
 
-        ## discretize state for the agent to control
+        # Discretize state for the agent to control
         self._discretize_agent_state()
         self.agent_state = [self.discrete_distance, self.discrete_delta_theta]
 
-        ## create state x,y,theta)
+        # Create state (x,y,theta)
         self.state = [self.x, self.y, self.theta]
 
         return self.state, self.agent_state, reward, done, None
-
 
     def _distance_next(self):
 
@@ -160,14 +156,20 @@ class UgvEnv:
                 self.index = w
 
     def _calc_delta_theta(self):
-        # difference between the vehicle angle and the trajectory angle
+
+        # Difference between the vehicle angle and the trajectory angle
         next_index = self.index+1
+
         if next_index >= len(x_trajectory):
             next_index = self.index
 
-        self.delta_theta = math.atan2((y_trajectory[next_index]-y_trajectory[self.index]), (x_trajectory[next_index]-x_trajectory[self.index]))
+        self.delta_theta = math.atan2((y_trajectory[next_index]
+                                       - y_trajectory[self.index]),
+                                      (x_trajectory[next_index]
+                                       - x_trajectory[self.index]))
 
     def _calc_zone(self):
+
         if self.distance < self.zone_0_limit:
             self.zone_reward = -1
         elif self.distance < self.zone_1_limit:
@@ -179,27 +181,30 @@ class UgvEnv:
 
         return
 
-    def _distance_covered(self, x, y):
+    def _distance_covered(self):
+
         # Calculation of distance traveled compared to the previous point
-        self.gap = (x**2 + y**2) - (self.x_ant**2 + self.y_ant**2)
-        self.x_ant = x
-        self.y_ant = y
+        self.gap = (self.x**2 + self.y**2) - (self.x_ant**2 + self.y_ant**2)
+        self.x_ant = self.x
+        self.y_ant = self.y
+
         return
 
     def _discretize_agent_state(self):
 
         left_band = -(((NUM_DIV_STATE-1)/2) - 0.5)
+
         self.discrete_distance = 0
         for div in range(NUM_DIV_STATE-1):
             if self.distance > ((left_band + div) * BAND_WIDTH):
                 self.discrete_distance = div + 1
 
         angle_band_width = math.pi/(NUM_DIV_STATE - 2)
+
         self.discrete_delta_theta = 0
         for div in range(NUM_DIV_STATE - 1):
             if self.discrete_delta_theta > (left_band + div) * angle_band_width:
                 self.discrete_delta_theta = div + 1
-
 
     def _dediscretize_action(self, action):
 
@@ -213,20 +218,25 @@ class UgvEnv:
 
 
 class Agent:
-    def __init__(self, agent_type = "SARSA"):
+    def __init__(self, agent_type="SARSA"):
         self.agent_type = agent_type
         self._build_model()
+
         # Define some constants for the learning
         self.EPSILON_DECAY = 0.95
         self.EPSILON_MIN = 0.0
-        self.ALFA = 0.04 # learning rate
-        self.GANMA = 0.95 # disccount factor
+        self.ALFA = 0.04  # learning rate
+        self.GANMA = 0.95  # discount factor
+
         # Reset the training variables
         self.epsilon = 1.0
 
     def _build_model(self):
+
         # Create the model all with zeros
-        self.model = np.zeros([NUM_DIV_STATE, NUM_DIV_STATE, NUM_DIV_ACTION, NUM_DIV_ACTION])
+        self.model = np.zeros([NUM_DIV_STATE, NUM_DIV_STATE,
+                               NUM_DIV_ACTION, NUM_DIV_ACTION])
+
         # Initialize random Q table (except the terminal state that is 0)
         for distance in range(NUM_DIV_STATE):
             for delta_theta in range(NUM_DIV_STATE):
@@ -237,51 +247,73 @@ class Agent:
                         else:
                             if delta_theta == 0:
                                 if m1 == m2:
-                                    self.model[distance, delta_theta, m1, m2] = 10
+                                    self.model[distance, delta_theta, m1, m2] \
+                                        = 10
                                 else:
-                                    self.model[distance, delta_theta, m1, m2] = -10
+                                    self.model[distance, delta_theta, m1, m2] \
+                                        = -10
                             elif delta_theta < 0:
                                 if m1 > m2:
-                                    self.model[distance, delta_theta, m1, m2] = 10
+                                    self.model[distance, delta_theta, m1, m2] \
+                                        = 10
                                 else:
-                                    self.model[distance, delta_theta, m1, m2] = -10
+                                    self.model[distance, delta_theta, m1, m2] \
+                                        = -10
                             else:
                                 if m1 < m2:
-                                    self.model[distance, delta_theta, m1, m2] = 10
+                                    self.model[distance, delta_theta, m1, m2] \
+                                        = 10
                                 else:
-                                    self.model[distance, delta_theta, m1, m2] = -10
+                                    self.model[distance, delta_theta, m1, m2] \
+                                        = -10
 
     def _choose_action(self, agent_state):
+
         if np.random.rand() <= self.epsilon:
-            action = [random.randrange(NUM_DIV_ACTION), random.randrange(NUM_DIV_ACTION)]
+            action = [random.randrange(NUM_DIV_ACTION),
+                      random.randrange(NUM_DIV_ACTION)]
         else:
             A = self.predict(agent_state)
             row_max = math.floor(np.argmax(A)/3)
             col_max = np.argmax(A)-3*math.floor(np.argmax(A)/3)
             action = [row_max, col_max]
+
         return action
 
     def predict(self, agent_state):
+
         ret_val = self.model[agent_state[0], agent_state[1], :, :]
+
         return ret_val
 
     def init_episode(self, env):
+
         if self.agent_type == "SARSA":
+
             return self._init_episode_sarsa_qlearning(env)
+
         if self.agent_type == "Q-Learning":
+
             return self._init_episode_sarsa_qlearning(env)
+
         if self.agent_type == "Expected SARSA":
+
             return self._init_episode_sarsa_qlearning(env)
+
         if self.agent_type == "n-step SARSA":
+
             return self._init_episode_n_step_sarsa(env)
 
     def _init_episode_sarsa_qlearning(self, env):
-        self.state, self.agent_state  = env.reset()
+
+        self.state, self.agent_state = env.reset()
         self.action = self._choose_action(self.agent_state)
+
         return self.state
 
     def _init_episode_n_step_sarsa(self, env):
-        self.N=3
+
+        self.N = 3
         self.R = deque()
         self.A = deque()
         self.S = deque()
@@ -290,71 +322,101 @@ class Agent:
         self.S.append(self.agent_state)
         self.A.append(self.action)
         self.T = float("inf")
-        self.t=0
+        self.t = 0
 
     def train_step(self, env):
+
         if self.agent_type == "SARSA":
+
             return self._train_step_sarsa(env)
+
         if self.agent_type == "Q-Learning":
+
             return self._train_step_qlearning(env)
+
         if self.agent_type == "Expected SARSA":
+
             return self._train_step_expected_sarsa(env)
+
         if self.agent_type == "n-step SARSA":
+
             return self._train_step_nstep_sarsa(env)
 
     def _train_step_sarsa(self, env):
+
         new_state, new_agent_state, reward, done, _ = env.step(self.action)
         new_action = self._choose_action(new_agent_state)
+
         # Q(S;A)<-Q(S;A) + alfa[R + ganma*Q(S';A') - Q(S;A)]
-        self.model[self.agent_state[0,0], self.agent_state[0, 1], self.action[0,0], self.action[0,1]] \
-            += self.ALFA* \
-            (reward + self.GANMA*self.predict(new_agent_state)[new_action[0], new_action[1]] \
-            - self.predict(self.state)[self.action])
+
+        self.model[self.agent_state[0, 0], self.agent_state[0, 1],
+                   self.action[0, 0], self.action[0, 1]] \
+            += self.ALFA * (reward + self.GANMA
+                            * self.predict(new_agent_state)[new_action[0],
+                                                            new_action[1]]
+                            - self.predict(self.state)[self.action])
+
         self.agent_state = new_agent_state
         self.action = new_action
+
         if done:
             self.epsilon *= self.EPSILON_DECAY
             if self.epsilon < self.EPSILON_MIN:
                 self.epsilon = self.EPSILON_MIN
+
         return new_state, reward, done, self.epsilon
 
     def _train_step_qlearning(self, env):
+
         self.action = self._choose_action(self.state)
         new_state, new_agent_state, reward, done, _ = env.step(self.action)
+
         # Q(S;A)<-Q(S;A) + alfa[R + ganma*maxQ(S';a) - Q(S;A)]
-        self.model[self.state[0,0], self.state[0,1], self.action] \
-            += self.ALFA* \
-            (reward + self.GANMA*np.amax(self.predict(new_state)) \
-            - self.predict(self.state)[self.action])
+
+        self.model[self.state[0, 0], self.state[0, 1], self.action] \
+            += self.ALFA * (reward + self.GANMA*np.amax(self.predict(new_state))
+                            - self.predict(self.state)[self.action])
+
         self.state = new_state
+
         if done:
             self.epsilon *= self.EPSILON_DECAY
             if self.epsilon < self.EPSILON_MIN:
                 self.epsilon = self.EPSILON_MIN
+
         return new_state, reward, done, self.epsilon
 
     def _train_step_expected_sarsa(self, env):
+
         new_state, reward, done, _ = env.step(self.action)
         new_action = self._choose_action(new_state)
+
         # Q(S;A)<-Q(S;A) + alfa[R + E[Q(S';A')|S'] - Q(S;A)]
-        self.model[self.state[0,0], self.state[0,1], self.action] \
-            += self.ALFA* \
-            (reward + self.GANMA*(1/4)*np.sum(self.predict(new_state)) \
-            - self.predict(self.state)[self.action])
+
+        self.model[self.state[0, 0], self.state[0, 1], self.action] \
+            += self.ALFA * (reward + self.GANMA*(1/4)
+                            * np.sum(self.predict(new_state)) -
+                            self.predict(self.state)[self.action])
+
         self.state = new_state
         self.action = new_action
+
         if done:
             self.epsilon *= self.EPSILON_DECAY
             if self.epsilon < self.EPSILON_MIN:
                 self.epsilon = self.EPSILON_MIN
+
         return new_state, reward, done, self.epsilon
 
     def _train_step_nstep_sarsa(self, env):
+
         new_state, reward, done, _ = env.step(self.action)
+
         self.R.append(reward)
         self.S.append(new_state)
-        if done:#if St+1 terminal
-            self.T = self.t + 1;
+
+        if done:  # if St+1 terminal
+            self.T = self.t + 1
         else:
             self.action = self._choose_action(new_state)
             self.A.append(self.action)
@@ -362,55 +424,67 @@ class Agent:
         tau = self.t - self.N + 1
         if tau >= 0:
             G = 0.0
-            for i in range(tau+1, min(tau+self.N,self.T)):
+            for i in range(tau+1, min(tau+self.N, self.T)):
                 G += (self.GANMA**(i-tau-1)) * self.R[i]
-            if (tau + self.N < self.T):
-                G = G + (self.GANMA**self.N)\
-                *self.predict(self.S[tau+self.N])[self.A[tau+self.N]]
+            if tau + self.N < self.T:
+                G = G + (self.GANMA**self.N) \
+                    * self.predict(self.S[tau+self.N])[self.A[tau+self.N]]
+
                 # Q(S;A)<-Q(S;A) + alfa[R + ganma*Q(S';A') - Q(S;A)]
-                self.model[self.S[tau][0,0], self.S[tau][0,1], self.A[tau]] \
-                += self.ALFA* (G - self.predict(self.S[tau])[self.A[tau]])
+
+                self.model[self.S[tau][0, 0], self.S[tau][0, 1], self.A[tau]] \
+                    += self.ALFA * (G - self.predict(self.S[tau])[self.A[tau]])
 
         # Count the time
         if tau != self.T - 1:
-          self.t += 1
+            self.t += 1
 
         if done:
             self.epsilon *= self.EPSILON_DECAY
             if self.epsilon < self.EPSILON_MIN:
                 self.epsilon = self.EPSILON_MIN
+
         return new_state, reward, done, self.epsilon
 
 
 if __name__ == "__main__":
-    #agent_types = ["SARSA","Q-Learning","Expected SARSA"]#, "n-step SARSA"]
+
+    # agent_types = ["SARSA","Q-Learning","Expected SARSA"]#, "n-step SARSA"]
     agent_types = ["SARSA"]
 
     # Train
     epi_reward = {}
     epi_reward_average = {}
     plot_ugv = PlotUgv(SPACE_X, SPACE_Y, x_trajectory, y_trajectory, PERIOD)
+
     for i in range(len(agent_types)):
         env = UgvEnv()
         agent = Agent(agent_types[i])
         epi_reward[i] = np.zeros([EPISODES])
         epi_reward_average[i] = np.zeros([EPISODES])
+
         for e in range(EPISODES):
             state = agent.init_episode(env)
-            plot_ugv.reset(state[0],state[1],state[2])
+            plot_ugv.reset(state[0], state[1], state[2])
+
             done = False
             while not done:
                 state, reward, done, epsilon = agent.train_step(env)
                 epi_reward[i][e] += reward
-                plot_ugv.execute(state[0],state[1],state[2])
-            epi_reward_average[i][e] = np.mean(epi_reward[i][max(0,e-20):e])
-            print("episode: {} epsilon:{} reward:{} averaged reward:{}".format(e, epsilon, epi_reward[i][e], epi_reward_average[i][e]))
+                plot_ugv.execute(state[0], state[1], state[2])
+
+            epi_reward_average[i][e] = np.mean(epi_reward[i][max(0, e-20):e])
+            print("episode: {} epsilon:{} reward:{} averaged reward:{}".format
+                  (e, epsilon, epi_reward[i][e], epi_reward_average[i][e]))
 
     # Plot Rewards
     fig, ax = plt.subplots()
     fig.suptitle('Rewards')
+
     for j in range(len(epi_reward_average)):
-        ax.plot(range(len(epi_reward_average[j])), epi_reward_average[j], label=agent_types[j])
+        ax.plot(range(len(epi_reward_average[j])), epi_reward_average[j],
+                label=agent_types[j])
+
     legend = ax.legend(loc='lower right', shadow=True, fontsize='x-large')
     plt.xlabel("Episode")
     plt.ylabel("Reward")

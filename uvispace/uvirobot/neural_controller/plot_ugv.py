@@ -10,10 +10,10 @@ class PlotUgv:
         self.fig, self.ax = plt.subplots()
         self.arrayX = []*500  # max_steps
         self.arrayY = []*500
-        self.theta = angle  # Check
         self.yellow_back_x = x_limit
         self.yellow_back_y = y_limit
-        self.point, = self.ax.plot([], [], marker=(3, 0, angle), color='red')
+        self.point, = self.ax.plot([], [], marker=(3, 0, 90), color='red')
+        self.point2, = self.ax.plot([], [], 'r:')
         self.x_origin = 0
         self.y_origin = 0
         self.x_trajectory = x_trajectory
@@ -57,8 +57,8 @@ class PlotUgv:
         # self.theta = self.theta+20  # Check if is necessary
 
 
-d = PlotUgv(1, 2, 0, 3, 4, [1, 2, 2.5], [1, 2, 2.5])
-d.begin()
+"""d = PlotUgv(3, 4, [1, 2, 2.5], [1, 2, 2.5], 1/30)
+d._begin()
 i = 0
 b = 0
 angle = 0
@@ -69,4 +69,4 @@ while True:
     angle = -45
     d.execute(i+0.15, b, angle)
     if i == 10:
-        break
+        break"""
