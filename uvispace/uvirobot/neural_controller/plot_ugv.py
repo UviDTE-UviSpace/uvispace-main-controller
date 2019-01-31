@@ -7,6 +7,7 @@ import time
 class PlotUgv:
 
     def __init__(self, x_limit, y_limit, x_trajectory, y_trajectory, period):
+
         self.fig, self.ax = plt.subplots()
         self.arrayX = []*500  # max_steps
         self.arrayY = []*500
@@ -22,13 +23,19 @@ class PlotUgv:
         self.period = period
 
     def _begin(self):
-        self.ax.set_ylim(self.y_origin-0.5, self.yellow_back_y+self.y_origin+0.5)
-        self.ax.set_xlim(self.x_origin-0.5, self.x_origin+self.yellow_back_x+0.5)
+        
+        self.ax.set_ylim(self.y_origin-0.5,
+                         self.yellow_back_y + self.y_origin+0.5)
+
+        self.ax.set_xlim(self.x_origin-0.5,
+                         self.x_origin+self.yellow_back_x+0.5)
+
         self.ax.set_facecolor('xkcd:black')
 
         rect2 = ptch.Rectangle((self.x_origin, self.y_origin),
-                               self.yellow_back_x, self.yellow_back_y,
-                               linewidth=2, edgecolor='yellow', facecolor='none')
+                               self.yellow_back_x,
+                               self.yellow_back_y, linewidth=2,
+                               edgecolor='yellow', facecolor='none')
 
         self.ax.plot(self.x_trajectory, self.y_trajectory, 'tab:cyan',
                      linewidth=1.75,)
@@ -39,11 +46,12 @@ class PlotUgv:
         plt.draw()
 
     def reset(self, x, y, angle):
+
         self.point2, = self.ax.plot([], [], 'r:')
         self.execute(x, y, angle)
 
-
     def execute(self, x, y, angle):
+
         self.fig.canvas.draw()
         self.point.set_xdata(x)
         self.point.set_ydata(y)
