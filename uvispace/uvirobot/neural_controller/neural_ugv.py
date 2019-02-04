@@ -15,35 +15,27 @@ from plot_ugv import PlotUgv
 # Size of Uvispace area
 SPACE_X = 4
 SPACE_Y = 3
-
 # Maximum number of steps allowed
 MAX_STEPS = 500
-
 # Sampling period (time between 2 images)
 PERIOD = (1 / 30)
-
 # Reward weights
 BETA_DIST = 0.01
 BETA_GAP = 0.01
 BETA_ZONE = 0.01
-
 # Variable space quantization
 NUM_DIV_STATE = 5
 NUM_DIV_ACTION = 5
 BAND_WIDTH = 0.02
-
 # Define Reward Zones
-ZONE0_LIMIT = 0.021
-ZONE1_LIMIT = 0.056
-ZONE2_LIMIT = 0.071
-
+ZONE0_LIMIT = 0.00045  # Up to 2.1cm
+ZONE1_LIMIT = 0.0032  # Up to 5.6 cm
+ZONE2_LIMIT = 0.0050  # Up to 7.1 cm
 # Init to zero?
 INIT_TO_ZERO = False
-
 # Define trajectory
 x_trajectory = np.linspace(0.2, 0.2, 201)
 y_trajectory = np.linspace(0.2, 1.2, 201)  # 5mm
-
 # Number of episodes
 EPISODES = 500
 
@@ -157,9 +149,8 @@ class UgvEnv:
         self.distance = 10
 
         for w in range(self.index, self.index+6):
-            self.dist_point = math.sqrt((x_trajectory[w] - self.x)**2
-                                        + (y_trajectory[w] - self.y)**2)
-
+            self.dist_point = math.sqrt((x_trajectory[w] - self.x)**2 +
+                                        (y_trajectory[w] - self.y)**2)
             if self.dist_point < self.distance:
                 self.distance = self.dist_point
                 self.index = w
@@ -172,10 +163,12 @@ class UgvEnv:
         if next_index >= len(x_trajectory):
             next_index = self.index
 
-        self.delta_theta = math.atan2((y_trajectory[next_index]
+        self.trajec_angle = math.atan2((y_trajectory[next_index]
                                        - y_trajectory[self.index]),
-                                      (x_trajectory[next_index]
-                                       - x_trajectory[self.index]))
+                                       (x_trajectory[next_index]
+                                        - x_trajectory[self.index]))
+
+        self.delta_theta = self.trajec_angle - self.theta
 
     def _calc_zone(self):
 
@@ -193,8 +186,7 @@ class UgvEnv:
     def _distance_covered(self):
 
         # Calculation of distance traveled compared to the previous point
-        self.gap = math.sqrt((self.x - self.x_ant)**2
-                             - (self.y - self.y_ant)**2)
+        self.gap = (self.x**2 + self.y**2) - (self.x_ant**2 + self.y_ant**2)
         self.x_ant = self.x
         self.y_ant = self.y
 
