@@ -5,6 +5,7 @@ techniques.
 """
 import numpy as np
 import math
+import time
 
 from plot_ugv import PlotUgv
 
@@ -64,7 +65,7 @@ class UgvEnv:
         # Reset the environment (start a new episode)
         self.y = 0.2
         self.x = 0.2
-        self.theta = 0
+        self.theta = 90
         self.steps = 0
         self.index = 0
 
@@ -86,8 +87,8 @@ class UgvEnv:
         m1, m2 = self._dediscretize_action(action)
 
         # PWM to rads conversion
-        wm1 = (42.77 * m1 / 128)
-        wm2 = (42.77 * m2 / 128)
+        wm1 = (42.77 * (m1 - 127) / 128)
+        wm2 = (42.77 * (m2 - 127) / 128)
 
         # Calculate linear and angular velocity
         self.v_linear = (wm2 + wm1) * (self.ro / 2)
@@ -138,7 +139,7 @@ class UgvEnv:
         # Create state (x,y,theta)
         self.state = [self.x, self.y, self.theta]
 
-        return self.state, self.agent_state, reward, done, None
+        return self.state, self.agent_state, reward, done
 
     def _distance_next(self):
 
@@ -151,10 +152,16 @@ class UgvEnv:
                 self.distance = self.dist_point
                 self.index = w
 
+        self._calc_side()
+
+        self.distance = self.distance * self.sign
+
+        return self.distance
+
     def _calc_delta_theta(self):
 
         # Difference between the vehicle angle and the trajectory angle
-        next_index = self.index+1
+        next_index = self.index + 1
 
         if next_index >= len(x_trajectory):
             next_index = self.index
@@ -169,12 +176,19 @@ class UgvEnv:
     def _calc_zone(self):
 
         if self.distance < self.zone_0_limit:
+
             self.zone_reward = -1
+
         elif self.distance < self.zone_1_limit:
+
             self.zone_reward = 1
+
         elif self.distance < self.zone_2_limit:
+
             self.zone_reward = 2
+
         else:
+
             self.zone_reward = 3
 
         return
@@ -182,27 +196,30 @@ class UgvEnv:
     def _distance_covered(self):
 
         # Calculation of distance traveled compared to the previous point
-        self.gap = (self.x**2 + self.y**2) - (self.x_ant**2 + self.y_ant**2)
+        self.gap = math.sqrt((self.x - self.x_ant)**2
+                             - (self.y - self.y_ant)**2)
+
         self.x_ant = self.x
         self.y_ant = self.y
 
-        return
+        return self.gap
 
     def _calc_side(self):
 
         # Calculation of the side of the car with respect to the trajectory
-        trajectory_vector = np.array(x_trajectory[self.index + 1]
-                                     - x_trajectory[self.index],
-                                     y_trajectory[self.index + 1]
-                                     - y_trajectory[self.index])
+        next_index = self.index + 1
+
+        trajectory_vector = ((x_trajectory[next_index]
+                              - x_trajectory[self.index]),
+                             (y_trajectory[next_index]
+                              - y_trajectory[self.index]))
 
         x_diff = self.x - x_trajectory[self.index]
         y_diff = self.y - y_trajectory[self.index]
 
-        ugv_vector = np.array(x_diff, y_diff)
+        ugv_vector = (x_diff, y_diff)
 
-        vector_z = ugv_vector[0] * trajectory_vector[1] \
-                   - ugv_vector[1] - trajectory_vector[0]
+        vector_z = ugv_vector[0] * trajectory_vector[1] - ugv_vector[1] - trajectory_vector[0]
 
         if vector_z > 0:
 
@@ -221,9 +238,6 @@ class UgvEnv:
         left_band = -(((NUM_DIV_STATE-1)/2) - 0.5)
 
         self.discrete_distance = 0
-
-        # Distance with sign
-        self.distance = self.distance * self.sign
 
         for div in range(NUM_DIV_STATE-1):
             if self.distance > ((left_band + div) * BAND_WIDTH):
@@ -249,30 +263,27 @@ class UgvEnv:
 
 if __name__ == "__main__":
 
-    # agent_types = ["SARSA","Q-Learning","Expected SARSA"]#, "n-step SARSA"]
-    agent_types = ["SARSA"]
-
-    # Train
-    epi_reward = {}
-    epi_reward_average = {}
-    # plot_ugv = PlotUgv(SPACE_X, SPACE_Y, x_trajectory, y_trajectory, PERIOD)
-
-    for i in range(len(agent_types)):
         env = UgvEnv()
-        agent = Agent(agent_types[i])
-        epi_reward[i] = np.zeros([EPISODES])
-        epi_reward_average[i] = np.zeros([EPISODES])
+        action = (4, 5)
+        EPISODES = 50
+        epi_reward = np.zeros([EPISODES])
+        epi_reward_average = np.zeros([EPISODES])
 
-        for e in range(EPISODES):
-            state = agent.init_episode(env)
-            # plot_ugv.reset(state[0], state[1], state[2])
+        state, agent_state = env.reset()
 
-            done = False
-            while not done:
-                state, reward, done, epsilon = agent.train_step(env)
-                epi_reward[i][e] += reward
-                # plot_ugv.execute(state[0], state[1], state[2])
+        b = PlotUgv(3, 4, x_trajectory, y_trajectory, 1 / 30)
+        b.reset(state)
 
-            epi_reward_average[i][e] = np.mean(epi_reward[i][max(0, e-20):e])
-            print("episode: {} epsilon:{} reward:{} averaged reward:{}".format
-                  (e, epsilon, epi_reward[i][e], epi_reward_average[i][e]))
+
+        # plot_ugv.reset(state[0], state[1], state[2])
+
+        done = False
+        while not done:
+            state, agent_state, reward, done = env.step(action)
+            # plot_ugv.execute(state[0], state[1], state[2])
+            b.execute(state)
+
+            print("reward:{} distance:{} gap:{} zone_reward:{} theta:{} done:{} x:{} y:{}"
+                  .format(reward, env.distance, env.gap, env.zone_reward, env.theta, done, env.x, env.y))
+            time.sleep(1)
+

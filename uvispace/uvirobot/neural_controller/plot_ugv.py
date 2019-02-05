@@ -25,14 +25,15 @@ class PlotUgv:
         self.y_trajectory = y_trajectory
         self._begin()
         self.period = period
+        self._begin()
 
     def _begin(self):
 
         self.ax.set_ylim(self.y_origin-0.5,
-                         self.yellow_back_y + self.y_origin+0.5)
+                         self.yellow_back_y + self.y_origin + 0.5)
 
-        self.ax.set_xlim(self.x_origin-0.5,
-                         self.x_origin+self.yellow_back_x+0.5)
+        self.ax.set_xlim(self.x_origin - 0.5,
+                         self.x_origin + self.yellow_back_x + 0.5)
 
         self.ax.set_facecolor('xkcd:black')
 
@@ -49,27 +50,33 @@ class PlotUgv:
         plt.show(False)
         plt.draw()
 
-    def reset(self, x, y, angle):
+    def reset(self, state):
 
+        self.x = state[0]
+        self.y = state[1]
+        self.angle = state[2]
         self.point2, = self.ax.plot([], [], 'r:')
-        self.execute(x, y, angle)
+        self.execute(state)
 
-    def execute(self, x, y, angle):
+    def execute(self, state):
 
+        self.x = state[0]
+        self.y = state[1]
+        self.angle = state[2]
         self.fig.canvas.draw()
-        self.point.set_xdata(x)
-        self.point.set_ydata(y)
-        self.point.set_marker((3, 0, angle))
+        self.point.set_xdata(self.x)
+        self.point.set_ydata(self.y)
+        self.point.set_marker((3, 0, self.angle + 135))
 
         time.sleep(self.period)
 
-        self.arrayX.append(x)
-        self.arrayY.append(y)
+        self.arrayX.append(self.x)
+        self.arrayY.append(self.y)
         self.point2.set_data(self.arrayX, self.arrayY)
         # self.theta = self.theta+20  # Check if is necessary
 
 
-d = PlotUgv(3, 4, [1, 2, 2.5], [1, 2, 2.5], 1/30)
+""" d = PlotUgv(3, 4, [1, 2, 2.5], [1, 2, 2.5], 1/30)
 d._begin()
 i = 0
 b = 0
@@ -81,4 +88,4 @@ while True:
     angle = 135
     d.execute(i+0.15, b, angle)
     if i == 10:
-        break
+        break """
