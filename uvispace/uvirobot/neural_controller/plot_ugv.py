@@ -1,4 +1,8 @@
-import numpy as np
+# -*- coding: utf-8 -*-
+"""This module plot /blindtext
+
+"""
+
 import matplotlib.patches as ptch
 import matplotlib.pyplot as plt
 import time
@@ -13,7 +17,7 @@ class PlotUgv:
         self.arrayY = []*500
         self.yellow_back_x = x_limit
         self.yellow_back_y = y_limit
-        self.point, = self.ax.plot([], [], marker=(3, 0, 90), color='red')
+        self.point, = self.ax.plot([], [], marker=(3, 0, 0), color='red')
         self.point2, = self.ax.plot([], [], 'r:')
         self.x_origin = 0
         self.y_origin = 0
@@ -65,7 +69,7 @@ class PlotUgv:
         # self.theta = self.theta+20  # Check if is necessary
 
 
-"""d = PlotUgv(3, 4, [1, 2, 2.5], [1, 2, 2.5], 1/30)
+d = PlotUgv(3, 4, [1, 2, 2.5], [1, 2, 2.5], 1/30)
 d._begin()
 i = 0
 b = 0
@@ -74,7 +78,7 @@ while True:
     i = i+0.005
 
     b = b+0.01
-    angle = -45
+    angle = 135
     d.execute(i+0.15, b, angle)
     if i == 10:
-        break"""
+        break
