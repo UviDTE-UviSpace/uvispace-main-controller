@@ -13,18 +13,24 @@ class PlotUgv:
     def __init__(self, x_limit, y_limit, x_trajectory, y_trajectory, period):
 
         self.fig, self.ax = plt.subplots()
+
         self.arrayX = []*500  # max_steps
         self.arrayY = []*500
+
         self.yellow_back_x = x_limit
         self.yellow_back_y = y_limit
+
         self.point, = self.ax.plot([], [], marker=(3, 0, 0), color='red')
         self.point2, = self.ax.plot([], [], 'r:')
+
         self.x_origin = 0
         self.y_origin = 0
+
         self.x_trajectory = x_trajectory
         self.y_trajectory = y_trajectory
-        self._begin()
+
         self.period = period
+
         self._begin()
 
     def _begin(self):
@@ -63,7 +69,9 @@ class PlotUgv:
         self.x = state[0]
         self.y = state[1]
         self.angle = state[2]
+
         self.fig.canvas.draw()
+
         self.point.set_xdata(self.x)
         self.point.set_ydata(self.y)
         self.point.set_marker((3, 0, self.angle + 135))
@@ -72,6 +80,7 @@ class PlotUgv:
 
         self.arrayX.append(self.x)
         self.arrayY.append(self.y)
+
         self.point2.set_data(self.arrayX, self.arrayY)
         # self.theta = self.theta+20  # Check if is necessary
 

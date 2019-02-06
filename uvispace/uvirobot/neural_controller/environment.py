@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This module trains a table Agente using different Reinforcement Learning
+"""This module trains a table Agent using different Reinforcement Learning
 techniques.
 
 """
@@ -129,8 +129,8 @@ class UgvEnv:
 
         else:
             done = 0
-            reward = (-1 * BETA_DIST * self.distance) + BETA_GAP * self.gap \
-                     - BETA_ZONE * self.zone_reward
+            reward = (-1 * BETA_DIST * self.distance) \
+                     + BETA_GAP * self.gap - BETA_ZONE * self.zone_reward
 
         # Discretize state for the agent to control
         self._discretize_agent_state()
@@ -264,7 +264,7 @@ class UgvEnv:
 if __name__ == "__main__":
 
         env = UgvEnv()
-        action = (4, 5)
+        action = (2, 2)
         EPISODES = 50
         epi_reward = np.zeros([EPISODES])
         epi_reward_average = np.zeros([EPISODES])
@@ -273,7 +273,6 @@ if __name__ == "__main__":
 
         b = PlotUgv(3, 4, x_trajectory, y_trajectory, 1 / 30)
         b.reset(state)
-
 
         # plot_ugv.reset(state[0], state[1], state[2])
 

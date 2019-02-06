@@ -89,8 +89,10 @@ class Agent:
                       random.randrange(NUM_DIV_ACTION)]
         else:
             A = self.predict(agent_state)
+
             row_max = math.floor(np.argmax(A)/3)
             col_max = np.argmax(A)-3*math.floor(np.argmax(A)/3)
+
             action = [row_max, col_max]
 
         return action
@@ -132,10 +134,13 @@ class Agent:
         self.R = deque()
         self.A = deque()
         self.S = deque()
+
         self.state, self.agent_state = env.reset()
         self.action = self._choose_action(self.agent_state)
+
         self.S.append(self.agent_state)
         self.A.append(self.action)
+
         self.T = float("inf")
         self.t = 0
 
@@ -176,6 +181,7 @@ class Agent:
 
         if done:
             self.epsilon *= self.EPSILON_DECAY
+
             if self.epsilon < self.EPSILON_MIN:
                 self.epsilon = self.EPSILON_MIN
 
@@ -196,6 +202,7 @@ class Agent:
 
         if done:
             self.epsilon *= self.EPSILON_DECAY
+
             if self.epsilon < self.EPSILON_MIN:
                 self.epsilon = self.EPSILON_MIN
 
@@ -218,6 +225,7 @@ class Agent:
 
         if done:
             self.epsilon *= self.EPSILON_DECAY
+
             if self.epsilon < self.EPSILON_MIN:
                 self.epsilon = self.EPSILON_MIN
 
@@ -232,6 +240,7 @@ class Agent:
 
         if done:  # if St+1 terminal
             self.T = self.t + 1
+
         else:
             self.action = self._choose_action(new_state)
             self.A.append(self.action)
@@ -241,6 +250,7 @@ class Agent:
             G = 0.0
             for i in range(tau+1, min(tau+self.N, self.T)):
                 G += (self.GANMA**(i-tau-1)) * self.R[i]
+
             if tau + self.N < self.T:
                 G = G + (self.GANMA**self.N) \
                     * self.predict(self.S[tau+self.N])[self.A[tau+self.N]]
@@ -256,6 +266,7 @@ class Agent:
 
         if done:
             self.epsilon *= self.EPSILON_DECAY
+
             if self.epsilon < self.EPSILON_MIN:
                 self.epsilon = self.EPSILON_MIN
 
