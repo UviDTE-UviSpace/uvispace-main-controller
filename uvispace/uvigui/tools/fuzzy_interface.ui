@@ -18,7 +18,7 @@
     <item row="0" column="0">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="page_0">
        <widget class="QPushButton" name="next0Button">
@@ -52,12 +52,12 @@
          <rect>
           <x>10</x>
           <y>30</y>
-          <width>481</width>
+          <width>581</width>
           <height>71</height>
          </rect>
         </property>
         <property name="text">
-         <string>Put the vehicle on the central position of the camera number 1</string>
+         <string>Put the vehicle on the camera 3 , position -1400, 600. Use the tiles as a reference</string>
         </property>
        </widget>
       </widget>
@@ -225,7 +225,7 @@
          <string>The vehicle is going to do some movements</string>
         </property>
        </widget>
-       <widget class="QPushButton" name="pushButton">
+       <widget class="QPushButton" name="Start_Button">
         <property name="geometry">
          <rect>
           <x>10</x>

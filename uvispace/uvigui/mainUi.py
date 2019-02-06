@@ -15,12 +15,16 @@ from PyQt5.QtGui import QPixmap, QImage
 # PIL libraries
 from PIL import Image, ImageQt
 
+#ZMQ
+import zmq
+
 # proprietary libraries
 import mainwindowinterface
 import image_load
 import load_csv
 
-
+#for testing
+from cv2 import imwrite
 
 # Create the application logger
 logger = logging.getLogger('view')
@@ -177,7 +181,7 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         self.__actualizar_imagen = QTimer()
         t_refresh = 500
         self.__actualizar_imagen.start(t_refresh)
-        self.__actualizar_imagen.timeout.connect(self.__update_image)
+        self.__actualizar_imagen.timeout.connect(self.__update_interface)
         # menu actions
         self.actionExit.triggered.connect(self.close)  # close the app
         self.action_about.triggered.connect(self.about_message)
@@ -196,8 +200,11 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         # file button event
         self.file_Button.clicked.connect(self.__loadfileswindow)
 
+
+
+
         #options checks
-        #self.grid_check.clicked.connect(self.options_checks)
+
 
         # add Car Widget using QlistWidget
         itemN = QListWidgetItem(self.listWidget)
@@ -264,28 +271,34 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         self.lineEdit.setText(coord_filename)
         return
 
-    def __update_image(self):
+    def __update_interface(self):
         """
         refresh the image label
         calls the image_stack method to join the four camera images
+        refresh the car coordinates
 
         """
+        # get the car coordinates
+        coordinates = self.get_coordinates()
+
         # get the image
         image_np = image_load.image_stack(self.cameras_IPs,
                                           self.cameras_size,
                                           self.__check_img_type())
 
-        #checks the grid, car or path ckecks and draws them if neccesary
+        # checks the grid, car or path ckecks and draws them if neccesary
+        # grid check
         if self.grid_check.isChecked():
             image_load.draw_grid(image_np)
+        #car check
 
-
-
+        if self.ugv_check.isChecked():
+            image_np = image_load.draw_ugv(image_np, coordinates)
         # update the image label
 
         ############    test
 
-        pilimage = Image.fromarray(image_np) # type:Image
+        pilimage = Image.fromarray(image_np)  # type:Image
         qim = ImageQt.ImageQt(pilimage)  # type: ImageQt
         qima = QImage(qim)
 
@@ -300,9 +313,38 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         self.label.adjustSize()
         self.label.setScaledContents(True)
 
-        # //TODO options checks for grid, ugv and path
 
-        # //TODO draw car function
+
+    def get_coordinates(self):
+        # read the car coordinates and the angle
+        """ Connects to the IP port and read the pose of the UGV
+        TODO: read the UGV IP from file
+
+
+        :return:
+
+        receiver = zmq.Context.instance().socket(zmq.SUB)
+        receiver.connect("tcp://" + "192.168.0.51" + ":31000")
+        receiver.setsockopt_string(zmq.SUBSCRIBE, u"")
+        receiver.setsockopt(zmq.CONFLATE, True)
+
+        coordinates = receiver.recv()
+
+        #translate coordinates from uvispace reference system to numpy
+        a = coordinates[0]
+        b = coordinates[1]
+        x = (a+2000)*1280/4000
+        y = (-b+1500)*936/3000
+        x = int(x)
+        y = int(y)
+
+        coordinates[0] = x
+        coordinates[1] = y
+
+
+        """
+        coordinates = [640, 468, -45]
+        return coordinates
 
     def about_message(self):
         # about message with a link to the main project web

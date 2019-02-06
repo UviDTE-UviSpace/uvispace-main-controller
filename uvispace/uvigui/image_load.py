@@ -4,7 +4,7 @@ import cv2
 import zmq
 import configparser
 from PyQt5.QtGui import QImage, QPixmap
-
+from PIL import Image
 
 """
     Images are treated as arrays in cv2. Therefore, they can be formatted with 
@@ -68,11 +68,11 @@ def image_stack(cameras_ips, img_size, img_type):
 
     # Stack the array using concatenate, first stacks horizontally,
     # then, one on top of the other
-    output12 = np.concatenate((image_array[2-1], image_array[1-1]), axis=1)
-    output34 = np.concatenate((image_array[3-1], image_array[4-1]), axis=1)
+    output12 = np.concatenate((image_array[2 - 1], image_array[1 - 1]), axis=1)
+    output34 = np.concatenate((image_array[3 - 1], image_array[4 - 1]), axis=1)
     output = np.concatenate((output12, output34), axis=0)  # final image
 
-    #cv2.imwrite('salida.jpg', output)  # saves the image as jpg
+    # cv2.imwrite('salida.jpg', output)  # saves the image as jpg
 
     return output
 
@@ -121,5 +121,31 @@ def draw_grid(image):
     cv2.line(image, (640, 468), (740, 468), 255, 8)
     # vertical origin
     cv2.line(image, (640, 368), (640, 468), 255, 8)
-    
+
     return image
+
+
+def draw_ugv(image, coordinates):
+    """
+    Draw the ugv
+    :param image: numpy image
+    :param coordinates: array with the two coordinates
+    :param delta: degrees of rotation of the agv
+    :return: numpy image array
+    """
+    src_im = Image.open('icons/UGV_image.jpg')
+    size = src_im.size
+
+    dst_im = Image.fromarray(image)
+    im = src_im.convert('RGBA')
+    rot = im.rotate(coordinates[2], expand=1).resize(size)
+    dst_im.paste(rot, (coordinates[0]-int(size[0]/2), coordinates[1]-int(size[1]/2)), rot)
+
+    dst_im.convert('RGB')
+    array_image = np.array(dst_im)
+    # cv2.imwrite('save2.jpg', array_image)
+
+    return array_image
+
+
+

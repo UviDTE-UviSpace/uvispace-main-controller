@@ -1,155 +1,73 @@
-# -*- coding: utf-8 -*-
+import sys
+import os
 
-# Form implementation generated from reading ui file 'setup_interface.ui'
-#
-# Created by: PyQt5 UI code generator 5.11.3
-#
-# WARNING! All changes made in this file will be lost!
+from PyQt5 import QtWidgets
 
-from PyQt5 import QtCore, QtGui, QtWidgets
 
-class Ui_fuzzy_window(object):
-    def setupUi(self, fuzzy_window):
-        fuzzy_window.setObjectName("fuzzy_window")
-        fuzzy_window.resize(662, 436)
-        self.centralWidget = QtWidgets.QWidget(fuzzy_window)
-        self.centralWidget.setObjectName("centralWidget")
-        self.gridLayout_2 = QtWidgets.QGridLayout(self.centralWidget)
-        self.gridLayout_2.setContentsMargins(11, 11, 11, 11)
-        self.gridLayout_2.setSpacing(6)
-        self.gridLayout_2.setObjectName("gridLayout_2")
-        self.stackedWidget = QtWidgets.QStackedWidget(self.centralWidget)
-        self.stackedWidget.setObjectName("stackedWidget")
-        self.page_0 = QtWidgets.QWidget()
-        self.page_0.setObjectName("page_0")
-        self.next0Button = QtWidgets.QPushButton(self.page_0)
-        self.next0Button.setGeometry(QtCore.QRect(530, 320, 75, 23))
-        self.next0Button.setObjectName("next0Button")
-        self.label = QtWidgets.QLabel(self.page_0)
-        self.label.setGeometry(QtCore.QRect(10, 0, 61, 21))
-        self.label.setObjectName("label")
-        self.label_3 = QtWidgets.QLabel(self.page_0)
-        self.label_3.setGeometry(QtCore.QRect(10, 30, 481, 71))
-        self.label_3.setObjectName("label_3")
-        self.stackedWidget.addWidget(self.page_0)
-        self.page_1 = QtWidgets.QWidget()
-        self.page_1.setObjectName("page_1")
-        self.label_2 = QtWidgets.QLabel(self.page_1)
-        self.label_2.setGeometry(QtCore.QRect(10, 0, 51, 16))
-        self.label_2.setObjectName("label_2")
-        self.next1Button = QtWidgets.QPushButton(self.page_1)
-        self.next1Button.setGeometry(QtCore.QRect(540, 320, 75, 23))
-        self.next1Button.setObjectName("next1Button")
-        self.prev1Button = QtWidgets.QPushButton(self.page_1)
-        self.prev1Button.setGeometry(QtCore.QRect(0, 320, 101, 23))
-        self.prev1Button.setObjectName("prev1Button")
-        self.label_4 = QtWidgets.QLabel(self.page_1)
-        self.label_4.setGeometry(QtCore.QRect(10, 20, 331, 21))
-        self.label_4.setObjectName("label_4")
-        self.label_5 = QtWidgets.QLabel(self.page_1)
-        self.label_5.setGeometry(QtCore.QRect(10, 170, 251, 16))
-        self.label_5.setObjectName("label_5")
-        self.stackedWidget.addWidget(self.page_1)
-        self.page_2 = QtWidgets.QWidget()
-        self.page_2.setObjectName("page_2")
-        self.label_6 = QtWidgets.QLabel(self.page_2)
-        self.label_6.setGeometry(QtCore.QRect(10, 10, 51, 16))
-        self.label_6.setObjectName("label_6")
-        self.next2Button = QtWidgets.QPushButton(self.page_2)
-        self.next2Button.setGeometry(QtCore.QRect(540, 320, 75, 23))
-        self.next2Button.setObjectName("next2Button")
-        self.prev2Button = QtWidgets.QPushButton(self.page_2)
-        self.prev2Button.setGeometry(QtCore.QRect(0, 320, 101, 23))
-        self.prev2Button.setObjectName("prev2Button")
-        self.label_7 = QtWidgets.QLabel(self.page_2)
-        self.label_7.setGeometry(QtCore.QRect(10, 50, 311, 41))
-        font = QtGui.QFont()
-        font.setPointSize(10)
-        self.label_7.setFont(font)
-        self.label_7.setObjectName("label_7")
-        self.label_10 = QtWidgets.QLabel(self.page_2)
-        self.label_10.setGeometry(QtCore.QRect(10, 90, 311, 16))
-        self.label_10.setObjectName("label_10")
-        self.pushButton = QtWidgets.QPushButton(self.page_2)
-        self.pushButton.setGeometry(QtCore.QRect(10, 120, 75, 23))
-        self.pushButton.setObjectName("pushButton")
-        self.label_ready = QtWidgets.QLabel(self.page_2)
-        self.label_ready.setGeometry(QtCore.QRect(420, 280, 171, 16))
-        self.label_ready.setObjectName("label_ready")
-        self.stackedWidget.addWidget(self.page_2)
-        self.page_3 = QtWidgets.QWidget()
-        self.page_3.setObjectName("page_3")
-        self.label_8 = QtWidgets.QLabel(self.page_3)
-        self.label_8.setGeometry(QtCore.QRect(10, 10, 61, 16))
-        self.label_8.setObjectName("label_8")
-        self.label_9 = QtWidgets.QLabel(self.page_3)
-        self.label_9.setGeometry(QtCore.QRect(20, 30, 141, 16))
-        font = QtGui.QFont()
-        font.setPointSize(12)
-        self.label_9.setFont(font)
-        self.label_9.setObjectName("label_9")
-        self.pushButton_2 = QtWidgets.QPushButton(self.page_3)
-        self.pushButton_2.setGeometry(QtCore.QRect(350, 320, 81, 23))
-        self.pushButton_2.setObjectName("pushButton_2")
-        self.prev4Button = QtWidgets.QPushButton(self.page_3)
-        self.prev4Button.setGeometry(QtCore.QRect(530, 320, 101, 23))
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.prev4Button.sizePolicy().hasHeightForWidth())
-        self.prev4Button.setSizePolicy(sizePolicy)
-        self.prev4Button.setObjectName("prev4Button")
-        self.next4Button = QtWidgets.QPushButton(self.page_3)
-        self.next4Button.setGeometry(QtCore.QRect(0, 320, 75, 23))
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.next4Button.sizePolicy().hasHeightForWidth())
-        self.next4Button.setSizePolicy(sizePolicy)
-        self.next4Button.setObjectName("next4Button")
-        self.label_11 = QtWidgets.QLabel(self.page_3)
-        self.label_11.setGeometry(QtCore.QRect(140, 320, 191, 21))
-        self.label_11.setObjectName("label_11")
-        self.stackedWidget.addWidget(self.page_3)
-        self.gridLayout_2.addWidget(self.stackedWidget, 0, 1, 1, 1)
-        fuzzy_window.setCentralWidget(self.centralWidget)
-        self.menuBar = QtWidgets.QMenuBar(fuzzy_window)
-        self.menuBar.setGeometry(QtCore.QRect(0, 0, 662, 25))
-        self.menuBar.setObjectName("menuBar")
-        fuzzy_window.setMenuBar(self.menuBar)
-        self.mainToolBar = QtWidgets.QToolBar(fuzzy_window)
-        self.mainToolBar.setObjectName("mainToolBar")
-        fuzzy_window.addToolBar(QtCore.Qt.TopToolBarArea, self.mainToolBar)
-        self.statusBar = QtWidgets.QStatusBar(fuzzy_window)
-        self.statusBar.setObjectName("statusBar")
-        fuzzy_window.setStatusBar(self.statusBar)
+import fuzzy_interface
 
-        self.retranslateUi(fuzzy_window)
+
+
+class MainWindow(QtWidgets.QMainWindow, fuzzy_interface.Ui_fuzzy_window):
+    def __init__(self):
+        QtWidgets.QMainWindow.__init__(self)
+        self.setupUi(self)
+
         self.stackedWidget.setCurrentIndex(0)
-        QtCore.QMetaObject.connectSlotsByName(fuzzy_window)
+        #button actions (next button)
+        self.next0Button.clicked.connect(self.next_page)
+        self.next1Button.clicked.connect(self.next_page)
+        self.next2Button.clicked.connect(self.next_page)
+        self.next3Button.clicked.connect(self.next_page)
 
-    def retranslateUi(self, fuzzy_window):
-        _translate = QtCore.QCoreApplication.translate
-        fuzzy_window.setWindowTitle(_translate("fuzzy_window", "proba"))
-        self.next0Button.setText(_translate("fuzzy_window", "Next Step"))
-        self.label.setText(_translate("fuzzy_window", "Step 1"))
-        self.label_3.setText(_translate("fuzzy_window", "Put the vehicle on the central position of the camera number 1"))
-        self.label_2.setText(_translate("fuzzy_window", "Step 2"))
-        self.next1Button.setText(_translate("fuzzy_window", "Next Step"))
-        self.prev1Button.setText(_translate("fuzzy_window", "Previous Step"))
-        self.label_4.setText(_translate("fuzzy_window", "Connect the vehicle using the power cord"))
-        self.label_5.setText(_translate("fuzzy_window", "Set the power source to 10 V 3A Vcc"))
-        self.label_6.setText(_translate("fuzzy_window", "Step 3"))
-        self.next2Button.setText(_translate("fuzzy_window", "Next Step"))
-        self.prev2Button.setText(_translate("fuzzy_window", "Previous Step"))
-        self.label_7.setText(_translate("fuzzy_window", "Do you want to start the calibration process?"))
-        self.label_10.setText(_translate("fuzzy_window", "The vehicle is going to do some movements"))
-        self.pushButton.setText(_translate("fuzzy_window", "Start"))
-        self.label_ready.setText(_translate("fuzzy_window", "Calibration finished. Click on next"))
-        self.label_8.setText(_translate("fuzzy_window", "Stage 4"))
-        self.label_9.setText(_translate("fuzzy_window", "Calibration results"))
-        self.pushButton_2.setText(_translate("fuzzy_window", "Repeat"))
-        self.prev4Button.setText(_translate("fuzzy_window", "Previous Step"))
-        self.next4Button.setText(_translate("fuzzy_window", "Finish test"))
-        self.label_11.setText(_translate("fuzzy_window", "Do you want to repeat the calibration?"))
+        #button actions (prev button)
+        self.prev1Button.clicked.connect(self.prev_page)
+        self.prev2Button.clicked.connect(self.prev_page)
+        self.prev3Button.clicked.connect(self.prev_page)
+
+        #button actions start the test
+        self.Start_Button.clicked.connect(self.start_calibration)
+
+        #hide the calibration finished message
+        self.label_ready.hide()
+
+
+    def next_page(self):
+        # goes to the next step in the interface
+        index = self.stackedWidget.currentIndex()
+        self.stackedWidget.setCurrentIndex(index+1)
+
+    def prev_page(self):
+        # goes to the previous page in the interface
+        index = self.stackedWidget.currentIndex()
+        self.stackedWidget.setCurrentIndex(index-1)
+
+    def start_calibration(self):
+        """
+        Calls the functions to move the car, read the car values and resolve the ecuations to get the coefficients.
+        Calculates the forward and the only turn movement.
+        :return:
+        """
+        #Execute the functions to do the calibration
+        #multiplecamera.py guardar poses robot
+
+        #SpeedStudy introducir combinacion de consignas
+
+        #leer datos e pasar a resolver as ecuacions
+
+        #enseñar os coeficientes na gui
+
+        #update the coefficients
+
+
+
+        #show the ready message when finished
+        self.label_ready.show()
+
+
+app = QtWidgets.QApplication(sys.argv)
+form = MainWindow()
+form.show()
+sys.exit(app.exec_())
+
 
