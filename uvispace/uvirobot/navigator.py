@@ -120,20 +120,20 @@ def main():
         opts, args = getopt.getopt(sys.argv[1:], "hr:",
                                    ["robotid=", "rectangle"])
     except getopt.GetoptError:
-        print help_msg
+        print(help_msg)
         sys.exit()
     if not opts:
-        print help_msg
+        print(help_msg)
         sys.exit()
     for opt, arg in opts:
         if opt == '-h':
-            print help_msg
+            print(help_msg)
             sys.exit()
         else:
             if opt in ("-r", "--robotid"):
                 robot_id = int(arg)
             else:
-                print help_msg
+                print(help_msg)
                 sys.exit()
             if opt == "--rectangle":
                 rectangle_path = True
@@ -151,6 +151,7 @@ def main():
     while run_program and not my_robot.init:
         try:
             position = sockets['pose_subscriber'].recv_json(zmq.NOBLOCK)
+            print(position)
         except zmq.ZMQError:
             pass
         else:
