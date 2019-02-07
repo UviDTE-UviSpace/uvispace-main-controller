@@ -113,30 +113,36 @@ def main():
     signal.signal(signal.SIGINT, sigint_handler)
 
     # This exception forces to give the robot_id argument within run command.
+    robot_id = None
     rectangle_path = False
-    help_msg = ('Usage: navigator.py [-r <robot_id>], [--robotid=<robot_id>], '
+    help_msg = ('Usage: navigator.py (-r <robot_id> | --robotid=<robot_id>) '
                 '[--rectangle]')
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "hr:",
-                                   ["robotid=", "rectangle"])
+        opts, _ = getopt.getopt(sys.argv[1:], "hr:", ["robotid=", "rectangle"])
     except getopt.GetoptError:
-        print(help_msg)
+        logger.info(help_msg)
         sys.exit()
     if not opts:
-        print(help_msg)
+        logger.info(help_msg)
         sys.exit()
-    for opt, arg in opts:
+    for opt, value in opts:
         if opt == '-h':
-            print(help_msg)
+            logger.info(help_msg)
             sys.exit()
+        elif opt in ("-r", "--robotid"):
+            robot_id = int(value)
+        elif opt == "--rectangle":
+            rectangle_path = True
         else:
-            if opt in ("-r", "--robotid"):
-                robot_id = int(arg)
-            else:
-                print(help_msg)
-                sys.exit()
-            if opt == "--rectangle":
-                rectangle_path = True
+            logger.error("Unrecognized parameter {}".format(opt))
+            logger.info(help_msg)
+            sys.exit()
+
+    if not robot_id:
+        logger.error("Missing robot_id parameter")
+        logger.info(help_msg)
+        sys.exit()
+
     # Calls the main function
     my_robot = RobotController(robot_id)
 
