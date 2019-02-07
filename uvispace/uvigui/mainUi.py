@@ -10,13 +10,21 @@ import os
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import QLabel, QMessageBox, QWidget, QListWidgetItem
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QPixmap, QImage
 
+# PIL libraries
+from PIL import Image, ImageQt
+
+#ZMQ
+import zmq
 
 # proprietary libraries
 import mainwindowinterface
-import image_procesing
+import image_load
 import load_csv
+
+#for testing
+from cv2 import imwrite
 
 # Create the application logger
 logger = logging.getLogger('view')
@@ -33,7 +41,7 @@ class AppLogHandler(logging.Handler):
                             " %(message)s",
                             datefmt="%H:%M:%S")
         self.widget = widget
-        #logging.setLevel(logging.DEBUG)
+        # logging.setLevel(logging.DEBUG)
         formatter = logging.Formatter(" %(asctime)s.%(msecs)03d %(levelname)8s:"
                                       " %(message)s", "%H:%M:%S")
         self.setFormatter(formatter)
@@ -171,23 +179,32 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
 
         # initialise the QTimer to update the cameras image
         self.__actualizar_imagen = QTimer()
-        t_refresco = 100
-        self.__actualizar_imagen.start(t_refresco)
-        self.__actualizar_imagen.timeout.connect(self.__update_image)
+        t_refresh = 500
+        self.__actualizar_imagen.start(t_refresh)
+        self.__actualizar_imagen.timeout.connect(self.__update_interface)
         # menu actions
         self.actionExit.triggered.connect(self.close)  # close the app
         self.action_about.triggered.connect(self.about_message)
         self.actionOpen_csv.triggered.connect(self.__loadfileswindow)
+
         # load cameras IP
-        self.cameras_IPs = image_procesing.loadips()
+        self.cameras_IPs = image_load.loadips()
         logger.info("Cameras IPs loaded")
         print(self.cameras_IPs)
+
         # load cameras size
-        self.cameras_size = image_procesing.load_image_size()
+        self.cameras_size = image_load.load_image_size()
         logger.info("Cameras size loaded")
         print(self.cameras_size)
+
         # file button event
         self.file_Button.clicked.connect(self.__loadfileswindow)
+
+
+
+
+        #options checks
+
 
         # add Car Widget using QlistWidget
         itemN = QListWidgetItem(self.listWidget)
@@ -216,6 +233,8 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         self.listWidget.setItemWidget(item2, widget3)
         widget3.label_UGV.setText("Coche 3")
         logger.info("Car 3 added")
+
+
 
     def update_logger_level(self):
         """Evaluate the check boxes states and update logger level."""
@@ -252,25 +271,80 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         self.lineEdit.setText(coord_filename)
         return
 
-    def __update_image(self):
+    def __update_interface(self):
         """
         refresh the image label
         calls the image_stack method to join the four camera images
+        refresh the car coordinates
 
         """
-        # get the image
-        image_np = image_procesing.image_stack(self.cameras_IPs,
-                                               self.cameras_size,
-                                               self.__check_img_type())
+        # get the car coordinates
+        coordinates = self.get_coordinates()
 
+        # get the image
+        image_np = image_load.image_stack(self.cameras_IPs,
+                                          self.cameras_size,
+                                          self.__check_img_type())
+
+        # checks the grid, car or path ckecks and draws them if neccesary
+        # grid check
+        if self.grid_check.isChecked():
+            image_load.draw_grid(image_np)
+        #car check
+
+        if self.ugv_check.isChecked():
+            image_np = image_load.draw_ugv(image_np, coordinates)
         # update the image label
-        pixmap = QPixmap.fromImage(image_np).scaled(self.label.size(),
-                                              aspectRatioMode= QtCore.Qt.KeepAspectRatio,
-                                              transformMode = QtCore.Qt.SmoothTransformation)
+
+        ############    test
+
+        pilimage = Image.fromarray(image_np)  # type:Image
+        qim = ImageQt.ImageQt(pilimage)  # type: ImageQt
+        qima = QImage(qim)
+
+        pixmap = QPixmap.fromImage(qima).scaled(self.label.size(),
+                                                aspectRatioMode= QtCore.Qt.KeepAspectRatio,
+                                                transformMode = QtCore.Qt.SmoothTransformation)
+        """pixmap = QPixmap('salida.jpg').scaled(self.label.size(),
+                                              aspectRatioMode=QtCore.Qt.KeepAspectRatio,
+                                              transformMode=QtCore.Qt.SmoothTransformation)"""
 
         self.label.setPixmap(pixmap)
         self.label.adjustSize()
         self.label.setScaledContents(True)
+
+
+
+    def get_coordinates(self):
+        # read the car coordinates and the angle
+        """ Connects to the IP port and read the pose of the UGV
+        TODO: read the UGV IP from file
+
+
+        :return:
+
+        receiver = zmq.Context.instance().socket(zmq.SUB)
+        receiver.connect("tcp://" + "192.168.0.51" + ":31000")
+        receiver.setsockopt_string(zmq.SUBSCRIBE, u"")
+        receiver.setsockopt(zmq.CONFLATE, True)
+
+        coordinates = receiver.recv()
+
+        #translate coordinates from uvispace reference system to numpy
+        a = coordinates[0]
+        b = coordinates[1]
+        x = (a+2000)*1280/4000
+        y = (-b+1500)*936/3000
+        x = int(x)
+        y = int(y)
+
+        coordinates[0] = x
+        coordinates[1] = y
+
+
+        """
+        coordinates = [640, 468, -45]
+        return coordinates
 
     def about_message(self):
         # about message with a link to the main project web
