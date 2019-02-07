@@ -162,11 +162,13 @@ def read_battery_soc(com_device):
         soc = 0
         logger.warn("Fuel gauge PCB not detected")
     else:
-        # The soc variable are 4 bytes, but the data is stored on the last 2.
+        # Unpack the state of charge 0-100% (soc):
+        # Code for old fel gauge chip (SOC was 2 Byte variable):
+        # soc = struct.unpack('>H', raw_soc[1]+raw_soc[3])[0]
+        # Code for the new fuel gauge chip (SOC is 1 Byte variable):
         soc = struct.unpack('<B', raw_soc)[0]
         logger.info("The current battery soc is {}%".format(soc))
     return soc
-
 
 def stop_vehicle(com_device, wait_times, speed_calc_times, xbee_times):
     """Send a null speed to the UGV."""
