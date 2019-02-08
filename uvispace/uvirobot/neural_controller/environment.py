@@ -28,29 +28,22 @@ BAND_WIDTH = 0.02
 ZONE0_LIMIT = 0.021  # Up to 2.1cm
 ZONE1_LIMIT = 0.056  # Up to 5.6 cm
 ZONE2_LIMIT = 0.071  # Up to 7.1 cm
-# Init to zero?
-INIT_TO_ZERO = False
-# Define trajectory
-x_trajectory = np.linspace(0.2, 0.2, 201)
-y_trajectory = np.linspace(0.2, 1.2, 201)  # 5mm
-# Number of episodes
-EPISODES = 500
 
 
 class UgvEnv:
     a = int
 
-    def __init__(self):
+    def __init__(self, x_trajectory, y_trajectory, period):
 
         # Size of the space
         self.max_x = SPACE_X / 2  # [m]
         self.max_y = SPACE_Y / 2  # [m]
         self.state = []
-        self.x_goal = x_trajectory
-        self.y_goal = y_trajectory
+        self.x_trajectory = x_trajectory
+        self.y_trajectory = y_trajectory
         self.ro = 0.0325  # [m]
         self.diameter = 0.133  # [m]
-        self.time = PERIOD  # frames per second
+        self.time = period  # frames per second
         self.max_steps = MAX_STEPS
         self.constant = -0.1
         self.x_ant = 0.0
@@ -109,7 +102,7 @@ class UgvEnv:
         self._distance_covered()
 
         # Calculate done and reward
-        if self.index == (len(x_trajectory) - 1):
+        if self.index == (len(self.x_trajectory) - 1):
             done = 1
             reward = 20
 
@@ -124,7 +117,7 @@ class UgvEnv:
 
         elif self.zone_reward == 3:
             done = 1
-            reward = -10
+            reward = -1
 
         else:
             done = 0
@@ -147,16 +140,16 @@ class UgvEnv:
 
         self.distance = 10
 
-        for w in range(self.index, self.index + 10):
+        for w in range(self.index, self.index + 20):
 
-            self.dist_point = math.sqrt((x_trajectory[w] - self.x)**2 +
-                                        (y_trajectory[w] - self.y)**2)
+            self.dist_point = math.sqrt((self.x_trajectory[w] - self.x)**2 +
+                                        (self.y_trajectory[w] - self.y)**2)
 
             if self.dist_point < self.distance:
                 self.distance = self.dist_point
                 self.index = w
 
-            if w >= (len(x_trajectory) - 1):
+            if w >= (len(self.x_trajectory) - 1):
                 break
 
         self._calc_side()
@@ -170,13 +163,13 @@ class UgvEnv:
         # Difference between the vehicle angle and the trajectory angle
         next_index = self.index + 1
 
-        if next_index >= len(x_trajectory):
+        if next_index >= len(self.x_trajectory):
             next_index = self.index
 
-        self.trajec_angle = math.atan2((y_trajectory[next_index]
-                                       - y_trajectory[self.index]),
-                                       (x_trajectory[next_index]
-                                        - x_trajectory[self.index]))
+        self.trajec_angle = math.atan2((self.y_trajectory[next_index]
+                                       - self.y_trajectory[self.index]),
+                                       (self.x_trajectory[next_index]
+                                        - self.x_trajectory[self.index]))
 
         self.delta_theta = self.trajec_angle - self.theta
 
@@ -216,20 +209,21 @@ class UgvEnv:
         # Calculation of the side of the car with respect to the trajectory
         next_index = self.index + 1
 
-        if next_index == len(x_trajectory):
+        if next_index == len(self.x_trajectory):
             next_index = self.index
 
-        trajectory_vector = ((x_trajectory[next_index]
-                              - x_trajectory[self.index]),
-                             (y_trajectory[next_index]
-                              - y_trajectory[self.index]))
+        trajectory_vector = ((self.x_trajectory[next_index]
+                              - self.x_trajectory[self.index]),
+                             (self.y_trajectory[next_index]
+                              - self.y_trajectory[self.index]))
 
-        x_diff = self.x - x_trajectory[self.index]
-        y_diff = self.y - y_trajectory[self.index]
+        x_diff = self.x - self.x_trajectory[self.index]
+        y_diff = self.y - self.y_trajectory[self.index]
 
         ugv_vector = (x_diff, y_diff)
 
-        vector_z = ugv_vector[0] * trajectory_vector[1] - ugv_vector[1] - trajectory_vector[0]
+        vector_z = ugv_vector[0] * trajectory_vector[1] \
+                   - ugv_vector[1] - trajectory_vector[0]
 
         if vector_z > 0:
 
@@ -274,14 +268,14 @@ class UgvEnv:
 if __name__ == "__main__":
 
         env = UgvEnv()
-        action = (1, 1)
+        action = (4, 1)
         EPISODES = 1
         epi_reward = np.zeros([EPISODES])
         epi_reward_average = np.zeros([EPISODES])
 
         state, agent_state = env.reset()
 
-        b = PlotUgv(3, 4, x_trajectory, y_trajectory, 1 / 30)
+        b = PlotUgv(3, 4, env.x_trajectory, env.y_trajectory, 1 / 30)
         b.reset(state)
 
         # plot_ugv.reset(state[0], state[1], state[2])

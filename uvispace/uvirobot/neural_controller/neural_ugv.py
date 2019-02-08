@@ -10,26 +10,18 @@ from environment import UgvEnv
 # Size of Uvispace area
 SPACE_X = 4
 SPACE_Y = 3
-# Maximum number of steps allowed
-MAX_STEPS = 500
 # Sampling period (time between 2 images)
 PERIOD = (1 / 30)
-# Reward weights
-BETA_DIST = 0.01
-BETA_GAP = 0.01
-BETA_ZONE = 0.01
 # Variable space quantization
 NUM_DIV_STATE = 5
 NUM_DIV_ACTION = 5
-BAND_WIDTH = 0.02
-# Define Reward Zones
-ZONE0_LIMIT = 0.021  # Up to 2.1cm
-ZONE1_LIMIT = 0.056  # Up to 5.6 cm
-ZONE2_LIMIT = 0.071  # Up to 7.1 cm
 # Init to zero?
-INIT_TO_ZERO = False
+INIT_TO_ZERO = True
 # Number of episodes
 EPISODES = 500
+# Define trajectory
+x_trajectory = np.linspace(0.2, 0.2, 201)
+y_trajectory = np.linspace(0.2, 1.2, 201)
 
 
 class Agent:
@@ -40,7 +32,7 @@ class Agent:
         # Define some constants for the learning
         self.EPSILON_DECAY = 0.95
         self.EPSILON_MIN = 0.0
-        self.ALFA = 0.04  # learning rate
+        self.ALFA = 0.16  # learning rate
         self.GANMA = 0.95  # discount factor
 
         # Reset the training variables
@@ -63,35 +55,37 @@ class Agent:
                             if delta_theta == 0:
                                 if m1 == m2:
                                     self.model[distance, delta_theta, m1, m2] \
-                                        = 10
+                                        = 0.01
                                 else:
                                     self.model[distance, delta_theta, m1, m2] \
-                                        = -10
+                                        = -0.01
                             elif delta_theta < 0:
                                 if m1 > m2:
                                     self.model[distance, delta_theta, m1, m2] \
-                                        = 10
+                                        = 0.01
                                 else:
                                     self.model[distance, delta_theta, m1, m2] \
-                                        = -10
+                                        = -0.01
                             else:
                                 if m1 < m2:
                                     self.model[distance, delta_theta, m1, m2] \
-                                        = 10
+                                        = 0.01
                                 else:
                                     self.model[distance, delta_theta, m1, m2] \
-                                        = -10
+                                        = -0.01
 
     def _choose_action(self, agent_state):
 
         if np.random.rand() <= self.epsilon:
             action = [random.randrange(NUM_DIV_ACTION),
                       random.randrange(NUM_DIV_ACTION)]
+
         else:
             A = self.predict(agent_state)
+            row_max = np.argmax(A) // NUM_DIV_ACTION
 
-            row_max = math.floor(np.argmax(A)/3)
-            col_max = np.argmax(A)-3*math.floor(np.argmax(A)/3)
+            col_max = np.argmax(A) - NUM_DIV_ACTION*(np.argmax(A)
+                                                     // NUM_DIV_ACTION)
 
             action = [row_max, col_max]
 
@@ -164,17 +158,18 @@ class Agent:
 
     def _train_step_sarsa(self, env):
 
-        new_state, new_agent_state, reward, done, _ = env.step(self.action)
+        new_state, new_agent_state, reward, done = env.step(self.action)
+
         new_action = self._choose_action(new_agent_state)
 
         # Q(S;A)<-Q(S;A) + alfa[R + ganma*Q(S';A') - Q(S;A)]
-
-        self.model[self.agent_state[0, 0], self.agent_state[0, 1],
-                   self.action[0, 0], self.action[0, 1]] \
+        self.model[self.agent_state[0], self.agent_state[1], self.action[0],
+                   self.action[1]] \
             += self.ALFA * (reward + self.GANMA
                             * self.predict(new_agent_state)[new_action[0],
                                                             new_action[1]]
-                            - self.predict(self.state)[self.action])
+                            - self.predict(self.agent_state)[self.action[0],
+                                                             self.action[1]])
 
         self.agent_state = new_agent_state
         self.action = new_action
@@ -189,8 +184,9 @@ class Agent:
 
     def _train_step_qlearning(self, env):
 
+        new_state, new_agent_state, reward, done = env.step(self.action)
+
         self.action = self._choose_action(self.state)
-        new_state, new_agent_state, reward, done, _ = env.step(self.action)
 
         # Q(S;A)<-Q(S;A) + alfa[R + ganma*maxQ(S';a) - Q(S;A)]
 
@@ -210,15 +206,16 @@ class Agent:
 
     def _train_step_expected_sarsa(self, env):
 
-        new_state, reward, done, _ = env.step(self.action)
-        new_action = self._choose_action(new_state)
+        new_state, new_agent_state, reward, done = env.step(self.action)
+
+        new_action = self._choose_action(new_agent_state)
 
         # Q(S;A)<-Q(S;A) + alfa[R + E[Q(S';A')|S'] - Q(S;A)]
 
         self.model[self.state[0, 0], self.state[0, 1], self.action] \
             += self.ALFA * (reward + self.GANMA*(1/4)
-                            * np.sum(self.predict(new_state)) -
-                            self.predict(self.state)[self.action])
+                            * np.sum(self.predict(new_state))
+                            - self.predict(self.state)[self.action])
 
         self.state = new_state
         self.action = new_action
@@ -233,7 +230,7 @@ class Agent:
 
     def _train_step_nstep_sarsa(self, env):
 
-        new_state, reward, done, _ = env.step(self.action)
+        new_state, new_agent_state, reward, done = env.step(self.action)
 
         self.R.append(reward)
         self.S.append(new_state)
@@ -284,10 +281,12 @@ if __name__ == "__main__":
     # plot_ugv = PlotUgv(SPACE_X, SPACE_Y, x_trajectory, y_trajectory, PERIOD)
 
     for i in range(len(agent_types)):
-        env = UgvEnv()
+        env = UgvEnv(x_trajectory, y_trajectory, PERIOD)
         agent = Agent(agent_types[i])
         epi_reward[i] = np.zeros([EPISODES])
         epi_reward_average[i] = np.zeros([EPISODES])
+
+        # b = PlotUgv(3, 4, x_trajectory, y_trajectory, 1 / 30)
 
         for e in range(EPISODES):
             state = agent.init_episode(env)
@@ -297,15 +296,19 @@ if __name__ == "__main__":
             while not done:
                 state, reward, done, epsilon = agent.train_step(env)
                 epi_reward[i][e] += reward
+                # b.execute(state)
                 # plot_ugv.execute(state[0], state[1], state[2])
 
             epi_reward_average[i][e] = np.mean(epi_reward[i][max(0, e-20):e])
-            print("episode: {} epsilon:{} reward:{} averaged reward:{}".format
-                  (e, epsilon, epi_reward[i][e], epi_reward_average[i][e]))
+            print("episode: {} epsilon:{} reward:{} averaged reward:{} distance:{} gap:{}".format
+                  (e, epsilon, epi_reward[i][e], epi_reward_average[i][e], env.distance, env.gap))
+            # b.reset(state)
 
     # Plot Rewards
     fig, ax = plt.subplots()
     fig.suptitle('Rewards')
+    print(agent.action)
+    # print(agent.model)
 
     for j in range(len(epi_reward_average)):
         ax.plot(range(len(epi_reward_average[j])), epi_reward_average[j],

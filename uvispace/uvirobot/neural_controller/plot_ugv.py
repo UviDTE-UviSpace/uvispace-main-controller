@@ -60,6 +60,9 @@ class PlotUgv:
 
         self.x = state[0]
         self.y = state[1]
+        self.arrayX = []
+        self.arrayY = []
+        self.point2.set_data(self.arrayX, self.arrayY)
         self.angle = state[2]
         self.point2, = self.ax.plot([], [], 'r:')
         self.execute(state)
