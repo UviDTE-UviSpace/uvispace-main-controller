@@ -66,6 +66,7 @@ class UgvEnv:
         self.y = 0.2
         self.x = 0.2
         self.theta = 90
+        self.theta = math.radians(self.theta)
         self.steps = 0
         self.index = 0
 
@@ -95,10 +96,8 @@ class UgvEnv:
         self.w_ang = (wm2 - wm1) * (self.diameter / (4 * self.ro))
 
         # Calculate position and theta
-        self.x = self.x + self.v_linear * math.cos(self.w_ang
-                                                   * self.time) * self.time
-        self.y = self.y + self.v_linear * math.sin(self.w_ang
-                                                   * self.time) * self.time
+        self.x = self.x + self.v_linear * math.cos(self.theta) * self.time
+        self.y = self.y + self.v_linear * math.sin(self.theta) * self.time
         self.theta = self.theta + self.w_ang * self.time
 
         # Calculate the distance to the closest point in trajectory,
@@ -145,12 +144,16 @@ class UgvEnv:
 
         self.distance = 10
 
-        for w in range(self.index, self.index+6):
+        for w in range(self.index, self.index + 10):
+
             self.dist_point = math.sqrt((x_trajectory[w] - self.x)**2 +
                                         (y_trajectory[w] - self.y)**2)
             if self.dist_point < self.distance:
                 self.distance = self.dist_point
                 self.index = w
+
+            if w >= (len(x_trajectory) - 1):
+                break
 
         self._calc_side()
 
@@ -197,7 +200,7 @@ class UgvEnv:
 
         # Calculation of distance traveled compared to the previous point
         self.gap = math.sqrt((self.x - self.x_ant)**2
-                             - (self.y - self.y_ant)**2)
+                             + (self.y - self.y_ant)**2)
 
         self.x_ant = self.x
         self.y_ant = self.y
@@ -208,6 +211,9 @@ class UgvEnv:
 
         # Calculation of the side of the car with respect to the trajectory
         next_index = self.index + 1
+
+        if next_index == len(x_trajectory):
+            next_index = self.index
 
         trajectory_vector = ((x_trajectory[next_index]
                               - x_trajectory[self.index]),
@@ -264,7 +270,7 @@ class UgvEnv:
 if __name__ == "__main__":
 
         env = UgvEnv()
-        action = (2, 2)
+        action = (5, 5)
         EPISODES = 50
         epi_reward = np.zeros([EPISODES])
         epi_reward_average = np.zeros([EPISODES])
@@ -282,7 +288,7 @@ if __name__ == "__main__":
             # plot_ugv.execute(state[0], state[1], state[2])
             b.execute(state)
 
-            print("reward:{} distance:{} gap:{} zone_reward:{} theta:{} done:{} x:{} y:{}"
-                  .format(reward, env.distance, env.gap, env.zone_reward, env.theta, done, env.x, env.y))
+            print("reward:{} distance:{} gap:{} zone_reward:{} theta:{} done:{} x:{} y:{} index:{}"
+                  .format(reward, env.distance, env.gap, env.zone_reward, env.theta, done, env.x, env.y, env.index))
             time.sleep(1)
 
