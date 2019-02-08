@@ -13,7 +13,7 @@ from plot_ugv import PlotUgv
 SPACE_X = 4
 SPACE_Y = 3
 # Maximum number of steps allowed
-MAX_STEPS = 500
+MAX_STEPS = 30
 # Sampling period (time between 2 images)
 PERIOD = (1 / 30)
 # Reward weights
@@ -128,8 +128,11 @@ class UgvEnv:
 
         else:
             done = 0
-            reward = (-1 * BETA_DIST * self.distance) \
+            reward = (-1 * BETA_DIST * math.fabs(self.distance)) \
                      + BETA_GAP * self.gap - BETA_ZONE * self.zone_reward
+
+            # Number of iterations in a episode
+            self.steps += 1
 
         # Discretize state for the agent to control
         self._discretize_agent_state()
@@ -148,6 +151,7 @@ class UgvEnv:
 
             self.dist_point = math.sqrt((x_trajectory[w] - self.x)**2 +
                                         (y_trajectory[w] - self.y)**2)
+
             if self.dist_point < self.distance:
                 self.distance = self.dist_point
                 self.index = w
@@ -270,8 +274,8 @@ class UgvEnv:
 if __name__ == "__main__":
 
         env = UgvEnv()
-        action = (5, 5)
-        EPISODES = 50
+        action = (1, 1)
+        EPISODES = 1
         epi_reward = np.zeros([EPISODES])
         epi_reward_average = np.zeros([EPISODES])
 

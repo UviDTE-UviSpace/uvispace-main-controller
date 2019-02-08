@@ -74,7 +74,7 @@ class PlotUgv:
 
         self.point.set_xdata(self.x)
         self.point.set_ydata(self.y)
-        self.point.set_marker((3, 0, self.angle + 135))
+        self.point.set_marker((3, 0, self.angle))
 
         time.sleep(self.period)
 
