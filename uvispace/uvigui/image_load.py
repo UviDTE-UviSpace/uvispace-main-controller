@@ -110,17 +110,17 @@ def draw_grid(image):
     # y axis from top to bottom
     # if image changes to rgb the 4th parameter should be changed to (r,g,b)
     # upper line
-    cv2.line(image, (10, 10), (1270, 10), 255, 8)
+    cv2.line(image, (10, 10), (1270, 10), 255, 4)
     # lower line
-    cv2.line(image, (10, 926), (1270, 926), 255, 8)
+    cv2.line(image, (10, 926), (1270, 926), 255, 4)
     # left line
-    cv2.line(image, (10, 10), (10, 926), 255, 8)
+    cv2.line(image, (10, 10), (10, 926), 255, 4)
     # right line
-    cv2.line(image, (1270, 10), (1270, 926), 255, 8)
+    cv2.line(image, (1270, 10), (1270, 926), 255, 4)
     # horizontal origin
-    cv2.line(image, (640, 468), (740, 468), 255, 8)
+    cv2.line(image, (640, 468), (740, 468), 255, 4)
     # vertical origin
-    cv2.line(image, (640, 368), (640, 468), 255, 8)
+    cv2.line(image, (640, 368), (640, 468), 255, 4)
 
     return image
 
