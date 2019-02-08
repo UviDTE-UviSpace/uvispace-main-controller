@@ -20,7 +20,7 @@ import zmq
 
 # proprietary libraries
 import mainwindowinterface
-import image_load
+from image_generator import ImageGenerator
 import load_csv
 
 #for testing
@@ -187,24 +187,11 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         self.action_about.triggered.connect(self.about_message)
         self.actionOpen_csv.triggered.connect(self.__loadfileswindow)
 
-        # load cameras IP
-        self.cameras_IPs = image_load.loadips()
-        logger.info("Cameras IPs loaded")
-        print(self.cameras_IPs)
-
-        # load cameras size
-        self.cameras_size = image_load.load_image_size()
-        logger.info("Cameras size loaded")
-        print(self.cameras_size)
+        # create an object to control the image generation
+        self.img_generator = ImageGenerator()
 
         # file button event
         self.file_Button.clicked.connect(self.__loadfileswindow)
-
-
-
-
-        #options checks
-
 
         # add Car Widget using QlistWidget
         itemN = QListWidgetItem(self.listWidget)
@@ -252,13 +239,14 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         """
 
         if self.gray_rb.isChecked():
-            img_type = "GRAY"
+            self.img_generator.set_img_type("GRAY")
         elif self.bin_rb.isChecked():
-            img_type = "BIN"
+            self.img_generator.set_img_type("BIN")
         elif self.rgb_rb.isChecked():
-            img_type = "RGB"
+            self.img_generator.set_img_type("RGB")
         else:
-            img_type = "BLACK"
+            self.img_generator.set_img_type("BLACK")
+        self.img_generator.reconnect_cameras()
         return img_type
 
     def __loadfileswindow(self):
@@ -278,36 +266,11 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         refresh the car coordinates
 
         """
-        # get the car coordinates
-        coordinates = self.get_coordinates()
+        qpixmap_image = self.img_generator.get_image()
 
-        # get the image
-        image_np = image_load.image_stack(self.cameras_IPs,
-                                          self.cameras_size,
-                                          self.__check_img_type())
-
-        # checks the grid, car or path ckecks and draws them if neccesary
-        # grid check
-        if self.grid_check.isChecked():
-            image_load.draw_grid(image_np)
-        #car check
-
-        if self.ugv_check.isChecked():
-            image_np = image_load.draw_ugv(image_np, coordinates)
-        # update the image label
-
-        ############    test
-
-        pilimage = Image.fromarray(image_np)  # type:Image
-        qim = ImageQt.ImageQt(pilimage)  # type: ImageQt
-        qima = QImage(qim)
-
-        pixmap = QPixmap.fromImage(qima).scaled(self.label.size(),
-                                                aspectRatioMode= QtCore.Qt.KeepAspectRatio,
-                                                transformMode = QtCore.Qt.SmoothTransformation)
-        """pixmap = QPixmap('salida.jpg').scaled(self.label.size(),
-                                              aspectRatioMode=QtCore.Qt.KeepAspectRatio,
-                                              transformMode=QtCore.Qt.SmoothTransformation)"""
+        pixmap = QPixmap.fromImage(qpixmap_image).scaled(self.label.size(),
+                                aspectRatioMode= QtCore.Qt.KeepAspectRatio,
+                                transformMode = QtCore.Qt.SmoothTransformation)
 
         self.label.setPixmap(pixmap)
         self.label.adjustSize()
@@ -340,8 +303,6 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
 
         coordinates[0] = x
         coordinates[1] = y
-
-
         """
         coordinates = [640, 468, -45]
         return coordinates
