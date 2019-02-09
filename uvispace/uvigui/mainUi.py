@@ -10,21 +10,12 @@ import os
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import QLabel, QMessageBox, QWidget, QListWidgetItem
-from PyQt5.QtGui import QPixmap, QImage
-
-# PIL libraries
-from PIL import Image, ImageQt
-
-#ZMQ
-import zmq
+from PyQt5.QtGui import QPixmap
 
 # proprietary libraries
 import mainwindowinterface
 from image_generator import ImageGenerator
 import load_csv
-
-#for testing
-from cv2 import imwrite
 
 # Create the application logger
 logger = logging.getLogger('view')
@@ -55,10 +46,10 @@ class AppLogHandler(logging.Handler):
         # Paths to the log icons.
         parent_path = os.path.dirname(__file__)
         self.logsymbols = {
-            logging.DEBUG: "icons/debug.png",#.format(parent_path),
-            logging.INFO: "icons/info.png",#.format(parent_path),
-            logging.WARN: "icons/warning.png",#.format(parent_path),
-            logging.ERROR: "icons/error.png",#.format(parent_path),
+            logging.DEBUG: "icons/debug.png",
+            logging.INFO: "icons/info.png",
+            logging.WARN: "icons/warning.png",
+            logging.ERROR: "icons/error.png",
         }
         # The True levels are the ones that are printed on the log.
         self.enabled = {
@@ -166,10 +157,10 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         self.log_handler = AppLogHandler(self.LoggerBrowser)
         logger.setLevel(5)
         logger.addHandler(self.log_handler)
-        logger.info("Info")
-        logger.error("Error")
-        logger.debug("Debug")
-        logger.warning("Warning")
+        logger.info("Info debug actived")
+        logger.error("Error debug actived")
+        logger.debug("Debug debug actived")
+        logger.warning("Warning debug actived")
 
         # Log console level selection buttons
         self.DebugCheck.clicked.connect(self.update_logger_level)
@@ -178,20 +169,23 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         self.ErrorCheck.clicked.connect(self.update_logger_level)
 
         # initialise the QTimer to update the cameras image
-        self.__actualizar_imagen = QTimer()
+        self.__update_image_timer = QTimer()
         t_refresh = 500
-        self.__actualizar_imagen.start(t_refresh)
-        self.__actualizar_imagen.timeout.connect(self.__update_interface)
+        self.__update_image_timer.start(t_refresh)
+        self.__update_image_timer.timeout.connect(self.__update_interface)
         # menu actions
         self.actionExit.triggered.connect(self.close)  # close the app
         self.action_about.triggered.connect(self.about_message)
-        self.actionOpen_csv.triggered.connect(self.__loadfileswindow)
+        self.actionOpen_csv.triggered.connect(self.__load_files_window)
 
         # create an object to control the image generation
         self.img_generator = ImageGenerator()
 
+        # image border, ugv and path check events
+        self.grid_check.clicked.connect(self.update_border_status)
+
         # file button event
-        self.file_Button.clicked.connect(self.__loadfileswindow)
+        self.file_Button.clicked.connect(self.__load_files_window)
 
         # add Car Widget using QlistWidget
         itemN = QListWidgetItem(self.listWidget)
@@ -204,24 +198,20 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         widget.label_x.setText("20")
         widget.progressBar_battery.setProperty('value', 90)
         widget.label_UGV.setText("Coche 1")
-        # second car widget
-        item1 = QListWidgetItem(self.listWidget)
-        widget2 = CarWidget()
-        item1.setSizeHint(widget2.size())
-        self.listWidget.addItem(item1)
-        self.listWidget.setItemWidget(item1, widget2)
-        widget2.label_UGV.setText("Coche 2")
-        logger.info("Car 2 added")
-        # third car
-        item2 = QListWidgetItem(self.listWidget)
-        widget3 = CarWidget()
-        item2.setSizeHint(widget3.size())
-        self.listWidget.addItem(item2)
-        self.listWidget.setItemWidget(item2, widget3)
-        widget3.label_UGV.setText("Coche 3")
-        logger.info("Car 3 added")
 
+    def update_ugv_status(self):
+        if self.ugv_check.isChecked():
+            self.img_generator.set_ugv_visible(True)
+            logger.debug("UGV draw activated")
+        else:
+            self.img_generator.set_ugv_visible(False)
 
+    def update_border_status(self):
+        if self.grid_check.isChecked():
+            self.img_generator.set_border_visible(True)
+            logger.debug("Border draw activated")
+        else:
+            self.img_generator.set_border_visible(False)
 
     def update_logger_level(self):
         """Evaluate the check boxes states and update logger level."""
@@ -247,9 +237,9 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         else:
             self.img_generator.set_img_type("BLACK")
         self.img_generator.reconnect_cameras()
-        return img_type
+        return
 
-    def __loadfileswindow(self):
+    def __load_files_window(self):
         # opens a new window to load a .csv file
         logger.debug("Opening file loading window")
         self.popup = load_csv.App()
@@ -262,7 +252,6 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
     def __update_interface(self):
         """
         refresh the image label
-        calls the image_stack method to join the four camera images
         refresh the car coordinates
 
         """
@@ -272,11 +261,9 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
                                 aspectRatioMode= QtCore.Qt.KeepAspectRatio,
                                 transformMode = QtCore.Qt.SmoothTransformation)
 
-        self.label.setPixmap(pixmap)
         self.label.adjustSize()
         self.label.setScaledContents(True)
-
-
+        self.label.setPixmap(pixmap)
 
     def get_coordinates(self):
         # read the car coordinates and the angle
