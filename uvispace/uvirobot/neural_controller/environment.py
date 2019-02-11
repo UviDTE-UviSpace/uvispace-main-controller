@@ -13,16 +13,13 @@ from plot_ugv import PlotUgv
 SPACE_X = 4
 SPACE_Y = 3
 # Maximum number of steps allowed
-MAX_STEPS = 30
-# Sampling period (time between 2 images)
-PERIOD = (1 / 30)
+MAX_STEPS = 200
+
 # Reward weights
 BETA_DIST = 0.01
 BETA_GAP = 0.01
 BETA_ZONE = 0.01
-# Variable space quantization
-NUM_DIV_STATE = 5
-NUM_DIV_ACTION = 5
+
 BAND_WIDTH = 0.02
 # Define Reward Zones
 ZONE0_LIMIT = 0.021  # Up to 2.1cm
@@ -31,16 +28,15 @@ ZONE2_LIMIT = 0.071  # Up to 7.1 cm
 
 
 class UgvEnv:
-    a = int
 
-    def __init__(self, x_trajectory, y_trajectory, period):
+    def __init__(self, x_traj, y_traj, period, num_div_state, num_div_action):
 
         # Size of the space
         self.max_x = SPACE_X / 2  # [m]
         self.max_y = SPACE_Y / 2  # [m]
         self.state = []
-        self.x_trajectory = x_trajectory
-        self.y_trajectory = y_trajectory
+        self.x_trajectory = x_traj
+        self.y_trajectory = y_traj
         self.ro = 0.0325  # [m]
         self.diameter = 0.133  # [m]
         self.time = period  # frames per second
@@ -52,6 +48,8 @@ class UgvEnv:
         self.zone_0_limit = ZONE0_LIMIT
         self.zone_1_limit = ZONE1_LIMIT
         self.zone_2_limit = ZONE2_LIMIT
+        self.num_div_state = num_div_state
+        self.num_div_action = num_div_action
 
     def reset(self):
 
@@ -81,8 +79,8 @@ class UgvEnv:
         m1, m2 = self._dediscretize_action(action)
 
         # PWM to rads conversion
-        wm1 = (42.77 * (m1 - 127) / 128)
-        wm2 = (42.77 * (m2 - 127) / 128)
+        wm1 = (25 * (m1 - 127) / 128)
+        wm2 = (25 * (m2 - 127) / 128)
 
         # Calculate linear and angular velocity
         self.v_linear = (wm2 + wm1) * (self.ro / 2)
@@ -114,6 +112,10 @@ class UgvEnv:
         elif self.steps >= self.max_steps:
             done = 1
             reward = -20
+
+        elif math.fabs(self.delta_theta) > math.pi/2:
+            done = 1
+            reward = -10
 
         elif self.zone_reward == 3:
             done = 1
@@ -239,18 +241,18 @@ class UgvEnv:
 
     def _discretize_agent_state(self):
 
-        left_band = -(((NUM_DIV_STATE-1)/2) - 0.5)
+        left_band = -(((self.num_div_state-1)/2) - 0.5)
 
         self.discrete_distance = 0
 
-        for div in range(NUM_DIV_STATE-1):
+        for div in range(self.num_div_state-1):
             if self.distance > ((left_band + div) * BAND_WIDTH):
                 self.discrete_distance = div + 1
 
-        angle_band_width = math.pi/(NUM_DIV_STATE - 2)
+        angle_band_width = math.pi/(self.num_div_state - 2)
 
         self.discrete_delta_theta = 0
-        for div in range(NUM_DIV_STATE - 1):
+        for div in range(self.num_div_state - 1):
             if self.discrete_delta_theta > (left_band + div) * angle_band_width:
                 self.discrete_delta_theta = div + 1
 
@@ -259,8 +261,8 @@ class UgvEnv:
         discrete_m1 = action[0]
         discrete_m2 = action[1]
 
-        m1 = 127 + discrete_m1 * 128/(NUM_DIV_ACTION - 1)
-        m2 = 127 + discrete_m2 * 128/(NUM_DIV_ACTION - 1)
+        m1 = 127 + discrete_m1 * 128/(self.num_div_action - 1)
+        m2 = 127 + discrete_m2 * 128/(self.num_div_action - 1)
 
         return m1, m2
 

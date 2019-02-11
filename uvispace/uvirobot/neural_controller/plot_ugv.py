@@ -6,6 +6,7 @@
 import matplotlib.patches as ptch
 import matplotlib.pyplot as plt
 import time
+import math
 
 
 class PlotUgv:
@@ -77,7 +78,8 @@ class PlotUgv:
 
         self.point.set_xdata(self.x)
         self.point.set_ydata(self.y)
-        self.point.set_marker((3, 0, self.angle))
+
+        self.point.set_marker((3, 0, math.degrees(self.angle)))
 
         time.sleep(self.period)
 

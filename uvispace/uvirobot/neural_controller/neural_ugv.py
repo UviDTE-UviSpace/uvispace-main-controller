@@ -186,15 +186,20 @@ class Agent:
 
         new_state, new_agent_state, reward, done = env.step(self.action)
 
-        self.action = self._choose_action(self.state)
+        new_action = self._choose_action(new_agent_state)
 
         # Q(S;A)<-Q(S;A) + alfa[R + ganma*maxQ(S';a) - Q(S;A)]
 
-        self.model[self.state[0, 0], self.state[0, 1], self.action] \
-            += self.ALFA * (reward + self.GANMA*np.amax(self.predict(new_state))
-                            - self.predict(self.state)[self.action])
+        self.model[self.agent_state[0], self.agent_state[1], self.action[0],
+                   self.action[1]] \
+            += self.ALFA * (reward + self.GANMA *
+                            np.amax(self.predict(new_agent_state)[new_action[0],
+                                                                  new_action[1]]
+                                    - self.predict(self.agent_state)
+                                    [self.action[0], self.action[1]]))
 
-        self.state = new_state
+        self.agent_state = new_agent_state
+        self.action = new_action
 
         if done:
             self.epsilon *= self.EPSILON_DECAY
@@ -212,12 +217,15 @@ class Agent:
 
         # Q(S;A)<-Q(S;A) + alfa[R + E[Q(S';A')|S'] - Q(S;A)]
 
-        self.model[self.state[0, 0], self.state[0, 1], self.action] \
+        self.model[self.agent_state[0], self.agent_state[1], self.action[0],
+                   self.action[1]] \
             += self.ALFA * (reward + self.GANMA*(1/4)
-                            * np.sum(self.predict(new_state))
-                            - self.predict(self.state)[self.action])
+                            * np.sum(self.predict(new_agent_state)
+                                     [new_action[0], new_action[1]])
+                            - self.predict(self.agent_state)[self.action[0],
+                                                             self.action[1]])
 
-        self.state = new_state
+        self.agent_state = new_agent_state
         self.action = new_action
 
         if done:
@@ -274,35 +282,40 @@ if __name__ == "__main__":
 
     # agent_types = ["SARSA","Q-Learning","Expected SARSA"]#, "n-step SARSA"]
     agent_types = ["SARSA"]
+    # agent_types = ["Q-Learning"]
+    # agent_types = ["Expected SARSA"]
 
     # Train
     epi_reward = {}
     epi_reward_average = {}
-    # plot_ugv = PlotUgv(SPACE_X, SPACE_Y, x_trajectory, y_trajectory, PERIOD)
+
+    plot_ugv = PlotUgv(SPACE_X, SPACE_Y, x_trajectory, y_trajectory, PERIOD)
 
     for i in range(len(agent_types)):
-        env = UgvEnv(x_trajectory, y_trajectory, PERIOD)
+        env = UgvEnv(x_trajectory, y_trajectory, PERIOD, NUM_DIV_STATE,
+                     NUM_DIV_ACTION)
+
         agent = Agent(agent_types[i])
         epi_reward[i] = np.zeros([EPISODES])
         epi_reward_average[i] = np.zeros([EPISODES])
 
-        # b = PlotUgv(3, 4, x_trajectory, y_trajectory, 1 / 30)
-
         for e in range(EPISODES):
             state = agent.init_episode(env)
-            # plot_ugv.reset(state[0], state[1], state[2])
+
+            if e % 20 == 0:
+                plot_ugv.reset(state)
 
             done = False
             while not done:
                 state, reward, done, epsilon = agent.train_step(env)
                 epi_reward[i][e] += reward
-                # b.execute(state)
-                # plot_ugv.execute(state[0], state[1], state[2])
+
+                if e % 20 == 0:
+                    plot_ugv.execute(state)
 
             epi_reward_average[i][e] = np.mean(epi_reward[i][max(0, e-20):e])
-            print("episode: {} epsilon:{} reward:{} averaged reward:{} distance:{} gap:{}".format
-                  (e, epsilon, epi_reward[i][e], epi_reward_average[i][e], env.distance, env.gap))
-            # b.reset(state)
+            print("episode: {} epsilon:{} reward:{} averaged reward:{} distance:{} gap:{} theta:{}".format
+                  (e, epsilon, epi_reward[i][e], epi_reward_average[i][e], env.distance, env.gap, env.state[2]))
 
     # Plot Rewards
     fig, ax = plt.subplots()
