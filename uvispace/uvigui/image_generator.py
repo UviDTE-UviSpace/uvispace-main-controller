@@ -14,6 +14,9 @@ from PIL import Image, ImageQt
 import logging
 import os
 
+#fps metter
+import time
+
 # Create the application logger
 logger = logging.getLogger('view')
 
@@ -24,7 +27,7 @@ class ImageGenerator():
         # load info to read images from camera
         self.cam_ips = self._load_ips()
         self.img_size = self._load_image_size()
-
+        self.old_img_type = "BLACK"
         # By default black image without borders and without ugv
         self.img_type = "BLACK"
         self.border_visible = False
@@ -72,19 +75,29 @@ class ImageGenerator():
         return img_size
 
     def reconnect_cameras(self):
-        # save the image type
-        self.old_img_type = self.img_type
+
+        if self.img_type == "BLACK":
+            for i in range(4):
+                self.receiver[i].close()
+            logger.debug("Sockets closed")
 
         # disconnect from old image type
-        if self.old_img_type != "BLACK":
-            for i in range(4):
-                self.receiver[i].disconnect()
+        """ if self.img_type == "BLACK":
+            #disconnect from BIN image port
+            if self.old_img_type == "BIN":
+                for i in range(4):
+                    self.receiver[i].disconnect("tcp://" + self.cam_ips[i] +
+                    ":33000")
+                else: #disconnect from GRAY
+                    self.receiver[i].disconnect("tcp://" + self.cam_ips[i] +
+                    ":34000")"""
 
         # connect to new image type
         if self.img_type != "BLACK":
             self.receiver = []
             for i in range(4):
                 self.receiver.append(zmq.Context.instance().socket(zmq.SUB))
+                logger.info("Connected to camera '%s' ", i)
                 if self.img_type == "BIN":
                     self.receiver[i].connect("tcp://" + self.cam_ips[i] +
                     ":33000")
@@ -94,8 +107,13 @@ class ImageGenerator():
                 self.receiver[i].setsockopt_string(zmq.SUBSCRIBE, u"")
                 self.receiver[i].setsockopt(zmq.CONFLATE, True)
 
-    def set_img_type(self, img_type = "BLACK"):
+        # save the image type
+        self.old_img_type = self.img_type
+
+    def set_img_type(self, img_type="BLACK"):
+        logger.debug("Changed image type")
         self.img_type = img_type
+        self.reconnect_cameras()
 
     def set_border_visible(self, border_visible=False):
         self.border_visible = border_visible
@@ -120,17 +138,21 @@ class ImageGenerator():
                                       dtype=np.uint8)
         else:
             image = []
+            start = time.time()
             for i in range(4):
                 message = self.receiver[i].recv()
                 image.append(np.fromstring(message,
                              dtype=np.uint8).reshape((self.img_size[1],
-                             self.img_size[0])))
+                                                     self.img_size[0])))
 
             # Stack the array using concatenate, first stacks horizontally,
             # then, one on top of the other
             image12 = np.concatenate((image[2 - 1], image[1 - 1]), axis=1)
             image34 = np.concatenate((image[3 - 1], image[4 - 1]), axis=1)
             multi_image_np = np.concatenate((image12, image34), axis=0)
+
+            #calculate fps
+            #logger.debug("FPS: '%s'", 1.0 / (time.time() - start))
 
         # Add uvispace border if requested
         if self.border_visible:

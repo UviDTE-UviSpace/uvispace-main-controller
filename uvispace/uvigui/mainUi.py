@@ -168,11 +168,17 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         self.WarnCheck.clicked.connect(self.update_logger_level)
         self.ErrorCheck.clicked.connect(self.update_logger_level)
 
+        #Image type checks
+        self.bin_rb.clicked.connect(self.__check_img_type)
+        self.gray_rb.clicked.connect(self.__check_img_type)
+        self.black_rb.clicked.connect(self.__check_img_type)
+
         # initialise the QTimer to update the cameras image
         self.__update_image_timer = QTimer()
-        t_refresh = 500
+        t_refresh = 10
         self.__update_image_timer.start(t_refresh)
         self.__update_image_timer.timeout.connect(self.__update_interface)
+
         # menu actions
         self.actionExit.triggered.connect(self.close)  # close the app
         self.action_about.triggered.connect(self.about_message)
@@ -225,9 +231,8 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         """
         Checks the radio buttons state, to specify the image type
         to show in the viewer
-        :return: string, can be BIN, GRAY, BLACK or RGB
         """
-
+        logger.debug("Clikado selector image")
         if self.gray_rb.isChecked():
             self.img_generator.set_img_type("GRAY")
         elif self.bin_rb.isChecked():
