@@ -27,7 +27,7 @@ logger = logging.getLogger("sensor")
 class VideoSensor:
     def __init__(self, configuration_file):
         # Obtain configuration
-        configuration = ConfigParser.ConfigParser()
+        configuration = configparser.ConfigParser()
         configuration.read(configuration_file)
         # Store image dimension
         # FIXME [floonone-20171128] read parameters from config file

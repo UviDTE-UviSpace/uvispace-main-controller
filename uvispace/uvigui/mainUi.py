@@ -4,6 +4,7 @@
 import sys
 import logging
 import os
+import zmq
 
 
 # PyQt5 libraries
@@ -16,6 +17,7 @@ from PyQt5.QtGui import QPixmap
 import mainwindowinterface
 from image_generator import ImageGenerator
 import load_csv
+import tools.fuzzy_controller_calib.fuzzy_calibration as fuzzy_calib
 
 # Create the application logger
 logger = logging.getLogger('view')
@@ -183,27 +185,29 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         self.actionExit.triggered.connect(self.close)  # close the app
         self.action_about.triggered.connect(self.about_message)
         self.actionOpen_csv.triggered.connect(self.__load_files_window)
+        self.actionFuzzy_controller_calibration.triggered.connect(self.__fuzzy_controller_calibration)
 
         # create an object to control the image generation
         self.img_generator = ImageGenerator()
 
         # image border, ugv and path check events
         self.grid_check.clicked.connect(self.update_border_status)
+        self.ugv_check.clicked.connect(self.update_ugv_status)
 
         # file button event
         self.file_Button.clicked.connect(self.__load_files_window)
 
         # add Car Widget using QlistWidget
         itemN = QListWidgetItem(self.listWidget)
-        widget = CarWidget()
-        itemN.setSizeHint(widget.size())
+        self.widget = CarWidget()
+        itemN.setSizeHint(self.widget.size())
         self.listWidget.addItem(itemN)
-        self.listWidget.setItemWidget(itemN, widget)
+        self.listWidget.setItemWidget(itemN, self.widget)
         logger.info("Car 1 added")
         # testing the widget ...
-        widget.label_x.setText("20")
-        widget.progressBar_battery.setProperty('value', 90)
-        widget.label_UGV.setText("Coche 1")
+        #self.widget.label_x.setText("20")
+        self.widget.progressBar_battery.setProperty('value', 90)
+        self.widget.label_UGV.setText("Coche 1")
 
     def update_ugv_status(self):
         if self.ugv_check.isChecked():
@@ -254,12 +258,20 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         self.lineEdit.setText(coord_filename)
         return
 
+    def __fuzzy_controller_calibration(self):
+        # opens a new window to do the fuzzy controller calibration
+        logger.debug("Opening the fuzzy controller calibration window")
+        self.popup = fuzzy_calib.MainWindow()
+        self.popup.show()
+        return
+
     def __update_interface(self):
         """
         refresh the image label
         refresh the car coordinates
 
         """
+        self.get_pose()
         qpixmap_image = self.img_generator.get_image()
 
         pixmap = QPixmap.fromImage(qpixmap_image).scaled(self.label.size(),
@@ -270,32 +282,32 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         self.label.setScaledContents(True)
         self.label.setPixmap(pixmap)
 
-    def get_coordinates(self):
+    def get_pose(self):
         # read the car coordinates and the angle
-        """ Connects to the IP port and read the pose of the UGV
-        TODO: read the UGV IP from file
+        # Connects to the IP port and read the pose of the UGV
+        #TODO: read the UGV IP from file
 
-
-        :return:
 
         receiver = zmq.Context.instance().socket(zmq.SUB)
-        receiver.connect("tcp://" + "192.168.0.51" + ":31000")
+        receiver.connect("tcp://localhost:{}".format(
+            int(os.environ.get("UVISPACE_BASE_PORT_POSITION"))+1))
         receiver.setsockopt_string(zmq.SUBSCRIBE, u"")
         receiver.setsockopt(zmq.CONFLATE, True)
 
-        coordinates = receiver.recv()
+        coordinates = receiver.recv_json()
 
         #translate coordinates from uvispace reference system to numpy
-        a = coordinates[0]
-        b = coordinates[1]
-        x = (a+2000)*1280/4000
-        y = (-b+1500)*936/3000
-        x = int(x)
-        y = int(y)
+        x_mm = coordinates['x']
+        y_mm = coordinates['y']
+        #x_px = (x_mm+2000)*1280/4000
+        #y_px = (-y_mm+1500)*936/3000
+        x_px = int(x_mm)
+        y_px = int(y_mm)
 
-        coordinates[0] = x
-        coordinates[1] = y
-        """
+        #pose = [0, 0, 40]
+        self.widget.label_x.setText(str(x_px))
+        self.widget.label_y.setText(str(y_px))
+        self.widget.label_z.setText(str(coordinates['theta']))
         coordinates = [640, 468, -45]
         return coordinates
 

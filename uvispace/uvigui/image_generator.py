@@ -34,16 +34,16 @@ class ImageGenerator():
         self.ugv_visible = False
 
         # Load the UGV image (just once in the init)
-        self.ugv_image = Image.open('icons/UGV_image.jpg')
 
         # Create a socket to read UGV locations
         # Open a subscribe socket to listen for position data
         self.pose_subscriber = zmq.Context.instance().socket(zmq.SUB)
         self.pose_subscriber.setsockopt_string(zmq.SUBSCRIBE, u"")
         self.pose_subscriber.setsockopt(zmq.CONFLATE, True)
+        #self.pose_subscriber.connect("tcp://" + "192.168.0.51" + ":35000")
         self.pose_subscriber.connect("tcp://localhost:{}".format(
-            int(35000)))
-             #   int(os.environ.get("UVISPACE_BASE_PORT_POSITION"))))
+            int(os.environ.get("UVISPACE_BASE_PORT_POSITION"))+1))
+
 
     def _load_ips(self):
         """
@@ -58,7 +58,6 @@ class ImageGenerator():
             cameras_IPs.append(ipscam.get('VideoSensor', 'IP'))
         logger.info("Cameras IPs loaded")
         return cameras_IPs
-
 
     def _load_image_size(self):
         """
@@ -158,9 +157,6 @@ class ImageGenerator():
         if self.border_visible:
             multi_image_np = self._draw_border(multi_image_np)
 
-        # Transform from numpy to PIL image (better for adding the UGV)
-        # TODO ----------MAKE THIS!!!!!!-----------#
-
         # Add ugv if requested
         if self.ugv_visible:
             multi_image_np = self._draw_ugv(multi_image_np)
@@ -198,20 +194,63 @@ class ImageGenerator():
         :param image: numpy image
         :return: numpy image array
         """
-
-        # read coordinates from real UGV
+        # receive pose
+        #print("antes recv json")
         pose = self.pose_subscriber.recv_json()
+        """pose = {}
+        pose = {
+            'x': 360,
+            'y': 280,
+            'theta': 0
+        }"""
+        #print("pos function")
+        x_mm = pose['x']
+        logger.debug("posicion x: '%s'", x_mm)
+        y_mm = pose['y']
+        logger.debug("posicion y: '%s'", y_mm)
+        x_pix = int((x_mm + 2000) * 1280 / 4000)
+        y_pix = int((-y_mm + 1500) * 936 / 3000)
 
-        dst_im = Image.fromarray(image)
+        angle = pose['theta'] + np.pi/2
 
-        self.ugv_image = self.ugv_image.convert('RGBA')
-        rot = self.ugv_image.rotate(pose['theta'], expand=1).resize(
-                                                    self.ugv_image.size)
-        dst_im.paste(rot, (pose['x']-int(self.ugv_image.size[0]/2),
-                           pose['y']-int(self.ugv_image.size[1]/2)), rot)
-        dst_im.convert('RGB')
-        array_image = np.array(dst_im)
-        # cv2.imwrite('save2.jpg', array_image)
+        # triangle size
+        height = 60
+        width = 50
 
-        return array_image
+        # vertex coordinates before rotating
+        x1 = x_pix
+        y1 = y_pix - height / 2
+        x2 = x_pix + width / 2
+        y2 = y_pix + height / 2
+        x3 = x_pix - width / 2
+        y3 = y2
 
+        # rotating
+        x1r = (x1 - x_pix) * np.cos(angle) - (y1 - y_pix) * np.sin(
+            angle) + x_pix
+        y1r = -(x1 - x_pix) * np.sin(angle) - (y1 - y_pix) * np.cos(
+            angle) + y_pix
+
+        x2r = (x2 - x_pix) * np.cos(angle) - (y2 - y_pix) * np.sin(
+            angle) + x_pix
+        y2r = -(x2 - x_pix) * np.sin(angle) - (y2 - y_pix) * np.cos(
+            angle) + y_pix
+
+        x3r = (x3 - x_pix) * np.cos(angle) - (y3 - y_pix) * np.sin(
+            angle) + x_pix
+        y3r = -(x3 - x_pix) * np.sin(angle) - (y3 - y_pix) * np.cos(
+            angle) + y_pix
+
+        # casting to integer
+        x1r = int(x1r)
+        y1r = int(y1r)
+        x2r = int(x2r)
+        y2r = int(y2r)
+        x3r = int(x3r)
+        y3r = int(y3r)
+        # drawing the lines on the image
+        cv2.line(image, (x1r, y1r), (x2r, y2r), 255, 4)
+        cv2.line(image, (x2r, y2r), (x3r, y3r), 255, 4)
+        cv2.line(image, (x1r, y1r), (x3r, y3r), 255, 4)
+
+        return image
