@@ -13,7 +13,7 @@ from plot_ugv import PlotUgv
 SPACE_X = 4
 SPACE_Y = 3
 # Maximum number of steps allowed
-MAX_STEPS = 200
+MAX_STEPS = 450
 
 # Reward weights
 BETA_DIST = 0.01

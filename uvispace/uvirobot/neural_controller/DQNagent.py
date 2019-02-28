@@ -5,9 +5,11 @@ from collections import deque
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.optimizers import Adam
+from keras.models import load_model
 
 from plot_ugv import PlotUgv
 from environment import UgvEnv
+import math
 
 class Agent:
     def __init__(self,state_size,action_size, gamma=1, epsilon = 1.0, epsilon_min=0.01,epsilon_decay=0.995, learning_rate=0.001, batch_size=64, tau=0.1):
@@ -96,6 +98,14 @@ class Agent:
 
         self.target_model.set_weights(w_target)
 
+    def save_model(self):
+        self.model.save('model.h5')
+
+    def load_model(self):
+        self.model=load_model('model.h5')
+        self.target_model.set_weights(self.model.get_weights())
+
+
 
 
 if __name__ == "__main__":
@@ -110,41 +120,67 @@ if __name__ == "__main__":
     # Init to zero?
     INIT_TO_ZERO = True
     # Number of episodes
-    EPISODES = 500
+    EPISODES = 1500
     # Define trajectory
-    x_trajectory = np.linspace(0.2, 1.2, 201)
-    y_trajectory = np.linspace(0.2, 1.2, 201)
+
+
+    x_trajectory = np.append(np.linspace(0.2, 0.2, 121),np.cos(np.linspace(180*math.pi/180, 90*math.pi/180, 121))*0.4+0.6)
+    y_trajectory = np.append(np.linspace(0.2, 0.8, 121),np.sin(np.linspace(180*math.pi/180, 90*math.pi/180, 121))*0.4+0.8)
+
     state_size = 2
     action_size=NUM_DIV_ACTION*NUM_DIV_ACTION
 
-    scores = deque(maxlen=100)
-    agent=Agent(state_size,action_size, gamma=0.99, epsilon = 1.0, epsilon_min=0.001,epsilon_decay=0.95, learning_rate=0.001, batch_size=64, tau=0.1)
+    scores = deque(maxlen=20)
+    agent=Agent(state_size,action_size, gamma=0.99, epsilon = 0.4, epsilon_min=0.01,epsilon_decay=0.993, learning_rate=0.001, batch_size=64, tau=0.1)
     plot_ugv = PlotUgv(SPACE_X, SPACE_Y, x_trajectory, y_trajectory, PERIOD)
     env=UgvEnv(x_trajectory, y_trajectory, PERIOD, NUM_DIV_STATE,
                      NUM_DIV_ACTION)
+    agent.load_model()
 
     for e in range(EPISODES):
         state, agent_state=env.reset()
         agent_state=agent.format_state(agent_state)
         done=False
         R=0
-
+#
         while not done:
             action = agent.action(agent_state)
             new_state, new_agent_state, reward, done =env.step(action)
             new_agent_state = agent.format_state(new_agent_state)
             agent.remember(agent_state, action, reward, new_agent_state, done)
-
-
+#
+#
             agent_state=new_agent_state
             R+=reward
-
-            if len(agent.memory)>agent.batch_size:
-                agent.replay()
-                agent.soft_update_target_network()
-
+#
+        if len(agent.memory)>agent.batch_size:
+            agent.replay()
+            agent.soft_update_target_network()
         agent.reduce_random()
         scores.append(R)
         mean_score = np.mean(scores)
         print("episode: {}/{}, score: {}, e: {:.2}, mean_score: {}, final state :({},{})"
                   .format(e, EPISODES, R, agent.epsilon, mean_score,env.state[0],env.state[1]))
+#
+        if mean_score > 20:
+            agent.save_model()
+            break
+
+    #for e in range(EPISODES):
+    #    state, agent_state=env.reset()
+    #    agent_state=agent.format_state(agent_state)
+    #    done=False
+    #    R=0
+#
+    #    while not done:
+    #        action = np.argmax(agent.model.predict(agent_state))
+    #        new_state, new_agent_state, reward, done =env.step(action)
+    #        new_agent_state = agent.format_state(new_agent_state)
+#
+    #        agent_state=new_agent_state
+    #        R+=reward
+#
+    #    scores.append(R)
+    #    mean_score = np.mean(scores)
+    #    print("episode: {}/{}, score: {}, e: {:.2}, mean_score: {}, final state :({},{})"
+    #              .format(e, EPISODES, R, agent.epsilon, mean_score,env.state[0],env.state[1]))
