@@ -281,8 +281,8 @@ class Agent:
 if __name__ == "__main__":
 
     # agent_types = ["SARSA","Q-Learning","Expected SARSA"]#, "n-step SARSA"]
-    agent_types = ["SARSA"]
-    # agent_types = ["Q-Learning"]
+    #agent_types = ["SARSA"]
+    agent_types = ["Q-Learning"]
     # agent_types = ["Expected SARSA"]
 
     # Train
@@ -310,7 +310,7 @@ if __name__ == "__main__":
                 state, reward, done, epsilon = agent.train_step(env)
                 epi_reward[i][e] += reward
 
-                if e % 20 == 0:
+            if e % 20 == 0:
                     plot_ugv.execute(state)
 
             epi_reward_average[i][e] = np.mean(epi_reward[i][max(0, e-20):e])

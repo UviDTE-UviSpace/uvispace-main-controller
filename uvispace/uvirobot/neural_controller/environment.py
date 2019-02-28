@@ -65,9 +65,10 @@ class UgvEnv:
         self._calc_delta_theta()
 
         # discretize state for the agent to control
-        self._discretize_agent_state()
+        #self._discretize_agent_state()
 
-        self.agent_state = [self.discrete_distance, self.discrete_delta_theta]
+        #self.agent_state has to be a matrix to be accepted by keras
+        self.agent_state = np.array([self.distance, self.delta_theta])
 
         # Create state (x,y,theta)
         self.state = [self.x, self.y, self.theta]
@@ -130,11 +131,12 @@ class UgvEnv:
             self.steps += 1
 
         # Discretize state for the agent to control
-        self._discretize_agent_state()
-        self.agent_state = [self.discrete_distance, self.discrete_delta_theta]
+        #self._discretize_agent_state()
+        self.agent_state = np.array([self.distance, self.delta_theta])
 
         # Create state (x,y,theta)
         self.state = [self.x, self.y, self.theta]
+        #print(self.state,self.sign)
 
         return self.state, self.agent_state, reward, done
 
@@ -177,15 +179,15 @@ class UgvEnv:
 
     def _calc_zone(self):
 
-        if self.distance < self.zone_0_limit:
+        if np.abs(self.distance) < self.zone_0_limit:
 
             self.zone_reward = -1
 
-        elif self.distance < self.zone_1_limit:
+        elif np.abs(self.distance) < self.zone_1_limit:
 
             self.zone_reward = 1
 
-        elif self.distance < self.zone_2_limit:
+        elif np.abs(self.distance) < self.zone_2_limit:
 
             self.zone_reward = 2
 
@@ -200,6 +202,17 @@ class UgvEnv:
         # Calculation of distance traveled compared to the previous point
         self.gap = math.sqrt((self.x - self.x_ant)**2
                              + (self.y - self.y_ant)**2)
+
+        self.x_ant = self.x
+        self.y_ant = self.y
+
+        return self.gap
+
+    def _calc_side(self):
+
+        # Calculation of distance traveled compared to the previous point
+        self.gap = math.sqrt((self.x - self.x_ant) ** 2
+                             + (self.y - self.y_ant) ** 2)
 
         self.x_ant = self.x
         self.y_ant = self.y
@@ -225,7 +238,7 @@ class UgvEnv:
         ugv_vector = (x_diff, y_diff)
 
         vector_z = ugv_vector[0] * trajectory_vector[1] \
-                   - ugv_vector[1] - trajectory_vector[0]
+                   - ugv_vector[1] * trajectory_vector[0]
 
         if vector_z > 0:
 
@@ -236,6 +249,9 @@ class UgvEnv:
 
             # It is in the left side
             self.sign = -1
+
+        return self.sign
+
 
         return self.sign
 
@@ -258,13 +274,25 @@ class UgvEnv:
 
     def _dediscretize_action(self, action):
 
-        discrete_m1 = action[0]
-        discrete_m2 = action[1]
+        # actions fron 0 to 24
+        discrete_m1=action//5
+        discrete_m2=action%5
 
         m1 = 127 + discrete_m1 * 128/(self.num_div_action - 1)
         m2 = 127 + discrete_m2 * 128/(self.num_div_action - 1)
 
         return m1, m2
+
+
+        #Christian´s function
+
+        #discrete_m1 = action[0]
+        #discrete_m2 = action[1]
+#
+        #m1 = 127 + discrete_m1 * 128/(self.num_div_action - 1)
+        #m2 = 127 + discrete_m2 * 128/(self.num_div_action - 1)
+#
+        #return m1, m2
 
 
 if __name__ == "__main__":

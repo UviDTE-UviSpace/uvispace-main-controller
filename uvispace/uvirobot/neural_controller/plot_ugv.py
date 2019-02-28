@@ -54,7 +54,9 @@ class PlotUgv:
 
         self.ax.add_patch(rect2)
 
-        plt.show(False)
+        #Christian wrote false in the plt.show argumant and it
+        #it generated an error
+        plt.show()
         plt.draw()
 
     def reset(self, state):
