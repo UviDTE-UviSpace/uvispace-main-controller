@@ -98,11 +98,11 @@ class Agent:
 
         self.target_model.set_weights(w_target)
 
-    def save_model(self):
-        self.model.save('model.h5')
+    def save_model(self,name):
+        self.model.save(name)
 
-    def load_model(self):
-        self.model=load_model('model.h5')
+    def load_model(self, name):
+        self.model=load_model(name)
         self.target_model.set_weights(self.model.get_weights())
 
 
@@ -120,51 +120,43 @@ if __name__ == "__main__":
     # Init to zero?
     INIT_TO_ZERO = True
     # Number of episodes
-    EPISODES = 1500
+    EPISODES = 15000
     # Define trajectory
 
+    x_trajectory = np.linspace(0.2, 0.2, 121)
+    y_trajectory = np.linspace(0.2, 1.2, 121)
+    x_trajectory = np.append(np.linspace(0.2, 0.2, 41),np.cos(np.linspace(180*math.pi/180, 90*math.pi/180, 61))*0.1+0.3)
+    y_trajectory = np.append(np.linspace(0.2, 0.4, 41),np.sin(np.linspace(180*math.pi/180, 90*math.pi/180, 61))*0.1+0.4)
+    x_trajectory = np.append(x_trajectory,np.cos(np.linspace(270*math.pi/180, 360*math.pi/180, 81))*0.2+0.3)
+    y_trajectory = np.append(y_trajectory,np.sin(np.linspace(270*math.pi/180, 360*math.pi/180, 81))*0.2+0.7)
+    x_trajectory = np.append(x_trajectory,np.cos(np.linspace(180*math.pi/180, 0*math.pi/180, 121))*0.3+0.8)
+    y_trajectory = np.append(y_trajectory,np.sin(np.linspace(180*math.pi/180, 0*math.pi/180, 121))*0.3+0.7)
+    x_trajectory = np.append(x_trajectory, np.linspace(1.1, 1.1, 101))
+    y_trajectory = np.append(y_trajectory, np.linspace(0.7, 0.2, 101))
+    x_trajectory = np.append(x_trajectory, np.cos(np.linspace(360*math.pi/180, 270*math.pi/180, 81))*0.2+0.9)
+    y_trajectory = np.append(y_trajectory, np.sin(np.linspace(360*math.pi/180, 270*math.pi/180, 81))*0.2+0.2)
+    x_trajectory = np.append(x_trajectory, np.linspace(0.9, 0.4, 141))
+    y_trajectory = np.append(y_trajectory, np.linspace(0.0, 0.0, 141))
+    x_trajectory = np.append(x_trajectory,
+                             np.cos(np.linspace(270 * math.pi / 180, 180 * math.pi / 180, 81)) * 0.2 + 0.4)
+    y_trajectory = np.append(y_trajectory,
+                             np.sin(np.linspace(270 * math.pi / 180, 180 * math.pi / 180, 81)) * 0.2 + 0.2)
 
-    x_trajectory = np.append(np.linspace(0.2, 0.2, 121),np.cos(np.linspace(180*math.pi/180, 90*math.pi/180, 121))*0.4+0.6)
-    y_trajectory = np.append(np.linspace(0.2, 0.8, 121),np.sin(np.linspace(180*math.pi/180, 90*math.pi/180, 121))*0.4+0.8)
-
+    #Reward given if it completes an open circuit -5
+    reward_need=(len(x_trajectory)//50)*5+20
+    #print(reward_need)
+    #print(x_trajectory)
+    #print(y_trajectory)
+#
     state_size = 2
     action_size=NUM_DIV_ACTION*NUM_DIV_ACTION
 
     scores = deque(maxlen=20)
-    agent=Agent(state_size,action_size, gamma=0.99, epsilon = 0.4, epsilon_min=0.01,epsilon_decay=0.993, learning_rate=0.001, batch_size=64, tau=0.1)
+    agent=Agent(state_size,action_size, gamma=0.99, epsilon = 1, epsilon_min=0.01,epsilon_decay=0.9995, learning_rate=0.001, batch_size=64, tau=0.1)
     plot_ugv = PlotUgv(SPACE_X, SPACE_Y, x_trajectory, y_trajectory, PERIOD)
     env=UgvEnv(x_trajectory, y_trajectory, PERIOD, NUM_DIV_STATE,
                      NUM_DIV_ACTION)
-    agent.load_model()
-
-    for e in range(EPISODES):
-        state, agent_state=env.reset()
-        agent_state=agent.format_state(agent_state)
-        done=False
-        R=0
-#
-        while not done:
-            action = agent.action(agent_state)
-            new_state, new_agent_state, reward, done =env.step(action)
-            new_agent_state = agent.format_state(new_agent_state)
-            agent.remember(agent_state, action, reward, new_agent_state, done)
-#
-#
-            agent_state=new_agent_state
-            R+=reward
-#
-        if len(agent.memory)>agent.batch_size:
-            agent.replay()
-            agent.soft_update_target_network()
-        agent.reduce_random()
-        scores.append(R)
-        mean_score = np.mean(scores)
-        print("episode: {}/{}, score: {}, e: {:.2}, mean_score: {}, final state :({},{})"
-                  .format(e, EPISODES, R, agent.epsilon, mean_score,env.state[0],env.state[1]))
-#
-        if mean_score > 20:
-            agent.save_model()
-            break
+    agent.load_model('fast-model.h5')
 
     #for e in range(EPISODES):
     #    state, agent_state=env.reset()
@@ -173,14 +165,46 @@ if __name__ == "__main__":
     #    R=0
 #
     #    while not done:
-    #        action = np.argmax(agent.model.predict(agent_state))
+    #        action = agent.action(agent_state)
     #        new_state, new_agent_state, reward, done =env.step(action)
     #        new_agent_state = agent.format_state(new_agent_state)
+    #        agent.remember(agent_state, action, reward, new_agent_state, done)
+#
 #
     #        agent_state=new_agent_state
     #        R+=reward
 #
+    #    if len(agent.memory)>agent.batch_size:
+    #        agent.replay()
+    #        agent.soft_update_target_network()
+    #    agent.reduce_random()
     #    scores.append(R)
     #    mean_score = np.mean(scores)
     #    print("episode: {}/{}, score: {}, e: {:.2}, mean_score: {}, final state :({},{})"
     #              .format(e, EPISODES, R, agent.epsilon, mean_score,env.state[0],env.state[1]))
+#
+    #    if mean_score > 275:
+    #        agent.save_model('fast-model.h5')
+    #        break
+#
+    for e in range(EPISODES):
+        state, agent_state=env.reset()
+        agent_state=agent.format_state(agent_state)
+        done=False
+        R=0
+        v=deque()
+
+        while not done:
+            action = np.argmax(agent.model.predict(agent_state))
+            new_state, new_agent_state, reward, done =env.step(action)
+            new_agent_state = agent.format_state(new_agent_state)
+
+            agent_state=new_agent_state
+            R+=reward
+            v.append(env.v_linear)
+
+        scores.append(R)
+        mean_score = np.mean(scores)
+        mean_v=np.mean(v)
+        print("episode: {}/{}, score: {}, laps: {:}, mean_score: {}, final state :({},{}), velocidad media: {}"
+                  .format(e, EPISODES, R, env.laps, mean_score,env.state[0],env.state[1],mean_v))

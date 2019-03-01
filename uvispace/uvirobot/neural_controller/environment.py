@@ -13,7 +13,7 @@ from plot_ugv import PlotUgv
 SPACE_X = 4
 SPACE_Y = 3
 # Maximum number of steps allowed
-MAX_STEPS = 450
+MAX_STEPS = 1000
 
 # Reward weights
 BETA_DIST = 0.01
@@ -51,6 +51,7 @@ class UgvEnv:
         self.num_div_state = num_div_state
         self.num_div_action = num_div_action
 
+
     def reset(self):
 
         # Reset the environment (start a new episode)
@@ -60,6 +61,8 @@ class UgvEnv:
         self.theta = math.radians(self.theta)
         self.steps = 0
         self.index = 0
+        self.fathest = -1
+        self.laps=0
 
         self._distance_next()
         self._calc_delta_theta()
@@ -99,33 +102,41 @@ class UgvEnv:
         self._calc_zone()
         self._calc_delta_theta()
         self._distance_covered()
+        #I want to know how far it went to give reward each 50 points
 
         # Calculate done and reward
-        if self.index == (len(self.x_trajectory) - 1):
-            done = 1
-            reward = 20
+        #I want it to run without end for speed training
+        #if self.index == (len(self.x_trajectory) - 1):
+        #    done = 1
+        #    reward = 20
 
-        elif (self.x > self.max_x) or (self.x < -self.max_x) or \
+        if (self.x > self.max_x) or (self.x < -self.max_x) or \
                 (self.y < -self.max_y) or (self.y > self.max_y):
             done = 1
-            reward = -10
+            # It had a reward of -10 but doesnt make sense cause the car doesnt know where it is
+            reward = 0
 
         elif self.steps >= self.max_steps:
             done = 1
-            reward = -20
+            #It was -10, i change it to 0 because it will eventually end inf i train like a circuit
+            #and woudnt make sense to give bad reward
+            reward = 0
 
-        elif math.fabs(self.delta_theta) > math.pi/2:
-            done = 1
-            reward = -10
+        #elif math.fabs(self.delta_theta) > math.pi/2:
+        #    done = 1
+        #    reward = -10
 
         elif self.zone_reward == 3:
             done = 1
-            reward = -1
+            reward = -10
 
         else:
             done = 0
             reward = (-1 * BETA_DIST * math.fabs(self.distance)) \
-                     + BETA_GAP * self.gap - BETA_ZONE * self.zone_reward
+                     + BETA_GAP * self.gap
+            if (self.index//50)>self.fathest:
+                self.fathest=self.index//50
+                reward+=5
 
             # Number of iterations in a episode
             self.steps += 1
@@ -143,6 +154,13 @@ class UgvEnv:
     def _distance_next(self):
 
         self.distance = 10
+
+        #Here a set index to 0 if the car is finishing a lap
+        #Also reset the farthest
+        if self.index > (len(self.x_trajectory) - 6):
+            self.index=0
+            self.fathest=-1
+            self.laps+=1
 
         for w in range(self.index, self.index + 20):
 
