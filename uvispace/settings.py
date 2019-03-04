@@ -2,7 +2,22 @@ import logging.config
 import os
 import time
 
-
+# Definition of ports in Uvispace ZMQ sockets
+class UviPort():
+    # camera socket ports
+    triangles = 32000
+    bin_img = 33000
+    gray_img = 34000
+    rgb_img = 35000
+    cam_config = 36000
+    # main controller internal ports
+    multi_img = 32000
+    fps = 33000
+    position_base = 35000
+    speed_base = 35010
+    trajectory_base = 35020
+    battery_base = 35030
+    
 # Logging configuration
 parent_path = os.path.dirname(__file__)
 log_path = ("{}/log".format(parent_path))
