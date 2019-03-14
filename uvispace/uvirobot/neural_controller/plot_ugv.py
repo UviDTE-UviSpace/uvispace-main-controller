@@ -24,8 +24,8 @@ class PlotUgv:
         self.point, = self.ax.plot([], [], marker=(3, 0, 0), color='red')
         self.point2, = self.ax.plot([], [], 'r:')
 
-        self.x_origin = 0
-        self.y_origin = 0
+        self.x_origin = -x_limit/2
+        self.y_origin = -y_limit/2
 
         self.x_trajectory = x_trajectory
         self.y_trajectory = y_trajectory
@@ -56,9 +56,8 @@ class PlotUgv:
 
         #Christian wrote false in the plt.show argumant and it
         #it generated an error
-        plt.show()
+        plt.show(block=False)
         plt.draw()
-
     def reset(self, state):
 
         self.x = state[0]
@@ -75,7 +74,7 @@ class PlotUgv:
         self.x = state[0]
         self.y = state[1]
         self.angle = state[2]
-
+        plt.draw()
         self.fig.canvas.draw()
 
         self.point.set_xdata(self.x)
@@ -92,16 +91,25 @@ class PlotUgv:
         # self.theta = self.theta+20  # Check if is necessary
 
 
-""" d = PlotUgv(3, 4, [1, 2, 2.5], [1, 2, 2.5], 1/30)
-d._begin()
-i = 0
-b = 0
-angle = 0
-while True:
-    i = i+0.005
+    def real_trayectory(self,x_array,y_array):
+        self.ax.plot(x_array, y_array, 'tab:red',
+                     linewidth=1.25, )
+        self.fig.canvas.draw()
+        plt.draw()
+        plt.show()
 
-    b = b+0.01
-    angle = 135
-    d.execute(i+0.15, b, angle)
-    if i == 10:
-        break """
+if __name__ == "__main__":
+    d = PlotUgv(3, 4, [-1.5, 0, 1.5], [-1.5, 0, 1.5], 1/30)
+    d._begin()
+    i = 0
+    b = 0
+    angle = 0
+    d.reset([i,b,angle])
+    while True:
+        i = i+0.005
+
+        b = b+0.01
+        angle = 135
+        d.execute([i+0.15, b, angle])
+        if i == 10:
+            break

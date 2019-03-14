@@ -13,12 +13,12 @@ from plot_ugv import PlotUgv
 SPACE_X = 4
 SPACE_Y = 3
 # Maximum number of steps allowed
-MAX_STEPS = 1000
+MAX_STEPS = 500
 
 # Reward weights
-BETA_DIST = 0.01
-BETA_GAP = 0.01
-BETA_ZONE = 0.01
+BETA_DIST = 0.1
+BETA_GAP = 0.1
+BETA_ZONE = 0.05
 
 BAND_WIDTH = 0.02
 # Define Reward Zones
@@ -29,7 +29,7 @@ ZONE2_LIMIT = 0.071  # Up to 7.1 cm
 
 class UgvEnv:
 
-    def __init__(self, x_traj, y_traj, period, num_div_state, num_div_action):
+    def __init__(self, x_traj, y_traj, period, num_div_action, closed=True):
 
         # Size of the space
         self.max_x = SPACE_X / 2  # [m]
@@ -48,8 +48,9 @@ class UgvEnv:
         self.zone_0_limit = ZONE0_LIMIT
         self.zone_1_limit = ZONE1_LIMIT
         self.zone_2_limit = ZONE2_LIMIT
-        self.num_div_state = num_div_state
         self.num_div_action = num_div_action
+        #It is to inform if it´s an closed circuit without ending
+        self.closed=closed
 
 
     def reset(self):
@@ -61,7 +62,7 @@ class UgvEnv:
         self.theta = math.radians(self.theta)
         self.steps = 0
         self.index = 0
-        self.fathest = -1
+        self.farthest = -1
         self.laps=0
 
         self._distance_next()
@@ -95,6 +96,12 @@ class UgvEnv:
         self.y = self.y + self.v_linear * math.sin(self.theta) * self.time
         self.theta = self.theta + self.w_ang * self.time
 
+        #to set theta between [0,2pi]
+        if self.theta > 2*math.pi:
+            self.theta=self.theta-2*math.pi
+        elif self.theta<0:
+            self.theta=self.theta+2*math.pi
+
         # Calculate the distance to the closest point in trajectory,
         # depending on distance, delta theta (ugv to trajectory) and distance
         # covered in this step
@@ -105,12 +112,12 @@ class UgvEnv:
         #I want to know how far it went to give reward each 50 points
 
         # Calculate done and reward
-        #I want it to run without end for speed training
-        #if self.index == (len(self.x_trajectory) - 1):
-        #    done = 1
-        #    reward = 20
+        #Only want this end for open circuit
+        if self.index == (len(self.x_trajectory) - 1) and not self.closed:
+            done = 1
+            reward = 20
 
-        if (self.x > self.max_x) or (self.x < -self.max_x) or \
+        elif (self.x > self.max_x) or (self.x < -self.max_x) or \
                 (self.y < -self.max_y) or (self.y > self.max_y):
             done = 1
             # It had a reward of -10 but doesnt make sense cause the car doesnt know where it is
@@ -118,9 +125,12 @@ class UgvEnv:
 
         elif self.steps >= self.max_steps:
             done = 1
-            #It was -10, i change it to 0 because it will eventually end inf i train like a circuit
-            #and woudnt make sense to give bad reward
-            reward = 0
+            #Reward of -10 if its open circuit, for closed circuit reward=0 because it wouldnt make sense to punish
+            #because it is infinite
+            if self.closed:
+                reward = 0
+            else:
+                reward=-10
 
         #elif math.fabs(self.delta_theta) > math.pi/2:
         #    done = 1
@@ -132,12 +142,12 @@ class UgvEnv:
 
         else:
             done = 0
-            reward = (-1 * BETA_DIST * math.fabs(self.distance)) \
-                     + BETA_GAP * self.gap
-            if (self.index//50)>self.fathest:
-                self.fathest=self.index//50
+            #I removed Christians rewards
+            reward =-1 * BETA_DIST * math.fabs(self.distance) + BETA_GAP * self.gap
+            if (self.index//50)>self.farthest:
+                self.farthest=self.index//50
                 reward+=5
-
+#
             # Number of iterations in a episode
             self.steps += 1
 
@@ -157,9 +167,9 @@ class UgvEnv:
 
         #Here a set index to 0 if the car is finishing a lap
         #Also reset the farthest
-        if self.index > (len(self.x_trajectory) - 6):
+        if self.index > (len(self.x_trajectory) - 6) and self.closed:
             self.index=0
-            self.fathest=-1
+            self.farthest=-1
             self.laps+=1
 
         for w in range(self.index, self.index + 20):
@@ -192,8 +202,22 @@ class UgvEnv:
                                        - self.y_trajectory[self.index]),
                                        (self.x_trajectory[next_index]
                                         - self.x_trajectory[self.index]))
+        #to set trajec_angle between [0,2pi]
+        if self.trajec_angle < 0:
+            self.trajec_angle= math.pi + self.trajec_angle + math.pi
+
 
         self.delta_theta = self.trajec_angle - self.theta
+        #if the difference is bigger than 180 is because someone went trhoug a lap
+        if self.delta_theta > math.pi:
+            self.delta_theta = self.delta_theta - 2 * math.pi
+
+        if self.delta_theta < -math.pi:
+            self.delta_theta = self.delta_theta + 2 * math.pi
+
+
+
+        #to avoid having differences bigger than 2pi
 
     def _calc_zone(self):
 
@@ -228,17 +252,6 @@ class UgvEnv:
 
     def _calc_side(self):
 
-        # Calculation of distance traveled compared to the previous point
-        self.gap = math.sqrt((self.x - self.x_ant) ** 2
-                             + (self.y - self.y_ant) ** 2)
-
-        self.x_ant = self.x
-        self.y_ant = self.y
-
-        return self.gap
-
-    def _calc_side(self):
-
         # Calculation of the side of the car with respect to the trajectory
         next_index = self.index + 1
 
@@ -255,10 +268,9 @@ class UgvEnv:
 
         ugv_vector = (x_diff, y_diff)
 
-        vector_z = ugv_vector[0] * trajectory_vector[1] \
-                   - ugv_vector[1] * trajectory_vector[0]
+        vector_z = ugv_vector[0] * trajectory_vector[1] - ugv_vector[1] * trajectory_vector[0]
 
-        if vector_z > 0:
+        if vector_z >= 0:
 
             # It is in the right side
             self.sign = 1
@@ -273,22 +285,6 @@ class UgvEnv:
 
         return self.sign
 
-    def _discretize_agent_state(self):
-
-        left_band = -(((self.num_div_state-1)/2) - 0.5)
-
-        self.discrete_distance = 0
-
-        for div in range(self.num_div_state-1):
-            if self.distance > ((left_band + div) * BAND_WIDTH):
-                self.discrete_distance = div + 1
-
-        angle_band_width = math.pi/(self.num_div_state - 2)
-
-        self.discrete_delta_theta = 0
-        for div in range(self.num_div_state - 1):
-            if self.discrete_delta_theta > (left_band + div) * angle_band_width:
-                self.discrete_delta_theta = div + 1
 
     def _dediscretize_action(self, action):
 

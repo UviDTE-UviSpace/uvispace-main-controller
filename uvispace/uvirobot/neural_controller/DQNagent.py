@@ -6,6 +6,7 @@ from keras.models import Sequential
 from keras.layers import Dense
 from keras.optimizers import Adam
 from keras.models import load_model
+from keras.initializers import  zeros
 
 from plot_ugv import PlotUgv
 from environment import UgvEnv
@@ -31,10 +32,10 @@ class Agent:
 
     def build_network(self):
         #create the neural network
-        FILE_NAME = "ann-weights.h5"
+
         model=Sequential()
-        model.add(Dense(64, input_dim = self.state_size, activation='relu'))
-        model.add(Dense(64, activation='relu'))
+        model.add(Dense(30, input_dim = self.state_size, activation='relu'))
+        model.add(Dense(30, activation='relu'))
         model.add(Dense(self.action_size, activation='linear'))
         model.compile(loss='mse', optimizer=Adam(self.learning_rate), metrics=['mae'])
         return model
@@ -115,7 +116,6 @@ if __name__ == "__main__":
     # Sampling period (time between 2 images)
     PERIOD = (1 / 30)
     # Variable space quantization
-    NUM_DIV_STATE = 5
     NUM_DIV_ACTION = 5
     # Init to zero?
     INIT_TO_ZERO = True
@@ -129,14 +129,22 @@ if __name__ == "__main__":
     y_trajectory = np.append(np.linspace(0.2, 0.4, 41),np.sin(np.linspace(180*math.pi/180, 90*math.pi/180, 61))*0.1+0.4)
     x_trajectory = np.append(x_trajectory,np.cos(np.linspace(270*math.pi/180, 360*math.pi/180, 81))*0.2+0.3)
     y_trajectory = np.append(y_trajectory,np.sin(np.linspace(270*math.pi/180, 360*math.pi/180, 81))*0.2+0.7)
-    x_trajectory = np.append(x_trajectory,np.cos(np.linspace(180*math.pi/180, 0*math.pi/180, 121))*0.3+0.8)
-    y_trajectory = np.append(y_trajectory,np.sin(np.linspace(180*math.pi/180, 0*math.pi/180, 121))*0.3+0.7)
-    x_trajectory = np.append(x_trajectory, np.linspace(1.1, 1.1, 101))
-    y_trajectory = np.append(y_trajectory, np.linspace(0.7, 0.2, 101))
-    x_trajectory = np.append(x_trajectory, np.cos(np.linspace(360*math.pi/180, 270*math.pi/180, 81))*0.2+0.9)
-    y_trajectory = np.append(y_trajectory, np.sin(np.linspace(360*math.pi/180, 270*math.pi/180, 81))*0.2+0.2)
-    x_trajectory = np.append(x_trajectory, np.linspace(0.9, 0.4, 141))
-    y_trajectory = np.append(y_trajectory, np.linspace(0.0, 0.0, 141))
+    x_trajectory = np.append(x_trajectory,np.cos(np.linspace(180*math.pi/180, -90*math.pi/180, 141))*0.3+0.8)
+    y_trajectory = np.append(y_trajectory,np.sin(np.linspace(180*math.pi/180, -90*math.pi/180, 141))*0.3+0.7)
+    x_trajectory = np.append(x_trajectory,
+                             np.cos(np.linspace(90 * math.pi / 180, 180 * math.pi / 180, 61)) * 0.1 + 0.8)
+    y_trajectory = np.append(y_trajectory,
+                             np.sin(np.linspace(90 * math.pi / 180, 180 * math.pi / 180, 61)) * 0.1 + 0.3)
+    x_trajectory = np.append(x_trajectory,
+                             np.cos(np.linspace(360 * math.pi / 180, 270 * math.pi / 180, 61)) * 0.3 + 0.4)
+    y_trajectory = np.append(y_trajectory,
+                             np.sin(np.linspace(360 * math.pi / 180, 270 * math.pi / 180, 61)) * 0.3 + 0.3)
+    #x_trajectory = np.append(x_trajectory, np.linspace(1.1, 1.1, 101))
+    #y_trajectory = np.append(y_trajectory, np.linspace(0.7, 0.2, 101))
+    #x_trajectory = np.append(x_trajectory, np.cos(np.linspace(360*math.pi/180, 270*math.pi/180, 81))*0.2+0.9)
+    #y_trajectory = np.append(y_trajectory, np.sin(np.linspace(360*math.pi/180, 270*math.pi/180, 81))*0.2+0.2)
+    #x_trajectory = np.append(x_trajectory, np.linspace(0.9, 0.4, 141))
+    #y_trajectory = np.append(y_trajectory, np.linspace(0.0, 0.0, 141))
     x_trajectory = np.append(x_trajectory,
                              np.cos(np.linspace(270 * math.pi / 180, 180 * math.pi / 180, 81)) * 0.2 + 0.4)
     y_trajectory = np.append(y_trajectory,
@@ -154,7 +162,7 @@ if __name__ == "__main__":
     scores = deque(maxlen=20)
     agent=Agent(state_size,action_size, gamma=0.99, epsilon = 1, epsilon_min=0.01,epsilon_decay=0.9995, learning_rate=0.001, batch_size=64, tau=0.1)
     plot_ugv = PlotUgv(SPACE_X, SPACE_Y, x_trajectory, y_trajectory, PERIOD)
-    env=UgvEnv(x_trajectory, y_trajectory, PERIOD, NUM_DIV_STATE,
+    env=UgvEnv(x_trajectory, y_trajectory, PERIOD,
                      NUM_DIV_ACTION)
     agent.load_model('fast-model.h5')
 
