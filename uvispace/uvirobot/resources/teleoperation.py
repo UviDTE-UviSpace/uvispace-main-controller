@@ -87,7 +87,7 @@ def main():
     # Init publisher.
     speed_publisher = zmq.Context.instance().socket(zmq.PUB)
     speed_publisher.bind("tcp://*:{}".format(
-            int(os.environ.get("UVISPACE_BASE_PORT_SPEED"))+1))
+            int(os.environ.get("UVISPACE_BASE_PORT_SPEED"))+robot_id))
     speed_message = {
         'sp_m1': 127,
         'sp_m2': 127,
@@ -127,47 +127,44 @@ def main():
             # Move forward.
             if key in ('w', 'W'):
                 screen_message = 'moving forward'
-                speed_message['sp_m1'] = '200'
-                speed_message['sp_m2'] = '0'
+                speed_message['sp_m1'] = 200
+                speed_message['sp_m2'] = 127
                 speed_publisher.send_json(speed_message)
             # Move backwards.
             elif key in ('s', 'S'):
                 screen_message = 'moving backwards'
-                speed_message['sp_m1'] = '100'
-                speed_message['sp_m2'] = '0'
+                speed_message['sp_m1'] = 50
+                speed_message['sp_m2'] = 127
                 speed_publisher.send_json(speed_message)
             # Move left.
             elif key in ('a', 'A'):
                 screen_message = 'moving left'
-                speed_message['sp_m1'] = '200'
-                speed_message['sp_m2'] = '40'
+                speed_message['sp_m1'] = 200
+                speed_message['sp_m2'] = 40
                 speed_publisher.send_json(speed_message)
             # Move right.
             elif key in ('d', 'D'):
                 screen_message = 'moving right'
-                speed_message['sp_m1'] = '200'
-                speed_message['sp_m2'] = '148'
+                speed_message['sp_m1'] = 200
+                speed_message['sp_m2'] = 200
                 speed_publisher.send_json(speed_message)
             # Stop moving and exit.
             elif key in ('q', 'Q'):
                 print ('Stop and exiting program. Have a good day! =)')
-                speed_message['sp_m1'] = '0'
-                speed_message['sp_m2'] = '0'
+                speed_message['sp_m1'] = 127
+                speed_message['sp_m2'] = 127
                 speed_publisher.send_json(speed_message)
                 break
             # Stop moving.
             else:
                 screen_message = 'stop moving'
-                speed_message['sp_m1'] = '0'
-                speed_message['sp_m2'] = '0'
+                speed_message['sp_m1'] = 127
+                speed_message['sp_m2'] = 127
                 speed_publisher.send_json(speed_message)
             # If key pressed now and key pressed previously are different,
             # update message.
             if prev_key != key:
                 print('Currently %s. \n\r' % screen_message)
-            # Cleanup resources before end.
-                speed_publisher.close()
-                return
         else:
 
 

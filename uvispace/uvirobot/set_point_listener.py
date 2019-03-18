@@ -65,8 +65,13 @@ def connect_and_check(robot_id, port=None, baudrate=57600):
     if communication_type == 'wifi':
 
         TCP_PORT = communication_type = ast.literal_eval(conf.get('Communication', 'port'))
-        TCP_IP = communication_type = ast.literal_eval(conf.get('Communication', 'ip'))
+        TCP_IP = communication_type = conf.get('Communication', 'ip')
         wificomm = WifiMessenger(TCP_IP,TCP_PORT)
+        if wificomm.ready():
+            logger.info("The board is ready")
+        else:
+            logger.info("The board is not ready")
+            sys.exit()
         return wificomm
 
     else:
@@ -119,7 +124,9 @@ def listen_speed_set_points(com_device, robot_id, speed_calc_times,
     try:
         while True:
             data = speed_subscriber.recv_json()
+            print("Se realizo el suscriber")
             logger.debug("Received new speed set point: {}".format(data))
+            print("Entrando en move robot")
             move_robot(data, com_device, wait_times, speed_calc_times,
                        xbee_times)
             # Read the battery state-of-charge after regular seconds intervals.

@@ -193,6 +193,8 @@ class MessageProtocol:
                 logger.info('Error, STX was not found')
                 return (Rx_OK, fun_code, length, data)
             _STX = self._read(1)
+            #print(_STX)
+            #print(self.STX)
         # The 2nd and 3rd bytes of transmission correspond to the master
         # and slave IDs
         id_dest = self._read(1)
