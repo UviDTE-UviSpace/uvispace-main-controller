@@ -18,6 +18,7 @@ import mainwindowinterface
 from image_generator import ImageGenerator
 import load_csv
 import tools.fuzzy_controller_calib.fuzzy_calibration as fuzzy_calib
+import tools.neural_controller_trainer.neural_controller_trainer as neural_train
 
 # Create the application logger
 logger = logging.getLogger('view')
@@ -186,6 +187,7 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         self.action_about.triggered.connect(self.about_message)
         self.actionOpen_csv.triggered.connect(self.__load_files_window)
         self.actionFuzzy_controller_calibration.triggered.connect(self.__fuzzy_controller_calibration)
+        self.actionNuronal_controller_training.triggered.connect(self.__neural_controller_training)
 
         # create an object to control the image generation
         self.img_generator = ImageGenerator()
@@ -262,6 +264,13 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         # opens a new window to do the fuzzy controller calibration
         logger.debug("Opening the fuzzy controller calibration window")
         self.popup = fuzzy_calib.MainWindow()
+        self.popup.show()
+        return
+
+    def __neural_controller_training(self):
+        # opens a new window to do the neural controller training
+        logger.debug("Opening the neural controller training window")
+        self.popup = neural_train.MainWindow()
         self.popup.show()
         return
 
