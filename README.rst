@@ -26,6 +26,26 @@ Project documentation
 The oficial documentation about the UviSpace project is hosted at `this website
 <http://uvispace.readthedocs.io/en/latest/>`_.
 
+============
+Installation
+============
+
+Install tkinter package for Python 3:
+
+.. code-block:: bash
+
+   $ sudo apt-get install python3-tk
+
+Install virtualenvwrapper to create a Python 3.6 virtual environment. Follow
+the tutorial in the uvispace-main-controller documentation page.
+
+Inside the virtual environment install all the required packages with the
+correct versions using the requirements.txt file:
+
+.. code-block:: bash
+
+   $ pip install -r requieremnts.txt
+
 ========
 uvirobot
 ========
@@ -37,7 +57,7 @@ messenger
 ---------
 
 The *messenger* module establish a connection with the board. It has been tested with XBee modules, connected to the PC through a serial port. Once the connection is established, the program will wait for speed set points and will send them to the UGV.
-   
+
 * To run it, open a new Terminal, set up the environment, and execute the script using the Python interpreter. The execution will listen for speed set points until it is killed:
 
 .. code-block:: bash

@@ -10,7 +10,7 @@ keyboard delay in the operating system is less than 250 ms.
 """
 # Standard libraries
 import ast
-import ConfigParser
+import configparser
 import getopt
 import glob
 import logging
@@ -73,14 +73,14 @@ def main():
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hr:", ["robotid="])
     except getopt.GetoptError:
-        print help_msg
+        print(help_msg)
         sys.exit()
     if not opts:
-        print help_msg
+        print(help_msg)
         sys.exit()
     for opt, arg in opts:
         if opt == '-h':
-            print help_msg
+            print(help_msg)
             sys.exit()
         if opt in ("-r", "--robotid"):
             robot_id = int(arg)
@@ -89,19 +89,17 @@ def main():
     speed_publisher.bind("tcp://*:{}".format(
             int(os.environ.get("UVISPACE_BASE_PORT_SPEED"))+1))
     speed_message = {
-        'step': 0,
-        'linear': 0.0,
-        'angular': 0.0,
-        'sp_left': 127,
-        'sp_right': 127,
+        'sp_m1': 127,
+        'sp_m2': 127,
     }
     speed = Speed()
     # Read configuration file coefficients.
-    conf = ConfigParser.ConfigParser()
+    conf = configparser.ConfigParser()
     conf_file = glob.glob("./config/robot{}.cfg".format(robot_id))
     conf.read(conf_file)
     coefs_left = ast.literal_eval(conf.get('Coefficients_fwd', 'coefs_left'))
     coefs_right = ast.literal_eval(conf.get('Coefficients_fwd', 'coefs_right'))
+    communication_type = conf.get('Communication', 'protocol_type')
     # Send the coeficients to the polynomial solver objects.
     speed.left_fwd_solver.update_coefs(coefs_left)
     speed.right_fwd_solver.update_coefs(coefs_right)
@@ -124,51 +122,102 @@ def main():
         # Variables key pressed now and key previously pressed.
         prev_key = key
         key = get_key()
-        # Move forward.
-        if key in ('w', 'W'):
-            screen_message = 'moving forward'
-            speed_message['sp_left'] = speed.left_fwd_solver.solve(400, 0)
-            speed_message['sp_right'] = speed.right_fwd_solver.solve(400, 0)
-            speed_publisher.send_json(speed_message)
-        # Move backwards.
-        elif key in ('s', 'S'):
-            screen_message = 'moving backwards'
-            speed_message['sp_left'] = speed.left_fwd_solver.solve(-200, 0)
-            speed_message['sp_right'] = speed.right_fwd_solver.solve(-200, 0)
-            speed_publisher.send_json(speed_message)
-        # Move left.
-        elif key in ('a', 'A'):
-            screen_message = 'moving left'
-            speed_message['sp_left'] = speed.left_fwd_solver.solve(200, 1)
-            speed_message['sp_right'] = speed.right_fwd_solver.solve(200, 1)
-            speed_publisher.send_json(speed_message)
-        # Move right.
-        elif key in ('d', 'D'):
-            screen_message = 'moving right'
-            speed_message['sp_left'] = speed.left_fwd_solver.solve(200, -1)
-            speed_message['sp_right'] = speed.right_fwd_solver.solve(200, -1)
-            speed_publisher.send_json(speed_message)
-        # Stop moving and exit.
-        elif key in ('q', 'Q'):
-            print ('Stop and exiting program. Have a good day! =)')
-            speed_message['sp_left'] = speed.left_fwd_solver.solve(0, 0)
-            speed_message['sp_right'] = speed.right_fwd_solver.solve(0, 0)
-            speed_publisher.send_json(speed_message)
-            break
-        # Stop moving.
+        if communication_type == 'wifi':
+
+            # Move forward.
+            if key in ('w', 'W'):
+                screen_message = 'moving forward'
+                speed_message['sp_m1'] = '200'
+                speed_message['sp_m2'] = '0'
+                speed_publisher.send_json(speed_message)
+            # Move backwards.
+            elif key in ('s', 'S'):
+                screen_message = 'moving backwards'
+                speed_message['sp_m1'] = '100'
+                speed_message['sp_m2'] = '0'
+                speed_publisher.send_json(speed_message)
+            # Move left.
+            elif key in ('a', 'A'):
+                screen_message = 'moving left'
+                speed_message['sp_m1'] = '200'
+                speed_message['sp_m2'] = '40'
+                speed_publisher.send_json(speed_message)
+            # Move right.
+            elif key in ('d', 'D'):
+                screen_message = 'moving right'
+                speed_message['sp_m1'] = '200'
+                speed_message['sp_m2'] = '148'
+                speed_publisher.send_json(speed_message)
+            # Stop moving and exit.
+            elif key in ('q', 'Q'):
+                print ('Stop and exiting program. Have a good day! =)')
+                speed_message['sp_m1'] = '0'
+                speed_message['sp_m2'] = '0'
+                speed_publisher.send_json(speed_message)
+                break
+            # Stop moving.
+            else:
+                screen_message = 'stop moving'
+                speed_message['sp_m1'] = '0'
+                speed_message['sp_m2'] = '0'
+                speed_publisher.send_json(speed_message)
+            # If key pressed now and key pressed previously are different,
+            # update message.
+            if prev_key != key:
+                print('Currently %s. \n\r' % screen_message)
+            # Cleanup resources before end.
+                speed_publisher.close()
+                return
         else:
-            screen_message = 'stop moving'
-            speed_message['sp_left'] = speed.left_fwd_solver.solve(0, 0)
-            speed_message['sp_right'] = speed.right_fwd_solver.solve(0, 0)
-            speed_publisher.send_json(speed_message)
-        # If key pressed now and key pressed previously are different,
-        # update message.
-        if prev_key != key:
-            print('Currently %s. \n\r' % screen_message)
+
+
+            # Move forward.
+            if key in ('w', 'W'):
+
+                screen_message = 'moving forward'
+                speed_message['sp_m1'] = int(speed.left_fwd_solver.solve(200, 0))
+                speed_message['sp_m2'] = int(speed.right_fwd_solver.solve(200, 0))
+                speed_publisher.send_json(speed_message)
+            # Move backwards.
+            elif key in ('s', 'S'):
+                screen_message = 'moving backwards'
+                speed_message['sp_m1'] = int(speed.left_fwd_solver.solve(-200, 0))
+                speed_message['sp_m2'] = int(speed.right_fwd_solver.solve(-200, 0))
+                speed_publisher.send_json(speed_message)
+            # Move left.
+            elif key in ('a', 'A'):
+                screen_message = 'moving left'
+                speed_message['sp_m1'] = int(speed.left_fwd_solver.solve(200, 1))
+                speed_message['sp_m2'] = int(speed.right_fwd_solver.solve(200, 1))
+                speed_publisher.send_json(speed_message)
+            # Move right.
+            elif key in ('d', 'D'):
+                screen_message = 'moving right'
+                speed_message['sp_m1'] = int(speed.left_fwd_solver.solve(200, -1))
+                speed_message['sp_m2'] = int(speed.right_fwd_solver.solve(200, -1))
+                speed_publisher.send_json(speed_message)
+            # Stop moving and exit.
+            elif key in ('q', 'Q'):
+                print ('Stop and exiting program. Have a good day! =)')
+                speed_message['sp_m1'] = int(speed.left_fwd_solver.solve(0, 0))
+                speed_message['sp_m2'] = int(speed.right_fwd_solver.solve(0, 0))
+                speed_publisher.send_json(speed_message)
+                break
+            # Stop moving.
+            else:
+                screen_message = 'stop moving'
+                speed_message['sp_m1'] = int(speed.left_fwd_solver.solve(0, 0))
+                speed_message['sp_m2'] = int(speed.right_fwd_solver.solve(0, 0))
+                speed_publisher.send_json(speed_message)
+            # If key pressed now and key pressed previously are different,
+            # update message.
+            if prev_key != key:
+                print('Currently %s. \n\r' % screen_message)
 
     # Cleanup resources before end.
     speed_publisher.close()
     return
+
 
 
 if __name__ == '__main__':

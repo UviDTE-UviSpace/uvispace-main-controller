@@ -6,7 +6,7 @@ It contains a class *FuzzyController*, that represents a controller type
 """
 # Standard libraries
 import ast
-import ConfigParser
+import configparser
 import glob
 # Third party libraries
 import numpy as np
@@ -17,9 +17,9 @@ class FuzzyController(object):
     """
     def __init__(self, cfg_name):
         # Load the config file and read the fuzzy sets (fs) and singleton sets.
-        self._conf_file = glob.glob("./resources/config/{}.cfg"
+        self._conf_file = glob.glob("uvirobot/resources/config/{}.cfg"
                                     .format(cfg_name))
-        self._conf_raw = ConfigParser.RawConfigParser()
+        self._conf_raw = configparser.RawConfigParser()
         self._conf_raw.read(self._conf_file)
         self._fuzzysets_1 = self.get_set_array('Sets', 'fuzzysets_1')
         self._fuzzysets_2 = self.get_set_array('Sets', 'fuzzysets_2')

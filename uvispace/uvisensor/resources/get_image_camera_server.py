@@ -11,7 +11,7 @@ import socket
 
 def main():
     client = socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM)
-    address = ("172.19.5.213", 36000)
+    address = ("172.19.5.214", 36000)
     client.connect(address)
     client.send("capture_frame\n")
     try:
