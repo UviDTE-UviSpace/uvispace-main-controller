@@ -1,0 +1,89 @@
+Episodes: 395, gamma: 0.99 , epsilon_dec: 0.995, lr: 0.005, batch: 64 , tau:0.01
+Episodes: 545, gamma: 0.99 , epsilon_dec: 0.995, lr: 0.005, batch: 64 , tau:0.005
+Episodes: 379, gamma: 0.99 , epsilon_dec: 0.995, lr: 0.005, batch: 128, tau:0.01
+Episodes: 536, gamma: 0.99 , epsilon_dec: 0.995, lr: 0.005, batch: 128, tau:0.005
+Episodes: 388, gamma: 0.99 , epsilon_dec: 0.995, lr: 0.01 , batch: 64 , tau:0.01
+Episodes: 472, gamma: 0.99 , epsilon_dec: 0.995, lr: 0.01 , batch: 64 , tau:0.005
+Episodes: 368, gamma: 0.99 , epsilon_dec: 0.995, lr: 0.01 , batch: 128, tau:0.01
+Episodes: 507, gamma: 0.99 , epsilon_dec: 0.995, lr: 0.01 , batch: 128, tau:0.005
+Episodes: 592, gamma: 0.99 , epsilon_dec: 0.99 , lr: 0.005, batch: 64 , tau:0.01
+Episodes: 646, gamma: 0.99 , epsilon_dec: 0.99 , lr: 0.005, batch: 64 , tau:0.005
+Episodes: 663, gamma: 0.99 , epsilon_dec: 0.99 , lr: 0.005, batch: 128, tau:0.01
+Episodes: 411, gamma: 0.99 , epsilon_dec: 0.99 , lr: 0.005, batch: 128, tau:0.005
+Episodes: 498, gamma: 0.99 , epsilon_dec: 0.99 , lr: 0.01 , batch: 64 , tau:0.01
+Episodes: 704, gamma: 0.99 , epsilon_dec: 0.99 , lr: 0.01 , batch: 64 , tau:0.005
+Episodes: 397, gamma: 0.99 , epsilon_dec: 0.99 , lr: 0.01 , batch: 128, tau:0.01
+Episodes: 398, gamma: 0.99 , epsilon_dec: 0.99 , lr: 0.01 , batch: 128, tau:0.005
+Episodes: 979, gamma: 0.995, epsilon_dec: 0.999, lr: 0.01 , batch: 128, tau:0.01
+Episodes: 484, gamma: 0.995, epsilon_dec: 0.995, lr: 0.005, batch: 64 , tau:0.01
+Episodes: 588, gamma: 0.995, epsilon_dec: 0.995, lr: 0.005, batch: 64 , tau:0.005
+Episodes: 441, gamma: 0.995, epsilon_dec: 0.995, lr: 0.005, batch: 128, tau:0.01
+Episodes: 742, gamma: 0.995, epsilon_dec: 0.995, lr: 0.005, batch: 128, tau:0.005
+Episodes: 431, gamma: 0.995, epsilon_dec: 0.995, lr: 0.01 , batch: 64 , tau:0.01
+Episodes: 427, gamma: 0.995, epsilon_dec: 0.995, lr: 0.01 , batch: 64 , tau:0.005
+Episodes: 350, gamma: 0.995, epsilon_dec: 0.995, lr: 0.01 , batch: 128, tau:0.01
+Episodes: 386, gamma: 0.995, epsilon_dec: 0.995, lr: 0.01 , batch: 128, tau:0.005
+Episodes: 790, gamma: 0.995, epsilon_dec: 0.99 , lr: 0.001, batch: 128, tau:0.01
+Episodes: 666, gamma: 0.995, epsilon_dec: 0.99 , lr: 0.005, batch: 64 , tau:0.01
+Episodes: 366, gamma: 0.995, epsilon_dec: 0.99 , lr: 0.005, batch: 128, tau:0.01
+Episodes: 380, gamma: 0.995, epsilon_dec: 0.99 , lr: 0.005, batch: 128, tau:0.005
+Episodes: 393, gamma: 0.995, epsilon_dec: 0.99 , lr: 0.01 , batch: 64 , tau:0.01
+Episodes: 743, gamma: 0.995, epsilon_dec: 0.99 , lr: 0.01 , batch: 64 , tau:0.005
+Episodes: 300, gamma: 0.995, epsilon_dec: 0.99 , lr: 0.01 , batch: 128, tau:0.01
+Episodes: 335, gamma: 0.995, epsilon_dec: 0.99 , lr: 0.01 , batch: 128, tau:0.005
+Episodes: 987, gamma: 0.999, epsilon_dec: 0.999, lr: 0.005, batch: 128, tau:0.01
+Episodes: 941, gamma: 0.999, epsilon_dec: 0.999, lr: 0.01 , batch: 64 , tau:0.01
+Episodes: 475, gamma: 0.999, epsilon_dec: 0.995, lr: 0.005, batch: 64 , tau:0.01
+Episodes: 857, gamma: 0.999, epsilon_dec: 0.995, lr: 0.005, batch: 64 , tau:0.005
+Episodes: 520, gamma: 0.999, epsilon_dec: 0.995, lr: 0.005, batch: 128, tau:0.01
+Episodes: 624, gamma: 0.999, epsilon_dec: 0.995, lr: 0.005, batch: 128, tau:0.005
+Episodes: 354, gamma: 0.999, epsilon_dec: 0.995, lr: 0.01 , batch: 64 , tau:0.01
+Episodes: 454, gamma: 0.999, epsilon_dec: 0.995, lr: 0.01 , batch: 64 , tau:0.005
+Episodes: 340, gamma: 0.999, epsilon_dec: 0.995, lr: 0.01 , batch: 128, tau:0.01
+Episodes: 540, gamma: 0.999, epsilon_dec: 0.995, lr: 0.01 , batch: 128, tau:0.005
+Episodes: 315, gamma: 0.999, epsilon_dec: 0.99 , lr: 0.001, batch: 128, tau:0.01
+Episodes: 614, gamma: 0.999, epsilon_dec: 0.99 , lr: 0.005, batch: 64 , tau:0.01
+Episodes: 390, gamma: 0.999, epsilon_dec: 0.99 , lr: 0.005, batch: 64 , tau:0.01
+Episodes: 394, gamma: 0.999, epsilon_dec: 0.99 , lr: 0.005, batch: 64 , tau:0.005
+Episodes: 444, gamma: 0.999, epsilon_dec: 0.99 , lr: 0.005, batch: 128, tau:0.01
+Episodes: 641, gamma: 0.999, epsilon_dec: 0.99 , lr: 0.005, batch: 128, tau:0.005
+Episodes: 495, gamma: 0.999, epsilon_dec: 0.99 , lr: 0.01 , batch: 64 , tau:0.01
+Episodes: 433, gamma: 0.999, epsilon_dec: 0.99 , lr: 0.01 , batch: 64 , tau:0.005
+Episodes: 367, gamma: 0.999, epsilon_dec: 0.99 , lr: 0.01 , batch: 128, tau:0.01
+Episodes: 437, gamma: 0.999, epsilon_dec: 0.99 , lr: 0.01 , batch: 128, tau:0.005
+
+
+NOW TRAINING THE CIRCUIT
+
+Episodes: 175, gamma: 0.995, epsilon_dec: 0.995, lr: 0.005, batch: 64 , tau:0.01
+Episodes: 166, gamma: 0.995, epsilon_dec: 0.995, lr: 0.005, batch: 64 , tau:0.005
+Episodes: 86 , gamma: 0.995, epsilon_dec: 0.995, lr: 0.005, batch: 128, tau:0.01
+Episodes: 173, gamma: 0.995, epsilon_dec: 0.995, lr: 0.005, batch: 128, tau:0.005
+Episodes: 237, gamma: 0.995, epsilon_dec: 0.995, lr: 0.01 , batch: 64 , tau:0.01
+Episodes: 114, gamma: 0.995, epsilon_dec: 0.995, lr: 0.01 , batch: 64 , tau:0.005
+Episodes: 117, gamma: 0.995, epsilon_dec: 0.995, lr: 0.01 , batch: 128, tau:0.01
+Episodes: 89 , gamma: 0.995, epsilon_dec: 0.995, lr: 0.01 , batch: 128, tau:0.005
+Episodes: 108, gamma: 0.995, epsilon_dec: 0.99 , lr: 0.005, batch: 64 , tau:0.01
+Episodes: 205, gamma: 0.995, epsilon_dec: 0.99 , lr: 0.005, batch: 64 , tau:0.005
+Episodes: 89 , gamma: 0.995, epsilon_dec: 0.99 , lr: 0.005, batch: 128, tau:0.01
+Episodes: 88 , gamma: 0.995, epsilon_dec: 0.99 , lr: 0.005, batch: 128, tau:0.005
+Episodes: 120, gamma: 0.995, epsilon_dec: 0.99 , lr: 0.01 , batch: 64 , tau:0.01
+Episodes: 103, gamma: 0.995, epsilon_dec: 0.99 , lr: 0.01 , batch: 64 , tau:0.005
+Episodes: 152, gamma: 0.995, epsilon_dec: 0.99 , lr: 0.01 , batch: 128, tau:0.01
+Episodes: 84 , gamma: 0.995, epsilon_dec: 0.99 , lr: 0.01 , batch: 128, tau:0.005
+Episodes: 193, gamma: 0.999, epsilon_dec: 0.995, lr: 0.005, batch: 64 , tau:0.01
+Episodes: 192, gamma: 0.999, epsilon_dec: 0.995, lr: 0.005, batch: 64 , tau:0.005
+Episodes: 135, gamma: 0.999, epsilon_dec: 0.995, lr: 0.005, batch: 128, tau:0.01
+Episodes: 106, gamma: 0.999, epsilon_dec: 0.995, lr: 0.005, batch: 128, tau:0.005
+Episodes: 170, gamma: 0.999, epsilon_dec: 0.995, lr: 0.01 , batch: 64 , tau:0.01
+Episodes: 124, gamma: 0.999, epsilon_dec: 0.995, lr: 0.01 , batch: 64 , tau:0.005
+Episodes: 114, gamma: 0.999, epsilon_dec: 0.995, lr: 0.01 , batch: 128, tau:0.01
+Episodes: 175, gamma: 0.999, epsilon_dec: 0.995, lr: 0.01 , batch: 128, tau:0.005
+Episodes: 76 , gamma: 0.999, epsilon_dec: 0.99 , lr: 0.005, batch: 64 , tau:0.01
+Episodes: 95 , gamma: 0.999, epsilon_dec: 0.99 , lr: 0.005, batch: 64 , tau:0.005
+Episodes: 84 , gamma: 0.999, epsilon_dec: 0.99 , lr: 0.005, batch: 128, tau:0.01
+Episodes: 85 , gamma: 0.999, epsilon_dec: 0.99 , lr: 0.005, batch: 128, tau:0.005
+Episodes: 83 , gamma: 0.999, epsilon_dec: 0.99 , lr: 0.01 , batch: 64 , tau:0.01
+Episodes: 89 , gamma: 0.999, epsilon_dec: 0.99 , lr: 0.01 , batch: 64 , tau:0.005
+Episodes: 90 , gamma: 0.999, epsilon_dec: 0.99 , lr: 0.01 , batch: 128, tau:0.01
+Episodes: 94 , gamma: 0.999, epsilon_dec: 0.99 , lr: 0.01 , batch: 128, tau:0.005

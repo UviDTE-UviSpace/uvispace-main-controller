@@ -52,6 +52,11 @@ class UgvEnv:
         #It is to inform if it´s an closed circuit without ending
         self.closed=closed
 
+        #parameters to add noise to x, y, angle values
+        #self.mu=0
+        #self.sigmaxy=0.002
+        #self.sigmaangle=2*np.pi/180
+
 
     def reset(self):
 
@@ -64,6 +69,10 @@ class UgvEnv:
         self.index = 0
         self.farthest = -1
         self.laps=0
+        # add noise to position and theta
+        #self.x_noise = self.x + np.random.normal(self.mu, self.sigmaxy, 1)
+        #self.y_noise = self.y + np.random.normal(self.mu, self.sigmaxy, 1)
+        #self.theta_noise = self.theta + np.random.normal(self.mu, self.sigmaangle, 1)
 
         self._distance_next()
         self._calc_delta_theta()
@@ -96,11 +105,18 @@ class UgvEnv:
         self.y = self.y + self.v_linear * math.sin(self.theta) * self.time
         self.theta = self.theta + self.w_ang * self.time
 
+
+
         #to set theta between [0,2pi]
         if self.theta > 2*math.pi:
             self.theta=self.theta-2*math.pi
         elif self.theta<0:
             self.theta=self.theta+2*math.pi
+
+        # add noise to position and theta
+        #self.x_noise = self.x + np.random.normal(self.mu, self.sigmaxy, 1)
+        #self.y_noise = self.y + np.random.normal(self.mu, self.sigmaxy, 1)
+        #self.theta_noise = self.theta + np.random.normal(self.mu, self.sigmaangle, 1)
 
         # Calculate the distance to the closest point in trajectory,
         # depending on distance, delta theta (ugv to trajectory) and distance
@@ -153,6 +169,10 @@ class UgvEnv:
 
         # Discretize state for the agent to control
         #self._discretize_agent_state()
+
+        #self.norm_distance=(self.distance+0.071)/(0.071*2)
+        #self.norm_delta_theta=(self.delta_theta+np.pi)/(2*np.pi)
+
         self.agent_state = np.array([self.distance, self.delta_theta])
 
         # Create state (x,y,theta)
@@ -207,7 +227,7 @@ class UgvEnv:
             self.trajec_angle= math.pi + self.trajec_angle + math.pi
 
 
-        self.delta_theta = self.trajec_angle - self.theta
+        self.delta_theta = self.trajec_angle - self.theta#_noise
         #if the difference is bigger than 180 is because someone went trhoug a lap
         if self.delta_theta > math.pi:
             self.delta_theta = self.delta_theta - 2 * math.pi
