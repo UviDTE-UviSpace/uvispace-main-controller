@@ -1,10 +1,12 @@
-from DQNagent import  Agent
+import sys
+from uvispace.uvirobot.neural_controller.DQNagent import  Agent
 import numpy as np
-from plot_ugv import PlotUgv
-from environment import UgvEnv
+from uvispace.uvirobot.neural_controller.plot_ugv import PlotUgv
+from uvispace.uvirobot.neural_controller.environment import UgvEnv
 import math
 from collections import deque
 import matplotlib.pyplot as plt
+from uvispace.uvigui.tools.neural_controller_trainer.Plots import MyStaticMplCanvas
 
 
 
@@ -266,6 +268,7 @@ class Training:
         plt.xlabel("Episode")
         plt.ylabel("Distance")
         plt.show()
+
 
 
     def traincurve2(self, load=False, load_name='emodel.h5', save_name='emodel.h5'):

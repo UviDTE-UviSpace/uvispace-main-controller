@@ -8,8 +8,8 @@ from keras.optimizers import Adam
 from keras.models import load_model
 from keras.initializers import  zeros
 
-from plot_ugv import PlotUgv
-from environment import UgvEnv
+from uvispace.uvirobot.neural_controller.plot_ugv import PlotUgv
+from uvispace.uvirobot.neural_controller.environment import UgvEnv
 import math
 
 class Agent:
