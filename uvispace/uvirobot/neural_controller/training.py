@@ -6,7 +6,7 @@ from uvispace.uvirobot.neural_controller.environment import UgvEnv
 import math
 from collections import deque
 import matplotlib.pyplot as plt
-from uvispace.uvigui.tools.neural_controller_trainer.Plots import MyStaticMplCanvas
+
 
 
 
@@ -244,6 +244,7 @@ class Training:
             if mean_score > reward_need:
                 agent.save_model(save_name)
                 break
+        return [epi_reward_average, epi_v_average, epi_d_average]
 
         fig, ax = plt.subplots()
         fig.suptitle('Rewards Curve')
@@ -486,7 +487,7 @@ class Training:
                      self.NUM_DIV_ACTION, closed=closed)
         agent.load_model(load_name)
 
-        for e in range(10):
+        for e in range(1):
             state, agent_state = env.reset()
             agent_state = agent.format_state(agent_state)
             plot_ugv.reset(state)
@@ -515,22 +516,22 @@ class Training:
             print("episode: {}/{}, score: {}, laps: {:}, mean_score: {}, final state :({},{}), velocidad media: {}, Distancia media: {}"
                   .format(e, self.EPISODES, R, env.laps, mean_score, env.state[0], env.state[1], mean_v, mean_d))
 
-            fig, ax = plt.subplots()
-            fig.suptitle('Velocity')
-            ax.plot(range(len(v)), v, label='Deep Q-Learning')
-            legend = ax.legend(loc='lower right', shadow=True, fontsize='x-large')
-            plt.xlabel("Step")
-            plt.ylabel("Velocity")
-            plt.show()
-
-            fig, ax = plt.subplots()
-            fig.suptitle('Distance to Trajectory')
-            ax.plot(range(len(d)), d, label='Deep Q-Learning')
-            legend = ax.legend(loc='lower right', shadow=True, fontsize='x-large')
-            plt.xlabel("Step")
-            plt.ylabel("Distance")
-            plt.show()
-
+            #fig, ax = plt.subplots()
+            #fig.suptitle('Velocity')
+            #ax.plot(range(len(v)), v, label='Deep Q-Learning')
+            #legend = ax.legend(loc='lower right', shadow=True, fontsize='x-large')
+            #plt.xlabel("Step")
+            #plt.ylabel("Velocity")
+            #plt.show()
+#
+            #fig, ax = plt.subplots()
+            #fig.suptitle('Distance to Trajectory')
+            #ax.plot(range(len(d)), d, label='Deep Q-Learning')
+            #legend = ax.legend(loc='lower right', shadow=True, fontsize='x-large')
+            #plt.xlabel("Step")
+            #plt.ylabel("Distance")
+            #plt.show()
+#
 if __name__ == "__main__":
     #tengo que quitarle la indentacion a todo
     # Size of Uvispace area

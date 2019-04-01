@@ -49,7 +49,36 @@ class PlotTrainingResults(FigureCanvas):
         self.axes3.plot(self.distance)
 
         #Label
-        self.axes1.set_xlabel('Reward')
+        self.axes1.set_xlabel('Episode')
+
+        FigureCanvas.__init__(self, fig)
+        self.setParent(parent)
+
+        FigureCanvas.setSizePolicy(self,
+                                   QtWidgets.QSizePolicy.Expanding,
+                                   QtWidgets.QSizePolicy.Expanding)
+        FigureCanvas.updateGeometry(self)
+
+class PlotTestingResults(FigureCanvas):
+    """Simple canvas with a sine plot."""
+    def __init__(self,v=[], d=[] ,parent=None, width=5, height=4, dpi=100,):
+        self.velocity=v
+        self.distance=d
+        fig = Figure(figsize=(width, height), dpi=dpi)
+        fig.suptitle('Velocity[m/s]    Distance[m]')
+
+        #Create layout
+        self.axes1 = fig.add_axes([0.1, 0.5, 0.8, 0.4])
+
+        self.axes2 = fig.add_axes([0.1, 0.1, 0.8, 0.4])
+
+
+        #Plot
+        self.axes1.plot(self.velocity)
+        self.axes2.plot(self.distance)
+
+        #Label
+        self.axes1.set_xlabel('Step')
 
         FigureCanvas.__init__(self, fig)
         self.setParent(parent)

@@ -46,6 +46,7 @@ class Ui_fuzzy_window(object):
         font.setPointSize(16)
         self.lTraining.setFont(font)
         self.lTraining.setText("")
+        self.lTraining.setAlignment(QtCore.Qt.AlignCenter)
         self.lTraining.setObjectName("lTraining")
         self.stackedWidget.addWidget(self.page_0)
         self.page_1 = QtWidgets.QWidget()
@@ -53,9 +54,9 @@ class Ui_fuzzy_window(object):
         self.label_2 = QtWidgets.QLabel(self.page_1)
         self.label_2.setGeometry(QtCore.QRect(10, 0, 591, 41))
         self.label_2.setObjectName("label_2")
-        self.pbnextButton = QtWidgets.QPushButton(self.page_1)
-        self.pbnextButton.setGeometry(QtCore.QRect(620, 400, 75, 23))
-        self.pbnextButton.setObjectName("pbnextButton")
+        self.pbStartTesting = QtWidgets.QPushButton(self.page_1)
+        self.pbStartTesting.setGeometry(QtCore.QRect(620, 400, 75, 23))
+        self.pbStartTesting.setObjectName("pbStartTesting")
         self.wTrainPlot = QtWidgets.QWidget(self.page_1)
         self.wTrainPlot.setGeometry(QtCore.QRect(-11, 30, 721, 361))
         self.wTrainPlot.setObjectName("wTrainPlot")
@@ -63,8 +64,14 @@ class Ui_fuzzy_window(object):
         self.page_2 = QtWidgets.QWidget()
         self.page_2.setObjectName("page_2")
         self.label_6 = QtWidgets.QLabel(self.page_2)
-        self.label_6.setGeometry(QtCore.QRect(10, 10, 111, 31))
+        self.label_6.setGeometry(QtCore.QRect(10, 0, 111, 31))
         self.label_6.setObjectName("label_6")
+        self.wTestPlot = QtWidgets.QWidget(self.page_2)
+        self.wTestPlot.setGeometry(QtCore.QRect(0, 30, 701, 361))
+        self.wTestPlot.setObjectName("wTestPlot")
+        self.pbfinish = QtWidgets.QPushButton(self.page_2)
+        self.pbfinish.setGeometry(QtCore.QRect(600, 390, 93, 28))
+        self.pbfinish.setObjectName("pbfinish")
         self.stackedWidget.addWidget(self.page_2)
         self.gridLayout_2.addWidget(self.stackedWidget, 0, 1, 1, 1)
         fuzzy_window.setCentralWidget(self.centralWidget)
@@ -80,7 +87,7 @@ class Ui_fuzzy_window(object):
         fuzzy_window.setStatusBar(self.statusBar)
 
         self.retranslateUi(fuzzy_window)
-        self.stackedWidget.setCurrentIndex(0)
+        self.stackedWidget.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(fuzzy_window)
 
     def retranslateUi(self, fuzzy_window):
@@ -92,8 +99,9 @@ class Ui_fuzzy_window(object):
         self.rbTables.setText(_translate("fuzzy_window", "Tables"))
         self.label.setText(_translate("fuzzy_window", "Name the file:"))
         self.label_2.setText(_translate("fuzzy_window", "Training reults"))
-        self.pbnextButton.setText(_translate("fuzzy_window", "Next Step"))
+        self.pbStartTesting.setText(_translate("fuzzy_window", "Testing"))
         self.label_6.setText(_translate("fuzzy_window", "Testing"))
+        self.pbfinish.setText(_translate("fuzzy_window", "Finish"))
 
 
 if __name__ == "__main__":

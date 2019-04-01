@@ -1,5 +1,7 @@
 from DQNagent import  Agent
 import numpy as np
+import sys
+sys.path.append('F:\\Javier\\Desktop\\TFM\\uvispace-main-controller')
 from plot_ugv import PlotUgv
 from environment import UgvEnv
 import math
@@ -105,9 +107,11 @@ y_trajectory = np.append(y_trajectory,
 tr=Training()
 tr.testing(load_name='second-training.h5', x_trajectory=x_trajectory,y_trajectory=y_trajectory,closed=False)
 #
-#tr=Training()
-#tr.trainclosedcircuit(load=False,load_name='first-training.h5',save_name='second-training.h5',reward_need=180)
+tr=Training()
+tr.trainclosedcircuit(load=False,load_name='first-training.h5',save_name='second-training.h5',reward_need=180)
 
+tr=Training()
+tr.testing(load_name='second-training.h5', x_trajectory=x_trajectory,y_trajectory=y_trajectory,closed=False)
 #tr.traincurve(save_name='first-training.h5')
 ###tr.trainline(save_name='test-2.h5')
 ###tr.traincircle(save_name='2-64.h5')

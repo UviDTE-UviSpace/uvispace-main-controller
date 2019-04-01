@@ -1,5 +1,6 @@
 import sys
 from uvispace.uvirobot.neural_controller.DQNagent import  Agent
+from uvispace.uvirobot.neural_controller.plot_ugv import  PlotUgv
 import numpy as np
 from uvispace.uvirobot.neural_controller.environment import UgvEnv
 import math
@@ -96,3 +97,45 @@ class Training:
                 break
 
         return [epi_reward_average,epi_v_average,epi_d_average]
+
+    def testing(self, load_name, x_trajectory, y_trajectory, closed=True):
+
+        if not closed:
+            reward_need = (len(x_trajectory) // 50) * 5 + 15
+            print("Reward if it finishes: {}".format(reward_need))
+        scores = deque(maxlen=3)
+        agent = Agent(self.state_size, self.action_size, gamma=0.99, epsilon=1, epsilon_min=0.01, epsilon_decay=0.92,
+                      learning_rate=0.005, batch_size=64, tau=0.01)
+        plot_ugv = PlotUgv(self.SPACE_X, self.SPACE_Y, x_trajectory, y_trajectory, self.PERIOD)
+        env = UgvEnv(x_trajectory, y_trajectory, self.PERIOD,
+                     self.NUM_DIV_ACTION, closed=closed)
+        agent.load_model(load_name)
+
+        state, agent_state = env.reset()
+        agent_state = agent.format_state(agent_state)
+        plot_ugv.reset(state)
+        done = False
+        R = 0
+        v = deque()
+        d = deque()
+        while not done:
+            action = np.argmax(agent.model.predict(agent_state))
+            new_state, new_agent_state, reward, done = env.step(action)
+            v.append(env.v_linear)
+            d.append(np.sqrt(env.distance ** 2))
+            new_agent_state = agent.format_state(new_agent_state)
+            plot_ugv.execute(new_state)
+            # grados=new_agent_state[0][1]*180/math.pi
+            # grados2=new_state[2]*180/math.pi
+            # grados3=env.trajec_angle*180/math.pi
+            # print(grados3,'    ',grados2,'    ', grados)
+            agent_state = new_agent_state
+            R += reward
+        scores.append(R)
+        mean_score = np.mean(scores)
+        mean_v = np.mean(v)
+        mean_d = np.mean(d)
+        print(
+            "score: {}, laps: {:}, mean_score: {}, final state :({},{}), velocidad media: {}, Distancia media: {}"
+            .format(R, env.laps, mean_score, env.state[0], env.state[1], mean_v, mean_d))
+        return [v, d]

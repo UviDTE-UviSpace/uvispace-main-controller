@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import sys
+sys.path.append('F:\\Javier\\Desktop\\TFM\\uvispace-main-controller')
 import random
 import numpy as np
 from collections import deque
@@ -84,9 +86,6 @@ class Agent:
 
     def format_state(self,state):
         return np.reshape(state[0:self.state_size], [1, self.state_size])
-
-    def save_network(self):
-        self.model.save_weights("ann-weights.h5")
 
     def soft_update_target_network(self):
         w_model=self.model.get_weights()
