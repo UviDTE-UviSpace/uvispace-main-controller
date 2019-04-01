@@ -18,7 +18,7 @@ import mainwindowinterface
 from image_generator import ImageGenerator
 import load_csv
 import tools.fuzzy_controller_calib.fuzzy_calibration as fuzzy_calib
-import tools.neural_controller_trainer.neural_controller_trainer as neural_train
+import tools.neural_controller_trainer.interface.neural_controller_trainer as neural_train
 
 # Create the application logger
 logger = logging.getLogger('view')

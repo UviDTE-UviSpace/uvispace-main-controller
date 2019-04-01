@@ -1,28 +1,9 @@
-import sys
-sys.path.append('F:\\Javier\\Desktop\\TFM\\uvispace-main-controller')
-import os
+import uvispace.uvigui.tools.neural_controller_trainer.interface.neural_controller_trainer as neural
 
-from PyQt5 import QtWidgets, QtGui
+import numpy as np
 
-#import tools.neural_controller_trainer.neural_controller_trainer as neural
-import neural_controller_trainer as neural
-from uvispace.uvirobot.neural_controller.training import Training as TR
-
-import sys
-import  numpy as np
-from PyQt5.QtWidgets import QApplication, QVBoxLayout, QWidget
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.figure import Figure
-
-from numpy import arange, sin, pi
-from PyQt5 import QtCore, QtWidgets
-import random
-
-from guitraining import Training
+from uvispace.uvigui.tools.neural_controller_trainer.guitraining import Training
 from uvispace.uvigui.tools.neural_controller_trainer.Plots import *
-
-import threading
-import time
 
 
 class MainWindow(QtWidgets.QMainWindow, neural.Ui_fuzzy_window):
@@ -221,8 +202,4 @@ class TestingThread(QtCore.QThread):
         #self.next_page()
         #l.addWidget(self.train.plot)
 
-if __name__ == '__main__':
-    app = QtWidgets.QApplication(sys.argv)
-    form = MainWindow()
-    form.show()
-    sys.exit(app.exec_())
+
