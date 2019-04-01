@@ -61,21 +61,13 @@ def main():
         print '  python get_video_triangle_server.py 172.19.5.213 1280 936 BIN'
         return
 
-
-
-
     receiver = zmq.Context.instance().socket(zmq.SUB)
-<<<<<<< HEAD
-    #bin
-    receiver.connect("tcp://192.168.0.11:33000")
-    #gray
-    #receiver.connect("tcp://192.168.0.11:34000")
-=======
+
     if IMG_TYPE == "BIN":
         receiver.connect("tcp://"+IP_ADDRESS+":33000")
     else: #"GRAY" and "RGB"
         receiver.connect("tcp://"+IP_ADDRESS+":34000")
->>>>>>> Lego-UGV-Wifi
+
     receiver.setsockopt_string(zmq.SUBSCRIBE, u"")
     receiver.setsockopt(zmq.CONFLATE, True)
 

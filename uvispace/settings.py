@@ -2,7 +2,6 @@ import logging.config
 import os
 import time
 
-
 # Logging configuration
 parent_path = os.path.dirname(__file__)
 log_path = ("{}/log".format(parent_path))
