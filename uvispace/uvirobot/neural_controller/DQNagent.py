@@ -9,6 +9,7 @@ from keras.layers import Dense
 from keras.optimizers import Adam
 from keras.models import load_model
 from keras.initializers import  zeros
+import  tensorflow as tf
 
 from uvispace.uvirobot.neural_controller.plot_ugv import PlotUgv
 from uvispace.uvirobot.neural_controller.environment import UgvEnv
@@ -28,8 +29,12 @@ class Agent:
         self.memory=deque(maxlen=100000)
         self.tau=tau
         self.model=self.build_network()
-        self.target_model=self.build_network()
-        self.target_model.set_weights(self.model.get_weights())
+        self.session = tf.Session()
+        self.graph = tf.get_default_graph()
+        with self.graph.as_default():
+            with self.session.as_default():
+                self.target_model=self.build_network()
+                self.target_model.set_weights(self.model.get_weights())
 
 
     def build_network(self):
@@ -44,30 +49,36 @@ class Agent:
 
     def remember(self,state, action, reward, next_state, done):
         #use it to remember and then replay
-        self.memory.append((state, action, reward, next_state, done))
+        with self.graph.as_default():
+            with self.session.as_default():
+                self.memory.append((state, action, reward, next_state, done))
 
-    def action(self, state):
-        if np.random.random() < self.epsilon:
-            return random.randrange(self.action_size)
-        else:
-            return np.argmax(self.model.predict(state)[0])
+    def action(self, state, training=True):
+        with self.graph.as_default():
+            with self.session.as_default():
+                if training and np.random.random() < self.epsilon:
+                    return random.randrange(self.action_size)
+                else:
+                    return np.argmax(self.model.predict(state)[0])
 
     def replay(self):
-        target_batch, state_batch = [], []
-        batch=random.sample(self.memory,min(len(self.memory),self.batch_size))
-        for state, action, reward, next_state, done in batch:
-            if done:
-                target = reward
-            else:
-                action_max=np.argmax(self.model.predict(next_state))
+        with self.graph.as_default():
+            with self.session.as_default():
+                target_batch, state_batch = [], []
+                batch=random.sample(self.memory,min(len(self.memory),self.batch_size))
+                for state, action, reward, next_state, done in batch:
+                    if done:
+                        target = reward
+                    else:
+                        action_max=np.argmax(self.model.predict(next_state))
 
-                target=reward + self.gamma * self.target_model.predict(next_state)[0][action_max]
-            target_vec=self.model.predict(state)
-            target_vec[0][action] = target
-            target_batch.append(target_vec[0])
-            state_batch.append(state[0])
-        # Instead of train in the for, I give all targets as array and give the batch size
-        self.model.fit(np.array(state_batch), np.array(target_batch),batch_size=len(state_batch), epochs=1, verbose=0)
+                        target=reward + self.gamma * self.target_model.predict(next_state)[0][action_max]
+                    target_vec=self.model.predict(state)
+                    target_vec[0][action] = target
+                    target_batch.append(target_vec[0])
+                    state_batch.append(state[0])
+                # Instead of train in the for, I give all targets as array and give the batch size
+                self.model.fit(np.array(state_batch), np.array(target_batch),batch_size=len(state_batch), epochs=1, verbose=0)
 
 
     def reduce_random(self):
@@ -76,34 +87,42 @@ class Agent:
 
 
     def training(self, state, action, reward, next_state, done):
-        if done:
-            target=reward
-        else:
-            target=reward+self.gamma *np.amax(self.model.predict(next_state))
-        target_vec = self.model.predict(state)
-        target_vec[0][action] = target
-        self.model.fit(state, target_vec, epochs=1,verbose=0)
+        with self.graph.as_default():
+            with self.session.as_default():
+                if done:
+                    target=reward
+                else:
+                    target=reward+self.gamma *np.amax(self.model.predict(next_state))
+                target_vec = self.model.predict(state)
+                target_vec[0][action] = target
+                self.model.fit(state, target_vec, epochs=1,verbose=0)
 
     def format_state(self,state):
         return np.reshape(state[0:self.state_size], [1, self.state_size])
 
     def soft_update_target_network(self):
-        w_model=self.model.get_weights()
-        w_target=self.target_model.get_weights()
-        ctr = 0
-        for wmodel, wtarget in zip(w_model, w_target):
-            wtarget = wtarget * (1 - self.tau) + wmodel * self.tau
-            w_target[ctr] = wtarget
-            ctr += 1
+        with self.graph.as_default():
+            with self.session.as_default():
+                w_model=self.model.get_weights()
+                w_target=self.target_model.get_weights()
+                ctr = 0
+                for wmodel, wtarget in zip(w_model, w_target):
+                    wtarget = wtarget * (1 - self.tau) + wmodel * self.tau
+                    w_target[ctr] = wtarget
+                    ctr += 1
 
-        self.target_model.set_weights(w_target)
+                self.target_model.set_weights(w_target)
 
     def save_model(self,name):
-        self.model.save(name)
+        with self.graph.as_default():
+            with self.session.as_default():
+                self.model.save(name)
 
     def load_model(self, name):
-        self.model=load_model(name)
-        self.target_model.set_weights(self.model.get_weights())
+        with self.graph.as_default():
+            with self.session.as_default():
+                self.model=load_model(name)
+                self.target_model.set_weights(self.model.get_weights())
 
 
 

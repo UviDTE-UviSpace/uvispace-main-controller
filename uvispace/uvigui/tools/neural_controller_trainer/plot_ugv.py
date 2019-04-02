@@ -3,17 +3,28 @@
 
 """
 
+from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavTbar
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import matplotlib.patches as ptch
 import matplotlib.pyplot as plt
 import time
 import math
+from PyQt5 import QtWidgets
 
 
-class PlotUgv:
 
-    def __init__(self, x_limit, y_limit, x_trajectory, y_trajectory, period):
+class PlotUgv(QtWidgets.QMainWindow):
 
+    def __init__(self, x_limit, y_limit, x_trajectory, y_trajectory, period,):
+        QtWidgets.QMainWindow.__init__(self)
         self.fig, self.ax = plt.subplots()
+
+
+        self.fig.patch.set_alpha(0)
+        self.canvas = FigureCanvas(self.fig)
+        self.toolbar = NavTbar(self.canvas, self)
+        #self.verticalLayout_plot.addWidget(self.toolbar)
+        #self.verticalLayout_plot.addWidget(self.canvas_training)
 
         self.arrayX = []*500  # max_steps
         self.arrayY = []*500

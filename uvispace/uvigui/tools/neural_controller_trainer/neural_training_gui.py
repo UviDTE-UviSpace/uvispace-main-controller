@@ -1,57 +1,99 @@
-import uvispace.uvigui.tools.neural_controller_trainer.interface.neural_controller_trainer as neural
-
 import numpy as np
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavTbar
+from PyQt5.QtCore import QTimer
+from PyQt5 import QtWidgets
 
-from uvispace.uvigui.tools.neural_controller_trainer.guitraining import Training
+import uvispace.uvigui.tools.neural_controller_trainer.interface.neural_controller_trainer as neural
+from uvispace.uvigui.tools.neural_controller_trainer.guitraining import *
 from uvispace.uvigui.tools.neural_controller_trainer.Plots import *
+
+import matplotlib.pyplot as plt
+
 
 
 class MainWindow(QtWidgets.QMainWindow, neural.Ui_fuzzy_window):
     def __init__(self):
         QtWidgets.QMainWindow.__init__(self)
         self.setupUi(self)
-        self.layout = QVBoxLayout()
-
-
+        self.layout = QtWidgets.QVBoxLayout()
 
         # set the main page for the training process
         self.stackedWidget.setCurrentIndex(0)
 
+        #hide start training button
+        self.pbStartTesting.hide()
+
         # button actions (next button)
         self.pbStartTraining.clicked.connect(self.start_training)
         self.pbStartTesting.clicked.connect(self.start_testing)
-        self.pbfinish.clicked.connect(self.first_page)
+        self.pbRetrain.clicked.connect(self.first_page)
 
 
+
+
+        # initialize training figure
+        self.figure_training = plt.figure()
+        self.figure_training.patch.set_alpha(0)
+        self.canvas_training = FigureCanvas(self.figure_training)
+        self.toolbar = NavTbar(self.canvas_training, self)
+        self.verticalLayout_plot.addWidget(self.toolbar)
+        self.verticalLayout_plot.addWidget(self.canvas_training)
+
+        # add title
+        self.figure_training.suptitle('Reward    Velocity[m/s]    Distance[m]')
+
+
+        # define axes for Reward Velocity and Distance to trajectory
+        self.axes1training = self.figure_training.add_axes([0.1, 0.65, 0.8, 0.25])
+        self.axes2training = self.figure_training.add_axes([0.1, 0.4, 0.8, 0.25])
+        self.axes3training = self.figure_training.add_axes([0.1, 0.15, 0.8, 0.25])
+
+        self.axes3training.set_xlabel('Episode')
+
+        # initialize testing figure
+        self.figure_testing = plt.figure()
+        self.figure_testing.patch.set_alpha(0)
+        self.canvas_testing = FigureCanvas(self.figure_testing)
+        self.toolbar = NavTbar(self.canvas_testing, self)
+        self.verticalLayout_plot_test.addWidget(self.toolbar)
+        self.verticalLayout_plot_test.addWidget(self.canvas_testing)
+
+        # add title
+        self.figure_testing.suptitle('Velocity[m/s]    Distance[m]')
+
+        # define axes for Reward Velocity and Distance to trajectory
+        self.axes1testing = self.figure_testing.add_axes([0.1, 0.5, 0.8, 0.4])
+        self.axes2testing = self.figure_testing.add_axes([0.1, 0.1, 0.8, 0.4])
+
+        self.axes2testing.set_xlabel('Steps')
+
+        # Qt timer set-up for updating the training plots.
+        self.timer_training = QTimer()
+        self.timer_training.timeout.connect(self.update_training_plot)
+
+        # Qt timer set-up for updating the testing plots.
+        self.timer_testing = QTimer()
+        self.timer_testing.timeout.connect(self.update_testing_plot)
 
     def start_training(self):
         if self.rbNeural.isChecked():
-            #self.lTraining.setText('Training...  Please wait')
-            #self.training_thread = TrainingThread(self.lefilename.text())
-            #self.training_thread.finished.connect(self.plot_training)
-            #self.training_thread.start()
 
-            #usando threads aparece un error que asi no aparece
-            if len(self.lefilename.text()) > 0:
-                filename = self.lefilename.text() + '.h5'
-            else:
-                filename = 'emodel.h5'
-            tr = Training()
-            self.plot_data=tr.trainclosedcircuitplot(load=False, save_name=filename,
-                                  reward_need=180)
-            self.plot_training()
+            self.tr = Training()
+            self.tr.trainclosedcircuitplot(load=False, save_name='emodel.h5',reward_need=180)
+            self.timer_training.start(500)
+            self.tr.finished.connect(self.finish_training)
 
-##
+
+
         elif self.rbTables.isChecked():
+            self.pbStartTesting.show()
             pass
-        else:
-            self.lTraining.setText('Please, choose a training mode')
-            self.next_page()
 
     def start_testing(self):
-        #self.testing_thread = TestingThread(self.lefilename.text())
-        #self.testing_thread.finished.connect(self.plot_testing)
-        #self.testing_thread.start()
+
+        self.next_page()
+
         x_trajectory = np.append(np.linspace(0.2, 0.2, 41),
                                  np.cos(np.linspace(180 * np.pi / 180, 90 * np.pi / 180, 61)) * 0.1 + 0.3)
         y_trajectory = np.append(np.linspace(0.2, 0.4, 41),
@@ -76,130 +118,54 @@ class MainWindow(QtWidgets.QMainWindow, neural.Ui_fuzzy_window):
                                  np.cos(np.linspace(270 * np.pi / 180, 180 * np.pi / 180, 81)) * 0.2 + 0.4)
         y_trajectory = np.append(y_trajectory,
                                  np.sin(np.linspace(270 * np.pi / 180, 180 * np.pi / 180, 81)) * 0.2 + 0.2)
+        self.ts = Testing()
+        self.ts.testing(load_name='emodel.h5', x_trajectory=x_trajectory, y_trajectory=y_trajectory, closed=False)
+        self.timer_testing.start(500)
+        self.ts.finished.connect(self.finish_testing)
 
-        # x_trajectory = np.append(np.linspace(0.2, 0.2, 121),
-        #                        np.linspace(0.2001,0.25, 10))
-        # y_trajectory = np.append(np.linspace(0.2, 0.8, 121),
-        #                       np.linspace(0.8,0.8, 10))
-        # x_trajectory = np.append(x_trajectory,
-        #                        np.linspace(0.25,0.25, 361))
-        # y_trajectory = np.append(y_trajectory,
-        #                       np.linspace(0.79999,-1, 361))
-        #
-        if len(self.lefilename.text()) > 0:
-            filename = self.lefilename.text() + '.h5'
-        else:
-            filename = 'emodel.h5'
-        tr = Training()
-        self.plot_data=tr.testing(load_name='second-training.h5', x_trajectory=x_trajectory, y_trajectory=y_trajectory, closed=False)
-        self.plot_testing()
+    def finish_training(self):
+        self.timer_training.stop()
+        self.pbStartTesting.show()
+
+    def finish_testing(self):
+        self.timer_testing.stop()
+        self.update_testing_plot()
+        self.pbRetrain.show()
+
+    def update_training_plot(self):
+        self.axes1training.cla()
+        self.axes2training.cla()
+        self.axes3training.cla()
+
+        self.axes3training.set_xlabel('Episode')
+
+        reward, v, d = self.tr.read_averages()
+
+        self.axes1training.plot(reward)
+        self.axes2training.plot(v)
+        self.axes3training.plot(d)
+
+        self.canvas_training.draw()
+
+    def update_testing_plot(self):
+        self.axes1testing.cla()
+        self.axes2testing.cla()
+
+        self.axes3training.set_xlabel('Episode')
+
+        v, d = self.ts.read_values()
 
 
-    def first_page(self):
-        self.stackedWidget.setCurrentIndex(0)
+        self.axes1testing.plot(v)
+        self.axes2testing.plot(d)
+
+        self.canvas_testing.draw()
+
     def next_page(self):
         # goes to the next step in the interface
         index = self.stackedWidget.currentIndex()
-        self.stackedWidget.setCurrentIndex(index+1)
+        self.stackedWidget.setCurrentIndex(index + 1)
 
-    def plot_training(self):
-        self.training_plot = PlotTrainingResults(r=self.plot_data[0],v=self.plot_data[1],d=self.plot_data[2])
-        self.next_page()
-        self.wtrain = QtWidgets.QVBoxLayout(self.wTrainPlot)
-        self.wtrain.addWidget(self.training_plot)
-
-    def plot_testing(self):
-        self.training_plot = PlotTestingResults(v=self.plot_data[0],d=self.plot_data[1])
-        self.next_page()
-        self.wtest = QtWidgets.QVBoxLayout(self.wTestPlot)
-        self.wtest.addWidget(self.training_plot)
-
-class TrainingThread(QtCore.QThread):
-    def __init__(self, filename='',mode=False):
-        QtCore.QThread.__init__(self)
-        self.filename=filename
-        if len(self.filename) > 0:
-            self.filename = self.filename + '.h5'
-        else:
-            self.filename = 'emodel.h5'
-        self.train = Training()
-        self.mode=mode
-
-    def run(self):
-        if self. mode==False:
-            self.plot_data=self.train.trainclosedcircuitplot(reward_need=180,save_name=self.filename)  # hay que poner todo
-            #self.next_page()
-            #l.addWidget(self.train.plot)
-
-        else:
-            x_trajectory = np.append(np.linspace(0.2, 0.2, 41),
-                                     np.cos(np.linspace(180 * np.pi / 180, 90 * np.pi / 180, 61)) * 0.1 + 0.3)
-            y_trajectory = np.append(np.linspace(0.2, 0.4, 41),
-                                     np.sin(np.linspace(180 * np.pi / 180, 90 * np.pi / 180, 61)) * 0.1 + 0.4)
-            x_trajectory = np.append(x_trajectory,
-                                     np.cos(np.linspace(270 * np.pi / 180, 360 * np.pi / 180, 81)) * 0.2 + 0.3)
-            y_trajectory = np.append(y_trajectory,
-                                     np.sin(np.linspace(270 * np.pi / 180, 360 * np.pi / 180, 81)) * 0.2 + 0.7)
-            x_trajectory = np.append(x_trajectory,
-                                     np.cos(np.linspace(180 * np.pi / 180, -90 * np.pi / 180, 141)) * 0.3 + 0.8)
-            y_trajectory = np.append(y_trajectory,
-                                     np.sin(np.linspace(180 * np.pi / 180, -90 * np.pi / 180, 141)) * 0.3 + 0.7)
-            x_trajectory = np.append(x_trajectory,
-                                     np.cos(np.linspace(90 * np.pi / 180, 180 * np.pi / 180, 61)) * 0.1 + 0.8)
-            y_trajectory = np.append(y_trajectory,
-                                     np.sin(np.linspace(90 * np.pi / 180, 180 * np.pi / 180, 61)) * 0.1 + 0.3)
-            x_trajectory = np.append(x_trajectory,
-                                     np.cos(np.linspace(360 * np.pi / 180, 270 * np.pi / 180, 61)) * 0.3 + 0.4)
-            y_trajectory = np.append(y_trajectory,
-                                     np.sin(np.linspace(360 * np.pi / 180, 270 * np.pi / 180, 61)) * 0.3 + 0.3)
-            x_trajectory = np.append(x_trajectory,
-                                     np.cos(np.linspace(270 * np.pi / 180, 180 * np.pi / 180, 81)) * 0.2 + 0.4)
-            y_trajectory = np.append(y_trajectory,
-                                     np.sin(np.linspace(270 * np.pi / 180, 180 * np.pi / 180, 81)) * 0.2 + 0.2)
-            self.plot_data = self.train.testing(closed=False, load_name=self.filename, x_trajectory=x_trajectory,
-                                                y_trajectory=y_trajectory)  # hay que poner todo
-
-class TestingThread(QtCore.QThread):
-    def __init__(self, filename=''):
-        QtCore.QThread.__init__(self)
-        self.filename=filename
-
-
-    def run(self,filename=''):
-
-        if len(self.filename) > 0:
-            filename = self.filename + '.h5'
-        else:
-            filename = 'emodel.h5'
-
-
-        x_trajectory = np.append(np.linspace(0.2, 0.2, 41),
-                                 np.cos(np.linspace(180 * np.pi / 180, 90 * np.pi / 180, 61)) * 0.1 + 0.3)
-        y_trajectory = np.append(np.linspace(0.2, 0.4, 41),
-                                 np.sin(np.linspace(180 * np.pi / 180, 90 * np.pi / 180, 61)) * 0.1 + 0.4)
-        x_trajectory = np.append(x_trajectory,
-                                 np.cos(np.linspace(270 * np.pi / 180, 360 * np.pi / 180, 81)) * 0.2 + 0.3)
-        y_trajectory = np.append(y_trajectory,
-                                 np.sin(np.linspace(270 * np.pi / 180, 360 * np.pi / 180, 81)) * 0.2 + 0.7)
-        x_trajectory = np.append(x_trajectory,
-                                 np.cos(np.linspace(180 * np.pi / 180, -90 * np.pi / 180, 141)) * 0.3 + 0.8)
-        y_trajectory = np.append(y_trajectory,
-                                 np.sin(np.linspace(180 * np.pi / 180, -90 * np.pi / 180, 141)) * 0.3 + 0.7)
-        x_trajectory = np.append(x_trajectory,
-                                 np.cos(np.linspace(90 * np.pi / 180, 180 * np.pi / 180, 61)) * 0.1 + 0.8)
-        y_trajectory = np.append(y_trajectory,
-                                 np.sin(np.linspace(90 * np.pi / 180, 180 * np.pi / 180, 61)) * 0.1 + 0.3)
-        x_trajectory = np.append(x_trajectory,
-                                 np.cos(np.linspace(360 * np.pi / 180, 270 * np.pi / 180, 61)) * 0.3 + 0.4)
-        y_trajectory = np.append(y_trajectory,
-                                 np.sin(np.linspace(360 * np.pi / 180, 270 * np.pi / 180, 61)) * 0.3 + 0.3)
-        x_trajectory = np.append(x_trajectory,
-                                 np.cos(np.linspace(270 * np.pi / 180, 180 * np.pi / 180, 81)) * 0.2 + 0.4)
-        y_trajectory = np.append(y_trajectory,
-                                 np.sin(np.linspace(270 * np.pi / 180, 180 * np.pi / 180, 81)) * 0.2 + 0.2)
-        self.train = Training()
-        self.plot_data=self.train.testing(closed=False,load_name=filename, x_trajectory=x_trajectory ,y_trajectory=y_trajectory)  # hay que poner todo
-        #self.next_page()
-        #l.addWidget(self.train.plot)
-
+    def first_page(self):
+        self.stackedWidget.setCurrentIndex(0)
 
