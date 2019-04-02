@@ -1,6 +1,5 @@
 import sys
 from uvispace.uvirobot.neural_controller.DQNagent import  Agent
-from uvispace.uvigui.tools.neural_controller_trainer.plot_ugv import  PlotUgv
 import numpy as np
 from uvispace.uvirobot.neural_controller.environment import UgvEnv
 import math
@@ -151,6 +150,7 @@ class Testing(QtCore.QThread):
         self.x_trajectory=x_trajectory
         self.y_trajectory=y_trajectory
         self.closed=closed
+        self.states=[]
 
         self.start()
 
@@ -161,21 +161,23 @@ class Testing(QtCore.QThread):
         scores = deque(maxlen=3)
         agent = Agent(self.state_size, self.action_size, gamma=0.99, epsilon=1, epsilon_min=0.01, epsilon_decay=0.92,
                       learning_rate=0.005, batch_size=64, tau=0.01)
-        self.plot_ugv = PlotUgv(self.SPACE_X, self.SPACE_Y, self.x_trajectory, self.y_trajectory, self.PERIOD)
+
         env = UgvEnv(self.x_trajectory, self.y_trajectory, self.PERIOD,
                      self.NUM_DIV_ACTION, closed=self.closed)
         agent.load_model(self.load_name)
 
         state, agent_state = env.reset()
         agent_state = agent.format_state(agent_state)
-        self.plot_ugv.reset(state)
         done = False
         R = 0
         self.v = []
         self.d = []
+        self.states.append(state)
         while not done:
             action = agent.action(agent_state, training=False)
             new_state, new_agent_state, reward, done = env.step(action)
+
+            self.states.append(new_state)
 
             self.lock.acquire()
             self.v.append(env.v_linear)
@@ -183,7 +185,6 @@ class Testing(QtCore.QThread):
             self.lock.release()
 
             new_agent_state = agent.format_state(new_agent_state)
-            self.plot_ugv.execute(new_state)
             agent_state = new_agent_state
             R += reward
         scores.append(R)

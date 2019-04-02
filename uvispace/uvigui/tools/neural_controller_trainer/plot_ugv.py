@@ -13,6 +13,7 @@ from PyQt5 import QtWidgets
 
 
 
+
 class PlotUgv(QtWidgets.QMainWindow):
 
     def __init__(self, x_limit, y_limit, x_trajectory, y_trajectory, period,):
@@ -24,7 +25,7 @@ class PlotUgv(QtWidgets.QMainWindow):
         self.canvas = FigureCanvas(self.fig)
         self.toolbar = NavTbar(self.canvas, self)
         #self.verticalLayout_plot.addWidget(self.toolbar)
-        #self.verticalLayout_plot.addWidget(self.canvas_training)
+        #self.verticalLayout_plot.addWidget(self.canvas)
 
         self.arrayX = []*500  # max_steps
         self.arrayY = []*500

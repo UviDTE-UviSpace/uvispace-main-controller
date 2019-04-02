@@ -56,7 +56,7 @@ class PlotUgv:
 
         #Christian wrote false in the plt.show argumant and it
         #it generated an error
-        #plt.show(False)
+        plt.show(block=False)
         plt.draw()
     def reset(self, state):
 
@@ -91,7 +91,12 @@ class PlotUgv:
         # self.theta = self.theta+20  # Check if is necessary
 
 
-
+    def real_trayectory(self,x_array,y_array):
+        self.ax.plot(x_array, y_array, 'tab:red',
+                     linewidth=1.25, )
+        self.fig.canvas.draw()
+        plt.draw()
+        plt.show()
 
 if __name__ == "__main__":
     d = PlotUgv(3, 4, [-1.5, 0, 1.5], [-1.5, 0, 1.5], 1/30)
