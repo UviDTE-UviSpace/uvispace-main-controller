@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>617</width>
-    <height>421</height>
+    <width>721</width>
+    <height>552</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -24,7 +24,7 @@
     <item row="0" column="1">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="page_0">
        <layout class="QVBoxLayout" name="verticalLayout">
@@ -67,6 +67,13 @@
            <widget class="QPushButton" name="pbStartTraining">
             <property name="text">
              <string>Start Training</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pbAnnFile">
+            <property name="text">
+             <string>ANN file</string>
             </property>
            </widget>
           </item>
@@ -153,7 +160,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>617</width>
+     <width>721</width>
      <height>26</height>
     </rect>
    </property>

@@ -4,7 +4,7 @@ from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavTbar
 from PyQt5.QtCore import QTimer
 from PyQt5 import QtWidgets
 import matplotlib.patches as ptch
-import time
+
 
 import uvispace.uvigui.tools.neural_controller_trainer.interface.neural_controller_trainer as neural
 from uvispace.uvigui.tools.neural_controller_trainer.guitraining import *
@@ -26,10 +26,16 @@ class MainWindow(QtWidgets.QMainWindow, neural.Ui_fuzzy_window):
         #hide start training button
         self.pbStartTesting.hide()
 
+        #declarate file dialog
+        self.dlg = QtWidgets.QFileDialog()
+        self.dlg.setFileMode(QtWidgets.QFileDialog.AnyFile)
+        self.dlg.setDefaultSuffix('.h5')
+
         # button actions (next button)
         self.pbStartTraining.clicked.connect(self.start_training)
         self.pbStartTesting.clicked.connect(self.start_testing)
         self.pbRetrain.clicked.connect(self.first_page)
+        self.pbAnnFile.clicked.connect(self.dlg.exec_)
 
 
 
@@ -148,18 +154,21 @@ class MainWindow(QtWidgets.QMainWindow, neural.Ui_fuzzy_window):
         self.timer_sim.timeout.connect(self.plot_sim)
 
     def start_training(self):
-        if self.rbNeural.isChecked():
+        if len(self.dlg.selectedFiles())>0:
+            if self.rbNeural.isChecked():
 
-            self.tr = Training()
-            self.tr.trainclosedcircuitplot(load=False, save_name='emodel.h5',reward_need=180)
-            self.timer_training.start(500)
-            self.tr.finished.connect(self.finish_training)
+                self.tr = Training()
+                self.tr.trainclosedcircuitplot(load=False, save_name=self.dlg.selectedFiles()[0],reward_need=180)
+                self.timer_training.start(500)
+                self.tr.finished.connect(self.finish_training)
 
 
 
-        elif self.rbTables.isChecked():
-            self.pbStartTesting.show()
-            pass
+            elif self.rbTables.isChecked():
+                self.pbStartTesting.show()
+
+                print((self.dlg.selectedFiles()[0]))
+                pass
 
     def start_testing(self):
 
@@ -190,7 +199,7 @@ class MainWindow(QtWidgets.QMainWindow, neural.Ui_fuzzy_window):
         y_trajectory = np.append(y_trajectory,
                                  np.sin(np.linspace(270 * np.pi / 180, 180 * np.pi / 180, 81)) * 0.2 + 0.2)
         self.ts = Testing()
-        self.ts.testing(load_name='emodel.h5', x_trajectory=x_trajectory, y_trajectory=y_trajectory, closed=False)
+        self.ts.testing(load_name=self.dlg.selectedFiles()[0], x_trajectory=x_trajectory, y_trajectory=y_trajectory, closed=False)
         #self.timer_testing.start(500)
         self.ts.finished.connect(self.finish_testing)
 

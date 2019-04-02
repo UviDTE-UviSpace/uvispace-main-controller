@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_fuzzy_window(object):
     def setupUi(self, fuzzy_window):
         fuzzy_window.setObjectName("fuzzy_window")
-        fuzzy_window.resize(617, 421)
+        fuzzy_window.resize(721, 552)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -53,6 +53,9 @@ class Ui_fuzzy_window(object):
         self.pbStartTraining = QtWidgets.QPushButton(self.page_0)
         self.pbStartTraining.setObjectName("pbStartTraining")
         self.horizontalLayout.addWidget(self.pbStartTraining)
+        self.pbAnnFile = QtWidgets.QPushButton(self.page_0)
+        self.pbAnnFile.setObjectName("pbAnnFile")
+        self.horizontalLayout.addWidget(self.pbAnnFile)
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
         self.pbStartTesting = QtWidgets.QPushButton(self.page_0)
@@ -99,7 +102,7 @@ class Ui_fuzzy_window(object):
         self.gridLayout_2.addWidget(self.stackedWidget, 0, 1, 1, 1)
         fuzzy_window.setCentralWidget(self.centralWidget)
         self.menuBar = QtWidgets.QMenuBar(fuzzy_window)
-        self.menuBar.setGeometry(QtCore.QRect(0, 0, 617, 26))
+        self.menuBar.setGeometry(QtCore.QRect(0, 0, 721, 26))
         self.menuBar.setObjectName("menuBar")
         fuzzy_window.setMenuBar(self.menuBar)
         self.mainToolBar = QtWidgets.QToolBar(fuzzy_window)
@@ -110,7 +113,7 @@ class Ui_fuzzy_window(object):
         fuzzy_window.setStatusBar(self.statusBar)
 
         self.retranslateUi(fuzzy_window)
-        self.stackedWidget.setCurrentIndex(1)
+        self.stackedWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(fuzzy_window)
 
     def retranslateUi(self, fuzzy_window):
@@ -120,6 +123,7 @@ class Ui_fuzzy_window(object):
         self.rbNeural.setText(_translate("fuzzy_window", "Neural Network"))
         self.rbTables.setText(_translate("fuzzy_window", "Tables"))
         self.pbStartTraining.setText(_translate("fuzzy_window", "Start Training"))
+        self.pbAnnFile.setText(_translate("fuzzy_window", "ANN file"))
         self.pbStartTesting.setText(_translate("fuzzy_window", "Start Testing"))
         self.label_2.setText(_translate("fuzzy_window", "Testing"))
         self.pbRetrain.setText(_translate("fuzzy_window", "Re-Train"))
