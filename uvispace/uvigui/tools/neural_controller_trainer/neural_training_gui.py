@@ -6,6 +6,7 @@ from PyQt5 import QtWidgets
 import matplotlib.patches as ptch
 
 
+
 import uvispace.uvigui.tools.neural_controller_trainer.interface.neural_controller_trainer as neural
 from uvispace.uvigui.tools.neural_controller_trainer.guitraining import *
 from uvispace.uvigui.tools.neural_controller_trainer.Plots import *
@@ -23,8 +24,9 @@ class MainWindow(QtWidgets.QMainWindow, neural.Ui_fuzzy_window):
         # set the main page for the training process
         self.stackedWidget.setCurrentIndex(0)
 
-        #hide start training button
+        #hide  buttons
         self.pbStartTesting.hide()
+        self.pbRetrain.hide()
 
         #declarate file dialog
         self.dlg = QtWidgets.QFileDialog()
@@ -64,8 +66,8 @@ class MainWindow(QtWidgets.QMainWindow, neural.Ui_fuzzy_window):
         self.figure_testing.patch.set_alpha(0)
         self.canvas_testing = FigureCanvas(self.figure_testing)
         self.toolbar = NavTbar(self.canvas_testing, self)
-        self.verticalLayout_plot_test.addWidget(self.toolbar)
-        self.verticalLayout_plot_test.addWidget(self.canvas_testing)
+        self.gridLayout_plot_test.addWidget(self.toolbar)
+        self.gridLayout_plot_test.addWidget(self.canvas_testing)
 
         # add title
         self.figure_testing.suptitle('Velocity[m/s]    Distance[m]')
@@ -87,8 +89,8 @@ class MainWindow(QtWidgets.QMainWindow, neural.Ui_fuzzy_window):
         self.fig.patch.set_alpha(0)
         self.canvas = FigureCanvas(self.fig)
         self.toolbar = NavTbar(self.canvas, self)
-        self.verticalLayout_plot_sim.addWidget(self.toolbar)
-        self.verticalLayout_plot_sim.addWidget(self.canvas)
+        self.gridLayout_plot_sim.addWidget(self.toolbar)
+        self.gridLayout_plot_sim.addWidget(self.canvas)
 
         self.arrayX = [] * 500  # max_steps
         self.arrayY = [] * 500
@@ -157,6 +159,9 @@ class MainWindow(QtWidgets.QMainWindow, neural.Ui_fuzzy_window):
         if len(self.dlg.selectedFiles())>0:
             if self.rbNeural.isChecked():
 
+                #Hide start button to avoid multiple training
+                self.pbStartTraining.hide()
+
                 self.tr = Training()
                 self.tr.trainclosedcircuitplot(load=False, save_name=self.dlg.selectedFiles()[0],reward_need=180)
                 self.timer_training.start(500)
@@ -169,8 +174,15 @@ class MainWindow(QtWidgets.QMainWindow, neural.Ui_fuzzy_window):
 
                 print((self.dlg.selectedFiles()[0]))
                 pass
+        else:
+            #Message to remind to choose a file
+            QtWidgets.QMessageBox.about(self,'Error','Please, choose a file.')
 
     def start_testing(self):
+
+        #redraw to avoid visual bug
+        self.canvas_testing.draw()
+        self.reset([0.2,0.2,np.pi/4])
 
         self.next_page()
 
@@ -204,8 +216,10 @@ class MainWindow(QtWidgets.QMainWindow, neural.Ui_fuzzy_window):
         self.ts.finished.connect(self.finish_testing)
 
     def finish_training(self):
+        self.pbStartTraining.show()
         self.timer_training.stop()
         self.pbStartTesting.show()
+        QtWidgets.QMessageBox.about(self, 'Attention', 'Training finished')
 
     def finish_testing(self):
         #self.timer_testing.stop()
@@ -241,8 +255,7 @@ class MainWindow(QtWidgets.QMainWindow, neural.Ui_fuzzy_window):
 
         self.canvas_testing.draw()
 
-        #self.verticalLayout_plot_sim.addWidget(self.ts.plot_ugv.toolbar)
-        #self.verticalLayout_plot_sim.addWidget(self.ts.plot_ugv.canvas)
+
 
     def next_page(self):
         # goes to the next step in the interface
@@ -250,6 +263,11 @@ class MainWindow(QtWidgets.QMainWindow, neural.Ui_fuzzy_window):
         self.stackedWidget.setCurrentIndex(index + 1)
 
     def first_page(self):
+
+        #redraw to avoid visual bug
+        self.canvas_training.draw()
+
+        self.pbRetrain.hide()
         self.stackedWidget.setCurrentIndex(0)
 
     def _begin(self):
@@ -297,6 +315,17 @@ class MainWindow(QtWidgets.QMainWindow, neural.Ui_fuzzy_window):
         self.point2.set_data(self.arrayX, self.arrayY)
         plt.draw()
         # self.theta = self.theta+20  # Check if is necessary
+
+    def reset(self, state):
+
+        self.x = state[0]
+        self.y = state[1]
+        self.arrayX = []
+        self.arrayY = []
+        self.point2.set_data(self.arrayX, self.arrayY)
+        self.angle = state[2]
+        self.point2, = self.ax.plot([], [], 'r:')
+        self.execute(state)
 
     def plot_sim(self):
         if self.state_number < len(self.ts.states):

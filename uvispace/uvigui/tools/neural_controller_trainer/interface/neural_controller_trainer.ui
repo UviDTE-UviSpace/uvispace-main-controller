@@ -24,7 +24,7 @@
     <item row="0" column="1">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="page_0">
        <layout class="QVBoxLayout" name="verticalLayout">
@@ -144,10 +144,14 @@
          </layout>
         </item>
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_plot_test"/>
-        </item>
-        <item>
-         <layout class="QVBoxLayout" name="verticalLayout_plot_sim"/>
+         <layout class="QHBoxLayout" name="horizontalLayout_9">
+          <item>
+           <layout class="QGridLayout" name="gridLayout_plot_test"/>
+          </item>
+          <item>
+           <layout class="QGridLayout" name="gridLayout_plot_sim"/>
+          </item>
+         </layout>
         </item>
        </layout>
       </widget>
