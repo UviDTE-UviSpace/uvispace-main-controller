@@ -2,7 +2,8 @@ import cv2
 import time
 import sys
 
-from uvispace.uvisensor.locnode.locnode import LocalizationNode, ImgType
+from uvispace.uvisensor.locnode.locnode import LocalizationNode
+from uvispace.uvisensor.common import ImgType
 
 if __name__ == '__main__':
     """
