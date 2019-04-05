@@ -1,6 +1,6 @@
 """
-Invokes the main program when the module is run as a script
-It launches all uvispace packages in a different thread
+Invokes the main Uvispace package. It launches all uvispace sub packages.
+Each sub package goes in a different thread
 """
 
 import uvispace
