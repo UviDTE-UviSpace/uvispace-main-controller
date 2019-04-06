@@ -19,15 +19,6 @@ from uvispace.uvigui.image_generator import ImageGenerator
 from uvispace.uvigui import load_csv
 import uvispace.uvigui.tools.fuzzy_controller_calib.fuzzy_calibration as fuzzy_calib
 
-try:
-    # Logging setup.
-    import uvispace.settings
-except ImportError:
-    # Exit program if the settings module can't be found.
-    sys.exit("Can't find settings module. Maybe environment variables are not"
-             "set. Run the environment .sh script at the project root folder.")
-logger = logging.getLogger("sensor")
-
 
 class AppLogHandler(logging.Handler):
     """
@@ -257,12 +248,16 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         logger.debug("Clikado selector image")
         if self.gray_rb.isChecked():
             self.img_generator.set_img_type("GRAY")
+            logger.debug("Image changed to gray")
         elif self.bin_rb.isChecked():
             self.img_generator.set_img_type("BIN")
+            logger.debug("Image changed to bin")
         elif self.rgb_rb.isChecked():
             self.img_generator.set_img_type("RGB")
+            logger.debug("Image changed to rgb")
         else:
             self.img_generator.set_img_type("BLACK")
+            logger.debug("Image changed to black")
         self.img_generator.reconnect_cameras()
         return
 
@@ -289,7 +284,7 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         refresh the car coordinates
 
         """
-        self.get_pose()
+        #self.get_pose()
         qpixmap_image = self.img_generator.get_image()
 
         pixmap = QPixmap.fromImage(qpixmap_image).scaled(self.label.size(),
@@ -315,11 +310,13 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         x_px = int(x_mm)
         y_px = int(y_mm)
 
-        #pose = [0, 0, 40]
+
+        x_px = int(x_mm)
+        y_px = int(y_mm)
         self.widget.label_x.setText(str(x_px))
         self.widget.label_y.setText(str(y_px))
         self.widget.label_z.setText(str(coordinates['theta']))
-        coordinates = [640, 468, -45]
+
         return coordinates
 
     def about_message(self):

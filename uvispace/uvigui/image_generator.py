@@ -15,17 +15,22 @@ import logging
 import os
 
 #fps metter
+
 import time
 
 # Create the application logger
-logger = logging.getLogger('view')
+logger = logging.getLogger('view.aux')
 
 
 class ImageGenerator():
 
     def __init__(self):
+        # logger
+        self.logger = logging.getLogger('view.aux.aux')
+        self.logger.info("image loger created")
         # load info to read images from camera
         self.cam_ips = self._load_ips()
+
         self.img_size = self._load_image_size()
         self.old_img_type = "BLACK"
         # By default black image without borders and without ugv
@@ -71,7 +76,7 @@ class ImageGenerator():
         size.read(path)
         img_size = [(size.getint('Camera', 'width')),
                     (size.getint('Camera', 'height'))]
-        logger.info("Cameras size loaded")
+        self.logger.info("Cameras size loaded")
         return img_size
 
     def reconnect_cameras(self):
@@ -79,7 +84,7 @@ class ImageGenerator():
         if self.img_type == "BLACK":
             for i in range(4):
                 self.receiver[i].close()
-            logger.debug("Sockets closed")
+            self.logger.debug("Sockets closed")
 
         # disconnect from old image type
         """ if self.img_type == "BLACK":
@@ -97,7 +102,7 @@ class ImageGenerator():
             self.receiver = []
             for i in range(4):
                 self.receiver.append(zmq.Context.instance().socket(zmq.SUB))
-                logger.info("Connected to camera '%s' ", i)
+                self.logger.info("Connected to camera '%s' ", i)
                 if self.img_type == "BIN":
                     self.receiver[i].connect("tcp://" + self.cam_ips[i] +
                     ":33000")
@@ -111,7 +116,7 @@ class ImageGenerator():
         self.old_img_type = self.img_type
 
     def set_img_type(self, img_type="BLACK"):
-        logger.debug("Changed image type")
+        self.logger.debug("Changed image type")
         self.img_type = img_type
         self.reconnect_cameras()
 
@@ -152,7 +157,7 @@ class ImageGenerator():
             multi_image_np = np.concatenate((image12, image34), axis=0)
 
             #calculate fps
-            #logger.debug("FPS: '%s'", 1.0 / (time.time() - start))
+            #self.logger.debug("FPS: '%s'", 1.0 / (time.time() - start))
 
         # Add uvispace border if requested
         if self.border_visible:
@@ -206,7 +211,7 @@ class ImageGenerator():
         }"""
         #print("pos function")
         x_mm = pose['x']
-        logger.debug("posicion x: '%s'", x_mm)
+        self.logger.debug("posicion x: '%s'", x_mm)
         y_mm = pose['y']
         logger.debug("posicion y: '%s'", y_mm)
         x_pix = int((x_mm + 2000) * 1280 / 4000)
