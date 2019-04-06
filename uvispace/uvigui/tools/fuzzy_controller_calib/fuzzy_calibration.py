@@ -14,7 +14,7 @@ from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem
 
 import uvispace.uvigui.tools.fuzzy_controller_calib.fuzzy_interface as fuzzy
 
-from uvirobot.speedtransform import PolySpeedSolver
+from uvispace.uvirobot.speedtransform import PolySpeedSolver
 #from uvirobot.robot import RobotController
 
 #try:
@@ -38,9 +38,9 @@ class MainWindow(QtWidgets.QMainWindow, fuzzy.Ui_fuzzy_window):
 
         # set the images
         self.label_14.setPixmap(
-            QtGui.QPixmap('tools/fuzzy_controller_calib/real_image.png'))
+            QtGui.QPixmap('uvispace/uvigui/tools/fuzzy_controller_calib/real_image.png'))
         self.label_13.setPixmap(
-            QtGui.QPixmap('tools/fuzzy_controller_calib/diagram.png'))
+            QtGui.QPixmap('uvispace/uvigui/tools/fuzzy_controller_calib/diagram.png'))
 
         # set the main page for the calibration process
         self.stackedWidget.setCurrentIndex(0)
