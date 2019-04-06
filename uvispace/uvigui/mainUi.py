@@ -5,7 +5,7 @@ import sys
 import logging
 import os
 import zmq
-
+import configparser
 
 # PyQt5 libraries
 from PyQt5 import QtWidgets, QtCore, QtGui
@@ -14,13 +14,19 @@ from PyQt5.QtWidgets import QLabel, QMessageBox, QWidget, QListWidgetItem
 from PyQt5.QtGui import QPixmap
 
 # proprietary libraries
-import mainwindowinterface
-from image_generator import ImageGenerator
-import load_csv
-import tools.fuzzy_controller_calib.fuzzy_calibration as fuzzy_calib
+from uvispace.uvigui import mainwindowinterface
+from uvispace.uvigui.image_generator import ImageGenerator
+from uvispace.uvigui import load_csv
+import uvispace.uvigui.tools.fuzzy_controller_calib.fuzzy_calibration as fuzzy_calib
 
-# Create the application logger
-logger = logging.getLogger('view')
+try:
+    # Logging setup.
+    import uvispace.settings
+except ImportError:
+    # Exit program if the settings module can't be found.
+    sys.exit("Can't find settings module. Maybe environment variables are not"
+             "set. Run the environment .sh script at the project root folder.")
+logger = logging.getLogger("sensor")
 
 
 class AppLogHandler(logging.Handler):
@@ -209,6 +215,18 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         self.widget.progressBar_battery.setProperty('value', 90)
         self.widget.label_UGV.setText("Coche 1")
 
+        # create the subscriber to read the vehicles location
+        configuration = configparser.ConfigParser()
+        conf_file = "uvispace/config.cfg"
+        configuration.read(conf_file)
+        pose_port = configuration["ZMQ_Sockets"]["position_base"]
+        self.receiver = zmq.Context.instance().socket(zmq.SUB)
+        self.receiver.connect("tcp://localhost:{}".format(pose_port))
+        self.receiver.setsockopt_string(zmq.SUBSCRIBE, u"")
+        self.receiver.setsockopt(zmq.CONFLATE, True)
+
+        print("hola")
+
     def update_ugv_status(self):
         if self.ugv_check.isChecked():
             self.img_generator.set_ugv_visible(True)
@@ -287,14 +305,7 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         # Connects to the IP port and read the pose of the UGV
         #TODO: read the UGV IP from file
 
-
-        receiver = zmq.Context.instance().socket(zmq.SUB)
-        receiver.connect("tcp://localhost:{}".format(
-            int(os.environ.get("UVISPACE_BASE_PORT_POSITION"))+1))
-        receiver.setsockopt_string(zmq.SUBSCRIBE, u"")
-        receiver.setsockopt(zmq.CONFLATE, True)
-
-        coordinates = receiver.recv_json()
+        coordinates = self.receiver.recv_json()
 
         #translate coordinates from uvispace reference system to numpy
         x_mm = coordinates['x']
@@ -316,9 +327,3 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         link = "https://uvispace.readthedocs.io/en/latest/"
         message = "App for the uvispace project <br> <a href='%s'>Project Web</a>" % link
         about = QMessageBox.about(self, "About...", message)
-
-
-app = QtWidgets.QApplication(sys.argv)
-form = MainWindow()
-form.show()
-sys.exit(app.exec_())

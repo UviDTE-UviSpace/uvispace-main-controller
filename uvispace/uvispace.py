@@ -2,10 +2,17 @@ from distutils.util import strtobool
 import threading
 import configparser
 
+from PyQt5 import QtWidgets
+
 from uvispace.uvisensor.uvisensor import UviSensor
 from uvispace.uvisensor.common import ImgType
+from uvispace.uvigui.mainUi import MainWindow
 
 class UviSpace():
+    """
+    This class permits to launch all UviSpace packages in a single command
+    UviSpace().start()
+    """
     def __init__(self):
         # read configuration
         configuration = configparser.ConfigParser()
@@ -30,7 +37,10 @@ class UviSpace():
 
         # launch UviGui package
         if self.gui_enabled:
-            pass
+            app = QtWidgets.QApplication(sys.argv)
+            form = MainWindow()
+            form.show()
+            sys.exit(app.exec_())
         else:
             while(1):
                 pass

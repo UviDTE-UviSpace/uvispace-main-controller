@@ -40,10 +40,11 @@ class ImageGenerator():
         self.pose_subscriber = zmq.Context.instance().socket(zmq.SUB)
         self.pose_subscriber.setsockopt_string(zmq.SUBSCRIBE, u"")
         self.pose_subscriber.setsockopt(zmq.CONFLATE, True)
-        #self.pose_subscriber.connect("tcp://" + "192.168.0.51" + ":35000")
-        self.pose_subscriber.connect("tcp://localhost:{}".format(
-            int(os.environ.get("UVISPACE_BASE_PORT_POSITION"))+1))
-
+        configuration = configparser.ConfigParser()
+        conf_file = "uvispace/config.cfg"
+        configuration.read(conf_file)
+        pose_port = configuration["ZMQ_Sockets"]["position_base"]
+        self.pose_subscriber.connect("tcp://localhost:{}".format(pose_port))
 
     def _load_ips(self):
         """
@@ -53,9 +54,9 @@ class ImageGenerator():
         cameras_IPs = []
         for i in range(1, 5):
             ipscam = configparser.ConfigParser()
-            rel_path = '../uvisensor/resources/config/video_sensor' + str(i) + '.cfg'
-            ipscam.read(rel_path)
-            cameras_IPs.append(ipscam.get('VideoSensor', 'IP'))
+            path = 'uvispace/uvisensor/locnode/config/node' + str(i) + '.cfg'
+            ipscam.read(path)
+            cameras_IPs.append(ipscam.get('Comm', 'ip'))
         logger.info("Cameras IPs loaded")
         return cameras_IPs
 
@@ -66,8 +67,8 @@ class ImageGenerator():
         It returns a list with image dimensions:  [img_width, img_height]
         """
         size = configparser.ConfigParser()
-        rel_path = '../uvisensor/resources/config/video_sensor1.cfg'
-        size.read(rel_path)
+        path = 'uvispace/uvisensor/locnode/config/node1.cfg'
+        size.read(path)
         img_size = [(size.getint('Camera', 'width')),
                     (size.getint('Camera', 'height'))]
         logger.info("Cameras size loaded")

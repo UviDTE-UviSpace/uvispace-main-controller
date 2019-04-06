@@ -3,7 +3,7 @@ import os
 
 from PyQt5 import QtWidgets, QtGui
 
-import tools.fuzzy_controller_calib.fuzzy_interface as fuzzy
+import uvispace.uvigui.tools.fuzzy_controller_calib.fuzzy_interface as fuzzy
 #import fuzzy_interface as fuzzy
 
 
@@ -76,5 +76,3 @@ if __name__ == '__main__':
     form = MainWindow()
     form.show()
     sys.exit(app.exec_())
-
-
