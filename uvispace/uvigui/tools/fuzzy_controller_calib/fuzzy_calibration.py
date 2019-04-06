@@ -14,16 +14,6 @@ from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem
 
 import uvispace.uvigui.tools.fuzzy_controller_calib.fuzzy_interface as fuzzy
 
-from uvispace.uvirobot.speedtransform import PolySpeedSolver
-#from uvirobot.robot import RobotController
-
-#try:
- #   import messenger
-#except:
- #   print("could not load messenger")
-
-
-#import fuzzy_interface as fuzzy
 
 logger = logging.getLogger('view.fuzzy')
 
@@ -70,9 +60,11 @@ class MainWindow(QtWidgets.QMainWindow, fuzzy.Ui_fuzzy_window):
         self.pose_subscriber = zmq.Context.instance().socket(zmq.SUB)
         self.pose_subscriber.setsockopt_string(zmq.SUBSCRIBE, u"")
         self.pose_subscriber.setsockopt(zmq.CONFLATE, True)
-        # self.pose_subscriber.connect("tcp://" + "192.168.0.51" + ":35000")
-        self.pose_subscriber.connect("tcp://localhost:{}".format(
-            int(os.environ.get("UVISPACE_BASE_PORT_POSITION")) + 1))
+        configuration = configparser.ConfigParser()
+        conf_file = "uvispace/config.cfg"
+        configuration.read(conf_file)
+        pose_port = configuration["ZMQ_Sockets"]["position_base"]
+        self.pose_subscriber.connect("tcp://localhost:{}".format(pose_port))
 
     def next_page(self):
         # goes to the next step in the interface

@@ -19,6 +19,8 @@ from uvispace.uvigui.image_generator import ImageGenerator
 from uvispace.uvigui import load_csv
 import uvispace.uvigui.tools.fuzzy_controller_calib.fuzzy_calibration as fuzzy_calib
 
+logger = logging.getLogger('view')
+
 class AppLogHandler(logging.Handler):
     """
     Customized logging handler class, for printing on a PyQt Widget.
