@@ -53,35 +53,27 @@ class UviSensor():
         # sockets
         self.multiframe_port = int(configuration["ZMQ_Sockets"]["multi_img"])
         self.position_port = int(configuration["ZMQ_Sockets"]["position_base"])
-
         # real or simulated ugvs??
         self.simulated_ugvs = strtobool(configuration["Run"]["simulated_ugvs"])
+        # row and column position of each localization node
+        self.rows = list(map(int, configuration["LocNodes"]["rows"].split(",")))
+        self.cols = list(map(int, configuration["LocNodes"]["cols"].split(",")))
 
-        # create nodes using physical arrangement in the lab
-        ###########################################
-        #                    #                    #
-        #   cam 2 (num = 1)  #   cam 1 (num = 0)  #
-        #   array pos (0,0)  #   array pos (0,1)  #
-        ###########################################
-        #                    #                    #
-        #   cam 3 (num = 2)  #   cam 4 (num = 3)  #
-        #   array pos (1,0)  #   array pos (1,1)  #
-        ###########################################
-
-        # TODO: get col and row arrangement from uvispace config file
-        arow = [0, 0, 1, 1]
-        acol = [1, 0, 0, 1]
+        # definition of some object node, with row, column and device
         self.node = [None]*self.number_nodes
         for num in range(self.number_nodes):
             self.node[num] = {}
             self.node[num]["device"] = locnode.LocalizationNode(num,
                                         triang_enabled = self.enable_triang )
-            self.node[num]["device"].set_img_type(ImgType.BLACK)
-            self.node[num]["row"] = arow[num]
-            self.node[num]["col"] = acol[num]
-
-        self.width =  self.node_array_width * self.node[0]["device"].width
-        self.height =  self.node_array_height * self.node[0]["device"].height
+            self.node[num]["device"].set_img_type(ImgType.BLACK) #black default
+            self.node[num]["row"] = self.rows[num]
+            self.node[num]["col"] = self.cols[num]
+        # dimensions of the image from one localization node
+        self.locnode_width =  self.node[0]["device"].width
+        self.locnode_height =  self.node[0]["device"].height
+        # dimensions of the multi-image
+        self.multiframe_width =  self.node_array_width * self.locnode_width
+        self.multiframe_height =  self.node_array_height * self.locnode_height
 
         # define thread object
         self.thread = threading.Thread(target = self.acquisition_loop)
@@ -98,8 +90,8 @@ class UviSensor():
         # acquisition variables
         triangle = [None]*self.number_nodes
         frame = [None]*self.number_nodes
-        multiframe = np.zeros([self.height, self.width], dtype = np.uint8)
-        print(multiframe.shape)
+        multiframe = np.zeros([self.multiframe_width, self.multiframe_height],
+                    dtype = np.uint8)
         counter = 0
 
         # publising sockets
@@ -117,7 +109,7 @@ class UviSensor():
                 for num in range(self.number_nodes):
                     r, triangles = self.node[num]["device"].get_triangles()
                     if r:
-                        triangles[num] = triangles
+                        triangle[num] = triangles
             # calculate location of UGVs for triangles
 
             # publish location
@@ -131,15 +123,11 @@ class UviSensor():
                     # read image from devices
                     for num in range(self.number_nodes):
                         r, image = self.node[num]["device"].get_image()
-                        print(image.shape)
                         if r:
-                            # if there is new image add it to multiimage
-                            pix_col_first = self.node[num]["col"]*self.node[0]["device"].width
-                            pix_col_last = (self.node[num]["col"]+1)*self.node[0]["device"].width
-                            pix_row_first = self.node[num]["row"]*self.node[0]["device"].height
-                            pix_row_last = (self.node[num]["row"]+1)*self.node[0]["device"].height
-                            print("num={}cf={},cf={},cf={},cf={}".format(num,pix_col_first,pix_col_last,pix_row_first,pix_row_last))
-                            multiframe[pix_row_first:pix_row_last, pix_col_first: pix_col_last] = image
+                            frame[num]=image
+                    output12 = np.concatenate((frame[2 - 1], frame[1 - 1]), axis=1)
+                    output34 = np.concatenate((frame[3 - 1], frame[4 - 1]), axis=1)
+                    multiframe = np.concatenate((output12, output34), axis=0)  # final image
 
-                # send the multiimage
-                multiframe_publisher.send(multiframe)
+                    # send the multiimage
+                    multiframe_publisher.send(multiframe)

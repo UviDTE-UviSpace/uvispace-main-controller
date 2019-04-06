@@ -3,6 +3,7 @@ import time
 import sys
 import configparser
 import zmq
+import numpy as np
 
 from uvispace.uvisensor.uvisensor import UviSensor
 from uvispace.uvisensor.common import ImgType
@@ -33,7 +34,8 @@ if __name__ == '__main__':
 
     # start the stream of multi-images throug zmq socket
     sensor = UviSensor(enable_img = True, enable_triang = False)
-    height = sensor.height
+    width = sensor.multiframe_width
+    height = sensor.multiframe_height
 
     sensor.start_stream() # starts stream in other thread
 
@@ -45,7 +47,7 @@ if __name__ == '__main__':
     img_subscriber = zmq.Context.instance().socket(zmq.SUB)
     img_subscriber.setsockopt_string(zmq.SUBSCRIBE, "")
     img_subscriber.setsockopt(zmq.CONFLATE, True)
-    img_subscriber.connect("tcp://*:{}".format(multiframe_port))
+    img_subscriber.connect("tcp://localhost:{}".format(multiframe_port))
 
     t1 = time.time()
     frame_rate_counter = 0
