@@ -4,27 +4,20 @@
 import sys
 import logging
 import os
+import zmq
 
 
 # PyQt5 libraries
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import QLabel, QMessageBox, QWidget, QListWidgetItem
-from PyQt5.QtGui import QPixmap, QImage
-
-# PIL libraries
-from PIL import Image, ImageQt
-
-#ZMQ
-import zmq
+from PyQt5.QtGui import QPixmap
 
 # proprietary libraries
 import mainwindowinterface
-import image_load
+from image_generator import ImageGenerator
 import load_csv
-
-#for testing
-from cv2 import imwrite
+import tools.fuzzy_controller_calib.fuzzy_calibration as fuzzy_calib
 
 # Create the application logger
 logger = logging.getLogger('view')
@@ -55,10 +48,10 @@ class AppLogHandler(logging.Handler):
         # Paths to the log icons.
         parent_path = os.path.dirname(__file__)
         self.logsymbols = {
-            logging.DEBUG: "icons/debug.png",#.format(parent_path),
-            logging.INFO: "icons/info.png",#.format(parent_path),
-            logging.WARN: "icons/warning.png",#.format(parent_path),
-            logging.ERROR: "icons/error.png",#.format(parent_path),
+            logging.DEBUG: "icons/debug.png",
+            logging.INFO: "icons/info.png",
+            logging.WARN: "icons/warning.png",
+            logging.ERROR: "icons/error.png",
         }
         # The True levels are the ones that are printed on the log.
         self.enabled = {
@@ -166,10 +159,10 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         self.log_handler = AppLogHandler(self.LoggerBrowser)
         logger.setLevel(5)
         logger.addHandler(self.log_handler)
-        logger.info("Info")
-        logger.error("Error")
-        logger.debug("Debug")
-        logger.warning("Warning")
+        logger.info("Info debug actived")
+        logger.error("Error debug actived")
+        logger.debug("Debug debug actived")
+        logger.warning("Warning debug actived")
 
         # Log console level selection buttons
         self.DebugCheck.clicked.connect(self.update_logger_level)
@@ -177,64 +170,58 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         self.WarnCheck.clicked.connect(self.update_logger_level)
         self.ErrorCheck.clicked.connect(self.update_logger_level)
 
+        #Image type checks
+        self.bin_rb.clicked.connect(self.__check_img_type)
+        self.gray_rb.clicked.connect(self.__check_img_type)
+        self.black_rb.clicked.connect(self.__check_img_type)
+
         # initialise the QTimer to update the cameras image
-        self.__actualizar_imagen = QTimer()
-        t_refresh = 500
-        self.__actualizar_imagen.start(t_refresh)
-        self.__actualizar_imagen.timeout.connect(self.__update_interface)
+        self.__update_image_timer = QTimer()
+        t_refresh = 10
+        self.__update_image_timer.start(t_refresh)
+        self.__update_image_timer.timeout.connect(self.__update_interface)
+
         # menu actions
         self.actionExit.triggered.connect(self.close)  # close the app
         self.action_about.triggered.connect(self.about_message)
-        self.actionOpen_csv.triggered.connect(self.__loadfileswindow)
+        self.actionOpen_csv.triggered.connect(self.__load_files_window)
+        self.actionFuzzy_controller_calibration.triggered.connect(self.__fuzzy_controller_calibration)
 
-        # load cameras IP
-        self.cameras_IPs = image_load.loadips()
-        logger.info("Cameras IPs loaded")
-        print(self.cameras_IPs)
+        # create an object to control the image generation
+        self.img_generator = ImageGenerator()
 
-        # load cameras size
-        self.cameras_size = image_load.load_image_size()
-        logger.info("Cameras size loaded")
-        print(self.cameras_size)
+        # image border, ugv and path check events
+        self.grid_check.clicked.connect(self.update_border_status)
+        self.ugv_check.clicked.connect(self.update_ugv_status)
 
         # file button event
-        self.file_Button.clicked.connect(self.__loadfileswindow)
-
-
-
-
-        #options checks
-
+        self.file_Button.clicked.connect(self.__load_files_window)
 
         # add Car Widget using QlistWidget
         itemN = QListWidgetItem(self.listWidget)
-        widget = CarWidget()
-        itemN.setSizeHint(widget.size())
+        self.widget = CarWidget()
+        itemN.setSizeHint(self.widget.size())
         self.listWidget.addItem(itemN)
-        self.listWidget.setItemWidget(itemN, widget)
+        self.listWidget.setItemWidget(itemN, self.widget)
         logger.info("Car 1 added")
         # testing the widget ...
-        widget.label_x.setText("20")
-        widget.progressBar_battery.setProperty('value', 90)
-        widget.label_UGV.setText("Coche 1")
-        # second car widget
-        item1 = QListWidgetItem(self.listWidget)
-        widget2 = CarWidget()
-        item1.setSizeHint(widget2.size())
-        self.listWidget.addItem(item1)
-        self.listWidget.setItemWidget(item1, widget2)
-        widget2.label_UGV.setText("Coche 2")
-        logger.info("Car 2 added")
-        # third car
-        item2 = QListWidgetItem(self.listWidget)
-        widget3 = CarWidget()
-        item2.setSizeHint(widget3.size())
-        self.listWidget.addItem(item2)
-        self.listWidget.setItemWidget(item2, widget3)
-        widget3.label_UGV.setText("Coche 3")
-        logger.info("Car 3 added")
+        #self.widget.label_x.setText("20")
+        self.widget.progressBar_battery.setProperty('value', 90)
+        self.widget.label_UGV.setText("Coche 1")
 
+    def update_ugv_status(self):
+        if self.ugv_check.isChecked():
+            self.img_generator.set_ugv_visible(True)
+            logger.debug("UGV draw activated")
+        else:
+            self.img_generator.set_ugv_visible(False)
 
+    def update_border_status(self):
+        if self.grid_check.isChecked():
+            self.img_generator.set_border_visible(True)
+            logger.debug("Border draw activated")
+        else:
+            self.img_generator.set_border_visible(False)
 
     def update_logger_level(self):
         """Evaluate the check boxes states and update logger level."""
@@ -248,20 +235,20 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         """
         Checks the radio buttons state, to specify the image type
         to show in the viewer
-        :return: string, can be BIN, GRAY, BLACK or RGB
         """
-
+        logger.debug("Clikado selector image")
         if self.gray_rb.isChecked():
-            img_type = "GRAY"
+            self.img_generator.set_img_type("GRAY")
         elif self.bin_rb.isChecked():
-            img_type = "BIN"
+            self.img_generator.set_img_type("BIN")
         elif self.rgb_rb.isChecked():
-            img_type = "RGB"
+            self.img_generator.set_img_type("RGB")
         else:
-            img_type = "BLACK"
-        return img_type
+            self.img_generator.set_img_type("BLACK")
+        self.img_generator.reconnect_cameras()
+        return
 
-    def __loadfileswindow(self):
+    def __load_files_window(self):
         # opens a new window to load a .csv file
         logger.debug("Opening file loading window")
         self.popup = load_csv.App()
@@ -271,78 +258,56 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         self.lineEdit.setText(coord_filename)
         return
 
+    def __fuzzy_controller_calibration(self):
+        # opens a new window to do the fuzzy controller calibration
+        logger.debug("Opening the fuzzy controller calibration window")
+        self.popup = fuzzy_calib.MainWindow()
+        self.popup.show()
+        return
+
     def __update_interface(self):
         """
         refresh the image label
-        calls the image_stack method to join the four camera images
         refresh the car coordinates
 
         """
-        # get the car coordinates
-        coordinates = self.get_coordinates()
+        self.get_pose()
+        qpixmap_image = self.img_generator.get_image()
 
-        # get the image
-        image_np = image_load.image_stack(self.cameras_IPs,
-                                          self.cameras_size,
-                                          self.__check_img_type())
+        pixmap = QPixmap.fromImage(qpixmap_image).scaled(self.label.size(),
+                                aspectRatioMode= QtCore.Qt.KeepAspectRatio,
+                                transformMode = QtCore.Qt.SmoothTransformation)
 
-        # checks the grid, car or path ckecks and draws them if neccesary
-        # grid check
-        if self.grid_check.isChecked():
-            image_load.draw_grid(image_np)
-        #car check
-
-        if self.ugv_check.isChecked():
-            image_np = image_load.draw_ugv(image_np, coordinates)
-        # update the image label
-
-        ############    test
-
-        pilimage = Image.fromarray(image_np)  # type:Image
-        qim = ImageQt.ImageQt(pilimage)  # type: ImageQt
-        qima = QImage(qim)
-
-        pixmap = QPixmap.fromImage(qima).scaled(self.label.size(),
-                                                aspectRatioMode= QtCore.Qt.KeepAspectRatio,
-                                                transformMode = QtCore.Qt.SmoothTransformation)
-        """pixmap = QPixmap('salida.jpg').scaled(self.label.size(),
-                                              aspectRatioMode=QtCore.Qt.KeepAspectRatio,
-                                              transformMode=QtCore.Qt.SmoothTransformation)"""
-
-        self.label.setPixmap(pixmap)
         self.label.adjustSize()
         self.label.setScaledContents(True)
+        self.label.setPixmap(pixmap)
 
-
-
-    def get_coordinates(self):
+    def get_pose(self):
         # read the car coordinates and the angle
-        """ Connects to the IP port and read the pose of the UGV
-        TODO: read the UGV IP from file
+        # Connects to the IP port and read the pose of the UGV
+        #TODO: read the UGV IP from file
 
-
-        :return:
 
         receiver = zmq.Context.instance().socket(zmq.SUB)
-        receiver.connect("tcp://" + "192.168.0.51" + ":31000")
+        receiver.connect("tcp://localhost:{}".format(
+            int(os.environ.get("UVISPACE_BASE_PORT_POSITION"))+1))
         receiver.setsockopt_string(zmq.SUBSCRIBE, u"")
         receiver.setsockopt(zmq.CONFLATE, True)
 
-        coordinates = receiver.recv()
+        coordinates = receiver.recv_json()
 
         #translate coordinates from uvispace reference system to numpy
-        a = coordinates[0]
-        b = coordinates[1]
-        x = (a+2000)*1280/4000
-        y = (-b+1500)*936/3000
-        x = int(x)
-        y = int(y)
+        x_mm = coordinates['x']
+        y_mm = coordinates['y']
+        #x_px = (x_mm+2000)*1280/4000
+        #y_px = (-y_mm+1500)*936/3000
+        x_px = int(x_mm)
+        y_px = int(y_mm)
 
-        coordinates[0] = x
-        coordinates[1] = y
-
-
-        """
+        #pose = [0, 0, 40]
+        self.widget.label_x.setText(str(x_px))
+        self.widget.label_y.setText(str(y_px))
+        self.widget.label_z.setText(str(coordinates['theta']))
         coordinates = [640, 468, -45]
         return coordinates
 

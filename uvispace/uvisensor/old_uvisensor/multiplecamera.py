@@ -224,6 +224,7 @@ class DataFusionThread(threading.Thread):
         speeds = None
         publish_time = None
         while not self.__end_execution.isSet():
+            print("hello")
             # Start the cycle timer
             cycle_start_time = time.time()
             # Loop with N iterations, being N the number of camera threads.
@@ -256,6 +257,7 @@ class DataFusionThread(threading.Thread):
             # Boolean for updating the Kalman measurement noise.
             detected_triangle = False
             # Scan for detected triangle and process it.
+
             for element in self.__triangles:
                 if '1' in element:
                     if element['1'] is not None:
