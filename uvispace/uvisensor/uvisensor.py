@@ -59,18 +59,26 @@ class UviSensor():
         self.rows = list(map(int, configuration["LocNodes"]["rows"].split(",")))
         self.cols = list(map(int, configuration["LocNodes"]["cols"].split(",")))
 
-        # definition of some object node, with row, column and device
-        self.node = [None]*self.number_nodes
+        # create the different nodes in the system:
+        self.nodes = [None for i in range(self.number_nodes)]
         for num in range(self.number_nodes):
-            self.node[num] = {}
-            self.node[num]["device"] = locnode.LocalizationNode(num,
+            self.nodes[num] = locnode.LocalizationNode(num,
                                         triang_enabled = self.enable_triang )
-            self.node[num]["device"].set_img_type(ImgType.BLACK) #black default
-            self.node[num]["row"] = self.rows[num]
-            self.node[num]["col"] = self.cols[num]
+            self.nodes[num].set_img_type(ImgType.BLACK)
+
+        # array that permits accessing the correct node using row and column
+        self.node_array = [[None for i in range(self.node_array_width)]
+                            for j in range(self.node_array_height)]
+        for row in range(self.node_array_height):
+            for col in range(self.node_array_width):
+                # search the loc node number for that location
+                for num in range(self.number_nodes):
+                    if (self.rows[num] == row) and self.cols[num] == col:
+                        self.node_array[row][col] = self.nodes[num]
+
         # dimensions of the image from one localization node
-        self.locnode_width =  self.node[0]["device"].width
-        self.locnode_height =  self.node[0]["device"].height
+        self.locnode_width =  self.nodes[0].width
+        self.locnode_height =  self.nodes[0].height
         # dimensions of the multi-image
         self.multiframe_width =  self.node_array_width * self.locnode_width
         self.multiframe_height =  self.node_array_height * self.locnode_height
@@ -85,11 +93,14 @@ class UviSensor():
         """
         logger.info("Starting Uvisensor.")
         self.thread.start() #launches run in a new thread
+        #self.acquisition_loop()
 
     def acquisition_loop(self):
         # acquisition variables
         triangle = [None]*self.number_nodes
-        frame = [None]*self.number_nodes
+        frames = [[None for i in range(self.node_array_width)]
+                            for j in range(self.node_array_height)]
+        frame_row = [None for i in range(self.node_array_width)]
         multiframe = np.zeros([self.multiframe_width, self.multiframe_height],
                     dtype = np.uint8)
         counter = 0
@@ -110,9 +121,9 @@ class UviSensor():
                     r, triangles = self.node[num]["device"].get_triangles()
                     if r:
                         triangle[num] = triangles
-            # calculate location of UGVs for triangles
+                # calculate location of UGVs for triangles
 
-            # publish location
+                # publish location
 
             if self.enable_img:
                 # check for a new command from GUI to change camera settings
@@ -120,14 +131,16 @@ class UviSensor():
                 # get and send images from localization node at lower pace
                 counter = counter + 1
                 if counter >= (self.node_framerate//self.visualization_framerate):
-                    # read image from devices
-                    for num in range(self.number_nodes):
-                        r, image = self.node[num]["device"].get_image()
-                        if r:
-                            frame[num]=image
-                    output12 = np.concatenate((frame[2 - 1], frame[1 - 1]), axis=1)
-                    output34 = np.concatenate((frame[3 - 1], frame[4 - 1]), axis=1)
-                    multiframe = np.concatenate((output12, output34), axis=0)  # final image
+                    # create the multiframe image
+                    for row in range(self.node_array_height):
+                        for col in range(self.node_array_width):
+                            r, image = self.node_array[row][col].get_image()
+                            if r:
+                                frames[row][col]=image
+                        #concatenate this row
+                        frame_row[row] = np.concatenate(frames[row], axis=1)
+                    # concatenate all rows in single image
+                    multiframe = np.concatenate(frame_row, axis=0)
 
                     # send the multiimage
                     multiframe_publisher.send(multiframe)
