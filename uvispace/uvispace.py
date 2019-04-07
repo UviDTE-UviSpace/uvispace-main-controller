@@ -20,37 +20,38 @@ class UviSpace():
         configuration.read(conf_file)
         self.gui_enabled = strtobool(configuration["Run"]["gui_enabled"])
 
-        # create some threads to launch the different modules
-        self.thread_UviSensor = threading.Thread(target = self.launch_UviSensor)
-        self.thread_UviNavigator = threading.Thread(target = self.launch_UviNavigator)
-        self.thread_UviRobot = threading.Thread(target = self.launch_UviRobot)
-
     def start(self):
+        print("Starting Uvispace!!!")
+
         # launch UviSensor in a new thread
-        self.thread_UviSensor.start()
+        sensor = UviSensor(enable_img = True, enable_triang = False, threaded = True)
+        sensor.start_stream()
 
-        # Launch UviRobot
+        # Launch UviRobot in a new thread
         pass
 
-        # Launch UviNavigator
-        pass
+        # Launch UviNavigator in a new thread
 
-        # launch UviGui package
+        # Leave in this thread a way to interact with UviSpace (gui or console)
         if self.gui_enabled:
+            # launch UviGui package in this thread
             app = QtWidgets.QApplication(sys.argv)
             form = MainWindow()
             form.show()
-            sys.exit(app.exec_())
+            app.exec_()
         else:
-            while(1):
-                pass
+            # launch a console
+            response = ""
+            while(response != "EXIT"):
+                response = input('Type EXIT to leave UviSpace:')
 
-    def launch_UviSensor(self):
-        sensor = UviSensor(enable_img = True, enable_triang = False)
-        sensor.start_stream()
-
-    def launch_UviNavigator():
+        # Stop UviNavigator
         pass
 
-    def launch_UviRobot(self):
+        # Stop UviRobot
         pass
+
+        # Stop Uvisensor
+        sensor.stop_stream()
+
+        print("Leaving Uvispace!!!")

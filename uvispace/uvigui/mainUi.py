@@ -217,8 +217,6 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         self.receiver.setsockopt_string(zmq.SUBSCRIBE, u"")
         self.receiver.setsockopt(zmq.CONFLATE, True)
 
-        print("hola")
-
     def update_ugv_status(self):
         if self.ugv_check.isChecked():
             self.img_generator.set_ugv_visible(True)

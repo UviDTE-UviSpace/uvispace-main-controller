@@ -25,7 +25,7 @@ class UviSensor():
       through a ZMQ socket for the GUI.
     - Locate vehicles and post their location in another ZMQ sockets.
     """
-    def __init__(self, enable_img = True, enable_triang = True):
+    def __init__(self, enable_img = True, enable_triang = True, threaded = False):
         """
         Initialices the localization node array
         Params:
@@ -38,6 +38,7 @@ class UviSensor():
 
         self.enable_img = enable_img
         self.enable_triang = enable_triang
+        self.threaded = threaded
 
         configuration = configparser.ConfigParser()
         conf_file = "uvispace/config.cfg"
@@ -84,12 +85,31 @@ class UviSensor():
         self.multiframe_width =  self.node_array_width * self.locnode_width
         self.multiframe_height =  self.node_array_height * self.locnode_height
 
+        # if threaded mode is selected prepare elements to launch stream in
+        # different thread
+        self._kill_thread = threading.Event()
+        self._kill_thread.clear()
+        if self.threaded:
+            self.thread = threading.Thread(target = self.acquisition_loop)
+
     def start_stream(self):
         """
         Starts publishing images and ugv locations in their respective sockets
         """
         logger.info("Starting Uvisensor.")
-        self.acquisition_loop()
+        if self.threaded:
+            self._kill_thread.clear()
+            self.thread.start()
+        else:
+            self.acquisition_loop()
+
+    def stop_stream(self):
+        """
+        It permits to stop the stream and finish the thread in threaded mode
+        """
+        self._kill_thread.set()
+        # wait until the thrad finishes
+        self.thread.join()
 
     def acquisition_loop(self):
         # acquisition variables
@@ -112,7 +132,7 @@ class UviSensor():
         config_socket = zmq.Context().instance().socket(zmq.REP)
         config_socket.bind("tcp://*:{}".format(self.config_port))
 
-        while(True):
+        while not self._kill_thread.isSet():
 
             if self.enable_triang:
                 # get triangles from cameras
@@ -133,12 +153,9 @@ class UviSensor():
                     # change image type of all localization nodes
                     for i in range(self.number_nodes):
                         self.nodes[i].set_img_type(config_dict["img_type"])
-                        print("resetting cameras")
-                    print("resetting cameras end")
                     config_socket.send_json("OK")
-                    print("resetting cameras end")
                 except:
-                    print("no_message")
+                    pass
                 # get and send images from localization node at lower pace
                 counter = counter + 1
                 if counter >= (self.node_framerate//self.visualization_framerate):
