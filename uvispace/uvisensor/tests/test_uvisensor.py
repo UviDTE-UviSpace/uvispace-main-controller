@@ -12,36 +12,47 @@ sys.path.append(uvispace_path)
 from uvispace.uvisensor.uvisensor import UviSensor
 from uvispace.uvisensor.common import ImgType
 
-img_type = ImgType.BLACK
+img_type = ImgType.RAND
 
 if __name__ == '__main__':
     """
     This main reads from UviSensor socket the multiframe image and plots it.
     """
 
-    # creates zmq sockets to read from uvisensor
-    configuration = configparser.ConfigParser()
+    # load configs
+    uvispace_config = configparser.ConfigParser()
     conf_file = "uvispace/config.cfg"
-    configuration.read(conf_file)
-    multiframe_port = configuration["ZMQ_Sockets"]["multi_img"]
+    uvispace_config.read(conf_file)
+    node_config = configparser.ConfigParser()
+    conf_file = "uvispace/uvisensor/locnode/config/node1.cfg"
+    node_config.read(conf_file)
+
+    # creates zmq socket to configure the uvisensor
+    multiframe_port = uvispace_config["ZMQ_Sockets"]["multi_img"]
     img_subscriber = zmq.Context.instance().socket(zmq.SUB)
     img_subscriber.setsockopt_string(zmq.SUBSCRIBE, "")
     img_subscriber.setsockopt(zmq.CONFLATE, True)
     img_subscriber.connect("tcp://localhost:{}".format(multiframe_port))
 
+    # creates zmq sockets to read multiframe image from uvisensor
+    uvisensor_config_port = uvispace_config["ZMQ_Sockets"]["uvisensor_config"]
+    config_requester = zmq.Context.instance().socket(zmq.REQ)
+    config_requester.connect("tcp://localhost:{}".format(uvisensor_config_port))
+
     # calculate image dimensions
-    configuration = configparser.ConfigParser()
-    conf_file = "uvispace/config.cfg"
-    configuration.read(conf_file)
-    node_array_width = int(configuration["LocNodes"]["node_array_width"])
-    node_array_height = int(configuration["LocNodes"]["node_array_height"])
-    configuration = configparser.ConfigParser()
-    conf_file = "uvispace/uvisensor/locnode/config/node1.cfg"
-    configuration.read(conf_file)
-    single_image_width = int(configuration.get("Camera", "width"))
-    single_image_height = int(configuration.get("Camera", "height"))
+    node_array_width = int(uvispace_config["LocNodes"]["node_array_width"])
+    node_array_height = int(uvispace_config["LocNodes"]["node_array_height"])
+    single_image_width = int(node_config.get("Camera", "width"))
+    single_image_height = int(node_config.get("Camera", "height"))
     width = single_image_width * node_array_width
     height = single_image_height * node_array_height
+
+    # set the image type in uvisensor
+    uvisensor_config = {"img_type": img_type}
+    print("Sending configuration to UviSensor...")
+    config_requester.send_json(uvisensor_config)
+    response = config_requester.recv_json() # waits until response
+    print("Configuration finished. Starting streaming...")
 
     # show multiframe image from uvisensor and calculate frame rate
     t1 = time.time()

@@ -53,6 +53,7 @@ class UviSensor():
         # sockets
         self.multiframe_port = int(configuration["ZMQ_Sockets"]["multi_img"])
         self.position_port = int(configuration["ZMQ_Sockets"]["position_base"])
+        self.config_port = int(configuration["ZMQ_Sockets"]["uvisensor_config"])
         # real or simulated ugvs??
         self.simulated_ugvs = strtobool(configuration["Run"]["simulated_ugvs"])
         # row and column position of each localization node
@@ -83,17 +84,12 @@ class UviSensor():
         self.multiframe_width =  self.node_array_width * self.locnode_width
         self.multiframe_height =  self.node_array_height * self.locnode_height
 
-        # define thread object
-        self.thread = threading.Thread(target = self.acquisition_loop)
-
     def start_stream(self):
         """
-        Starts new threads for publishing images and ugv locations in their
-        respective sockets
+        Starts publishing images and ugv locations in their respective sockets
         """
         logger.info("Starting Uvisensor.")
-        self.thread.start() #launches run in a new thread
-        #self.acquisition_loop()
+        self.acquisition_loop()
 
     def acquisition_loop(self):
         # acquisition variables
@@ -112,6 +108,9 @@ class UviSensor():
         multiframe_publisher = zmq.Context.instance().socket(zmq.PUB)
         multiframe_publisher.sndhwm = 1
         multiframe_publisher.bind("tcp://*:{}".format(self.multiframe_port))
+        # socket to read requests for changing configuration
+        config_socket = zmq.Context().instance().socket(zmq.REP)
+        config_socket.bind("tcp://*:{}".format(self.config_port))
 
         while(True):
 
@@ -127,7 +126,19 @@ class UviSensor():
 
             if self.enable_img:
                 # check for a new command from GUI to change camera settings
-
+                try:
+                    #check for a message, this will not block
+                    # if no message it leaves the try because zmq behaviour
+                    config_dict = config_socket.recv_json(flags=zmq.NOBLOCK)
+                    # change image type of all localization nodes
+                    for i in range(self.number_nodes):
+                        self.nodes[i].set_img_type(config_dict["img_type"])
+                        print("resetting cameras")
+                    print("resetting cameras end")
+                    config_socket.send_json("OK")
+                    print("resetting cameras end")
+                except:
+                    print("no_message")
                 # get and send images from localization node at lower pace
                 counter = counter + 1
                 if counter >= (self.node_framerate//self.visualization_framerate):
