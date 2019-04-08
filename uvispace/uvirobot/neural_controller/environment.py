@@ -7,7 +7,7 @@ import numpy as np
 import math
 import time
 
-from uvispace.uvirobot.neural_controller.plot_ugv import PlotUgv
+
 
 # Size of Uvispace area
 SPACE_X = 4

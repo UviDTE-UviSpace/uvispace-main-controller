@@ -57,3 +57,6 @@ venv/
 /DE1-SoC/FPGA_Design/**/*.rbf
 /DE1-SoC/FPGA_Design/**/*.cdf
 /DE1-SoC/FPGA_Design/**/*.stp
+
+#h5 files
+*.h5

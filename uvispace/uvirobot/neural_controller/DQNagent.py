@@ -11,7 +11,6 @@ from keras.models import load_model
 from keras.initializers import  zeros
 import  tensorflow as tf
 
-from uvispace.uvirobot.neural_controller.plot_ugv import PlotUgv
 from uvispace.uvirobot.neural_controller.environment import UgvEnv
 import math
 
@@ -179,7 +178,6 @@ if __name__ == "__main__":
 
     scores = deque(maxlen=20)
     agent=Agent(state_size,action_size, gamma=0.99, epsilon = 1, epsilon_min=0.01,epsilon_decay=0.9995, learning_rate=0.001, batch_size=64, tau=0.1)
-    plot_ugv = PlotUgv(SPACE_X, SPACE_Y, x_trajectory, y_trajectory, PERIOD)
     env=UgvEnv(x_trajectory, y_trajectory, PERIOD,
                      NUM_DIV_ACTION)
     agent.load_model('fast-model.h5')

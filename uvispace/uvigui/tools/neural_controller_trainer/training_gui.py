@@ -4,14 +4,14 @@ from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavTbar
 from PyQt5.QtCore import QTimer
 from PyQt5 import QtWidgets
 import matplotlib.patches as ptch
+import matplotlib.pyplot as plt
 
 
 
 import uvispace.uvigui.tools.neural_controller_trainer.interface.neural_controller_trainer as neural
-from uvispace.uvigui.tools.neural_controller_trainer.guitraining import *
-from uvispace.uvigui.tools.neural_controller_trainer.Plots import *
+from uvispace.uvigui.tools.neural_controller_trainer.neural_training import *
 
-import matplotlib.pyplot as plt
+
 
 
 
