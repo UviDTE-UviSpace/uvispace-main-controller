@@ -161,6 +161,7 @@ class MainWindow(QtWidgets.QMainWindow, neural.Ui_fuzzy_window):
 
                 #Hide start button to avoid multiple training
                 self.pbStartTraining.hide()
+                self.pbStartTesting.hide()
 
                 self.tr = Training()
                 self.tr.trainclosedcircuitplot(load=False, save_name=self.dlg.selectedFiles()[0],reward_need=180)
