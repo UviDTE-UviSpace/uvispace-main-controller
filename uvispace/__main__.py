@@ -1,8 +1,8 @@
 """
-Invokes the main program when the module is run as a script
-It launches all uvispace packages in a different thread
+Invokes the main Uvispace package. It launches all uvispace sub packages.
+Each sub package goes in a different thread (except GUI that remains in this one)
 """
-
-import uvispace
+from uvispace.uvispace import UviSpace
 
 if __name__ == "__main__":
+    UviSpace().start()

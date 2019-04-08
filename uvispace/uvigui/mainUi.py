@@ -5,7 +5,7 @@ import sys
 import logging
 import os
 import zmq
-
+import configparser
 
 # PyQt5 libraries
 from PyQt5 import QtWidgets, QtCore, QtGui
@@ -14,13 +14,12 @@ from PyQt5.QtWidgets import QLabel, QMessageBox, QWidget, QListWidgetItem
 from PyQt5.QtGui import QPixmap
 
 # proprietary libraries
-import mainwindowinterface
-from image_generator import ImageGenerator
-import load_csv
-import tools.fuzzy_controller_calib.fuzzy_calibration as fuzzy_calib
-import tools.neural_controller_trainer.interface.neural_controller_trainer as neural_train
+import uvispace.uvigui.tools.neural_controller_trainer.interface.neural_controller_trainer as neural_train
+from uvispace.uvigui import mainwindowinterface
+from uvispace.uvigui.image_generator import ImageGenerator
+from uvispace.uvigui import load_csv
+import uvispace.uvigui.tools.fuzzy_controller_calib.fuzzy_calibration as fuzzy_calib
 
-# Create the application logger
 logger = logging.getLogger('view')
 
 
@@ -28,6 +27,7 @@ class AppLogHandler(logging.Handler):
     """
     Customized logging handler class, for printing on a PyQt Widget.
     """
+
     def __init__(self, widget):
         logging.Handler.__init__(self)
         logging.basicConfig(filename="loger.log",
@@ -88,6 +88,7 @@ class CarWidget(QWidget):
     Includes the position (x,y,z), the battery status, the name of the UGV and
     an icon representing the UGV
     """
+
     def __init__(self, parent=None):
         QWidget.__init__(self, parent=parent)
         self.resize(270, 122)
@@ -138,10 +139,10 @@ class CarWidget(QWidget):
         self.label.setText("UGV:")
         self.label_icon.setText("IconLabel")
         self.label_UGV.setText("TextLabel")
-        self.label_2.setText( "wifi:")
+        self.label_2.setText("wifi:")
         self.label_wifi.setText("TextLabel")
         self.label_4.setText("x:")
-        self.label_5.setText( "y:")
+        self.label_5.setText("y:")
         self.label_6.setText("z:")
         self.label_x.setText("TextLabel")
         self.label_y.setText("TextLabel")
@@ -171,7 +172,7 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         self.WarnCheck.clicked.connect(self.update_logger_level)
         self.ErrorCheck.clicked.connect(self.update_logger_level)
 
-        #Image type checks
+        # Image type checks
         self.bin_rb.clicked.connect(self.__check_img_type)
         self.gray_rb.clicked.connect(self.__check_img_type)
         self.black_rb.clicked.connect(self.__check_img_type)
@@ -186,7 +187,8 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         self.actionExit.triggered.connect(self.close)  # close the app
         self.action_about.triggered.connect(self.about_message)
         self.actionOpen_csv.triggered.connect(self.__load_files_window)
-        self.actionFuzzy_controller_calibration.triggered.connect(self.__fuzzy_controller_calibration)
+        self.actionFuzzy_controller_calibration.triggered.connect(
+            self.__fuzzy_controller_calibration)
         self.actionNuronal_controller_training.triggered.connect(self.__neural_controller_training)
 
         # create an object to control the image generation
@@ -207,9 +209,19 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         self.listWidget.setItemWidget(itemN, self.widget)
         logger.info("Car 1 added")
         # testing the widget ...
-        #self.widget.label_x.setText("20")
+        # self.widget.label_x.setText("20")
         self.widget.progressBar_battery.setProperty('value', 90)
         self.widget.label_UGV.setText("Coche 1")
+
+        # create the subscriber to read the vehicles location
+        configuration = configparser.ConfigParser()
+        conf_file = "uvispace/config.cfg"
+        configuration.read(conf_file)
+        pose_port = configuration["ZMQ_Sockets"]["position_base"]
+        self.receiver = zmq.Context.instance().socket(zmq.SUB)
+        self.receiver.connect("tcp://localhost:{}".format(pose_port))
+        self.receiver.setsockopt_string(zmq.SUBSCRIBE, u"")
+        self.receiver.setsockopt(zmq.CONFLATE, True)
 
     def update_ugv_status(self):
         if self.ugv_check.isChecked():
@@ -241,12 +253,16 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         logger.debug("Clikado selector image")
         if self.gray_rb.isChecked():
             self.img_generator.set_img_type("GRAY")
+            logger.debug("Image changed to gray")
         elif self.bin_rb.isChecked():
             self.img_generator.set_img_type("BIN")
+            logger.debug("Image changed to bin")
         elif self.rgb_rb.isChecked():
             self.img_generator.set_img_type("RGB")
+            logger.debug("Image changed to rgb")
         else:
             self.img_generator.set_img_type("BLACK")
+            logger.debug("Image changed to black")
         self.img_generator.reconnect_cameras()
         return
 
@@ -280,12 +296,12 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         refresh the car coordinates
 
         """
-        self.get_pose()
+        # self.get_pose()
         qpixmap_image = self.img_generator.get_image()
 
         pixmap = QPixmap.fromImage(qpixmap_image).scaled(self.label.size(),
-                                aspectRatioMode= QtCore.Qt.KeepAspectRatio,
-                                transformMode = QtCore.Qt.SmoothTransformation)
+                                                         aspectRatioMode=QtCore.Qt.KeepAspectRatio,
+                                                         transformMode=QtCore.Qt.SmoothTransformation)
 
         self.label.adjustSize()
         self.label.setScaledContents(True)
@@ -294,18 +310,11 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
     def get_pose(self):
         # read the car coordinates and the angle
         # Connects to the IP port and read the pose of the UGV
-        #TODO: read the UGV IP from file
+        # TODO: read the UGV IP from file
 
+        coordinates = self.receiver.recv_json()
 
-        receiver = zmq.Context.instance().socket(zmq.SUB)
-        receiver.connect("tcp://localhost:{}".format(
-            int(os.environ.get("UVISPACE_BASE_PORT_POSITION"))+1))
-        receiver.setsockopt_string(zmq.SUBSCRIBE, u"")
-        receiver.setsockopt(zmq.CONFLATE, True)
-
-        coordinates = receiver.recv_json()
-
-        #translate coordinates from uvispace reference system to numpy
+        # translate coordinates from uvispace reference system to numpy
         x_mm = coordinates['x']
         y_mm = coordinates['y']
         #x_px = (x_mm+2000)*1280/4000
@@ -313,11 +322,12 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         x_px = int(x_mm)
         y_px = int(y_mm)
 
-        #pose = [0, 0, 40]
+        x_px = int(x_mm)
+        y_px = int(y_mm)
         self.widget.label_x.setText(str(x_px))
         self.widget.label_y.setText(str(y_px))
         self.widget.label_z.setText(str(coordinates['theta']))
-        coordinates = [640, 468, -45]
+
         return coordinates
 
     def about_message(self):
@@ -325,9 +335,3 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         link = "https://uvispace.readthedocs.io/en/latest/"
         message = "App for the uvispace project <br> <a href='%s'>Project Web</a>" % link
         about = QMessageBox.about(self, "About...", message)
-
-
-app = QtWidgets.QApplication(sys.argv)
-form = MainWindow()
-form.show()
-sys.exit(app.exec_())

@@ -3,7 +3,7 @@ import sys
 from PyQt5.QtWidgets import QFileDialog, QWidget, QApplication, QMessageBox
 
 
-import loadfilesinterface
+from uvispace.uvigui import loadfilesinterface
 """
     Module used to load csv files with a list of coordinates for the controller.
     Opens a new window. The new window also shows the coordinate list after the
