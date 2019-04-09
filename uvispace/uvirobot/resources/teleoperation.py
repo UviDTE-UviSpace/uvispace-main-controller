@@ -127,26 +127,26 @@ def main():
             # Move forward.
             if key in ('w', 'W'):
                 screen_message = 'moving forward'
-                speed_message['sp_m1'] = 200
+                speed_message['sp_m1'] = 255
                 speed_message['sp_m2'] = 127
                 speed_publisher.send_json(speed_message)
             # Move backwards.
             elif key in ('s', 'S'):
                 screen_message = 'moving backwards'
-                speed_message['sp_m1'] = 50
+                speed_message['sp_m1'] = 0
                 speed_message['sp_m2'] = 127
                 speed_publisher.send_json(speed_message)
             # Move left.
             elif key in ('a', 'A'):
                 screen_message = 'moving left'
-                speed_message['sp_m1'] = 200
-                speed_message['sp_m2'] = 40
+                speed_message['sp_m1'] = 230
+                speed_message['sp_m2'] = 0
                 speed_publisher.send_json(speed_message)
             # Move right.
             elif key in ('d', 'D'):
                 screen_message = 'moving right'
-                speed_message['sp_m1'] = 200
-                speed_message['sp_m2'] = 200
+                speed_message['sp_m1'] = 230
+                speed_message['sp_m2'] = 255
                 speed_publisher.send_json(speed_message)
             # Stop moving and exit.
             elif key in ('q', 'Q'):
@@ -172,39 +172,39 @@ def main():
             if key in ('w', 'W'):
 
                 screen_message = 'moving forward'
-                speed_message['sp_m1'] = int(speed.left_fwd_solver.solve(200, 0))
-                speed_message['sp_m2'] = int(speed.right_fwd_solver.solve(200, 0))
+                speed_message['sp_m1'] = int(speed.right_fwd_solver.solve(200, 0))
+                speed_message['sp_m2'] = int(speed.left_fwd_solver.solve(200, 0))
                 speed_publisher.send_json(speed_message)
             # Move backwards.
             elif key in ('s', 'S'):
                 screen_message = 'moving backwards'
-                speed_message['sp_m1'] = int(speed.left_fwd_solver.solve(-200, 0))
-                speed_message['sp_m2'] = int(speed.right_fwd_solver.solve(-200, 0))
+                speed_message['sp_m1'] = int(speed.right_fwd_solver.solve(-200, 0))
+                speed_message['sp_m2'] = int(speed.left_fwd_solver.solve(-200, 0))
                 speed_publisher.send_json(speed_message)
             # Move left.
             elif key in ('a', 'A'):
                 screen_message = 'moving left'
-                speed_message['sp_m1'] = int(speed.left_fwd_solver.solve(200, 1))
-                speed_message['sp_m2'] = int(speed.right_fwd_solver.solve(200, 1))
+                speed_message['sp_m1'] = int(speed.right_fwd_solver.solve(200, 1))
+                speed_message['sp_m2'] = int(speed.left_fwd_solver.solve(200, 1))
                 speed_publisher.send_json(speed_message)
             # Move right.
             elif key in ('d', 'D'):
                 screen_message = 'moving right'
-                speed_message['sp_m1'] = int(speed.left_fwd_solver.solve(200, -1))
-                speed_message['sp_m2'] = int(speed.right_fwd_solver.solve(200, -1))
+                speed_message['sp_m1'] = int(speed.right_fwd_solver.solve(200, -1))
+                speed_message['sp_m2'] = int(speed.left_fwd_solver.solve(200, -1))
                 speed_publisher.send_json(speed_message)
             # Stop moving and exit.
             elif key in ('q', 'Q'):
                 print ('Stop and exiting program. Have a good day! =)')
-                speed_message['sp_m1'] = int(speed.left_fwd_solver.solve(0, 0))
-                speed_message['sp_m2'] = int(speed.right_fwd_solver.solve(0, 0))
+                speed_message['sp_m1'] = int(speed.right_fwd_solver.solve(0, 0))
+                speed_message['sp_m2'] = int(speed.left_fwd_solver.solve(0, 0))
                 speed_publisher.send_json(speed_message)
                 break
             # Stop moving.
             else:
                 screen_message = 'stop moving'
-                speed_message['sp_m1'] = int(speed.left_fwd_solver.solve(0, 0))
-                speed_message['sp_m2'] = int(speed.right_fwd_solver.solve(0, 0))
+                speed_message['sp_m1'] = int(speed.right_fwd_solver.solve(0, 0))
+                speed_message['sp_m2'] = int(speed.left_fwd_solver.solve(0, 0))
                 speed_publisher.send_json(speed_message)
             # If key pressed now and key pressed previously are different,
             # update message.

@@ -89,8 +89,10 @@ class MessageProtocol:
         """Send a move order to the slave.
 
         :param setpoint: List with UGV speeds, whose elements range from
-         0 to 255. The first element corresponds to right wheels, and
-         the second element to left wheels. Values are rounded if
+         0 to 255. The first element corresponds to M1 (right wheels in 
+         DF Robot Pirate 4WD, acceleration in Lego UGV), and
+         the second element corresponds to M2 (left wheels in the DF Robot 
+         Pirate 4WD, servo for steering in Lego UGV). Values are rounded if
          float.
         :type setpoint: [int, int]
         :returns: true or false condition which confirms that the

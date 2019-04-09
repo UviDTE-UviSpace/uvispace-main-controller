@@ -131,7 +131,7 @@ def listen_speed_set_points(com_device, robot_id, speed_calc_times,
                        xbee_times)
             # Read the battery state-of-charge after regular seconds intervals.
             if (time.time()-soc_time) > soc_read_interval:
-                read_battery_soc(com_device)
+                #read_battery_soc(com_device)
                 soc_time = time.time()
     except KeyboardInterrupt:
         pass
@@ -152,7 +152,7 @@ def move_robot(data, com_device, wait_times, speed_calc_times, xbee_times):
     t2 = time.time()
     speed_calc_times.append(t2 - t1)
     logger.info('I am sending M1: {} M2: {}'.format(sp_m1, sp_m2))
-    com_device.move([sp_m2, sp_m1])
+    com_device.move([sp_m1, sp_m2])
     t0 = time.time()
     xbee_times.append(t0 - t2)
     logger.debug('Transmission ended successfully')
