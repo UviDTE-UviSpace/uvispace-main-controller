@@ -46,7 +46,8 @@ class ZigBeeMessenger(Serial, MessageProtocol):
             self.flushInput()
 
     def _read(self, numbytes):
-        return self.read(numbytes)
+        data = self.read(numbytes)
+        return data
 
     def _write(self, message):
         self.write(message)
@@ -55,12 +56,15 @@ class WifiMessenger(MessageProtocol):
     """
     WiFi wrapper of the MessageProtocol class
     """
-    def __init__(TCP_IP, TCP_PORT):
+    def __init__(self,TCP_IP, TCP_PORT):
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.s.connect((TCP_IP, TCP_PORT))
+        # IDs of the master and slave. Not used in this protocol
+        self.MASTER_ID = b'\x01'
+        self.SLAVE_ID = b'\x01'
     def _read(self, numbytes):
-        data = self.s.recv(numbytes*8)
+        data = self.s.recv(numbytes)
         return data
 
-    def _write(self, messsage):
+    def _write(self, message):
         self.s.send(message)
