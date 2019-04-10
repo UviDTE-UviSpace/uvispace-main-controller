@@ -6,7 +6,7 @@ import sys
 from PyQt5 import QtWidgets
 
 from uvispace.uvisensor.uvisensor import UviSensor
-from uvispace.uvisensor.common import ImgType
+from uvispace.uvirobot.uvirobot import UviRobot
 from uvispace.uvigui.mainUi import MainWindow
 
 class UviSpace():
@@ -29,7 +29,8 @@ class UviSpace():
         sensor.start_stream()
 
         # Launch UviRobot in a new thread
-        pass
+        robot = UviRobot(threaded = True)
+        robot.start()
 
         # Launch UviNavigator in a new thread
 
@@ -50,7 +51,7 @@ class UviSpace():
         pass
 
         # Stop UviRobot
-        pass
+        robot.stop()
 
         # Stop Uvisensor
         sensor.stop_stream()

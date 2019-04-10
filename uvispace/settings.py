@@ -34,11 +34,11 @@ LOGGING = {
                     time.strftime("%Y%m%d_%H%M%S"))]),
             'delay': True
         },
-        'file_messenger': {
+        'file_robot': {
             'level': 'DEBUG',
             'formatter': 'verbose',
             'class': 'logging.FileHandler',
-            'filename': '/'.join([log_path, 'messenger_{}.log'.format(
+            'filename': '/'.join([log_path, 'robot_{}.log'.format(
                     time.strftime("%Y%m%d_%H%M%S"))]),
             'delay': True
         },
@@ -69,8 +69,8 @@ LOGGING = {
             'handlers': ['file_navigator', 'console'],
             'level': 'DEBUG'
         },
-        'messenger': {
-            'handlers': ['file_messenger', 'console'],
+        'robot': {
+            'handlers': ['file_robot', 'console'],
             'level': 'DEBUG'
         },
         'sensor': {
