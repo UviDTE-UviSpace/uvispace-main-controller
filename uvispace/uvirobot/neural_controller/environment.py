@@ -29,7 +29,7 @@ ZONE2_LIMIT = 0.071  # Up to 7.1 cm
 
 class UgvEnv:
 
-    def __init__(self, x_traj, y_traj, period, num_div_action, closed=True):
+    def __init__(self, x_traj, y_traj, period, num_div_action, closed=True, differential_car=True):
 
         # Size of the space
         self.max_x = SPACE_X / 2  # [m]
@@ -40,7 +40,15 @@ class UgvEnv:
         self.ro = 0.0325  # [m]
         self.diameter = 0.133  # [m]
         self.time = period  # frames per second
-        self.max_steps = MAX_STEPS
+
+        #more steps for ackerman model because circuit is longer
+        if differential_car:
+            self.max_steps = 500
+        else:
+            self.max_steps = 500
+
+
+
         self.constant = -0.1
         self.x_ant = 0.0
         self.y_ant = 0.0
@@ -51,6 +59,17 @@ class UgvEnv:
         self.num_div_action = num_div_action
         #It is to inform if it´s an closed circuit without ending
         self.closed=closed
+
+        #distance between axis in ackerman car
+        self.l_ack=0.245
+        #Radius of wheels of the ackerman car
+        self.r_ack=0.035
+        # Maximum angle of the wheels of the ackerman car
+        self.alpha_ack=25.34*np.pi/180
+
+
+        #Choose car model
+        self.differential_car=differential_car
 
         #parameters to add noise to x, y, angle values
         #self.mu=0
@@ -92,13 +111,32 @@ class UgvEnv:
 
         m1, m2 = self._dediscretize_action(action)
 
-        # PWM to rads conversion
-        wm1 = (25 * (m1 - 127) / 128)
-        wm2 = (25 * (m2 - 127) / 128)
+        if self.differential_car == False:  # ackerman model
+            #m1 = orientation  m2= engine
 
-        # Calculate linear and angular velocity
-        self.v_linear = (wm2 + wm1) * (self.ro / 2)
-        self.w_ang = (wm2 - wm1) * (self.diameter / (4 * self.ro))
+            # i dont know the relation between pwm to angle in radians
+
+            wm1 = (16.257 * (m1 - 180) / 75)
+
+            # the negative sign is because it turns to the left with PWM 0-127 and for us turning to the left is
+            # positive w_ang
+            wm2 = - self.alpha_ack * (m2 - 128) / 127
+
+
+            #necesito el diametro de las ruedas
+            self.v_linear=wm1*self.r_ack*np.cos(wm2)
+
+            self.w_ang=-(wm1*self.r_ack*np.cos(wm2)*np.tan(wm2))/self.l_ack
+
+        else: #differential model
+            # PWM to rads conversion
+            wm1 = (25 * (m1 - 127) / 128)
+            wm2 = (25 * (m2 - 127) / 128)
+
+            # Calculate linear and angular velocity
+            self.v_linear = (wm2 + wm1) * (self.ro / 2)
+            #wm1 - wm2 because m1 is the engine of  the right
+            self.w_ang = (wm1 - wm2) * (self.diameter / (4 * self.ro))
 
         # Calculate position and theta
         self.x = self.x + self.v_linear * math.cos(self.theta) * self.time
@@ -308,12 +346,23 @@ class UgvEnv:
 
     def _dediscretize_action(self, action):
 
-        # actions fron 0 to 24
-        discrete_m1=action//5
-        discrete_m2=action%5
+        if self.differential_car:
+            # actions fron 0 to 24
+            discrete_m1=action//5
+            discrete_m2=action%5
 
-        m1 = 127 + discrete_m1 * 128/(self.num_div_action - 1)
-        m2 = 127 + discrete_m2 * 128/(self.num_div_action - 1)
+            m1 = 127 + discrete_m1 * 128/(self.num_div_action - 1)
+            m2 = 127 + discrete_m2 * 128/(self.num_div_action - 1)
+
+        else:
+            discrete_m1 = action // 5
+            discrete_m2 = action % 5
+
+            #the traction engine of the ackerman car starts working with pwm=180
+            m1 = 180 + discrete_m1 * 75 / (self.num_div_action - 1)
+
+            #it is the servo and goes from 0 to 255
+            m2 =discrete_m2 * 255 / (self.num_div_action - 1)
 
         return m1, m2
 

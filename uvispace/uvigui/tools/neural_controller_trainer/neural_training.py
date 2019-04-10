@@ -22,41 +22,71 @@ class Training(QtCore.QThread):
 
         self.lock = threading.Lock()
 
-    def trainclosedcircuitplot(self, load=False, load_name='emodel.h5', save_name='emodel.h5', reward_need=100):
+    def trainclosedcircuitplot(self, load=False, load_name='emodel.h5', save_name='emodel.h5', reward_need=100, differential_car=True):
 
         self.load = load
         self.load_name = load_name
         self.save_name = save_name
         self.reward_need = reward_need
+        self.differential_car=differential_car
 
         self.start()
 
     def run(self):
+        if self.differential_car:
+            x_trajectory = np.append(np.linspace(0.2, 0.2, 41),
+                                     np.cos(np.linspace(180 * math.pi / 180, 90 * math.pi / 180, 61)) * 0.1 + 0.3)
+            y_trajectory = np.append(np.linspace(0.2, 0.4, 41),
+                                     np.sin(np.linspace(180 * math.pi / 180, 90 * math.pi / 180, 61)) * 0.1 + 0.4)
+            x_trajectory = np.append(x_trajectory,
+                                     np.cos(np.linspace(270 * math.pi / 180, 360 * math.pi / 180, 81)) * 0.2 + 0.3)
+            y_trajectory = np.append(y_trajectory,
+                                     np.sin(np.linspace(270 * math.pi / 180, 360 * math.pi / 180, 81)) * 0.2 + 0.7)
+            x_trajectory = np.append(x_trajectory,
+                                     np.cos(np.linspace(180 * math.pi / 180, 0 * math.pi / 180, 141)) * 0.3 + 0.8)
+            y_trajectory = np.append(y_trajectory,
+                                     np.sin(np.linspace(180 * math.pi / 180, 0 * math.pi / 180, 141)) * 0.3 + 0.7)
+            x_trajectory = np.append(x_trajectory, np.linspace(1.1, 1.1, 81))
+            y_trajectory = np.append(y_trajectory, np.linspace(0.7, 0.3, 81))
+            x_trajectory = np.append(x_trajectory,
+                                     np.cos(np.linspace(0 * math.pi / 180, -90 * math.pi / 180, 81)) * 0.3 + 0.8)
+            y_trajectory = np.append(y_trajectory,
+                                     np.sin(np.linspace(0 * math.pi / 180, -90 * math.pi / 180, 81)) * 0.3 + 0.3)
+            x_trajectory = np.append(x_trajectory, np.linspace(0.8, 0.4, 81))
+            y_trajectory = np.append(y_trajectory, np.linspace(0, 0, 81))
+            x_trajectory = np.append(x_trajectory,
+                                     np.cos(np.linspace(270 * math.pi / 180, 180 * math.pi / 180, 81)) * 0.2 + 0.4)
+            y_trajectory = np.append(y_trajectory,
+                                     np.sin(np.linspace(270 * math.pi / 180, 180 * math.pi / 180, 81)) * 0.2 + 0.2)
 
-        x_trajectory = np.append(np.linspace(0.2, 0.2, 41),
-                                 np.cos(np.linspace(180 * math.pi / 180, 90 * math.pi / 180, 61)) * 0.1 + 0.3)
-        y_trajectory = np.append(np.linspace(0.2, 0.4, 41),
-                                 np.sin(np.linspace(180 * math.pi / 180, 90 * math.pi / 180, 61)) * 0.1 + 0.4)
-        x_trajectory = np.append(x_trajectory,
-                                 np.cos(np.linspace(270 * math.pi / 180, 360 * math.pi / 180, 81)) * 0.2 + 0.3)
-        y_trajectory = np.append(y_trajectory,
-                                 np.sin(np.linspace(270 * math.pi / 180, 360 * math.pi / 180, 81)) * 0.2 + 0.7)
-        x_trajectory = np.append(x_trajectory,
-                                 np.cos(np.linspace(180 * math.pi / 180, 0 * math.pi / 180, 141)) * 0.3 + 0.8)
-        y_trajectory = np.append(y_trajectory,
-                                 np.sin(np.linspace(180 * math.pi / 180, 0 * math.pi / 180, 141)) * 0.3 + 0.7)
-        x_trajectory = np.append(x_trajectory, np.linspace(1.1, 1.1, 81))
-        y_trajectory = np.append(y_trajectory, np.linspace(0.7, 0.3, 81))
-        x_trajectory = np.append(x_trajectory,
-                                 np.cos(np.linspace(0 * math.pi / 180, -90 * math.pi / 180, 81)) * 0.3 + 0.8)
-        y_trajectory = np.append(y_trajectory,
-                                 np.sin(np.linspace(0 * math.pi / 180, -90 * math.pi / 180, 81)) * 0.3 + 0.3)
-        x_trajectory = np.append(x_trajectory, np.linspace(0.8, 0.4, 81))
-        y_trajectory = np.append(y_trajectory, np.linspace(0, 0, 81))
-        x_trajectory = np.append(x_trajectory,
-                                 np.cos(np.linspace(270 * math.pi / 180, 180 * math.pi / 180, 81)) * 0.2 + 0.4)
-        y_trajectory = np.append(y_trajectory,
-                                 np.sin(np.linspace(270 * math.pi / 180, 180 * math.pi / 180, 81)) * 0.2 + 0.2)
+        else:
+
+            x_trajectory = np.append(np.linspace(0.2, 0.2, 41),
+                                     np.cos(np.linspace(180 * math.pi / 180, 0.001 * math.pi / 180, 161)) * 0.8 + 1)
+            y_trajectory = np.append(np.linspace(0.2, 0.399, 41),
+                                     np.sin(np.linspace(180 * math.pi / 180, 0.001 * math.pi / 180, 161)) * 0.8 + 0.4)
+            x_trajectory = np.append(x_trajectory, np.linspace(1.8, 1.8, 81))
+            y_trajectory = np.append(y_trajectory, np.linspace(0.4, 0.001, 81))
+            x_trajectory = np.append(x_trajectory,
+                                     np.cos(np.linspace(360 * math.pi / 180, 180.001 * math.pi / 180, 161)) * 0.8 + 1)
+            y_trajectory = np.append(y_trajectory,
+                                     np.sin(np.linspace(360 * math.pi / 180, 180.001 * math.pi / 180, 161)) * 0.8 - 0)
+            x_trajectory = np.append(x_trajectory, np.linspace(0.2, 0.2, 81))
+            y_trajectory = np.append(y_trajectory, np.linspace(0, 0.3999, 81))
+            x_trajectory = np.append(x_trajectory,
+                                     np.cos(np.linspace(0 * math.pi / 180, 179.999 * math.pi / 180, 161)) * 0.7 - 0.5)
+            y_trajectory = np.append(y_trajectory,
+                                     np.sin(np.linspace(0 * math.pi / 180, 179.999 * math.pi / 180, 161)) * 0.7 + 0.4)
+            x_trajectory = np.append(x_trajectory, np.linspace(-1.2, -1.2, 81))
+            y_trajectory = np.append(y_trajectory, np.linspace(0.4, 0.001, 81))
+            x_trajectory = np.append(x_trajectory,
+                                     np.cos(np.linspace(180 * math.pi / 180, 359.99 * math.pi / 180, 161)) * 0.7 - 0.5)
+            y_trajectory = np.append(y_trajectory,
+                                     np.sin(np.linspace(180 * math.pi / 180, 359.99 * math.pi / 180, 161)) * 0.7 - 0)
+            x_trajectory = np.append(x_trajectory, np.linspace(0.2, 0.2, 41))
+            y_trajectory = np.append(y_trajectory, np.linspace(0, 0.1999, 41))
+
+
 
         scores = deque(maxlen=50)
         self.epi_reward_average = []
@@ -67,8 +97,12 @@ class Training(QtCore.QThread):
         d = deque(maxlen=50)
         agent = Agent(self.state_size, self.action_size, gamma=0.999, epsilon=1, epsilon_min=0.01, epsilon_decay=0.995,
                       learning_rate=0.01, batch_size=128, tau=0.01)
-        env = UgvEnv(x_trajectory, y_trajectory, self.PERIOD,
-                     self.NUM_DIV_ACTION, closed=True)
+        if self.differential_car:
+            env = UgvEnv(x_trajectory, y_trajectory, self.PERIOD,
+                         self.NUM_DIV_ACTION, closed=True, differential_car=True)
+        else:
+            env = UgvEnv(x_trajectory, y_trajectory, self.PERIOD,
+                         self.NUM_DIV_ACTION, closed=True, differential_car=False)
         if self.load:
             agent.load_model(self.load_name)
 
@@ -144,13 +178,14 @@ class Testing(QtCore.QThread):
 
         self.lock = threading.Lock()
 
-    def testing(self, load_name, x_trajectory, y_trajectory, closed=True):
+    def testing(self, load_name, x_trajectory, y_trajectory, closed=True, differential_car=True):
 
         self.load_name = load_name
         self.x_trajectory=x_trajectory
         self.y_trajectory=y_trajectory
         self.closed=closed
         self.states=[]
+        self.differential_car = differential_car
 
         self.start()
 
@@ -162,8 +197,14 @@ class Testing(QtCore.QThread):
         agent = Agent(self.state_size, self.action_size, gamma=0.99, epsilon=1, epsilon_min=0.01, epsilon_decay=0.92,
                       learning_rate=0.005, batch_size=64, tau=0.01)
 
-        env = UgvEnv(self.x_trajectory, self.y_trajectory, self.PERIOD,
-                     self.NUM_DIV_ACTION, closed=self.closed)
+        if self.differential_car:
+            env = UgvEnv(self.x_trajectory, self.y_trajectory, self.PERIOD,
+                         self.NUM_DIV_ACTION, closed=self.closed,differential_car=True)
+
+        else:
+            env = UgvEnv(self.x_trajectory, self.y_trajectory, self.PERIOD,
+                         self.NUM_DIV_ACTION, closed=self.closed, differential_car=False)
+
         agent.load_model(self.load_name)
 
         state, agent_state = env.reset()

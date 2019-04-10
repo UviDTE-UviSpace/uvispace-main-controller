@@ -24,7 +24,7 @@
     <item row="0" column="1">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="page_0">
        <layout class="QVBoxLayout" name="verticalLayout">
@@ -54,6 +54,9 @@
             <property name="checked">
              <bool>true</bool>
             </property>
+            <attribute name="buttonGroup">
+             <string notr="true">rbModelGroup</string>
+            </attribute>
            </widget>
           </item>
           <item>
@@ -61,6 +64,9 @@
             <property name="text">
              <string>Tables</string>
             </property>
+            <attribute name="buttonGroup">
+             <string notr="true">rbModelGroup</string>
+            </attribute>
            </widget>
           </item>
           <item>
@@ -96,6 +102,53 @@
              <string>Start Testing</string>
             </property>
            </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <item>
+           <widget class="QLabel" name="lModel">
+            <property name="text">
+             <string>Choose vehicle model:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="rbDifferential">
+            <property name="text">
+             <string>Differential</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+            <attribute name="buttonGroup">
+             <string notr="true">rbControllerGroup</string>
+            </attribute>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="rbAckerman">
+            <property name="text">
+             <string>Ackerman</string>
+            </property>
+            <attribute name="buttonGroup">
+             <string notr="true">rbControllerGroup</string>
+            </attribute>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_3">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
           </item>
          </layout>
         </item>
@@ -182,4 +235,8 @@
  <layoutdefault spacing="6" margin="11"/>
  <resources/>
  <connections/>
+ <buttongroups>
+  <buttongroup name="rbControllerGroup"/>
+  <buttongroup name="rbModelGroup"/>
+ </buttongroups>
 </ui>
