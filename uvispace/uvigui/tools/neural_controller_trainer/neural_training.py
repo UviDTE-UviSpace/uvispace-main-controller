@@ -1,7 +1,7 @@
 import sys
-from uvispace.uvirobot.neural_controller.DQNagent import  Agent
+from uvispace.uvinavigator.controllers.linefollowers.neural_controller.DQNagent import  Agent
 import numpy as np
-from uvispace.uvirobot.neural_controller.environment import UgvEnv
+from uvispace.uvirobot.robot_model.environment import UgvEnv
 import math
 from collections import deque
 import threading

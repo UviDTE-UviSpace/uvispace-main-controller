@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import sys
-sys.path.append('F:\\Javier\\Desktop\\TFM\\uvispace-main-controller')
 import random
 import numpy as np
 from collections import deque
@@ -8,11 +7,11 @@ from keras.models import Sequential
 from keras.layers import Dense
 from keras.optimizers import Adam
 from keras.models import load_model
-from keras.initializers import  zeros
-import  tensorflow as tf
-
-from uvispace.uvirobot.neural_controller.environment import UgvEnv
+import tensorflow as tf
 import math
+
+from uvispace.uvirobot.robot_model.environment import UgvEnv
+
 
 class Agent:
     def __init__(self,state_size,action_size, gamma=1, epsilon = 1.0, epsilon_min=0.01,epsilon_decay=0.995, learning_rate=0.001, batch_size=64, tau=0.1):
