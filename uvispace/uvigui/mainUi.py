@@ -18,6 +18,7 @@ from uvispace.uvigui import mainwindowinterface
 from uvispace.uvigui.image_generator import ImageGenerator
 from uvispace.uvigui import load_csv
 import uvispace.uvigui.tools.fuzzy_controller_calib.fuzzy_calibration as fuzzy_calib
+from uvispace.uvisensor.common import ImgType
 
 logger = logging.getLogger('view')
 
@@ -162,6 +163,16 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         logger.debug("Debug debug actived")
         logger.warning("Warning debug actived")
 
+        # create the subscriber to read the vehicles location
+        configuration = configparser.ConfigParser()
+        conf_file = "uvispace/config.cfg"
+        configuration.read(conf_file)
+        pose_port = configuration["ZMQ_Sockets"]["position_base"]
+        self.receiver = zmq.Context.instance().socket(zmq.SUB)
+        self.receiver.connect("tcp://localhost:{}".format(pose_port))
+        self.receiver.setsockopt_string(zmq.SUBSCRIBE, u"")
+        self.receiver.setsockopt(zmq.CONFLATE, True)
+
         # Log console level selection buttons
         self.DebugCheck.clicked.connect(self.update_logger_level)
         self.InfoCheck.clicked.connect(self.update_logger_level)
@@ -172,21 +183,7 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         self.bin_rb.clicked.connect(self.__check_img_type)
         self.gray_rb.clicked.connect(self.__check_img_type)
         self.black_rb.clicked.connect(self.__check_img_type)
-
-        # initialise the QTimer to update the cameras image
-        self.__update_image_timer = QTimer()
-        t_refresh = 10
-        self.__update_image_timer.start(t_refresh)
-        self.__update_image_timer.timeout.connect(self.__update_interface)
-
-        # menu actions
-        self.actionExit.triggered.connect(self.close)  # close the app
-        self.action_about.triggered.connect(self.about_message)
-        self.actionOpen_csv.triggered.connect(self.__load_files_window)
-        self.actionFuzzy_controller_calibration.triggered.connect(self.__fuzzy_controller_calibration)
-
-        # create an object to control the image generation
-        self.img_generator = ImageGenerator()
+        self.rgb_rb.clicked.connect(self.__check_img_type)
 
         # image border, ugv and path check events
         self.grid_check.clicked.connect(self.update_border_status)
@@ -194,6 +191,22 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
 
         # file button event
         self.file_Button.clicked.connect(self.__load_files_window)
+
+        # menu actions
+        self.actionExit.triggered.connect(self.close)  # close the app
+        self.action_about.triggered.connect(self.about_message)
+        self.actionOpen_csv.triggered.connect(self.__load_files_window)
+        self.actionFuzzy_controller_calibration.triggered.connect(
+            self.__fuzzy_controller_calibration)
+
+        # initialise the QTimer to update the cameras image
+        self.__update_image_timer = QTimer()
+        t_refresh = int(configuration["GUI"]["visualization_fps"])
+        self.__update_image_timer.start(1000/t_refresh)
+        self.__update_image_timer.timeout.connect(self.__update_interface)
+
+        # create an object to control the image generation
+        self.img_generator = ImageGenerator()
 
         # add Car Widget using QlistWidget
         itemN = QListWidgetItem(self.listWidget)
@@ -206,16 +219,6 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         #self.widget.label_x.setText("20")
         self.widget.progressBar_battery.setProperty('value', 90)
         self.widget.label_UGV.setText("Coche 1")
-
-        # create the subscriber to read the vehicles location
-        configuration = configparser.ConfigParser()
-        conf_file = "uvispace/config.cfg"
-        configuration.read(conf_file)
-        pose_port = configuration["ZMQ_Sockets"]["position_base"]
-        self.receiver = zmq.Context.instance().socket(zmq.SUB)
-        self.receiver.connect("tcp://localhost:{}".format(pose_port))
-        self.receiver.setsockopt_string(zmq.SUBSCRIBE, u"")
-        self.receiver.setsockopt(zmq.CONFLATE, True)
 
     def update_ugv_status(self):
         if self.ugv_check.isChecked():
@@ -244,20 +247,19 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         Checks the radio buttons state, to specify the image type
         to show in the viewer
         """
-        logger.debug("Clikado selector image")
         if self.gray_rb.isChecked():
-            self.img_generator.set_img_type("GRAY")
+            self.img_generator.set_img_type(ImgType.GRAY)
             logger.debug("Image changed to gray")
         elif self.bin_rb.isChecked():
-            self.img_generator.set_img_type("BIN")
+            self.img_generator.set_img_type(ImgType.BIN)
             logger.debug("Image changed to bin")
         elif self.rgb_rb.isChecked():
-            self.img_generator.set_img_type("RGB")
+            # Set Random image because RGB is not implemented yet
+            self.img_generator.set_img_type(ImgType.RAND)
             logger.debug("Image changed to rgb")
         else:
-            self.img_generator.set_img_type("BLACK")
+            self.img_generator.set_img_type(ImgType.BLACK)
             logger.debug("Image changed to black")
-        self.img_generator.reconnect_cameras()
         return
 
     def __load_files_window(self):
@@ -284,6 +286,8 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
 
         """
         #self.get_pose()
+        #if self.ugv_check.isChecked():
+        #    self.get_pose()
         qpixmap_image = self.img_generator.get_image()
 
         pixmap = QPixmap.fromImage(qpixmap_image).scaled(self.label.size(),
@@ -296,19 +300,11 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
 
     def get_pose(self):
         # read the car coordinates and the angle
-        # Connects to the IP port and read the pose of the UGV
-        #TODO: read the UGV IP from file
+        # Connects to the ZMQ port and read the pose of the UGV
 
         coordinates = self.receiver.recv_json()
-
-        #translate coordinates from uvispace reference system to numpy
         x_mm = coordinates['x']
         y_mm = coordinates['y']
-        #x_px = (x_mm+2000)*1280/4000
-        #y_px = (-y_mm+1500)*936/3000
-        x_px = int(x_mm)
-        y_px = int(y_mm)
-
 
         x_px = int(x_mm)
         y_px = int(y_mm)
