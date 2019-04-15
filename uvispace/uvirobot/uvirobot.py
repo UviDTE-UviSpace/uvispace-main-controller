@@ -24,9 +24,9 @@ class UviRobot():
     """
     def __init__(self, threaded = False):
         """
-        Initialices the uvisensor class
+        Initialices the uvirobot class
         Params:
-        - threaded = uvisrobot loop launches in other thread
+        - threaded = uvirobot loop launches in other thread
         """
         self.threaded = threaded
 

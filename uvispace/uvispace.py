@@ -7,6 +7,7 @@ from PyQt5 import QtWidgets
 
 from uvispace.uvisensor.uvisensor import UviSensor
 from uvispace.uvirobot.uvirobot import UviRobot
+from uvispace.uvinavigator.uvinavigator import UviNavigator
 from uvispace.uvigui.mainUi import MainWindow
 
 class UviSpace():
@@ -33,6 +34,9 @@ class UviSpace():
         robot.start()
 
         # Launch UviNavigator in a new thread
+        navigator = UviNavigator(threaded = True)
+        navigator.start()
+
 
         # Leave in this thread a way to interact with UviSpace (gui or console)
         if self.gui_enabled:
@@ -48,7 +52,7 @@ class UviSpace():
                 response = input('Type EXIT to leave UviSpace:')
 
         # Stop UviNavigator
-        pass
+        navigator.stop()
 
         # Stop UviRobot
         robot.stop()
