@@ -8,6 +8,5 @@ if __name__ == '__main__':
     the movement of the robot is simulated using a model of it and the current
     pose of the UGV is sourced to the position zmq socket.
     """
-    # start the stream of multi-images throug zmq socket
     robot = UviRobot(threaded = False)
     robot.start()
