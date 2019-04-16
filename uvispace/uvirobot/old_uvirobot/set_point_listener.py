@@ -65,8 +65,13 @@ def connect_and_check(robot_id, port=None, baudrate=57600):
     if communication_type == 'wifi':
 
         TCP_PORT = communication_type = ast.literal_eval(conf.get('Communication', 'port'))
-        TCP_IP = communication_type = ast.literal_eval(conf.get('Communication', 'ip'))
+        TCP_IP = communication_type = conf.get('Communication', 'ip')
         wificomm = WifiMessenger(TCP_IP,TCP_PORT)
+        if wificomm.ready():
+            logger.info("The board is ready")
+        else:
+            logger.info("The board is not ready")
+            sys.exit()
         return wificomm
 
     else:
@@ -119,12 +124,14 @@ def listen_speed_set_points(com_device, robot_id, speed_calc_times,
     try:
         while True:
             data = speed_subscriber.recv_json()
+            print("Se realizo el suscriber")
             logger.debug("Received new speed set point: {}".format(data))
+            print("Entrando en move robot")
             move_robot(data, com_device, wait_times, speed_calc_times,
                        xbee_times)
             # Read the battery state-of-charge after regular seconds intervals.
             if (time.time()-soc_time) > soc_read_interval:
-                read_battery_soc(com_device)
+                #read_battery_soc(com_device)
                 soc_time = time.time()
     except KeyboardInterrupt:
         pass
@@ -145,7 +152,7 @@ def move_robot(data, com_device, wait_times, speed_calc_times, xbee_times):
     t2 = time.time()
     speed_calc_times.append(t2 - t1)
     logger.info('I am sending M1: {} M2: {}'.format(sp_m1, sp_m2))
-    com_device.move([sp_m2, sp_m1])
+    com_device.move([sp_m1, sp_m2])
     t0 = time.time()
     xbee_times.append(t0 - t2)
     logger.debug('Transmission ended successfully')
@@ -162,13 +169,11 @@ def read_battery_soc(com_device):
         soc = 0
         logger.warn("Fuel gauge PCB not detected")
     else:
-        # Unpack the state of charge 0-100% (soc):
-        # Code for old fel gauge chip (SOC was 2 Byte variable):
-        # soc = struct.unpack('>H', raw_soc[1]+raw_soc[3])[0]
-        # Code for the new fuel gauge chip (SOC is 1 Byte variable):
+        # The soc variable are 4 bytes, but the data is stored on the last 2.
         soc = struct.unpack('<B', raw_soc)[0]
         logger.info("The current battery soc is {}%".format(soc))
     return soc
+
 
 def stop_vehicle(com_device, wait_times, speed_calc_times, xbee_times):
     """Send a null speed to the UGV."""

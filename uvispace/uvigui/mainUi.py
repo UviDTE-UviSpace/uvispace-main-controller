@@ -14,6 +14,7 @@ from PyQt5.QtWidgets import QLabel, QMessageBox, QWidget, QListWidgetItem
 from PyQt5.QtGui import QPixmap
 
 # proprietary libraries
+import uvispace.uvigui.tools.neural_controller_trainer.interface.neural_controller_trainer as neural_train
 from uvispace.uvigui import mainwindowinterface
 from uvispace.uvigui.image_generator import ImageGenerator
 from uvispace.uvigui import load_csv
@@ -22,10 +23,12 @@ from uvispace.uvisensor.common import ImgType
 
 logger = logging.getLogger('view')
 
+
 class AppLogHandler(logging.Handler):
     """
     Customized logging handler class, for printing on a PyQt Widget.
     """
+
     def __init__(self, widget):
         logging.Handler.__init__(self)
         logging.basicConfig(filename="loger.log",
@@ -86,6 +89,7 @@ class CarWidget(QWidget):
     Includes the position (x,y,z), the battery status, the name of the UGV and
     an icon representing the UGV
     """
+
     def __init__(self, parent=None):
         QWidget.__init__(self, parent=parent)
         self.resize(270, 122)
@@ -136,10 +140,10 @@ class CarWidget(QWidget):
         self.label.setText("UGV:")
         self.label_icon.setText("IconLabel")
         self.label_UGV.setText("TextLabel")
-        self.label_2.setText( "wifi:")
+        self.label_2.setText("wifi:")
         self.label_wifi.setText("TextLabel")
         self.label_4.setText("x:")
-        self.label_5.setText( "y:")
+        self.label_5.setText("y:")
         self.label_6.setText("z:")
         self.label_x.setText("TextLabel")
         self.label_y.setText("TextLabel")
@@ -179,7 +183,7 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         self.WarnCheck.clicked.connect(self.update_logger_level)
         self.ErrorCheck.clicked.connect(self.update_logger_level)
 
-        #Image type checks
+        # Image type checks
         self.bin_rb.clicked.connect(self.__check_img_type)
         self.gray_rb.clicked.connect(self.__check_img_type)
         self.black_rb.clicked.connect(self.__check_img_type)
@@ -198,12 +202,16 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         self.actionOpen_csv.triggered.connect(self.__load_files_window)
         self.actionFuzzy_controller_calibration.triggered.connect(
             self.__fuzzy_controller_calibration)
+<<<<<<< HEAD
 
         # initialise the QTimer to update the cameras image
         self.__update_image_timer = QTimer()
         t_refresh = int(configuration["GUI"]["visualization_fps"])
         self.__update_image_timer.start(1000/t_refresh)
         self.__update_image_timer.timeout.connect(self.__update_interface)
+=======
+        self.actionNuronal_controller_training.triggered.connect(self.__neural_controller_training)
+>>>>>>> integration
 
         # create an object to control the image generation
         self.img_generator = ImageGenerator()
@@ -216,7 +224,7 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         self.listWidget.setItemWidget(itemN, self.widget)
         logger.info("Car 1 added")
         # testing the widget ...
-        #self.widget.label_x.setText("20")
+        # self.widget.label_x.setText("20")
         self.widget.progressBar_battery.setProperty('value', 90)
         self.widget.label_UGV.setText("Coche 1")
 
@@ -279,20 +287,31 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         self.popup.show()
         return
 
+    def __neural_controller_training(self):
+        # opens a new window to do the neural controller training
+        logger.debug("Opening the neural controller training window")
+        self.popup = neural_train.MainWindow()
+        self.popup.show()
+        return
+
     def __update_interface(self):
         """
         refresh the image label
         refresh the car coordinates
 
         """
+<<<<<<< HEAD
         #self.get_pose()
         #if self.ugv_check.isChecked():
         #    self.get_pose()
+=======
+        # self.get_pose()
+>>>>>>> integration
         qpixmap_image = self.img_generator.get_image()
 
         pixmap = QPixmap.fromImage(qpixmap_image).scaled(self.label.size(),
-                                aspectRatioMode= QtCore.Qt.KeepAspectRatio,
-                                transformMode = QtCore.Qt.SmoothTransformation)
+                                                         aspectRatioMode=QtCore.Qt.KeepAspectRatio,
+                                                         transformMode=QtCore.Qt.SmoothTransformation)
 
         self.label.adjustSize()
         self.label.setScaledContents(True)
@@ -300,11 +319,26 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
 
     def get_pose(self):
         # read the car coordinates and the angle
+<<<<<<< HEAD
         # Connects to the ZMQ port and read the pose of the UGV
 
         coordinates = self.receiver.recv_json()
         x_mm = coordinates['x']
         y_mm = coordinates['y']
+=======
+        # Connects to the IP port and read the pose of the UGV
+        # TODO: read the UGV IP from file
+
+        coordinates = self.receiver.recv_json()
+
+        # translate coordinates from uvispace reference system to numpy
+        x_mm = coordinates['x']
+        y_mm = coordinates['y']
+        #x_px = (x_mm+2000)*1280/4000
+        #y_px = (-y_mm+1500)*936/3000
+        x_px = int(x_mm)
+        y_px = int(y_mm)
+>>>>>>> integration
 
         x_px = int(x_mm)
         y_px = int(y_mm)

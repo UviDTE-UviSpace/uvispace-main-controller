@@ -31,9 +31,7 @@ class UviSensor():
         Params:
         - enable_img = enables images
         - enable_triang = enables triangles
-        - simulated_ugv = if False location is calculated from triangles
-                          if True location is obtained from the
-                          simulated_location_base sockets
+        - threaded = uvisensor launches in other thread
         """
 
         self.enable_img = enable_img
@@ -96,7 +94,7 @@ class UviSensor():
         """
         Starts publishing images and ugv locations in their respective sockets
         """
-        logger.info("Starting Uvisensor.")
+        logger.info("Starting UviSensor.")
         if self.threaded:
             self._kill_thread.clear()
             self.thread.start()
@@ -107,6 +105,7 @@ class UviSensor():
         """
         It permits to stop the stream and finish the thread in threaded mode
         """
+        logger.info("Stopping UviSensor.")
         self._kill_thread.set()
         # wait until the thrad finishes
         self.thread.join()
