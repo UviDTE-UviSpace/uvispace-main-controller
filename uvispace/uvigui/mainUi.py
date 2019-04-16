@@ -202,16 +202,15 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         self.actionOpen_csv.triggered.connect(self.__load_files_window)
         self.actionFuzzy_controller_calibration.triggered.connect(
             self.__fuzzy_controller_calibration)
-<<<<<<< HEAD
+
 
         # initialise the QTimer to update the cameras image
         self.__update_image_timer = QTimer()
         t_refresh = int(configuration["GUI"]["visualization_fps"])
         self.__update_image_timer.start(1000/t_refresh)
         self.__update_image_timer.timeout.connect(self.__update_interface)
-=======
         self.actionNuronal_controller_training.triggered.connect(self.__neural_controller_training)
->>>>>>> integration
+
 
         # create an object to control the image generation
         self.img_generator = ImageGenerator()
@@ -300,13 +299,13 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         refresh the car coordinates
 
         """
-<<<<<<< HEAD
+
         #self.get_pose()
         #if self.ugv_check.isChecked():
         #    self.get_pose()
-=======
+
         # self.get_pose()
->>>>>>> integration
+
         qpixmap_image = self.img_generator.get_image()
 
         pixmap = QPixmap.fromImage(qpixmap_image).scaled(self.label.size(),
@@ -319,13 +318,12 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
 
     def get_pose(self):
         # read the car coordinates and the angle
-<<<<<<< HEAD
         # Connects to the ZMQ port and read the pose of the UGV
 
         coordinates = self.receiver.recv_json()
         x_mm = coordinates['x']
         y_mm = coordinates['y']
-=======
+
         # Connects to the IP port and read the pose of the UGV
         # TODO: read the UGV IP from file
 
@@ -336,9 +334,6 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         y_mm = coordinates['y']
         #x_px = (x_mm+2000)*1280/4000
         #y_px = (-y_mm+1500)*936/3000
-        x_px = int(x_mm)
-        y_px = int(y_mm)
->>>>>>> integration
 
         x_px = int(x_mm)
         y_px = int(y_mm)
