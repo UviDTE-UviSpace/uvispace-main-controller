@@ -21,6 +21,8 @@ import time
 # Create the application logger
 logger = logging.getLogger('view.aux')
 
+from uvispace.uvisensor.common import ImgType
+# img_type = ImgType.RAND
 
 class ImageGenerator():
 
@@ -28,97 +30,63 @@ class ImageGenerator():
         # logger
         self.logger = logging.getLogger('view.aux.aux')
         self.logger.info("image loger created")
-        # load info to read images from camera
-        self.cam_ips = self._load_ips()
 
-        self.img_size = self._load_image_size()
-        self.old_img_type = "BLACK"
         # By default black image without borders and without ugv
-        self.img_type = "BLACK"
+        self.img_type = ImgType.BLACK
         self.border_visible = False
         self.ugv_visible = False
+        self.selected_ugv = 0
 
-        # Load the UGV image (just once in the init)
-
-        # Create a socket to read UGV locations
-        # Open a subscribe socket to listen for position data
-        self.pose_subscriber = zmq.Context.instance().socket(zmq.SUB)
-        self.pose_subscriber.setsockopt_string(zmq.SUBSCRIBE, u"")
-        self.pose_subscriber.setsockopt(zmq.CONFLATE, True)
-        configuration = configparser.ConfigParser()
+        # Creates zmq socket to configure the uvisensor
+        uvispace_config = configparser.ConfigParser()
         conf_file = "uvispace/config.cfg"
-        configuration.read(conf_file)
-        pose_port = configuration["ZMQ_Sockets"]["position_base"]
-        self.pose_subscriber.connect("tcp://localhost:{}".format(pose_port))
+        uvispace_config.read(conf_file)
 
-    def _load_ips(self):
-        """
-        Load the cameras IPs from the .cfg files
-        Uses the configparser lib to read .cfg files
-        """
-        cameras_IPs = []
-        for i in range(1, 5):
-            ipscam = configparser.ConfigParser()
-            path = 'uvispace/uvisensor/locnode/config/node' + str(i) + '.cfg'
-            ipscam.read(path)
-            cameras_IPs.append(ipscam.get('Comm', 'ip'))
-        logger.info("Cameras IPs loaded")
-        return cameras_IPs
+        node_config = configparser.ConfigParser()
+        conf_file = "uvispace/uvisensor/locnode/config/node1.cfg"
+        node_config.read(conf_file)
 
-    def _load_image_size(self):
-        """
-        Load the image size from a .cfg file. Because all the cameras have the same
-        size, only reads one config file.
-        It returns a list with image dimensions:  [img_width, img_height]
-        """
-        size = configparser.ConfigParser()
-        path = 'uvispace/uvisensor/locnode/config/node1.cfg'
-        size.read(path)
-        img_size = [(size.getint('Camera', 'width')),
-                    (size.getint('Camera', 'height'))]
-        self.logger.info("Cameras size loaded")
-        return img_size
+        node_array_width = int(uvispace_config["LocNodes"]["node_array_width"])
+        node_array_height = int(
+            uvispace_config["LocNodes"]["node_array_height"])
+        single_image_width = int(node_config.get("Camera", "width"))
+        single_image_height = int(node_config.get("Camera", "height"))
+        width = single_image_width * node_array_width
+        height = single_image_height * node_array_height
+        self.img_size = [width, height]
 
-    def reconnect_cameras(self):
+        # Creates a socket to listen for UGV poses
+        self.position_base_port = int(
+             uvispace_config["ZMQ_Sockets"]["position_base"])
 
-        if self.img_type == "BLACK":
-            for i in range(4):
-                self.receiver[i].close()
-            self.logger.debug("Sockets closed")
+        # creates zmq socket to read image from multiframe
+        multiframe_port = uvispace_config["ZMQ_Sockets"]["multi_img"]
+        self.img_subscriber = zmq.Context.instance().socket(zmq.SUB)
+        self.img_subscriber.setsockopt_string(zmq.SUBSCRIBE, "")
+        self.img_subscriber.setsockopt(zmq.CONFLATE, True)
+        self.img_subscriber.connect("tcp://localhost:{}".format(multiframe_port))
 
-        # disconnect from old image type
-        """ if self.img_type == "BLACK":
-            #disconnect from BIN image port
-            if self.old_img_type == "BIN":
-                for i in range(4):
-                    self.receiver[i].disconnect("tcp://" + self.cam_ips[i] +
-                    ":33000")
-                else: #disconnect from GRAY
-                    self.receiver[i].disconnect("tcp://" + self.cam_ips[i] +
-                    ":34000")"""
+        uvisensor_config_port = uvispace_config["ZMQ_Sockets"]["uvisensor_config"]
+        self.config_requester = zmq.Context.instance().socket(zmq.REQ)
+        self.config_requester.connect(
+            "tcp://localhost:{}".format(uvisensor_config_port))
 
-        # connect to new image type
-        if self.img_type != "BLACK":
-            self.receiver = []
-            for i in range(4):
-                self.receiver.append(zmq.Context.instance().socket(zmq.SUB))
-                self.logger.info("Connected to camera '%s' ", i)
-                if self.img_type == "BIN":
-                    self.receiver[i].connect("tcp://" + self.cam_ips[i] +
-                    ":33000")
-                else:  # "GRAY" and "RGB"
-                    self.receiver[i].connect("tcp://" + self.cam_ips[i] +
-                    ":34000")
-                self.receiver[i].setsockopt_string(zmq.SUBSCRIBE, u"")
-                self.receiver[i].setsockopt(zmq.CONFLATE, True)
+        # set default image type
+        uvisensor_config = {"img_type": self.img_type}
+        print("Sending configuration to UviSensor...")
+        self.config_requester.send_json(uvisensor_config)
+        response = self.config_requester.recv_json()  # waits until response
+        print("Configuration finished. Starting streaming...")
 
-        # save the image type
-        self.old_img_type = self.img_type
-
-    def set_img_type(self, img_type="BLACK"):
-        self.logger.debug("Changed image type")
+    def set_img_type(self, img_type):
+        # changes the image type on the gui
         self.img_type = img_type
-        self.reconnect_cameras()
+        uvisensor_config = {"img_type": img_type}
+        print("Sending configuration to UviSensor...")
+        print(self.img_type)
+        self.config_requester.send_json(uvisensor_config)
+        response = self.config_requester.recv_json()  # waits until response
+        print("Configuration finished. Starting streaming...")
 
     def set_border_visible(self, border_visible=False):
         self.border_visible = border_visible
@@ -126,51 +94,25 @@ class ImageGenerator():
     def set_ugv_visible(self, ugv_visible=False):
         self.ugv_visible = ugv_visible
 
+    def set_selected_ugv(self, ugv_selected=0):
+        self.selected_ugv = ugv_selected
+
     def get_image(self):
-        # Gets the images from the cameras using the socket opened in
-        # "reconnect_cameras". Then, stacks the images from the four cameras
-        # Images are stacked using the given path, following
-        # the physical setup of the cameras:
-        #     Image2         Image1
-        #
-        #     Image3         Image4
-        #
-        # First, image1 and 2 are stack, then image 3 and 4.
-        # Finally, the 4 images are joined
+        # Receive image from multiframe uvisensor
 
-        if self.img_type == "BLACK":
-            multi_image_np = np.zeros([self.img_size[1]*2, self.img_size[0]*2],
-                                      dtype=np.uint8)
-        else:
-            image = []
-            start = time.time()
-            for i in range(4):
-                message = self.receiver[i].recv()
-                image.append(np.fromstring(message,
-                             dtype=np.uint8).reshape((self.img_size[1],
-                                                     self.img_size[0])))
-
-            # Stack the array using concatenate, first stacks horizontally,
-            # then, one on top of the other
-            image12 = np.concatenate((image[2 - 1], image[1 - 1]), axis=1)
-            image34 = np.concatenate((image[3 - 1], image[4 - 1]), axis=1)
-            multi_image_np = np.concatenate((image12, image34), axis=0)
-
-            #calculate fps
-            #self.logger.debug("FPS: '%s'", 1.0 / (time.time() - start))
-
+        message = self.img_subscriber.recv()
+        multi_image_np = np.fromstring(message, dtype=np.uint8).reshape(self.img_size[1],
+                                                                        self.img_size[0])
         # Add uvispace border if requested
         if self.border_visible:
             multi_image_np = self._draw_border(multi_image_np)
 
-        # Add ugv if requested
+        # Add ugv drawing if requested
         if self.ugv_visible:
             multi_image_np = self._draw_ugv(multi_image_np)
 
-        # Transform from PIL to QPixMap image
-        # PIL permits numpy to QPixMap without errors (image mix)
-        multi_image_pil = Image.fromarray(multi_image_np)
-        qpixmap_multi_image = QImage(ImageQt.ImageQt(multi_image_pil))
+        multi_image = Image.fromarray(multi_image_np)
+        qpixmap_multi_image = QImage(ImageQt.ImageQt(multi_image))
 
         return qpixmap_multi_image
 
@@ -200,20 +142,23 @@ class ImageGenerator():
         :param image: numpy image
         :return: numpy image array
         """
-        # receive pose
-        #print("antes recv json")
-        pose = self.pose_subscriber.recv_json()
-        """pose = {}
-        pose = {
-            'x': 360,
-            'y': 280,
-            'theta': 0
-        }"""
-        #print("pos function")
+        # create socket to receive pose from selected ugv
+        pose_subscriber = zmq.Context.instance().socket(zmq.SUB)
+        pose_subscriber.setsockopt_string(zmq.SUBSCRIBE, "")
+        pose_subscriber.setsockopt(zmq.CONFLATE, True)
+        pose_subscriber.connect("tcp://localhost:{}".format(
+                         self.position_base_port + self.selected_ugv))
+        # receive ugv pose
+        try:
+            pose = pose_subscriber.recv_json(flags=zmq.NOBLOCK)
+        except:
+            # draw the ugv at the center if not received pose
+            logger.warning("Could not receive pose")
+            pose = {'x': 0, 'y': 0, 'theta': 0}
+
         x_mm = pose['x']
-        self.logger.debug("posicion x: '%s'", x_mm)
         y_mm = pose['y']
-        logger.debug("posicion y: '%s'", y_mm)
+        # translate uvispace pose to pixel representation
         x_pix = int((x_mm + 2000) * 1280 / 4000)
         y_pix = int((-y_mm + 1500) * 936 / 3000)
 

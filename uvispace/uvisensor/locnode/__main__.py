@@ -45,7 +45,7 @@ if __name__ == '__main__':
         while not r:
             r, image = node.get_image()
             if not r:
-                print("No image from node!")
+                pass#print("No image from node!")
         cv2.imshow('stream', image)
         cv2.waitKey(1)
         #calculate framerate

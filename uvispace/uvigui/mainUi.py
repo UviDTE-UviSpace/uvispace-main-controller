@@ -9,7 +9,7 @@ import configparser
 
 # PyQt5 libraries
 from PyQt5 import QtWidgets, QtCore, QtGui
-from PyQt5.QtCore import QTimer
+from PyQt5.QtCore import QTimer, QModelIndex
 from PyQt5.QtWidgets import QLabel, QMessageBox, QWidget, QListWidgetItem
 from PyQt5.QtGui import QPixmap
 
@@ -19,6 +19,7 @@ from uvispace.uvigui import mainwindowinterface
 from uvispace.uvigui.image_generator import ImageGenerator
 from uvispace.uvigui import load_csv
 import uvispace.uvigui.tools.fuzzy_controller_calib.fuzzy_calibration as fuzzy_calib
+from uvispace.uvisensor.common import ImgType
 
 logger = logging.getLogger('view')
 
@@ -166,6 +167,15 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         logger.debug("Debug debug actived")
         logger.warning("Warning debug actived")
 
+        # create the subscriber to read the vehicles location
+        configuration = configparser.ConfigParser()
+        conf_file = "uvispace/config.cfg"
+        configuration.read(conf_file)
+        self.position_base_port = int(
+            configuration["ZMQ_Sockets"]["position_base"])
+        self.trajectory_base_port = int(
+            configuration["ZMQ_Sockets"]["trajectory_base"])
+
         # Log console level selection buttons
         self.DebugCheck.clicked.connect(self.update_logger_level)
         self.InfoCheck.clicked.connect(self.update_logger_level)
@@ -176,23 +186,10 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         self.bin_rb.clicked.connect(self.__check_img_type)
         self.gray_rb.clicked.connect(self.__check_img_type)
         self.black_rb.clicked.connect(self.__check_img_type)
+        self.rgb_rb.clicked.connect(self.__check_img_type)
 
-        # initialise the QTimer to update the cameras image
-        self.__update_image_timer = QTimer()
-        t_refresh = 10
-        self.__update_image_timer.start(t_refresh)
-        self.__update_image_timer.timeout.connect(self.__update_interface)
-
-        # menu actions
-        self.actionExit.triggered.connect(self.close)  # close the app
-        self.action_about.triggered.connect(self.about_message)
-        self.actionOpen_csv.triggered.connect(self.__load_files_window)
-        self.actionFuzzy_controller_calibration.triggered.connect(
-            self.__fuzzy_controller_calibration)
-        self.actionNuronal_controller_training.triggered.connect(self.__neural_controller_training)
-
-        # create an object to control the image generation
-        self.img_generator = ImageGenerator()
+        # car list selection changed
+        self.listWidget.itemSelectionChanged.connect(self.car_selection_changed)
 
         # image border, ugv and path check events
         self.grid_check.clicked.connect(self.update_border_status)
@@ -200,28 +197,105 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
 
         # file button event
         self.file_Button.clicked.connect(self.__load_files_window)
+        self.trajectories = load_csv.App()
+        self.coordinates_file_name = self.trajectories.file_csv
+        self.lineEdit.setText(self.coordinates_file_name)
+        self.trajectories.button_acept.clicked.connect(self.update_filename)
+        self.run_Button.clicked.connect(self.send_coordinates)
 
-        # add Car Widget using QlistWidget
-        itemN = QListWidgetItem(self.listWidget)
-        self.widget = CarWidget()
-        itemN.setSizeHint(self.widget.size())
-        self.listWidget.addItem(itemN)
-        self.listWidget.setItemWidget(itemN, self.widget)
-        logger.info("Car 1 added")
-        # testing the widget ...
-        # self.widget.label_x.setText("20")
-        self.widget.progressBar_battery.setProperty('value', 90)
-        self.widget.label_UGV.setText("Coche 1")
+        # menu actions
+        self.actionExit.triggered.connect(self.close)  # close the app
+        self.action_about.triggered.connect(self.about_message)
+        self.actionOpen_csv.triggered.connect(self.__load_files_window)
+        self.actionFuzzy_controller_calibration.triggered.connect(
+            self.__fuzzy_controller_calibration)
 
-        # create the subscriber to read the vehicles location
-        configuration = configparser.ConfigParser()
-        conf_file = "uvispace/config.cfg"
-        configuration.read(conf_file)
-        pose_port = configuration["ZMQ_Sockets"]["position_base"]
-        self.receiver = zmq.Context.instance().socket(zmq.SUB)
-        self.receiver.connect("tcp://localhost:{}".format(pose_port))
-        self.receiver.setsockopt_string(zmq.SUBSCRIBE, u"")
-        self.receiver.setsockopt(zmq.CONFLATE, True)
+
+        # initialise the QTimer to update the cameras image
+        self.__update_image_timer = QTimer()
+        t_refresh = int(configuration["GUI"]["visualization_fps"])
+        self.__update_image_timer.start(1000/t_refresh)
+        self.__update_image_timer.timeout.connect(self.__update_interface)
+        self.actionNuronal_controller_training.triggered.connect(self.__neural_controller_training)
+
+        # create an object to control the image generation
+        self.img_generator = ImageGenerator()
+
+        # load the number of ugs, ugvs id and active ugvs
+        self.num_ugvs = int(configuration["UGVs"]["number_ugvs"])
+        self.ugv_ids = list(
+            map(int, configuration["UGVs"]["ugv_ids"].split(",")))
+        self.active_ugvs = list(
+            map(int, configuration["UGVs"]["active_ugvs"].split(",")))
+
+        # create sockets to read poses and publish trajectories
+        # also creates the car widget with info about car id and car type
+        self.trajectory_socket = []
+        self.pose_sockets = []
+        self.ugv_widget = []
+        list_widget_item = []  # cars on the lateral list widget
+        self.ugv_id_order = []  # relation between ugv ids and list widget order
+        self.id_selected = 1  # ugv selected in gui list
+        for i in range(self.num_ugvs):
+            # socket to publish trajectories
+            trajectory_publisher = zmq.Context.instance().socket(zmq.PUB)
+            trajectory_publisher.bind("tcp://*:{}".format(
+                self.trajectory_base_port + i))
+            self.trajectory_socket.append(trajectory_publisher)
+            # socket to read robot pose (x, y and theta)
+            pose_subscriber = zmq.Context.instance().socket(zmq.SUB)
+            pose_subscriber.setsockopt_string(zmq.SUBSCRIBE, "")
+            pose_subscriber.setsockopt(zmq.CONFLATE, True)
+            pose_subscriber.connect("tcp://localhost:{}".format(
+                self.position_base_port + i))
+            self.pose_sockets.append(pose_subscriber)
+
+            # create car widget
+            list_widget_item.append(QListWidgetItem(self.listWidget))
+            widget = CarWidget()
+            self.ugv_widget.append(widget)
+            list_widget_item[i].setSizeHint(self.ugv_widget[i].size())
+
+            # draw car widget if active
+            # its prepared in case that in the future the cars could
+            # be activated and deactivated dinamically
+
+            if self.active_ugvs[i]:
+                self.listWidget.addItem(list_widget_item[i])
+                self.listWidget.setItemWidget(list_widget_item[i], self.ugv_widget[i])
+                # load ugv properties
+                self.ugv_widget[i].label_UGV.setText(str(self.ugv_ids[i]))
+                # saves the relation between ugv ids and widgets order
+                self.ugv_id_order.append(i)
+                self.ugv_widget[i].label_wifi.setText(str(self.position_base_port+i))
+                ugv_configuration = configparser.ConfigParser()
+                ugv_conf_file = "uvispace/uvirobot/resources/config/robot{}.cfg".format(
+                    self.ugv_ids[i])
+                ugv_configuration.read(ugv_conf_file)
+                ugv_type = ugv_configuration["Robot_chassis"]["ugv_type"]
+                self.ugv_widget[i].label_icon.setText(ugv_type)
+                logger.info("Car {} added".format(self.ugv_ids[i]))
+
+    def send_coordinates(self):
+        # sends the coordinates list to the selected ugv
+        coordinates = self.trajectories.read_coordinates()
+        # TODO preparar matriz para enviar datos
+
+
+        # socket to send trajectories
+        #self.trajectory_socket[self.id_selected].send_json(coordinates)
+
+
+    def update_filename(self):
+        # updates the csv filename on main gui
+        filename = self.trajectories.read_filename()
+        self.lineEdit.setText(filename)
+
+    def car_selection_changed(self):
+        selected_widget = self.listWidget.currentRow()
+        self.id_selected = self.ugv_id_order[selected_widget]
+        self.img_generator.set_selected_ugv(id)
+        logger.debug("Car selection changed to car  {}".format(id),)
 
     def update_ugv_status(self):
         if self.ugv_check.isChecked():
@@ -250,30 +324,28 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         Checks the radio buttons state, to specify the image type
         to show in the viewer
         """
-        logger.debug("Clikado selector image")
         if self.gray_rb.isChecked():
-            self.img_generator.set_img_type("GRAY")
+            self.img_generator.set_img_type(ImgType.GRAY)
             logger.debug("Image changed to gray")
         elif self.bin_rb.isChecked():
-            self.img_generator.set_img_type("BIN")
+            self.img_generator.set_img_type(ImgType.BIN)
             logger.debug("Image changed to bin")
         elif self.rgb_rb.isChecked():
-            self.img_generator.set_img_type("RGB")
+            # Set Random image because RGB is not implemented yet
+            self.img_generator.set_img_type(ImgType.RAND)
             logger.debug("Image changed to rgb")
         else:
-            self.img_generator.set_img_type("BLACK")
+            self.img_generator.set_img_type(ImgType.BLACK)
             logger.debug("Image changed to black")
-        self.img_generator.reconnect_cameras()
         return
 
     def __load_files_window(self):
         # opens a new window to load a .csv file
         logger.debug("Opening file loading window")
-        self.popup = load_csv.App()
-        self.popup.show()
-        # change the lineEdit text
-        coord_filename = self.popup.file_csv
-        self.lineEdit.setText(coord_filename)
+        self.trajectories.show()
+        # change the lineEdit text in main gui
+        self.coordinates_file_name = self.trajectories.read_filename()
+        self.lineEdit.setText(self.coordinates_file_name)
         return
 
     def __fuzzy_controller_calibration(self):
@@ -296,7 +368,10 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         refresh the car coordinates
 
         """
-        # self.get_pose()
+
+        if self.ugv_check.isChecked():
+            self.get_pose()
+
         qpixmap_image = self.img_generator.get_image()
 
         pixmap = QPixmap.fromImage(qpixmap_image).scaled(self.label.size(),
@@ -307,28 +382,29 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         self.label.setScaledContents(True)
         self.label.setPixmap(pixmap)
 
+        # update csv filename
+        #self.lineEdit.setText(self.trajectories.file_csv)
+
     def get_pose(self):
-        # read the car coordinates and the angle
-        # Connects to the IP port and read the pose of the UGV
-        # TODO: read the UGV IP from file
+        # read the UGVs coordinates and the angle from zmq socket
 
-        coordinates = self.receiver.recv_json()
+        for i in range(self.num_ugvs):
+            if self.active_ugvs[i]:
+                try:
+                    # check for a message, this will not block the interface
+                    # if no message it leaves the try
+                    coordinates = self.pose_sockets[i].recv_json(flags=zmq.NOBLOCK)
+                    self.ugv_widget[i].label_x.setText(coordinates['x'])
+                    self.ugv_widget[i].label_y.setText(coordinates['y'])
+                    self.ugv_widget[i].label_z.setText(str(coordinates['theta']))
+                except:
+                    logger.warning("No pose received")
+                    pass
 
-        # translate coordinates from uvispace reference system to numpy
-        x_mm = coordinates['x']
-        y_mm = coordinates['y']
         #x_px = (x_mm+2000)*1280/4000
         #y_px = (-y_mm+1500)*936/3000
-        x_px = int(x_mm)
-        y_px = int(y_mm)
 
-        x_px = int(x_mm)
-        y_px = int(y_mm)
-        self.widget.label_x.setText(str(x_px))
-        self.widget.label_y.setText(str(y_px))
-        self.widget.label_z.setText(str(coordinates['theta']))
-
-        return coordinates
+        return
 
     def about_message(self):
         # about message with a link to the main project web

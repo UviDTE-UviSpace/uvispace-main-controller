@@ -12,7 +12,7 @@ sys.path.append(uvispace_path)
 from uvispace.uvisensor.uvisensor import UviSensor
 from uvispace.uvisensor.common import ImgType
 
-img_type = ImgType.RAND
+img_type = ImgType.GRAY
 
 if __name__ == '__main__':
     """

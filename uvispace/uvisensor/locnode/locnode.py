@@ -53,7 +53,7 @@ class LocalizationNode():
 
         # define triangles thread and launch it
         if self._triang_enabled:
-            self._triangles_queue = queue.Queue(maxsize = 50)
+            self._triangles_queue = queue.Queue(maxsize = 2)
             self._thread_triangles = threading.Thread(
                 target = self._read_triangles_loop)
             self._thread_triangles.start()
@@ -77,7 +77,7 @@ class LocalizationNode():
 
     def _read_image_loop(self):
         # Loop
-        while not self._image_thread_active.isSet():
+        while self._image_thread_active.isSet():
             #read image from physical localization node
             """
             Read an image from the remote Node and save it into the thread save
@@ -134,7 +134,6 @@ class LocalizationNode():
                 port = self._port_bin
             else:
                 port = self._port_gray
-            socket = "tcp://{}:{}".format(self._ip, port)
             self.img_subscriber.connect("tcp://{}:{}".format(self._ip, port))
             # Launch a new thread
             self._image_queue = queue.Queue(maxsize = 50)
@@ -166,8 +165,8 @@ class LocalizationNode():
         else:
             # return the last image in the queue
             if not self._image_queue.empty():
-                images = _image_queue.get_nowait()
-                img_return = images[-1]
+                image = self._image_queue.get_nowait()
+                img_return = image
                 r = True
             else:
                 img_return = None
@@ -178,7 +177,7 @@ class LocalizationNode():
         # Loop
         while True:
             # read triangles (wait in the function if no triangles)
-            recv_triangles = tri_subscriber.recv_json()
+            recv_triangles = self.tri_subscriber.recv_json()
             # put triangles in the queue
             self._triang_queue.put(recv_triangles)
 
