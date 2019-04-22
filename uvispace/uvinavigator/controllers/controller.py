@@ -22,7 +22,8 @@ class Controller():
         params:
          - trajectory: list of points the ugv must pass through
         """
-        trajectory = self.trajectory
+
+        self.trajectory = trajectory
         self.running = True
 
     def abort_trajectory(self):

@@ -77,11 +77,11 @@ class UgvEnv:
         #self.sigmaangle=2*np.pi/180
 
 
-    def reset(self):
+    def reset(self ,x = 0.2, y = 0.2):
 
         # Reset the environment (start a new episode)
-        self.y = 0.2
-        self.x = 0.2
+        self.y = y
+        self.x = x
         self.theta = 90
         self.theta = math.radians(self.theta)
         self.steps = 0
@@ -106,6 +106,11 @@ class UgvEnv:
         self.state = [self.x, self.y, self.theta]
 
         return self.state, self.agent_state
+
+    def define_state(self,x, y, theta):
+        self.y = x
+        self.x = y
+        self.theta = theta
 
     def step(self, action):  # m1 = left_motor, m2 = right_motor
 
@@ -272,6 +277,11 @@ class UgvEnv:
 
         if self.delta_theta < -math.pi:
             self.delta_theta = self.delta_theta + 2 * math.pi
+
+        return self.delta_theta
+
+    def _get_index(self):
+        return self.index
 
 
 

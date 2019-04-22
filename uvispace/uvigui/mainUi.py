@@ -14,7 +14,7 @@ from PyQt5.QtWidgets import QLabel, QMessageBox, QWidget, QListWidgetItem
 from PyQt5.QtGui import QPixmap
 
 # proprietary libraries
-import uvispace.uvigui.tools.neural_controller_trainer.interface.neural_controller_trainer as neural_train
+import uvispace.uvigui.tools.neural_controller_trainer.training_gui as neural_train
 from uvispace.uvigui import mainwindowinterface
 from uvispace.uvigui.image_generator import ImageGenerator
 from uvispace.uvigui import load_csv

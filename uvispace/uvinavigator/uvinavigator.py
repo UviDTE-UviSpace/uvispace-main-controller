@@ -127,7 +127,7 @@ class UviNavigator():
         controllers = []
         for i in range(self.num_ugvs):
             if self.controller_types[i] == ControllerType.neural_line_follower:
-                controllers.append(NeuralController())
+                controllers.append(NeuralController(self.ugv_ids[i]))
             elif self.controller_types[i] == ControllerType.tables_line_follower:
                 # to be implemented
                 pass
@@ -159,7 +159,7 @@ class UviNavigator():
                         # if the UGV did not finished the trajectory yet
                         if self.controllers[i].isRunning():
                             # execute controller to get new motor setpoints
-                            motors_speed = self.controllers[i].step(self.pose, self.period)
+                            motors_speed = self.controllers[i].step(self.pose)
                             # send the new motor speed setpoints to UGV
                             motor_speed_sockets[i].send_json(motors_speed)
                     except:
