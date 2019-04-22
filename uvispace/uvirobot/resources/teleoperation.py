@@ -54,7 +54,6 @@ def get_key():
     termios.tcsetattr(fd, termios.TCSADRAIN, settings)
     return key
 
-
 def main():
     # SIGINT handling:
     # -Create a global flag to check if the execution should keep running.
