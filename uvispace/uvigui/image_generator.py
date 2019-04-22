@@ -32,9 +32,10 @@ class ImageGenerator():
         self.logger.info("image loger created")
 
         # By default black image without borders and without ugv
-        self.img_type = ImgType.RAND
+        self.img_type = ImgType.BLACK
         self.border_visible = False
         self.ugv_visible = False
+        self.selected_ugv = 0
 
         # Creates zmq socket to configure the uvisensor
         uvispace_config = configparser.ConfigParser()
@@ -54,13 +55,9 @@ class ImageGenerator():
         height = single_image_height * node_array_height
         self.img_size = [width, height]
 
-        # Cretaes a socket to listen for UGV poses
-        pose_port = uvispace_config["ZMQ_Sockets"]["position_base"]
-        self.pose_subscriber = zmq.Context.instance().socket(zmq.SUB)
-        self.pose_subscriber.setsockopt_string(zmq.SUBSCRIBE, u"")
-        self.pose_subscriber.setsockopt(zmq.CONFLATE, True)
-        self.pose_subscriber.connect("tcp://localhost:{}".format(pose_port))
-
+        # Creates a socket to listen for UGV poses
+        self.position_base_port = int(
+             uvispace_config["ZMQ_Sockets"]["position_base"])
 
         # creates zmq socket to read image from multiframe
         multiframe_port = uvispace_config["ZMQ_Sockets"]["multi_img"]
@@ -96,6 +93,9 @@ class ImageGenerator():
 
     def set_ugv_visible(self, ugv_visible=False):
         self.ugv_visible = ugv_visible
+
+    def set_selected_ugv(self, ugv_selected=0):
+        self.selected_ugv = ugv_selected
 
     def get_image(self):
         # Receive image from multiframe uvisensor
@@ -142,12 +142,23 @@ class ImageGenerator():
         :param image: numpy image
         :return: numpy image array
         """
-        # receive pose
-        pose = self.pose_subscriber.recv_json()
+        # create socket to receive pose from selected ugv
+        pose_subscriber = zmq.Context.instance().socket(zmq.SUB)
+        pose_subscriber.setsockopt_string(zmq.SUBSCRIBE, "")
+        pose_subscriber.setsockopt(zmq.CONFLATE, True)
+        pose_subscriber.connect("tcp://localhost:{}".format(
+                         self.position_base_port + self.selected_ugv))
+        # receive ugv pose
+        try:
+            pose = pose_subscriber.recv_json(flags=zmq.NOBLOCK)
+        except:
+            # draw the ugv at the center if not received pose
+            logger.warning("Could not receive pose")
+            pose = {'x': 0, 'y': 0, 'theta': 0}
+
         x_mm = pose['x']
-        self.logger.debug("posicion x: '%s'", x_mm)
         y_mm = pose['y']
-        logger.debug("posicion y: '%s'", y_mm)
+        # translate uvispace pose to pixel representation
         x_pix = int((x_mm + 2000) * 1280 / 4000)
         y_pix = int((-y_mm + 1500) * 936 / 3000)
 

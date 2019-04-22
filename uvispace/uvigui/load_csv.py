@@ -1,6 +1,8 @@
 import numpy as np
 import sys
 from PyQt5.QtWidgets import QFileDialog, QWidget, QApplication, QMessageBox
+import zmq
+import configparser
 
 
 from uvispace.uvigui import loadfilesinterface
@@ -8,7 +10,6 @@ from uvispace.uvigui import loadfilesinterface
     Module used to load csv files with a list of coordinates for the controller.
     Opens a new window. The new window also shows the coordinate list after the
     file is loaded.
-    The Loadedfile class stores the coordinates array and the filename
 """
 
 
@@ -16,14 +17,30 @@ class App(QWidget, loadfilesinterface.Ui_Form):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+
+        # buttons actions
         self.button_openfile.clicked.connect(self.openFileNameDialog)
         self.button_save.clicked.connect(self.sendCoordinates)
         self.button_acept.clicked.connect(self.aceptCoordinates)
         self.button_cancel.clicked.connect(self.cancelCoordinates)
         self.file_csv = ""
 
+        # uvispace config file
+        configuration = configparser.ConfigParser()
+        conf_file = "uvispace/config.cfg"
+        configuration.read(conf_file)
+        self.trajectory_base_port = int(
+            configuration["ZMQ_Sockets"]["trajectory_base"])
+
+        #socket to send trajectories
+        pose_publisher = zmq.Context.instance().socket(zmq.PUB)
+        # Send goals for robot 1
+        pose_publisher.bind("tcp://*:{}".format(self.trajectory_base_port))
+
+
+
     def aceptCoordinates(self):
-        # acept the coordinates
+        # acept the coordinates and send to selected ugv
         self.close()
 
     def cancelCoordinates(self):
@@ -50,10 +67,9 @@ class App(QWidget, loadfilesinterface.Ui_Form):
                                                   options=options)
         if fileName:
             print(fileName)
-            coordinates = np.loadtxt(open(fileName, "r"), delimiter=";")
-            self.textEdit.setText(str(coordinates))
+            self.coordinates = np.loadtxt(open(fileName, "r"), delimiter=";")
+            self.textEdit.setText(str(self.coordinates))
             self.file_csv = fileName
-
         return
 
     def sendCoordinates(self):
@@ -61,9 +77,16 @@ class App(QWidget, loadfilesinterface.Ui_Form):
         print("Sending coordinates to the controller")
         # command to connect to the controller
 
+    def read_coordinates(self):
+        # function to read coordiantes from main gui
+        return self.coordinates
+
+    def read_filename(self):
+        # function to read filename from main gui
+        return self.file_csv
 
 if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    form = App()
-    form.show()
-    sys.exit(app.exec_())
+     app = QApplication(sys.argv)
+     form = App()
+     form.show()
+     sys.exit(app.exec_())
