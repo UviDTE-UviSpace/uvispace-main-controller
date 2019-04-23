@@ -29,7 +29,7 @@ ZONE2_LIMIT = 0.071  # Up to 7.1 cm
 
 class UgvEnv:
 
-    def __init__(self, x_traj, y_traj, period, num_div_action, closed=True, differential_car=True):
+    def __init__(self, x_traj =[], y_traj =[], period = 0, num_div_action= 5 ,closed=True, differential_car=True):
 
         # Size of the space
         self.max_x = SPACE_X / 2  # [m]
@@ -112,14 +112,16 @@ class UgvEnv:
         self.x = y
         self.theta = theta
 
-    def step(self, action):  # m1 = left_motor, m2 = right_motor
+    def step(self, action = [], simulation = False, m1=0, m2=0):
 
-        m1, m2 = self._dediscretize_action(action)
+        # m1 = left_motor, m2 = right_motor
+
+        # receive  m1 and m2 if using it for the ubirobot_model simulation
+        if not simulation:
+            m1, m2 = self._dediscretize_action(action)
 
         if self.differential_car == False:  # ackerman model
             #m1 = orientation  m2= engine
-
-            # i dont know the relation between pwm to angle in radians
 
             wm1 = (16.257 * (m1 - 180) / 75)
 
@@ -127,10 +129,7 @@ class UgvEnv:
             # positive w_ang
             wm2 = - self.alpha_ack * (m2 - 128) / 127
 
-
-            #necesito el diametro de las ruedas
             self.v_linear=wm1*self.r_ack*np.cos(wm2)
-
             self.w_ang=-(wm1*self.r_ack*np.cos(wm2)*np.tan(wm2))/self.l_ack
 
         else: #differential model
@@ -155,6 +154,10 @@ class UgvEnv:
             self.theta=self.theta-2*math.pi
         elif self.theta<0:
             self.theta=self.theta+2*math.pi
+
+        # return the state if i´m using it for the ubirobot_model simulation
+        if simulation:
+            return self.x, self.y, self.theta
 
         # add noise to position and theta
         #self.x_noise = self.x + np.random.normal(self.mu, self.sigmaxy, 1)

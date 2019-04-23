@@ -49,7 +49,7 @@ class NeuralController(Controller):
     def start_new_trajectory(self, trajectory):
         Controller.start_new_trajectory(self)
         self.env = UgvEnv(self.trajectory['x'], self.trajectory['y'],0,
-                     self.NUM_DIV_ACTION, closed=True, differential_car=self.differential)
+                     self.NUM_DIV_ACTION, closed=False, differential_car=self.differential)
         self.env.reset(self.trajectory['x'][0],self.trajectory['y'][0])
         self.num_points=len(self.trajectory['y'])
 

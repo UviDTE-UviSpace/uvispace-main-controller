@@ -1,3 +1,5 @@
+import math
+
 from uvispace.uvirobot.common import UgvType
 from uvispace.uvirobot.robot_model.environment import UgvEnv
 
@@ -13,16 +15,15 @@ class RobotModel():
         self.ugv_type = ugv_type
 
         if self.ugv_type == UgvType.df_robot_baron4:
-            #self.env = differential
+            self.differential=True
             pass
         else:
-            #self.env = ackerman
+            self.differential=False
             pass
+        self.env = UgvEnv( period=1/30, closed=False, differential_car=self.differential)
 
         # set a random location and orientation aroun (0,0)
-        # self.x =
-        # self.y
-        # self.theta
+        self.env.define_state(0, 0,math.pi/4)
 
     def step(self, motor_speed):
         m1 = motor_speed["m1"]
@@ -30,8 +31,10 @@ class RobotModel():
 
         # call step in the environment a get pose
 
+        x , y, theta = self.env.step(simulation= True, m1 = m1, m2 = m2)
+
         pose = {}
-        #pose["x"] =
-        #pose["y"] =
-        #pose["theta"] =
+        pose["x"] = x
+        pose["y"] = y
+        pose["theta"] = theta
         return pose
