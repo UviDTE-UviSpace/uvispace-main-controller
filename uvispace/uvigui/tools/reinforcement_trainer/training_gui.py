@@ -88,7 +88,6 @@ class MainWindow(QtWidgets.QMainWindow, reinforcement.Ui_fuzzy_window):
         self.yellow_back_x = x_limit
         self.yellow_back_y = y_limit
 
-        self.point, = self.ax.plot([], [], marker=(3, 0, 0), color='red')
         self.point2, = self.ax.plot([], [], 'r:')
 
         self.x_origin = -x_limit / 2
@@ -326,11 +325,16 @@ class MainWindow(QtWidgets.QMainWindow, reinforcement.Ui_fuzzy_window):
                                      np.sin(
                                          np.linspace(180 * math.pi / 180, 359.999 * math.pi / 180, 191)) * 0.525 + 0.2)
 
+        self.ax.clear()
+
+        self.point, = self.ax.plot([], [], marker=(3, 0, 0), color='red')
+
         self.ax.set_ylim(self.y_origin-0.5,
                          self.yellow_back_y + self.y_origin + 0.5)
 
         self.ax.set_xlim(self.x_origin - 0.5,
                          self.x_origin + self.yellow_back_x + 0.5)
+
 
         self.ax.set_facecolor('xkcd:black')
 
