@@ -187,7 +187,7 @@ class UviRobot():
                 # simulate uvisensor (send location even if robot is stopped)
                 if self.simulated_ugvs:
                     if self.active_ugvs[i] == 1:
-                        print("uvirobot:ugv {} pose = {} sent".format(i, poses[i]))
+                        #print("uvirobot:ugv {} pose = {} sent".format(i, poses[i]))
                         pose_sockets[i].send_json(poses[i])
 
                 # read battery once per second

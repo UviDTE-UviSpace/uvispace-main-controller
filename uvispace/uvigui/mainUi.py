@@ -299,6 +299,7 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
 
         # send trajectories through the socket of the selected ugv
         self.trajectory_socket[ugv_selected].send_json(trajectory_dict)
+        print('uvigui: Trajectory sent')
 
     def update_filename(self):
         # updates the csv filename on main gui
@@ -390,9 +391,9 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
                         # update pose for later plot in the image
                         self.img_generator.set_pose(i, pose)
                         # update labels in ugv gui
-                        self.ugv_widget[i].label_x.setText(coordinates['x'])
-                        self.ugv_widget[i].label_y.setText(coordinates['y'])
-                        self.ugv_widget[i].label_z.setText(str(coordinates['theta']))
+                        self.ugv_widget[i].label_x.setText(str(pose['x']))
+                        self.ugv_widget[i].label_y.setText(str(pose['y']))
+                        self.ugv_widget[i].label_z.setText(str(pose['theta']))
 
         # update image (if changed)
         r, qpixmap_image = self.img_generator.get_image()
@@ -428,7 +429,7 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
                 # if no message it leaves the try
                 print("uvigui:new pose for ugv {}?".format(ugv_number))
                 pose = self.pose_sockets[ugv_number].recv_json(flags=zmq.NOBLOCK)
-                loger.debug("received pose {} for ugv {}".format(coordinates,i))
+                logger.debug("received pose {} for ugv {}".format(pose,ugv_number))
                 r = True
             except:
                 logger.debug("No pose received")

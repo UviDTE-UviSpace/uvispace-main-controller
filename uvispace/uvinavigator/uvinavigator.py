@@ -144,8 +144,11 @@ class UviNavigator():
                         #check for a message, this will not block
                         # if no message it leaves the try because zmq behaviour
                         trajectory = trajectory_sockets[i].recv_json(flags=zmq.NOBLOCK)
+                        print('uvinavigator: trajectory recieved')
+
                         # set the received trajectory as new trajectory
-                        self.controllers[i].start_new_trajectory(trajectory)
+                        controllers[i].start_new_trajectory(trajectory)
+
                         # print a message in logger
                         logger.debug("Starting a new trajectory with UGV {}".format(self.ugv_ids[i]))
                     except:
@@ -159,7 +162,7 @@ class UviNavigator():
                         # if the UGV did not finished the trajectory yet
                         if self.controllers[i].isRunning():
                             # execute controller to get new motor setpoints
-                            motors_speed = self.controllers[i].step(self.pose)
+                            motors_speed = self.controllers[i].step(pose)
                             # send the new motor speed setpoints to UGV
                             motor_speed_sockets[i].send_json(motors_speed)
                     except:

@@ -25,6 +25,7 @@ class NeuralController(Controller):
 
         # Initialize the father class
         Controller.__init__(self)
+        self.ugv_id=ugv_id
 
         ugv_configuration = configparser.ConfigParser()
         ugv_conf_file = "uvispace/uvirobot/resources/config/robot{}.cfg".format(ugv_id)
@@ -46,8 +47,11 @@ class NeuralController(Controller):
         """
 
         # overwrite previous trajectory with the new one
-        Controller.start_new_trajectory(self)
+
+        Controller.start_new_trajectory(self, trajectory)
         self.num_points=len(self.trajectory['y'])
+
+
 
         # initialize neural Agent (controller) with the first trajectory
         if not self.agent_initialized:
@@ -56,12 +60,14 @@ class NeuralController(Controller):
             self.action_size = 5 * 5
             self.NUM_DIV_ACTION = 5
             self.agent = Agent(self.state_size, self.action_size)
-            self.agent.load_model('uvispace/uvinavigator/controllers/linefollowers/neural_controller/resources/neural_nets/ANN_ugv{}.h5'.format(ugv_id))
+            self.agent.load_model('uvispace/uvinavigator/controllers/linefollowers/neural_controller/resources/neural_nets/ANN_ugv{}.h5'.format(self.ugv_id))
 
         # initialize an instance of UGV environment to help with calculations
         self.env = UgvEnv(self.trajectory['x'], self.trajectory['y'],0,
                      self.NUM_DIV_ACTION, closed=False, differential_car=self.differential)
         self.env.reset(self.trajectory['x'][0],self.trajectory['y'][0])
+
+
 
     def step(self, pose):
         """
