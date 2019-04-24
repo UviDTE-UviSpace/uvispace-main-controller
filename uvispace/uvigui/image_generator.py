@@ -26,7 +26,7 @@ from uvispace.uvisensor.common import ImgType
 
 class ImageGenerator():
 
-    def __init__(self):
+    def __init__(self, num_ugvs):
         # logger
         self.logger = logging.getLogger('view.aux.aux')
         self.logger.info("image loger created")
@@ -37,7 +37,6 @@ class ImageGenerator():
         self.ugv_visible = False
         self.selected_ugv = 0
 
-        # Creates zmq socket to configure the uvisensor
         uvispace_config = configparser.ConfigParser()
         conf_file = "uvispace/config.cfg"
         uvispace_config.read(conf_file)
@@ -51,13 +50,8 @@ class ImageGenerator():
             uvispace_config["LocNodes"]["node_array_height"])
         single_image_width = int(node_config.get("Camera", "width"))
         single_image_height = int(node_config.get("Camera", "height"))
-        width = single_image_width * node_array_width
-        height = single_image_height * node_array_height
-        self.img_size = [width, height]
-
-        # Creates a socket to listen for UGV poses
-        self.position_base_port = int(
-             uvispace_config["ZMQ_Sockets"]["position_base"])
+        self.width = single_image_width * node_array_width
+        self.height = single_image_height * node_array_height
 
         # creates zmq socket to read image from multiframe
         multiframe_port = uvispace_config["ZMQ_Sockets"]["multi_img"]
@@ -71,6 +65,9 @@ class ImageGenerator():
         self.config_requester.connect(
             "tcp://localhost:{}".format(uvisensor_config_port))
 
+        # create an object to store poses
+        self.poses = [None]*num_ugvs
+
         # set default image type
         uvisensor_config = {"img_type": self.img_type}
         print("Sending configuration to UviSensor...")
@@ -78,15 +75,18 @@ class ImageGenerator():
         response = self.config_requester.recv_json()  # waits until response
         print("Configuration finished. Starting streaming...")
 
+    def set_pose(self, ugv_number, pose):
+        self.poses[ugv_number] = pose
+
     def set_img_type(self, img_type):
         # changes the image type on the gui
         self.img_type = img_type
         uvisensor_config = {"img_type": img_type}
-        print("Sending configuration to UviSensor...")
+        logger.info("Sending configuration {} to UviSensor...".format(img_type))
         print(self.img_type)
         self.config_requester.send_json(uvisensor_config)
         response = self.config_requester.recv_json()  # waits until response
-        print("Configuration finished. Starting streaming...")
+        logger.info("UviSensor configuration finished. Starting streaming...")
 
     def set_border_visible(self, border_visible=False):
         self.border_visible = border_visible
@@ -98,23 +98,28 @@ class ImageGenerator():
         self.selected_ugv = ugv_selected
 
     def get_image(self):
-        # Receive image from multiframe uvisensor
 
-        message = self.img_subscriber.recv()
-        multi_image_np = np.fromstring(message, dtype=np.uint8).reshape(self.img_size[1],
-                                                                        self.img_size[0])
-        # Add uvispace border if requested
-        if self.border_visible:
-            multi_image_np = self._draw_border(multi_image_np)
+        try:
+            # Receive image from multiframe uvisensor
+            message = self.img_subscriber.recv(flags=zmq.NOBLOCK)
+            multi_image_np = np.fromstring(message, dtype=np.uint8).reshape(self.height,
+                                                                            self.width)
+            # Add uvispace border if requested
+            if self.border_visible:
+                multi_image_np = self._draw_border(multi_image_np)
 
-        # Add ugv drawing if requested
-        if self.ugv_visible:
-            multi_image_np = self._draw_ugv(multi_image_np)
+            # Add ugv drawing if requested
+            if self.ugv_visible:
+                multi_image_np = self._draw_ugv(multi_image_np)
 
-        multi_image = Image.fromarray(multi_image_np)
-        qpixmap_multi_image = QImage(ImageQt.ImageQt(multi_image))
+            multi_image = Image.fromarray(multi_image_np)
+            qpixmap_multi_image = QImage(ImageQt.ImageQt(multi_image))
+            r = True
+        except:
+            qpixmap_multi_image = None
+            r = False
 
-        return qpixmap_multi_image
+        return r, qpixmap_multi_image
 
     def _draw_border(self, image):
         # draw the grid lines  (in opencv the coordinates system is different)
@@ -142,19 +147,9 @@ class ImageGenerator():
         :param image: numpy image
         :return: numpy image array
         """
-        # create socket to receive pose from selected ugv
-        pose_subscriber = zmq.Context.instance().socket(zmq.SUB)
-        pose_subscriber.setsockopt_string(zmq.SUBSCRIBE, "")
-        pose_subscriber.setsockopt(zmq.CONFLATE, True)
-        pose_subscriber.connect("tcp://localhost:{}".format(
-                         self.position_base_port + self.selected_ugv))
-        # receive ugv pose
-        try:
-            pose = pose_subscriber.recv_json(flags=zmq.NOBLOCK)
-        except:
-            # draw the ugv at the center if not received pose
-            logger.warning("Could not receive pose")
-            pose = {'x': 0, 'y': 0, 'theta': 0}
+        # Now it takes the first vehicle by default
+        # TODO do it multivehicle
+        pose = self.poses[0]
 
         x_mm = pose['x']
         y_mm = pose['y']

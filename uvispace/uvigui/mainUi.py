@@ -218,15 +218,15 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         self.__update_image_timer.timeout.connect(self.__update_interface)
         self.actionReinforcement_training.triggered.connect(self.__reinforcement_training)
 
-        # create an object to control the image generation
-        self.img_generator = ImageGenerator()
-
         # load the number of ugs, ugvs id and active ugvs
         self.num_ugvs = int(configuration["UGVs"]["number_ugvs"])
         self.ugv_ids = list(
             map(int, configuration["UGVs"]["ugv_ids"].split(",")))
         self.active_ugvs = list(
             map(int, configuration["UGVs"]["active_ugvs"].split(",")))
+
+        # create an object to control the image generation
+        self.img_generator = ImageGenerator(self.num_ugvs)
 
         # create sockets to read poses and publish trajectories
         # also creates the car widget with info about car id and car type
@@ -236,6 +236,7 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         list_widget_item = []  # cars on the lateral list widget
         self.ugv_id_order = []  # relation between ugv ids and list widget order
         self.id_selected = 1  # ugv selected in gui list
+
         for i in range(self.num_ugvs):
             # socket to publish trajectories
             trajectory_publisher = zmq.Context.instance().socket(zmq.PUB)
@@ -258,6 +259,9 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
             self.ugv_widget.append(widget)
             list_widget_item[i].setSizeHint(self.ugv_widget[i].size())
 
+            # create an object to store ugv poses
+            self.poses = [None]*self.num_ugvs
+
             # draw car widget if active
             # its prepared in case that in the future the cars could
             # be activated and deactivated dinamically
@@ -277,6 +281,8 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
                 ugv_type = ugv_configuration["Robot_chassis"]["ugv_type"]
                 self.ugv_widget[i].label_icon.setText(ugv_type)
                 logger.info("Car {} added".format(self.ugv_ids[i]))
+
+                self.poses[i] = self.get_pose(i, block = "True")
 
     def send_coordinates(self):
         # Transform coordinates from list of points to dictionary
@@ -374,42 +380,61 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         """
         refresh the image label
         refresh the car coordinates
-
         """
-
+        # update pose (only the ones that changed)
         if self.ugv_check.isChecked():
-            self.get_pose()
+            for i in range(self.num_ugvs):
+                if self.active_ugvs[i]:
+                    r,pose = self.get_pose(i)
+                    if r:
+                        # update pose for later plot in the image
+                        self.img_generator.set_pose(i, pose)
+                        # update labels in ugv gui
+                        self.ugv_widget[i].label_x.setText(coordinates['x'])
+                        self.ugv_widget[i].label_y.setText(coordinates['y'])
+                        self.ugv_widget[i].label_z.setText(str(coordinates['theta']))
 
-        qpixmap_image = self.img_generator.get_image()
+        # update image (if changed)
+        r, qpixmap_image = self.img_generator.get_image()
+        if r:
+            pixmap = QPixmap.fromImage(qpixmap_image).scaled(self.label.size(),
+                                    aspectRatioMode=QtCore.Qt.KeepAspectRatio,
+                                    transformMode=QtCore.Qt.SmoothTransformation)
+            self.label.adjustSize()
+            self.label.setScaledContents(True)
+            self.label.setPixmap(pixmap)
 
-        pixmap = QPixmap.fromImage(qpixmap_image).scaled(self.label.size(),
-                                                         aspectRatioMode=QtCore.Qt.KeepAspectRatio,
-                                                         transformMode=QtCore.Qt.SmoothTransformation)
 
-        self.label.adjustSize()
-        self.label.setScaledContents(True)
-        self.label.setPixmap(pixmap)
+    def get_pose(self, ugv_number, block = False):
+        """
+        read the UGVs pose(x,y,theta) from pose zmq socket
+        :param int ugv_number: number of ugv in software (does not
+         missunderstand with ugv_id)
+        :param bool block: if true this function block and waits until a
+         pose is available. if false it does not block
+        :return: if block=True pose in format
+         pose={"x":<x>, "y":<y>, "theta":<theta>} is returned.  If block = False
+         (r, pose) are returned where r is True if a new pose was received and
+         False otherwise. pose={"x":<x>, "y":<y>, "theta":<theta>} if r=True
+         and None otherwise.
+        """
+        if block:
+            pose = self.pose_sockets[ugv_number].recv_json()
+            return pose
 
-        # update csv filename
-        #self.lineEdit.setText(self.trajectories.file_csv)
-
-    def get_pose(self):
-        # read the UGVs coordinates and the angle from zmq socket
-
-        for i in range(self.num_ugvs):
-            if self.active_ugvs[i]:
-                try:
-                    # check for a message, this will not block the interface
-                    # if no message it leaves the try
-                    #print("uvigui:new pose for ugv {}?".format(i))
-                    coordinates = self.pose_sockets[i].recv_json(flags=zmq.NOBLOCK)
-                    print("uvigui:received pose {} for ugv {}".format(coordinates,i))
-                    self.ugv_widget[i].label_x.setText(coordinates['x'])
-                    self.ugv_widget[i].label_y.setText(coordinates['y'])
-                    self.ugv_widget[i].label_z.setText(str(coordinates['theta']))
-                except:
-                    logger.warning("No pose received")
-                    pass
+        else:
+            try:
+                # check for a message, this will not block the interface
+                # if no message it leaves the try
+                print("uvigui:new pose for ugv {}?".format(ugv_number))
+                pose = self.pose_sockets[ugv_number].recv_json(flags=zmq.NOBLOCK)
+                loger.debug("received pose {} for ugv {}".format(coordinates,i))
+                r = True
+            except:
+                logger.debug("No pose received")
+                pose = None
+                r = False
+            return r, pose
 
         #x_px = (x_mm+2000)*1280/4000
         #y_px = (-y_mm+1500)*936/3000
