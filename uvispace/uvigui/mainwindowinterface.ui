@@ -365,7 +365,7 @@
      <x>0</x>
      <y>0</y>
      <width>1116</width>
-     <height>22</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menufile">
@@ -385,7 +385,7 @@
     <property name="title">
      <string>Tools</string>
     </property>
-    <addaction name="actionNuronal_controller_training"/>
+    <addaction name="actionReinforcement_training"/>
     <addaction name="actionFuzzy_controller_calibration"/>
    </widget>
    <addaction name="menufile"/>
@@ -421,9 +421,9 @@
     <string>Open .csv</string>
    </property>
   </action>
-  <action name="actionNuronal_controller_training">
+  <action name="actionReinforcement_training">
    <property name="text">
-    <string>Neuronal controller training</string>
+    <string>Reinforcement training</string>
    </property>
   </action>
   <action name="actionFuzzy_controller_calibration">

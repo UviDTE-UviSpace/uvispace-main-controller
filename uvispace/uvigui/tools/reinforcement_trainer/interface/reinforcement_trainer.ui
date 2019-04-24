@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>721</width>
+    <width>739</width>
     <height>552</height>
    </rect>
   </property>
@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>proba</string>
+   <string>Reinforcement Trainer</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout_2">
@@ -77,13 +77,6 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="pbAnnFile">
-            <property name="text">
-             <string>ANN file</string>
-            </property>
-           </widget>
-          </item>
-          <item>
            <spacer name="horizontalSpacer">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
@@ -139,6 +132,49 @@
           </item>
           <item>
            <spacer name="horizontalSpacer_3">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QLabel" name="label">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Select UGV Id (1, 2, 3, etc.):</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="lineEdit_ugvid">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>1</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_4">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -217,8 +253,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>721</width>
-     <height>26</height>
+     <width>739</width>
+     <height>25</height>
     </rect>
    </property>
   </widget>
@@ -236,7 +272,7 @@
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="rbControllerGroup"/>
   <buttongroup name="rbModelGroup"/>
+  <buttongroup name="rbControllerGroup"/>
  </buttongroups>
 </ui>

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'neural_controller_trainer.ui'
+# Form implementation generated from reading ui file 'uvispace/uvigui/tools/reinforcement_trainer/interface/reinforcement_trainer.ui'
 #
 # Created by: PyQt5 UI code generator 5.11.3
 #
@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_fuzzy_window(object):
     def setupUi(self, fuzzy_window):
         fuzzy_window.setObjectName("fuzzy_window")
-        fuzzy_window.resize(721, 552)
+        fuzzy_window.resize(739, 552)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -57,9 +57,6 @@ class Ui_fuzzy_window(object):
         self.pbStartTraining = QtWidgets.QPushButton(self.page_0)
         self.pbStartTraining.setObjectName("pbStartTraining")
         self.horizontalLayout.addWidget(self.pbStartTraining)
-        self.pbAnnFile = QtWidgets.QPushButton(self.page_0)
-        self.pbAnnFile.setObjectName("pbAnnFile")
-        self.horizontalLayout.addWidget(self.pbAnnFile)
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
         self.pbStartTesting = QtWidgets.QPushButton(self.page_0)
@@ -86,6 +83,28 @@ class Ui_fuzzy_window(object):
         spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_4.addItem(spacerItem1)
         self.verticalLayout.addLayout(self.horizontalLayout_4)
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_2.setSpacing(6)
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.label = QtWidgets.QLabel(self.page_0)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
+        self.label.setSizePolicy(sizePolicy)
+        self.label.setObjectName("label")
+        self.horizontalLayout_2.addWidget(self.label)
+        self.lineEdit_ugvid = QtWidgets.QLineEdit(self.page_0)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.lineEdit_ugvid.sizePolicy().hasHeightForWidth())
+        self.lineEdit_ugvid.setSizePolicy(sizePolicy)
+        self.lineEdit_ugvid.setObjectName("lineEdit_ugvid")
+        self.horizontalLayout_2.addWidget(self.lineEdit_ugvid)
+        spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_2.addItem(spacerItem2)
+        self.verticalLayout.addLayout(self.horizontalLayout_2)
         self.verticalLayout_plot = QtWidgets.QVBoxLayout()
         self.verticalLayout_plot.setSpacing(6)
         self.verticalLayout_plot.setObjectName("verticalLayout_plot")
@@ -111,8 +130,8 @@ class Ui_fuzzy_window(object):
         self.pbRetrain = QtWidgets.QPushButton(self.page_1)
         self.pbRetrain.setObjectName("pbRetrain")
         self.horizontalLayout_3.addWidget(self.pbRetrain)
-        spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_3.addItem(spacerItem2)
+        spacerItem3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_3.addItem(spacerItem3)
         self.verticalLayout_5.addLayout(self.horizontalLayout_3)
         self.horizontalLayout_9 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_9.setSpacing(6)
@@ -130,7 +149,7 @@ class Ui_fuzzy_window(object):
         self.gridLayout_2.addWidget(self.stackedWidget, 0, 1, 1, 1)
         fuzzy_window.setCentralWidget(self.centralWidget)
         self.menuBar = QtWidgets.QMenuBar(fuzzy_window)
-        self.menuBar.setGeometry(QtCore.QRect(0, 0, 721, 26))
+        self.menuBar.setGeometry(QtCore.QRect(0, 0, 739, 25))
         self.menuBar.setObjectName("menuBar")
         fuzzy_window.setMenuBar(self.menuBar)
         self.mainToolBar = QtWidgets.QToolBar(fuzzy_window)
@@ -146,26 +165,17 @@ class Ui_fuzzy_window(object):
 
     def retranslateUi(self, fuzzy_window):
         _translate = QtCore.QCoreApplication.translate
-        fuzzy_window.setWindowTitle(_translate("fuzzy_window", "proba"))
+        fuzzy_window.setWindowTitle(_translate("fuzzy_window", "Reinforcement Trainer"))
         self.label_3.setText(_translate("fuzzy_window", "Choose the controller:"))
         self.rbNeural.setText(_translate("fuzzy_window", "Neural Network"))
         self.rbTables.setText(_translate("fuzzy_window", "Tables"))
         self.pbStartTraining.setText(_translate("fuzzy_window", "Start Training"))
-        self.pbAnnFile.setText(_translate("fuzzy_window", "ANN file"))
         self.pbStartTesting.setText(_translate("fuzzy_window", "Start Testing"))
         self.lModel.setText(_translate("fuzzy_window", "Choose vehicle model:"))
         self.rbDifferential.setText(_translate("fuzzy_window", "Differential"))
         self.rbAckerman.setText(_translate("fuzzy_window", "Ackerman"))
+        self.label.setText(_translate("fuzzy_window", "Select UGV Id (1, 2, 3, etc.):"))
+        self.lineEdit_ugvid.setText(_translate("fuzzy_window", "1"))
         self.label_2.setText(_translate("fuzzy_window", "Testing"))
         self.pbRetrain.setText(_translate("fuzzy_window", "Re-Train"))
-
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    fuzzy_window = QtWidgets.QMainWindow()
-    ui = Ui_fuzzy_window()
-    ui.setupUi(fuzzy_window)
-    fuzzy_window.show()
-    sys.exit(app.exec_())
 

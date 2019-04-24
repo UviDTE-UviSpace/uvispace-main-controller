@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'mainwindowinterface.ui'
+# Form implementation generated from reading ui file 'uvispace/uvigui/mainwindowinterface.ui'
 #
 # Created by: PyQt5 UI code generator 5.11.3
 #
@@ -213,7 +213,7 @@ class Ui_MainWindow(object):
         self.gridLayout_2.addWidget(self.group_options, 2, 1, 1, 2)
         MainWindow.setCentralWidget(self.centralWidget)
         self.menuBar = QtWidgets.QMenuBar(MainWindow)
-        self.menuBar.setGeometry(QtCore.QRect(0, 0, 1116, 22))
+        self.menuBar.setGeometry(QtCore.QRect(0, 0, 1116, 25))
         self.menuBar.setObjectName("menuBar")
         self.menufile = QtWidgets.QMenu(self.menuBar)
         self.menufile.setObjectName("menufile")
@@ -236,14 +236,14 @@ class Ui_MainWindow(object):
         self.action_docs.setObjectName("action_docs")
         self.actionOpen_csv = QtWidgets.QAction(MainWindow)
         self.actionOpen_csv.setObjectName("actionOpen_csv")
-        self.actionNuronal_controller_training = QtWidgets.QAction(MainWindow)
-        self.actionNuronal_controller_training.setObjectName("actionNuronal_controller_training")
+        self.actionReinforcement_training = QtWidgets.QAction(MainWindow)
+        self.actionReinforcement_training.setObjectName("actionReinforcement_training")
         self.actionFuzzy_controller_calibration = QtWidgets.QAction(MainWindow)
         self.actionFuzzy_controller_calibration.setObjectName("actionFuzzy_controller_calibration")
         self.menufile.addAction(self.actionOpen_csv)
         self.menufile.addAction(self.actionExit)
         self.menuhelp.addAction(self.action_about)
-        self.menuTools.addAction(self.actionNuronal_controller_training)
+        self.menuTools.addAction(self.actionReinforcement_training)
         self.menuTools.addAction(self.actionFuzzy_controller_calibration)
         self.menuBar.addAction(self.menufile.menuAction())
         self.menuBar.addAction(self.menuTools.menuAction())
@@ -282,6 +282,6 @@ class Ui_MainWindow(object):
         self.action_about.setText(_translate("MainWindow", "About..."))
         self.action_docs.setText(_translate("MainWindow", "Manual de utilización"))
         self.actionOpen_csv.setText(_translate("MainWindow", "Open .csv"))
-        self.actionNuronal_controller_training.setText(_translate("MainWindow", "Neuronal controller training"))
+        self.actionReinforcement_training.setText(_translate("MainWindow", "Reinforcement training"))
         self.actionFuzzy_controller_calibration.setText(_translate("MainWindow", "Fuzzy controller calibration"))
 

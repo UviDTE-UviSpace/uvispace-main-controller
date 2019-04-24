@@ -8,14 +8,11 @@ import matplotlib.pyplot as plt
 
 
 
-import uvispace.uvigui.tools.neural_controller_trainer.interface.neural_controller_trainer as neural
-from uvispace.uvigui.tools.neural_controller_trainer.neural_training import *
+import uvispace.uvigui.tools.reinforcement_trainer.interface.reinforcement_trainer as reinforcement
+from uvispace.uvigui.tools.reinforcement_trainer.neural_training import *
 
 
-
-
-
-class MainWindow(QtWidgets.QMainWindow, neural.Ui_fuzzy_window):
+class MainWindow(QtWidgets.QMainWindow, reinforcement.Ui_fuzzy_window):
     def __init__(self):
         QtWidgets.QMainWindow.__init__(self)
         self.setupUi(self)
@@ -28,19 +25,10 @@ class MainWindow(QtWidgets.QMainWindow, neural.Ui_fuzzy_window):
         self.pbStartTesting.hide()
         self.pbRetrain.hide()
 
-        #declarate file dialog
-        self.dlg = QtWidgets.QFileDialog()
-        self.dlg.setFileMode(QtWidgets.QFileDialog.AnyFile)
-        self.dlg.setDefaultSuffix('.h5')
-
         # button actions (next button)
         self.pbStartTraining.clicked.connect(self.start_training)
         self.pbStartTesting.clicked.connect(self.start_testing)
         self.pbRetrain.clicked.connect(self.first_page)
-        self.pbAnnFile.clicked.connect(self.dlg.exec_)
-
-
-
 
         # initialize training figure
         self.figure_training = plt.figure()
@@ -79,8 +67,6 @@ class MainWindow(QtWidgets.QMainWindow, neural.Ui_fuzzy_window):
         self.axes2testing.set_xlabel('Steps')
 
 
-
-
         # Testing simulation plot
         self.state_number = 0
 
@@ -111,10 +97,6 @@ class MainWindow(QtWidgets.QMainWindow, neural.Ui_fuzzy_window):
         self.period = period
 
 
-
-
-
-
         # Qt timer set-up for updating the training plots.
         self.timer_training = QTimer()
         self.timer_training.timeout.connect(self.update_training_plot)
@@ -125,32 +107,30 @@ class MainWindow(QtWidgets.QMainWindow, neural.Ui_fuzzy_window):
         self.timer_sim.timeout.connect(self.plot_sim)
 
     def start_training(self):
-        if len(self.dlg.selectedFiles())>0:
-            if self.rbNeural.isChecked():
 
-                #Hide start button to avoid multiple training
-                self.pbStartTraining.hide()
-                self.pbStartTesting.hide()
+        self.hdf5_file_name = 'uvispace/uvinavigator/controllers/linefollowers/neural_controller/resources/neural_nets/ANN_ugv{}.h5'.format(self.lineEdit_ugvid.text())
 
-                self.tr = Training()
-                if self.rbDifferential.isChecked():
-                    self.tr.trainclosedcircuitplot(load=False, save_name=self.dlg.selectedFiles()[0],reward_need=180,differential_car=True)
-                elif self.rbAckerman.isChecked():
-                    self.tr.trainclosedcircuitplot(load=False, save_name=self.dlg.selectedFiles()[0], reward_need=50,
-                                                   differential_car=False)
-                self.timer_training.start(500)
-                self.tr.finished.connect(self.finish_training)
+        if self.rbNeural.isChecked():
 
+            #Hide start button to avoid multiple training
+            self.pbStartTraining.hide()
+            self.pbStartTesting.hide()
 
+            self.tr = Training()
+            if self.rbDifferential.isChecked():
+                self.tr.trainclosedcircuitplot(load=False, save_name=self.hdf5_file_name,reward_need=180,differential_car=True)
+            elif self.rbAckerman.isChecked():
+                self.tr.trainclosedcircuitplot(load=False, save_name=self.hdf5_file_name, reward_need=50,
+                                               differential_car=False)
+            self.timer_training.start(500)
+            self.tr.finished.connect(self.finish_training)
 
-            elif self.rbTables.isChecked():
-                self.pbStartTesting.show()
+        elif self.rbTables.isChecked():
+            self.pbStartTesting.show()
 
-                print((self.dlg.selectedFiles()[0]))
-                pass
-        else:
-            #Message to remind to choose a file
-            QtWidgets.QMessageBox.about(self,'Error','Please, choose a file.')
+            print((self.hdf5_file_name))
+            pass
+
 
     def start_testing(self):
 
@@ -188,7 +168,7 @@ class MainWindow(QtWidgets.QMainWindow, neural.Ui_fuzzy_window):
             y_trajectory = np.append(y_trajectory,
                                      np.sin(np.linspace(270 * np.pi / 180, 180 * np.pi / 180, 81)) * 0.2 + 0.2)
 
-            self.ts.testing(load_name=self.dlg.selectedFiles()[0], x_trajectory=x_trajectory, y_trajectory=y_trajectory, closed=False, differential_car=True)
+            self.ts.testing(load_name=self.hdf5_file_name, x_trajectory=x_trajectory, y_trajectory=y_trajectory, closed=False, differential_car=True)
 
         elif self.rbAckerman.isChecked():
             x_trajectory = np.append(np.linspace(0.2, 0.2, 41),
@@ -221,7 +201,7 @@ class MainWindow(QtWidgets.QMainWindow, neural.Ui_fuzzy_window):
                                      np.sin(
                                          np.linspace(180 * math.pi / 180, 359.999 * math.pi / 180, 191)) * 0.525 + 0.2)
 
-            self.ts.testing(load_name=self.dlg.selectedFiles()[0], x_trajectory=x_trajectory, y_trajectory=y_trajectory, closed=False, differential_car=False)
+            self.ts.testing(load_name=self.hdf5_file_name, x_trajectory=x_trajectory, y_trajectory=y_trajectory, closed=False, differential_car=False)
 
 
         self.ts.finished.connect(self.finish_testing)

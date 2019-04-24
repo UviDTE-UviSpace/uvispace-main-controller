@@ -14,7 +14,7 @@ from PyQt5.QtWidgets import QLabel, QMessageBox, QWidget, QListWidgetItem
 from PyQt5.QtGui import QPixmap
 
 # proprietary libraries
-import uvispace.uvigui.tools.neural_controller_trainer.training_gui as neural_train
+import uvispace.uvigui.tools.reinforcement_trainer.training_gui as reinforcement_train
 from uvispace.uvigui import mainwindowinterface
 from uvispace.uvigui.image_generator import ImageGenerator
 from uvispace.uvigui import load_csv
@@ -216,7 +216,7 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         t_refresh = int(configuration["GUI"]["visualization_fps"])
         self.__update_image_timer.start(1000/t_refresh)
         self.__update_image_timer.timeout.connect(self.__update_interface)
-        self.actionNuronal_controller_training.triggered.connect(self.__neural_controller_training)
+        self.actionReinforcement_training.triggered.connect(self.__reinforcement_training)
 
         # create an object to control the image generation
         self.img_generator = ImageGenerator()
@@ -355,10 +355,10 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         self.popup.show()
         return
 
-    def __neural_controller_training(self):
+    def __reinforcement_training(self):
         # opens a new window to do the neural controller training
         logger.debug("Opening the neural controller training window")
-        self.popup = neural_train.MainWindow()
+        self.popup = reinforcement_train.MainWindow()
         self.popup.show()
         return
 

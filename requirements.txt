@@ -1,4 +1,4 @@
-PyQt5==5.11.3
+# general
 cython==0.29.1
 sphinx==1.8.2
 matplotlib==3.0.2
@@ -14,3 +14,12 @@ openpyxl==2.5.11
 configparser==3.5.0
 pyqt5==5.11.3
 opencv-python==3.4.4.19
+
+# gui
+PyQt5==5.11.3
+
+# neural network
+scikit-learn==0.20.3
+pillow==6.0.0
+h5py==2.0.0
+keras==2.2.4
