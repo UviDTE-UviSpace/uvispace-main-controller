@@ -47,6 +47,8 @@ class UviRobot():
         self.pose_port = int(configuration["ZMQ_Sockets"]["position_base"])
         # real or simulated ugvs??
         self.simulated_ugvs = strtobool(configuration["Run"]["simulated_ugvs"])
+        # active ugvs
+        self.active_ugvs = list(map(int, configuration["UGVs"]["active_ugvs"].split(",")))
 
         # load the ugv related info
         self.ugv_types = []
@@ -103,6 +105,7 @@ class UviRobot():
 
     def loop(self):
 
+        # create communication sockets
         motor_speed_sockets = []
         battery_sockets = []
         if self.simulated_ugvs:
@@ -125,14 +128,20 @@ class UviRobot():
                 pose_publisher = zmq.Context.instance().socket(zmq.PUB)
                 pose_publisher.sndhwm = 1
                 pose_publisher.bind("tcp://*:{}".format(self.pose_port + i))
+                print("uvirobot: pose socket port for ugv {} = {}".format(i, self.pose_port + i))
                 pose_sockets.append(pose_publisher)
 
-
+        # Create extra objects depending on real or virtual ugvs
         if self.simulated_ugvs:
             # create a model of the robot to simulate its movement
             ugv_models = []
             for i in range(self.num_ugvs):
                 ugv_models.append(RobotModel(self.ugv_types[i]))
+            # obtain initial pose of the active ugvs
+            poses = [None]*self.num_ugvs
+            for i in range(self.num_ugvs):
+                if self.active_ugvs[i] == 1:
+                    poses[i] = ugv_models[i].get_current_pose()
         else:
             # create the communication objects for each UGV (if real ugvs are there)
             ugv_messenger = []
@@ -152,6 +161,7 @@ class UviRobot():
                         self.ugv_ids[i]))
                     sys.exit()
 
+
         while not self._kill_thread.isSet():
             for i in range(self.num_ugvs):
 
@@ -163,8 +173,7 @@ class UviRobot():
                     # if new setpoints send to the UGV
                     if self.simulated_ugvs:
                         # with simulated ugvs generate a simulated movement
-                        pose = ugv_models[i].step(motors_speed)
-                        self.pose_sockets.send_json(pose)
+                        poses[i] = ugv_models[i].step(motors_speed)
                     else:
                         # with real ugvs just send to the motor speed to UGVs
                         messenger.move([motors_speed["m1"], motors_speed["m2"]])
@@ -173,6 +182,13 @@ class UviRobot():
                             motors_speed["m2"]))
                 except:
                     pass
+
+                # always send pose even if no motor speeds are sent to better
+                # simulate uvisensor (send location even if robot is stopped)
+                if self.simulated_ugvs:
+                    if self.active_ugvs[i] == 1:
+                        #print("ugv {} pose = {}".format(i, poses[i]))
+                        pose_sockets[i].send_json(poses[i])
 
                 # read battery once per second
 

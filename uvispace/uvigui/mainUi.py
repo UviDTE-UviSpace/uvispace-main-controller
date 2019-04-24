@@ -239,6 +239,7 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         for i in range(self.num_ugvs):
             # socket to publish trajectories
             trajectory_publisher = zmq.Context.instance().socket(zmq.PUB)
+            trajectory_publisher.sndhwm = 1
             trajectory_publisher.bind("tcp://*:{}".format(
                 self.trajectory_base_port + i))
             self.trajectory_socket.append(trajectory_publisher)
@@ -248,6 +249,7 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
             pose_subscriber.setsockopt(zmq.CONFLATE, True)
             pose_subscriber.connect("tcp://localhost:{}".format(
                 self.position_base_port + i))
+            print("uvigui: pose socket port for ugv {} = {}".format(i, self.position_base_port + i))
             self.pose_sockets.append(pose_subscriber)
 
             # create car widget
@@ -277,14 +279,20 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
                 logger.info("Car {} added".format(self.ugv_ids[i]))
 
     def send_coordinates(self):
-        # sends the coordinates list to the selected ugv
-        coordinates = self.trajectories.read_coordinates()
-        # TODO preparar matriz para enviar datos
+        # Transform coordinates from list of points to dictionary
+        trajectory_dict = {'x':[], 'y':[]}
+        for point in  self.trajectories.read_coordinates():
+            trajectory_dict['x'].append(point[0])
+            trajectory_dict['y'].append(point[1])
 
+        # find ugv number from ugv id
+        ugv_selected = 0
+        for i in range(self.num_ugvs):
+            if self.ugv_ids[i] == self.id_selected:
+                ugv_selected = i
 
-        # socket to send trajectories
-        #self.trajectory_socket[self.id_selected].send_json(coordinates)
-
+        # send trajectories through the socket of the selected ugv
+        self.trajectory_socket[ugv_selected].send_json(trajectory_dict)
 
     def update_filename(self):
         # updates the csv filename on main gui
@@ -393,7 +401,9 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
                 try:
                     # check for a message, this will not block the interface
                     # if no message it leaves the try
+                    #print("uvigui:new pose for ugv {}?".format(i))
                     coordinates = self.pose_sockets[i].recv_json(flags=zmq.NOBLOCK)
+                    print("uvigui:received pose {} for ugv {}".format(coordinates,i))
                     self.ugv_widget[i].label_x.setText(coordinates['x'])
                     self.ugv_widget[i].label_y.setText(coordinates['y'])
                     self.ugv_widget[i].label_z.setText(str(coordinates['theta']))

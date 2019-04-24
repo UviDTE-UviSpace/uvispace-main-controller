@@ -121,9 +121,10 @@ class UviSensor():
         counter = 0
 
         # publising sockets
-        position_publisher = zmq.Context.instance().socket(zmq.PUB)
-        position_publisher.sndhwm = 1
-        position_publisher.bind("tcp://*:{}".format(self.position_port))
+        if not self.simulated_ugvs:
+            position_publisher = zmq.Context.instance().socket(zmq.PUB)
+            position_publisher.sndhwm = 1
+            position_publisher.bind("tcp://*:{}".format(self.position_port))
         multiframe_publisher = zmq.Context.instance().socket(zmq.PUB)
         multiframe_publisher.sndhwm = 1
         multiframe_publisher.bind("tcp://*:{}".format(self.multiframe_port))

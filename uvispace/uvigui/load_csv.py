@@ -62,7 +62,8 @@ class App(QWidget, loadfilesinterface.Ui_Form):
         # Opens a .csv file and then displays the array in a textEdit Widget
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        fileName, _ = QFileDialog.getOpenFileName(self, "Open file...", "",
+        fileName, _ = QFileDialog.getOpenFileName(self, "Open file...",
+                "uvispace/uvinavigator/resources/trajectories/",
                                                   "CSV files (*.csv);;All Files(*)",
                                                   options=options)
         if fileName:
