@@ -61,7 +61,6 @@ class NeuralController(Controller):
             self.NUM_DIV_ACTION = 5
             self.agent = Agent(self.state_size, self.action_size)
             self.agent.load_model('uvispace/uvinavigator/controllers/linefollowers/neural_controller/resources/neural_nets/ANN_ugv{}.h5'.format(self.ugv_id))
-
         # initialize an instance of UGV environment to help with calculations
         self.env = UgvEnv(self.trajectory['x'], self.trajectory['y'],0,
                      self.NUM_DIV_ACTION, closed=False, differential_car=self.differential)
@@ -84,6 +83,9 @@ class NeuralController(Controller):
         distance=self.env._distance_next()
         delta_theta= self.env._calc_delta_theta()
         index=self.env._get_index()
+
+        #print(pose)
+        #print(index)
 
         # call the neural agent to get the new motor setpoints for the motors
         if index >= (self.num_points-1):

@@ -23,7 +23,8 @@ class RobotModel():
         self.env = UgvEnv( period=1/30, closed=False, differential_car=self.differential)
 
         # set a random location and orientation near (0,0)
-        self.pose = {'x':0, 'y':0, 'theta':math.pi/4}
+        self.pose = {'x':0, 'y':0, 'theta':math.pi/2}
+        print('ubirobot:', self.pose)
         self.env.define_state(self.pose['x'], self.pose['y'],self.pose['theta'])
 
     def get_current_pose(self):
@@ -33,8 +34,12 @@ class RobotModel():
         m1 = motor_speed["m1"]
         m2 = motor_speed["m2"]
 
+        print('ubirobot:',self.pose)
+
         # call step in the environment a get pose
         x , y, theta = self.env.step(simulation= True, m1 = m1, m2 = m2)
 
         self.pose = {'x':x, 'y':y, 'theta':theta}
+
+        print('ubirobot:',self.pose)
         return self.pose

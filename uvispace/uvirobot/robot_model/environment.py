@@ -108,8 +108,8 @@ class UgvEnv:
         return self.state, self.agent_state
 
     def define_state(self,x, y, theta):
-        self.y = x
-        self.x = y
+        self.x = x
+        self.y = y
         self.theta = theta
 
     def step(self, action = [], simulation = False, m1=0, m2=0):
@@ -238,6 +238,8 @@ class UgvEnv:
             self.farthest=-1
             self.laps+=1
 
+
+
         for w in range(self.index, self.index + 20):
 
             self.dist_point = math.sqrt((self.x_trajectory[w] - self.x)**2 +
@@ -280,6 +282,7 @@ class UgvEnv:
 
         if self.delta_theta < -math.pi:
             self.delta_theta = self.delta_theta + 2 * math.pi
+
 
         return self.delta_theta
 

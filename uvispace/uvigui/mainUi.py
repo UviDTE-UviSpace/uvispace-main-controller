@@ -427,7 +427,7 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
             try:
                 # check for a message, this will not block the interface
                 # if no message it leaves the try
-                print("uvigui:new pose for ugv {}?".format(ugv_number))
+                #print("uvigui:new pose for ugv {}?".format(ugv_number))
                 pose = self.pose_sockets[ugv_number].recv_json(flags=zmq.NOBLOCK)
                 logger.debug("received pose {} for ugv {}".format(pose,ugv_number))
                 r = True

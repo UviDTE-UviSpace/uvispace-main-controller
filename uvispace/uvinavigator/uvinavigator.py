@@ -124,10 +124,10 @@ class UviNavigator():
             motor_speed_sockets.append(speed_publisher)
 
         # create the controller for each UGV
-        controllers = []
+        self.controllers = []
         for i in range(self.num_ugvs):
             if self.controller_types[i] == ControllerType.neural_line_follower:
-                controllers.append(NeuralController(self.ugv_ids[i]))
+                self.controllers.append(NeuralController(self.ugv_ids[i]))
             elif self.controller_types[i] == ControllerType.tables_line_follower:
                 # to be implemented
                 pass
@@ -147,7 +147,7 @@ class UviNavigator():
                         print('uvinavigator: trajectory recieved')
 
                         # set the received trajectory as new trajectory
-                        controllers[i].start_new_trajectory(trajectory)
+                        self.controllers[i].start_new_trajectory(trajectory)
 
                         # print a message in logger
                         logger.debug("Starting a new trajectory with UGV {}".format(self.ugv_ids[i]))
