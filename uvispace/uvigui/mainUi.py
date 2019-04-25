@@ -198,14 +198,15 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         # image border, ugv and path check events
         self.grid_check.clicked.connect(self.update_border_status)
         self.ugv_check.clicked.connect(self.update_ugv_status)
+        self.path_check.clicked.connect(self.update_view_trajectory_status)
 
         # file button event
         self.file_Button.clicked.connect(self.__load_files_window)
         self.trajectories = load_csv.App()
         self.coordinates_file_name = self.trajectories.file_csv
         self.lineEdit.setText(self.coordinates_file_name)
-        self.trajectories.button_acept.clicked.connect(self.update_filename)
-        self.run_Button.clicked.connect(self.send_coordinates)
+        self.trajectories.button_acept.clicked.connect(self.filename_updated)
+        self.run_Button.clicked.connect(self.run)
 
         # menu actions
         self.actionExit.triggered.connect(self.close)  # close the app
@@ -213,7 +214,6 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         self.actionOpen_csv.triggered.connect(self.__load_files_window)
         self.actionFuzzy_controller_calibration.triggered.connect(
             self.__fuzzy_controller_calibration)
-
 
         # initialise the QTimer to update the cameras image
         self.__update_image_timer = QTimer()
@@ -288,12 +288,9 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
 
                 self.poses[i] = self.get_pose(i, block = "True")
 
-    def send_coordinates(self):
-        # Transform coordinates from list of points to dictionary
-        trajectory_dict = {'x':[], 'y':[]}
-        for point in  self.trajectories.read_coordinates():
-            trajectory_dict['x'].append(point[0])
-            trajectory_dict['y'].append(point[1])
+    def run(self):
+        # Get trajectory dictionary
+        trajectory = self.trajectories.read_coordinates()
 
         # find ugv number from ugv id
         ugv_selected = 0
@@ -301,14 +298,21 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
             if self.ugv_ids[i] == self.id_selected:
                 ugv_selected = i
 
-        # send trajectories through the socket of the selected ugv
-        self.trajectory_socket[ugv_selected].send_json(trajectory_dict)
-        print('uvigui: Trajectory sent')
+        # clean the real trajectory in the image
+        self.img_generator.clean_real_trajectory()
 
-    def update_filename(self):
+        # send trajectories through the socket of the selected ugv
+        self.trajectory_socket[ugv_selected].send_json(trajectory)
+        logger.info('Trajectory sent')
+
+
+    def filename_updated(self):
         # updates the csv filename on main gui
         filename = self.trajectories.read_filename()
         self.lineEdit.setText(filename)
+        # updates the desired trajectory variable in image
+        trajectory = self.trajectories.read_coordinates()
+        self.img_generator.set_desired_trajectory(trajectory)
 
     def car_selection_changed(self):
         selected_widget = self.listWidget.currentRow()
@@ -329,6 +333,13 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
             logger.debug("Border draw activated")
         else:
             self.img_generator.set_border_visible(False)
+
+    def update_view_trajectory_status(self):
+        if self.path_check.isChecked():
+            self.img_generator.set_trajectory_visible(True)
+            logger.debug("Trajectory draw activated")
+        else:
+            self.img_generator.set_trajectory_visible(False)
 
     def update_logger_level(self):
         """Evaluate the check boxes states and update logger level."""
@@ -440,10 +451,6 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
                 pose = None
                 r = False
             return r, pose
-
-        #x_px = (x_mm+2000)*1280/4000
-        #y_px = (-y_mm+1500)*936/3000
-
         return
 
     def about_message(self):

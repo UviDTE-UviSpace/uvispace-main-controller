@@ -79,8 +79,14 @@ class App(QWidget, loadfilesinterface.Ui_Form):
         # command to connect to the controller
 
     def read_coordinates(self):
-        # function to read coordiantes from main gui
-        return self.coordinates
+        """
+        function to read coordiantes from main gui with the dict format
+        """
+        trajectory_dict = {'x':[], 'y':[]}
+        for point in self.coordinates:
+            trajectory_dict['x'].append(point[0])
+            trajectory_dict['y'].append(point[1])
+        return trajectory_dict
 
     def read_filename(self):
         # function to read filename from main gui

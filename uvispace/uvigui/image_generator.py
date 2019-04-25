@@ -35,6 +35,7 @@ class ImageGenerator():
         self.img_type = ImgType.BLACK
         self.border_visible = False
         self.ugv_visible = False
+        self.trajectory_visible = False
         self.selected_ugv = 0
 
         uvispace_config = configparser.ConfigParser()
@@ -68,6 +69,10 @@ class ImageGenerator():
         # create an object to store poses
         self.poses = [None]*num_ugvs
 
+        # create objects to store real and desired trajectories of selected ugv
+        self.real_trajectory = {"x":[], "y":[]}
+        self.desired_trajectory = {"x":[], "y":[]}
+
         # set default image type
         uvisensor_config = {"img_type": self.img_type}
         logger.debug("Sending configuration to UviSensor...")
@@ -76,7 +81,25 @@ class ImageGenerator():
         logger.debug("Configuration finished. Starting streaming...")
 
     def set_pose(self, ugv_number, pose):
+        # update last pose (to be used to draw triangle)
         self.poses[ugv_number] = pose
+        # add the pose to the pose history (to plot the trajectory)
+        if len(self.real_trajectory["x"]) == 0:
+            # if empty just add a point
+            self.real_trajectory["x"].append(pose["x"])
+            self.real_trajectory["y"].append(pose["y"])
+        else:
+            # if not empty add if the movement was significant (>1cm)
+            if ((abs(pose["x"] - self.real_trajectory["x"][-1])>0.01) or
+            (abs(pose["y"] - self.real_trajectory["y"][-1])>0.01)):
+                self.real_trajectory["x"].append(pose["x"])
+                self.real_trajectory["y"].append(pose["y"])
+
+    def clean_real_trajectory(self):
+        self.real_trajectory = {"x":[], "y":[]}
+
+    def set_desired_trajectory(self, desired_trajectory):
+        self.desired_trajectory = desired_trajectory
 
     def set_img_type(self, img_type):
         # changes the image type on the gui
@@ -93,6 +116,9 @@ class ImageGenerator():
 
     def set_ugv_visible(self, ugv_visible=False):
         self.ugv_visible = ugv_visible
+
+    def set_trajectory_visible(self, trajectory_visible=False):
+        self.trajectory_visible = trajectory_visible
 
     def set_selected_ugv(self, ugv_selected=0):
         self.selected_ugv = ugv_selected
@@ -111,6 +137,10 @@ class ImageGenerator():
             # Add ugv drawing if requested
             if self.ugv_visible:
                 multi_image_np = self._draw_ugv(multi_image_np)
+
+            # add trajectories if requested:
+            if self.trajectory_visible:
+                multi_image_np = self._draw_trajectories(multi_image_np)
 
             multi_image = Image.fromarray(multi_image_np)
             qpixmap_multi_image = QImage(ImageQt.ImageQt(multi_image))
@@ -199,4 +229,8 @@ class ImageGenerator():
         cv2.line(image, (x2r, y2r), (x3r, y3r), 255, 4)
         cv2.line(image, (x1r, y1r), (x3r, y3r), 255, 4)
 
+        return image
+
+    def _draw_trajectories(self, image):
+        #print("uvigui: real_trajectory: {}".format(self.real_trajectory))
         return image
