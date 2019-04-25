@@ -50,10 +50,10 @@ class AppLogHandler(logging.Handler):
         # Paths to the log icons.
         parent_path = os.path.dirname(__file__)
         self.logsymbols = {
-            logging.DEBUG: "icons/debug.png",
-            logging.INFO: "icons/info.png",
-            logging.WARN: "icons/warning.png",
-            logging.ERROR: "icons/error.png",
+            logging.DEBUG: "uvispace/uvigui/icons/debug.png",
+            logging.INFO: "uvispace/uvigui/icons/info.png",
+            logging.WARN: "uvispace/uvigui/icons/warning.png",
+            logging.ERROR: "uvispace/uvigui/icons/error.png",
         }
         # The True levels are the ones that are printed on the log.
         self.enabled = {
@@ -166,6 +166,10 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
         logger.error("Error debug actived")
         logger.debug("Debug debug actived")
         logger.warning("Warning debug actived")
+
+        # draw folder icon on coordinates loader
+        self.file_Button.setIcon(QtGui.QIcon('uvispace/uvigui/icons/folder.png'))
+        self.file_Button.setIconSize(QtCore.QSize(16, 16))
 
         # create the subscriber to read the vehicles location
         configuration = configparser.ConfigParser()
