@@ -144,10 +144,10 @@ class CarWidget(QWidget):
         self.label_wifi.setText("TextLabel")
         self.label_4.setText("x:")
         self.label_5.setText("y:")
-        self.label_6.setText("z:")
-        self.label_x.setText("TextLabel")
-        self.label_y.setText("TextLabel")
-        self.label_z.setText("TextLabel")
+        self.label_6.setText("theta:")
+        self.label_x.setText("?")
+        self.label_y.setText("?")
+        self.label_z.setText("?")
 
 
 class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):

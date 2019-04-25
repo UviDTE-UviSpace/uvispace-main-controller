@@ -70,10 +70,10 @@ class ImageGenerator():
 
         # set default image type
         uvisensor_config = {"img_type": self.img_type}
-        print("Sending configuration to UviSensor...")
+        logger.debug("Sending configuration to UviSensor...")
         self.config_requester.send_json(uvisensor_config)
         response = self.config_requester.recv_json()  # waits until response
-        print("Configuration finished. Starting streaming...")
+        logger.debug("Configuration finished. Starting streaming...")
 
     def set_pose(self, ugv_number, pose):
         self.poses[ugv_number] = pose
@@ -151,8 +151,8 @@ class ImageGenerator():
         # TODO do it multivehicle
         pose = self.poses[0]
 
-        x_mm = pose['x']
-        y_mm = pose['y']
+        x_mm = pose['x']*1000
+        y_mm = pose['y']*1000
         # translate uvispace pose to pixel representation
         x_pix = int((x_mm + 2000) * 1280 / 4000)
         y_pix = int((-y_mm + 1500) * 936 / 3000)
