@@ -4,6 +4,7 @@ import logging
 import configparser
 import zmq
 import numpy as np
+import time
 
 from uvispace.uvirobot.common import UgvType, UgvCommType
 from uvispace.uvirobot.robot_model.robot_model import RobotModel
@@ -128,7 +129,6 @@ class UviRobot():
                 pose_publisher = zmq.Context.instance().socket(zmq.PUB)
                 pose_publisher.sndhwm = 1
                 pose_publisher.bind("tcp://*:{}".format(self.pose_port + i))
-                print("uvirobot: pose socket port for ugv {} = {}".format(i, self.pose_port + i))
                 pose_sockets.append(pose_publisher)
 
         # Create extra objects depending on real or virtual ugvs
@@ -142,6 +142,9 @@ class UviRobot():
             for i in range(self.num_ugvs):
                 if self.active_ugvs[i] == 1:
                     poses[i] = ugv_models[i].get_current_pose()
+            # to simulate the cameras frame rate
+            t1 = time.time()
+            send_in_this_iteration = False
         else:
             # create the communication objects for each UGV (if real ugvs are there)
             ugv_messenger = []
@@ -163,6 +166,13 @@ class UviRobot():
 
 
         while not self._kill_thread.isSet():
+            # calculate the time to send coordinates (to simulate the camera rate)
+            if self.simulated_ugvs:
+                t2 = time.time()
+                if (t2 - t1) >= self.period:
+                    send_in_this_iteration = True
+                    t1 = t2
+
             for i in range(self.num_ugvs):
 
                 # read motor speed socket to check if new setpoints available
@@ -186,10 +196,14 @@ class UviRobot():
                 # always send pose even if no motor speeds are sent to better
                 # simulate uvisensor (send location even if robot is stopped)
                 if self.simulated_ugvs:
-                    if self.active_ugvs[i] == 1:
-                        #print("uvirobot:ugv {} pose = {} sent".format(i, poses[i]))
-                        pose_sockets[i].send_json(poses[i])
+                    if send_in_this_iteration == True:
+                        if self.active_ugvs[i] == 1:
+                            #print("uvirobot:ugv {} pose = {} sent".format(i, poses[i]))
+                            pose_sockets[i].send_json(poses[i])
 
                 # read battery once per second
 
                 # publish battery
+
+            if self.simulated_ugvs:
+                send_in_this_iteration = False

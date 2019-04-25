@@ -254,7 +254,6 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
             pose_subscriber.setsockopt(zmq.CONFLATE, True)
             pose_subscriber.connect("tcp://localhost:{}".format(
                 self.position_base_port + i))
-            print("uvigui: pose socket port for ugv {} = {}".format(i, self.position_base_port + i))
             self.pose_sockets.append(pose_subscriber)
 
             # create car widget
@@ -442,7 +441,6 @@ class MainWindow(QtWidgets.QMainWindow, mainwindowinterface.Ui_MainWindow):
             try:
                 # check for a message, this will not block the interface
                 # if no message it leaves the try
-                #print("uvigui:new pose for ugv {}?".format(ugv_number))
                 pose = self.pose_sockets[ugv_number].recv_json(flags=zmq.NOBLOCK)
                 logger.debug("received pose {} for ugv {}".format(pose,ugv_number))
                 r = True
