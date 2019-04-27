@@ -20,7 +20,6 @@ class App(QWidget, loadfilesinterface.Ui_Form):
 
         # buttons actions
         self.button_openfile.clicked.connect(self.openFileNameDialog)
-        self.button_save.clicked.connect(self.sendCoordinates)
         self.button_acept.clicked.connect(self.aceptCoordinates)
         self.button_cancel.clicked.connect(self.cancelCoordinates)
         self.file_csv = ""
@@ -72,11 +71,6 @@ class App(QWidget, loadfilesinterface.Ui_Form):
             self.textEdit.setText(str(self.coordinates))
             self.file_csv = fileName
         return
-
-    def sendCoordinates(self):
-        # Connects to the controller and send the new coordinates loaded
-        print("Sending coordinates to the controller")
-        # command to connect to the controller
 
     def read_coordinates(self):
         """
