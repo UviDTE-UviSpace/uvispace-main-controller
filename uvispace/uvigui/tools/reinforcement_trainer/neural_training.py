@@ -111,12 +111,12 @@ class Training(QtCore.QThread):
             self.lock.release()
 
             if e%100 == 0:
-                print("episode: {}/{}, score: {}, e: {:.2}, mean_score: {}, final state :({},{})"
-                      .format(e, self.EPISODES, R, agent.epsilon, mean_score, env.state[0], env.state[1]))
+                print("episode: {}, score: {}, e: {:.2}, mean_score: {}, final state :({},{})"
+                      .format(e, R, agent.epsilon, mean_score, env.state[0], env.state[1]))
 
             if mean_score > self.reward_need:
-                print("episode: {}/{}, score: {}, e: {:.2}, mean_score: {}, final state :({},{})"
-                      .format(e, self.EPISODES, R, agent.epsilon, mean_score, env.state[0], env.state[1]))
+                print("episode: {}, score: {}, e: {:.2}, mean_score: {}, final state :({},{})"
+                      .format(e, R, agent.epsilon, mean_score, env.state[0], env.state[1]))
                 agent.save_model(self.save_name)
                 break
 
