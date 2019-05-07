@@ -123,6 +123,9 @@ class UviNavigator():
             speed_publisher.bind("tcp://*:{}".format(self.speed_base_port + i))
             motor_speed_sockets.append(speed_publisher)
 
+        #Varible to store poses
+        poses=[None]*self.num_ugvs
+
         # create the controller for each UGV
         self.controllers = []
         for i in range(self.num_ugvs):
@@ -146,6 +149,19 @@ class UviNavigator():
                         trajectory = trajectory_sockets[i].recv_json(flags=zmq.NOBLOCK)
                         print('uvinavigator: trajectory recieved')
 
+                        #calculate distance from first point of the trajectory to the vehicle
+                        distance_trajec=np.sqrt((trajectory['x'][0]-poses[i]['x'])**2+(trajectory['y'][0]-poses[i]['y'])**2)
+
+                        print('uvinavigator: distance:', distance_trajec)
+
+                        if distance_trajec>0.07:
+                            points=distance_trajec//0.05+2
+                            x_appendize=np.linspace(poses[i]['x'],trajectory['x'][0],points)
+                            y_appendize=np.linspace(poses[i]['y'],trajectory['y'][0],points)
+
+                            trajectory['x']=np.concatenate((x_appendize, trajectory['x']))
+                            trajectory['y']=np.concatenate((y_appendize, trajectory['y']))
+
                         # set the received trajectory as new trajectory
                         self.controllers[i].start_new_trajectory(trajectory)
 
@@ -158,11 +174,11 @@ class UviNavigator():
                     try:
                         #check for a message, this will not block
                         # if no message it leaves the try because zmq behaviour
-                        pose = pose_sockets[i].recv_json(flags=zmq.NOBLOCK)
+                        poses[i] = pose_sockets[i].recv_json(flags=zmq.NOBLOCK)
                         # if the UGV did not finished the trajectory yet
                         if self.controllers[i].isRunning():
                             # execute controller to get new motor setpoints
-                            motors_speed = self.controllers[i].step(pose)
+                            motors_speed = self.controllers[i].step(poses[i])
                             # send the new motor speed setpoints to UGV
                             motor_speed_sockets[i].send_json(motors_speed)
                     except:
