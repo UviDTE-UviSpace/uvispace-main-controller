@@ -25,9 +25,10 @@ x_trajectory = np.append(x_trajectory,
                          np.cos(np.linspace(270 * np.pi / 180, 180 * np.pi / 180, 81)) * 0.2 + 0.4)
 y_trajectory = np.append(y_trajectory,
                          np.sin(np.linspace(270 * np.pi / 180, 180 * np.pi / 180, 81)) * 0.2 + 0.2)
+
 l=[x_trajectory,y_trajectory]
 datos = np.asarray(l)
-np.savetxt("testing_differential.csv",   # Archivo de salida
+np.savetxt("trajectory.csv",   # Archivo de salida
            datos.T,        # Trasponemos los datos
            fmt="%f",       # Usamos números enteros
            delimiter=";")  # Para que sea un CSV de verdad
