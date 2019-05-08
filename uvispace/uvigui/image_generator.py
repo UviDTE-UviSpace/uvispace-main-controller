@@ -232,5 +232,33 @@ class ImageGenerator():
         return image
 
     def _draw_trajectories(self, image):
-        #print("uvigui: real_trajectory: {}".format(self.real_trajectory))
+        # if a trajectory is loaded, draw
+        # translate uvispace pose to pixel repersentation
+        # x_pix = int((x_mm + 2000) * 1280 / 4000)
+        # y_pix = int((-y_mm + 1500) * 936 / 3000)
+
+        if len(self.desired_trajectory['x']) > 3:
+            des_traj = list(self.desired_trajectory.values())
+            des_traj = np.transpose(np.asarray(des_traj))
+            des_traj_drawing = np.copy(des_traj)
+            for i in range(len(des_traj)):
+                des_traj_drawing[i][0] = int((1000 * des_traj[i][0] + 2000) * 1280 / 4000)
+                des_traj_drawing[i][1] = int((-1000 * des_traj[i][1] + 1500) * 936 / 3000)
+
+            cv2.polylines(image, [des_traj_drawing.astype(int)], False, 255, 2)
+
+        else:
+            logger.warning("No desired trajectory loaded")
+        # if real trajectory available
+        if len(self.real_trajectory['x']) > 3:
+            real_traj = list(self.real_trajectory.values())
+            real_traj = np.transpose(np.asarray(real_traj))
+            real_traj = np.copy(real_traj)
+            for i in range(len(real_traj)):
+                real_traj[i][0] = int((1000 * real_traj[i][0] + 2000) * 1280 / 4000)
+                real_traj[i][1] = int((-1000 * real_traj[i][1] + 1500) * 936 / 3000)
+            cv2.polylines(image, [real_traj.astype(int)], False, 120, 4)
+        else:
+            logger.warning("No real trajectory available")
+
         return image

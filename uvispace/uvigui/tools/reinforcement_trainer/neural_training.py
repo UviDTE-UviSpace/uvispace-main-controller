@@ -34,58 +34,27 @@ class Training(QtCore.QThread):
 
     def run(self):
         if self.differential_car:
-            x_trajectory = np.append(np.linspace(0.2, 0.2, 41),
-                                     np.cos(np.linspace(180 * math.pi / 180, 90 * math.pi / 180, 61)) * 0.1 + 0.3)
-            y_trajectory = np.append(np.linspace(0.2, 0.4, 41),
-                                     np.sin(np.linspace(180 * math.pi / 180, 90 * math.pi / 180, 61)) * 0.1 + 0.4)
-            x_trajectory = np.append(x_trajectory,
-                                     np.cos(np.linspace(270 * math.pi / 180, 360 * math.pi / 180, 81)) * 0.2 + 0.3)
-            y_trajectory = np.append(y_trajectory,
-                                     np.sin(np.linspace(270 * math.pi / 180, 360 * math.pi / 180, 81)) * 0.2 + 0.7)
-            x_trajectory = np.append(x_trajectory,
-                                     np.cos(np.linspace(180 * math.pi / 180, 0 * math.pi / 180, 141)) * 0.3 + 0.8)
-            y_trajectory = np.append(y_trajectory,
-                                     np.sin(np.linspace(180 * math.pi / 180, 0 * math.pi / 180, 141)) * 0.3 + 0.7)
-            x_trajectory = np.append(x_trajectory, np.linspace(1.1, 1.1, 81))
-            y_trajectory = np.append(y_trajectory, np.linspace(0.7, 0.3, 81))
-            x_trajectory = np.append(x_trajectory,
-                                     np.cos(np.linspace(0 * math.pi / 180, -90 * math.pi / 180, 81)) * 0.3 + 0.8)
-            y_trajectory = np.append(y_trajectory,
-                                     np.sin(np.linspace(0 * math.pi / 180, -90 * math.pi / 180, 81)) * 0.3 + 0.3)
-            x_trajectory = np.append(x_trajectory, np.linspace(0.8, 0.4, 81))
-            y_trajectory = np.append(y_trajectory, np.linspace(0, 0, 81))
-            x_trajectory = np.append(x_trajectory,
-                                     np.cos(np.linspace(270 * math.pi / 180, 180 * math.pi / 180, 81)) * 0.2 + 0.4)
-            y_trajectory = np.append(y_trajectory,
-                                     np.sin(np.linspace(270 * math.pi / 180, 180 * math.pi / 180, 81)) * 0.2 + 0.2)
+            # Read csv file
+            coordinates = np.loadtxt(
+                open("uvispace/uvigui/tools/reinforcement_trainer/resources/training_differential.csv", "r"),
+                delimiter=";")
+            x_trajectory = []
+            y_trajectory = []
+            for point in coordinates:
+                x_trajectory.append(point[0])
+                y_trajectory.append(point[1])
 
         else:
 
-            x_trajectory = np.append(np.linspace(0.2, 0.2, 41),
-                                     np.cos(np.linspace(180 * math.pi / 180, 0.001 * math.pi / 180, 161)) * 0.8 + 1)
-            y_trajectory = np.append(np.linspace(0.2, 0.399, 41),
-                                     np.sin(np.linspace(180 * math.pi / 180, 0.001 * math.pi / 180, 161)) * 0.8 + 0.4)
-            x_trajectory = np.append(x_trajectory, np.linspace(1.8, 1.8, 81))
-            y_trajectory = np.append(y_trajectory, np.linspace(0.4, 0.001, 81))
-            x_trajectory = np.append(x_trajectory,
-                                     np.cos(np.linspace(360 * math.pi / 180, 180.001 * math.pi / 180, 161)) * 0.8 + 1)
-            y_trajectory = np.append(y_trajectory,
-                                     np.sin(np.linspace(360 * math.pi / 180, 180.001 * math.pi / 180, 161)) * 0.8 - 0)
-            x_trajectory = np.append(x_trajectory, np.linspace(0.2, 0.2, 81))
-            y_trajectory = np.append(y_trajectory, np.linspace(0, 0.3999, 81))
-            x_trajectory = np.append(x_trajectory,
-                                     np.cos(np.linspace(0 * math.pi / 180, 179.999 * math.pi / 180, 161)) * 0.7 - 0.5)
-            y_trajectory = np.append(y_trajectory,
-                                     np.sin(np.linspace(0 * math.pi / 180, 179.999 * math.pi / 180, 161)) * 0.7 + 0.4)
-            x_trajectory = np.append(x_trajectory, np.linspace(-1.2, -1.2, 81))
-            y_trajectory = np.append(y_trajectory, np.linspace(0.4, 0.001, 81))
-            x_trajectory = np.append(x_trajectory,
-                                     np.cos(np.linspace(180 * math.pi / 180, 359.99 * math.pi / 180, 161)) * 0.7 - 0.5)
-            y_trajectory = np.append(y_trajectory,
-                                     np.sin(np.linspace(180 * math.pi / 180, 359.99 * math.pi / 180, 161)) * 0.7 - 0)
-            x_trajectory = np.append(x_trajectory, np.linspace(0.2, 0.2, 41))
-            y_trajectory = np.append(y_trajectory, np.linspace(0, 0.1999, 41))
-
+            # Read csv file
+            coordinates = np.loadtxt(
+                open("uvispace/uvigui/tools/reinforcement_trainer/resources/training_ackerman.csv", "r"),
+                delimiter=";")
+            x_trajectory = []
+            y_trajectory = []
+            for point in coordinates:
+                x_trajectory.append(point[0])
+                y_trajectory.append(point[1])
 
 
         scores = deque(maxlen=50)
@@ -142,12 +111,12 @@ class Training(QtCore.QThread):
             self.lock.release()
 
             if e%100 == 0:
-                print("episode: {}/{}, score: {}, e: {:.2}, mean_score: {}, final state :({},{})"
-                      .format(e, self.EPISODES, R, agent.epsilon, mean_score, env.state[0], env.state[1]))
+                print("episode: {}, score: {}, e: {:.2}, mean_score: {}, final state :({},{})"
+                      .format(e, R, agent.epsilon, mean_score, env.state[0], env.state[1]))
 
             if mean_score > self.reward_need:
-                print("episode: {}/{}, score: {}, e: {:.2}, mean_score: {}, final state :({},{})"
-                      .format(e, self.EPISODES, R, agent.epsilon, mean_score, env.state[0], env.state[1]))
+                print("episode: {}, score: {}, e: {:.2}, mean_score: {}, final state :({},{})"
+                      .format(e, R, agent.epsilon, mean_score, env.state[0], env.state[1]))
                 agent.save_model(self.save_name)
                 break
 
