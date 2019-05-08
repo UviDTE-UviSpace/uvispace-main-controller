@@ -7,7 +7,8 @@ from uvispace.uvisensor.common import ImgType
 
 if __name__ == '__main__':
     """
-    Plots the image type "img_type" from camera number "num".
+    Plots the image type "img_type" from camera number "num" and prints
+    framerate and triangles in console.
     Examples:
     python -m uvispace.uvisensor.locnode
     python -m uvispace.uvisensor.locnode <num>
@@ -34,7 +35,7 @@ if __name__ == '__main__':
         num  = 1
         img_type = ImgType.GRAY
 
-    node = LocalizationNode(num - 1, triang_enabled = False)
+    node = LocalizationNode(num - 1, triang_enabled = True)
     node.set_img_type(img_type)
 
     t1 = time.time()
@@ -51,8 +52,12 @@ if __name__ == '__main__':
         #calculate framerate
         frame_rate_counter = frame_rate_counter + 1
         if frame_rate_counter == frame_rate_counter_limit:
+            # print frame rate
             frame_rate_counter = 0
             t2 = time.time()
             frame_rate = frame_rate_counter_limit/(t2-t1)
             t1 = t2
             print("frame rate = {}".format(frame_rate))
+            # print last triangles
+            r, triangles = node.get_triangles()
+            print("triangles = {}".format(triangles))

@@ -23,7 +23,7 @@ class UviSensor():
     Localization nodes are used for:
     - Creating a multiimage (combining images from all nodes) and post it
       through a ZMQ socket for the GUI.
-    - Locate vehicles and post their location in another ZMQ sockets.
+    - Locate vehicles and post their location in pose ZMQ sockets.
     """
     def __init__(self, enable_img = True, enable_triang = True, threaded = False):
         """
@@ -51,13 +51,15 @@ class UviSensor():
         self.node_array_height = int(configuration["LocNodes"]["node_array_height"])
         # sockets
         self.multiframe_port = int(configuration["ZMQ_Sockets"]["multi_img"])
-        self.position_port = int(configuration["ZMQ_Sockets"]["position_base"])
         self.config_port = int(configuration["ZMQ_Sockets"]["uvisensor_config"])
+        self.position_port_base = int(configuration["ZMQ_Sockets"]["position_base"])
         # real or simulated ugvs??
         self.simulated_ugvs = strtobool(configuration["Run"]["simulated_ugvs"])
         # row and column position of each localization node
         self.rows = list(map(int, configuration["LocNodes"]["rows"].split(",")))
         self.cols = list(map(int, configuration["LocNodes"]["cols"].split(",")))
+        # number of ugvs
+        self.num_ugvs = int(configuration["UGVs"]["number_ugvs"])
 
         # create the different nodes in the system:
         self.nodes = [None for i in range(self.number_nodes)]
@@ -107,12 +109,12 @@ class UviSensor():
         """
         logger.info("Stopping UviSensor.")
         self._kill_thread.set()
-        # wait until the thrad finishes
+        # wait until the thread finishes
         self.thread.join()
 
     def acquisition_loop(self):
+
         # acquisition variables
-        triangle = [None]*self.number_nodes
         frames = [[None for i in range(self.node_array_width)]
                             for j in range(self.node_array_height)]
         frame_row = [None for i in range(self.node_array_width)]
@@ -120,29 +122,44 @@ class UviSensor():
                     dtype = np.uint8)
         counter = 0
 
-        # publising sockets
         if not self.simulated_ugvs:
-            position_publisher = zmq.Context.instance().socket(zmq.PUB)
-            position_publisher.sndhwm = 1
-            position_publisher.bind("tcp://*:{}".format(self.position_port))
+            # create a list to store the triangles from each localization node
+            triangles_cam = [[]]*self.number_nodes
+            # # get initial triangles (wait until all localization nodes are checked)
+            # for num in range(self.number_nodes):
+            #     r = False
+            #     while not r:
+            #         r, tri = self.nodes[num].get_triangles()
+            #     triangles_cam[num] = tri
+            # # Create the pose calculator with this triangles
+            # # pose_calculator = PoseCalculator()
+            # # ugvs = pose_calculator.shapes_to_poses(triangles_cam)
+
+        # publising sockets
+        pose_publishers = []
+        if not self.simulated_ugvs:
+            for i in range(self.num_ugvs):
+                pose_publisher = zmq.Context.instance().socket(zmq.PUB)
+                pose_publisher.sndhwm = 1
+                pose_publisher.bind("tcp://*:{}".format(self.position_port_base + i))
+                pose_publishers.append(pose_publisher)
         multiframe_publisher = zmq.Context.instance().socket(zmq.PUB)
         multiframe_publisher.sndhwm = 1
         multiframe_publisher.bind("tcp://*:{}".format(self.multiframe_port))
-        # socket to read requests for changing configuration
+        # socket to read requests for changing image configuration
         config_socket = zmq.Context().instance().socket(zmq.REP)
         config_socket.bind("tcp://*:{}".format(self.config_port))
 
         while not self._kill_thread.isSet():
 
-            if self.enable_triang:
+            if self.enable_triang and not self.simulated_ugvs:
+
                 # get triangles from cameras
                 for num in range(self.number_nodes):
-                    r, triangles = self.node[num]["device"].get_triangles()
+                    r, tri = self.nodes[num].get_triangles()
                     if r:
-                        triangle[num] = triangles
-                # calculate location of UGVs for triangles
-
-                # publish location
+                        print(tri)
+                        pose_publishers[0].send_json(tri[0])
 
             if self.enable_img:
                 # check for a new command from GUI to change camera settings
