@@ -156,8 +156,8 @@ class UviNavigator():
 
                         if distance_trajec>0.07:
                             points=distance_trajec//0.05+2
-                            x_appendize=np.linspace(poses[i]['x'],trajectory['x'][0],points)
-                            y_appendize=np.linspace(poses[i]['y'],trajectory['y'][0],points)
+                            x_appendize=np.linspace(poses[i]['x'],trajectory['x'][0]-0.005,points)
+                            y_appendize=np.linspace(poses[i]['y'],trajectory['y'][0]-0.005,points)
 
                             trajectory['x']=np.concatenate((x_appendize, trajectory['x']))
                             trajectory['y']=np.concatenate((y_appendize, trajectory['y']))
