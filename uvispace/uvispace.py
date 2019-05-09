@@ -37,7 +37,6 @@ class UviSpace():
         navigator = UviNavigator(threaded = True)
         navigator.start()
 
-
         # Leave in this thread a way to interact with UviSpace (gui or console)
         if self.gui_enabled:
             # launch UviGui package in this thread

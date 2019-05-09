@@ -5,9 +5,12 @@ import configparser
 import zmq
 import numpy as np
 import time
+import sys
+import struct
 
 from uvispace.uvirobot.common import UgvType, UgvCommType
 from uvispace.uvirobot.robot_model.robot_model import RobotModel
+from uvispace.uvirobot.messenger import ZigBeeMessenger, WifiMessenger
 
 try:
     # Logging setup.
@@ -147,23 +150,29 @@ class UviRobot():
             send_in_this_iteration = False
         else:
             # create the communication objects for each UGV (if real ugvs are there)
-            ugv_messenger = []
+            ugv_messengers = []
             for i in range(self.num_ugvs):
                 try:
-                    if ugv_comm_types[i] == UgvCommType.zigbee:
+                    if self.ugv_comm_types[i] == UgvCommType.zigbee:
                         ugv_messenger = ZigBeeMessenger(
-                                    port=self.ugv_comm_params["serial_port"],
-                                    baudrate=self.ugv_comm_params["baudrate"])
+                                    port=self.ugv_comm_params[i]["serial_port"],
+                                    baudrate=self.ugv_comm_params[i]["baudrate"])
                         ugv_messenger.SLAVE_ID = struct.pack('>B', self.ugv_ids[i])
-                    elif ugv_comm_types[i] == UgvCommType.wifi:
+                    elif self.ugv_comm_types[i] == UgvCommType.wifi:
                         ugv_messenger = WifiMessenger(
-                                    TCP_IP = self.ugv_comm_params["tcp_ip"],
-                                    TCP_PORT = self.ugv_comm_params["tcp_port"])
+                                    TCP_IP = self.ugv_comm_params[i]["tcp_ip"],
+                                    TCP_PORT = self.ugv_comm_params[i]["tcp_port"])
+                    if ugv_messenger.ready():
+                        logger.info("Succesfully connected to UGV with ID = {}".format(
+                            self.ugv_ids[i]))
+                    else:
+                        warning.info("Connected to UGV with ID = {} but it does not answer".format(
+                            self.ugv_ids[i]))
+                    ugv_messengers.append(ugv_messenger)
                 except:
-                    logger.info("Error when connecting with UGV with ID = {}".format(
+                    logger.error("Error when connecting UGV with ID = {}".format(
                         self.ugv_ids[i]))
                     sys.exit()
-
 
         while not self._kill_thread.isSet():
             # calculate the time to send coordinates (to simulate the camera rate)
@@ -174,7 +183,6 @@ class UviRobot():
                     t1 = t2
 
             for i in range(self.num_ugvs):
-
                 # read motor speed socket to check if new setpoints available
                 try:
                     #check for a message, this will not block
@@ -186,8 +194,9 @@ class UviRobot():
                         poses[i] = ugv_models[i].step(motors_speed)
                     else:
                         # with real ugvs just send to the motor speed to UGVs
-                        messenger.move([motors_speed["m1"], motors_speed["m2"]])
-                        logger.info('Sending M1: {} M2: {}'.format(
+                        ugv_messengers[i].move(
+                            [motors_speed["m1"], motors_speed["m2"]])
+                        logger.debug('Sending M1: {} M2: {}'.format(
                             motors_speed["m1"],
                             motors_speed["m2"]))
                 except:

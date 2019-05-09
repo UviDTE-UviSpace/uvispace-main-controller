@@ -14,7 +14,8 @@ serial port is shared by all objects of this class.
 import logging
 import socket
 from serial import Serial
-from message_protocol import MessageProtocol
+
+from uvispace.uvirobot.message_protocol import MessageProtocol
 
 class ZigBeeMessenger(Serial, MessageProtocol):
 

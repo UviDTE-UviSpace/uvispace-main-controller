@@ -29,12 +29,12 @@ import time
 
 try:
     # Logging setup.
-    import settings
+    import uvispace.settings
 except ImportError:
     # Exit program if the settings module can't be found.
     sys.exit("Can't find settings module. Maybe environment variables are not"
              "set. Run the environment .sh script at the project root folder.")
-logger = logging.getLogger('messenger')
+logger = logging.getLogger("robot")
 
 
 class MessageProtocol:

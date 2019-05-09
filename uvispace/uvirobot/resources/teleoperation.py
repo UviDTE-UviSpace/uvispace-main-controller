@@ -22,16 +22,24 @@ import termios
 import tty
 # Third party libraries
 import zmq
-# Local libraries
-try:
-    from uvirobot.speedtransform import Speed
-except ImportError:
-    # Exit program if the uvirobot package can't be found.
-    sys.exit("Can't find uvirobot module. Maybe environment variables are not"
-             "set. Run the environment .sh script at the project root folder.")
 
-# Logging setup.
-import settings
+import sys
+from os.path import realpath, dirname
+
+uvispace_path = dirname(dirname(dirname(dirname(realpath(__file__)))))
+sys.path.append(uvispace_path)
+
+from uvispace.uvirobot.common import UgvType
+from uvispace.uvinavigator.controllers.point_to_point.fuzzy_controller.speed_transform import Speed
+
+try:
+    # Logging setup.
+    import uvispace.settings
+except ImportError:
+    # Exit program if the settings module can't be found.
+    sys.exit("Can't find settings module. Maybe environment variables are not"
+             "set. Run the environment .sh script at the project root folder.")
+logger = logging.getLogger("robot")
 
 
 def get_key():
@@ -83,25 +91,35 @@ def main():
             sys.exit()
         if opt in ("-r", "--robotid"):
             robot_id = int(arg)
-    # Init publisher.
-    speed_publisher = zmq.Context.instance().socket(zmq.PUB)
-    speed_publisher.bind("tcp://*:{}".format(
-            int(os.environ.get("UVISPACE_BASE_PORT_SPEED"))+robot_id))
-    speed_message = {
-        'sp_m1': 127,
-        'sp_m2': 127,
-    }
+
+    # Read speed socket from uvispace configuration
+    configuration = configparser.ConfigParser()
+    conf_file = "uvispace/config.cfg"
+    configuration.read(conf_file)
+    speed_base_port = int(configuration["ZMQ_Sockets"]["speed_base"])
+
+    # Read UGV type (each UGV has different behaviour for M1 and M2)
+    ugv_configuration = configparser.ConfigParser()
+    ugv_conf_file = "uvispace/uvirobot/resources/config/robot{}.cfg".format(robot_id)
+    ugv_configuration.read(ugv_conf_file)
+    ugv_type = ugv_configuration.get('Robot_chassis', 'ugv_type')
+
+    # Create a speed transformer that linearizes the behaviour of differential
+    # UGVs
     speed = Speed()
-    # Read configuration file coefficients.
-    conf = configparser.ConfigParser()
-    conf_file = glob.glob("./config/robot{}.cfg".format(robot_id))
-    conf.read(conf_file)
-    coefs_left = ast.literal_eval(conf.get('Coefficients_fwd', 'coefs_left'))
-    coefs_right = ast.literal_eval(conf.get('Coefficients_fwd', 'coefs_right'))
-    communication_type = conf.get('Communication', 'protocol_type')
-    # Send the coeficients to the polynomial solver objects.
+    coefs_left = ast.literal_eval(ugv_configuration.get('Coefficients_fwd', 'coefs_left'))
+    coefs_right = ast.literal_eval(ugv_configuration.get('Coefficients_fwd', 'coefs_right'))
     speed.left_fwd_solver.update_coefs(coefs_left)
     speed.right_fwd_solver.update_coefs(coefs_right)
+
+    # Init publisher and send 127 to each wheel (stop UGV)
+    speed_publisher = zmq.Context.instance().socket(zmq.PUB)
+    speed_publisher.bind("tcp://*:{}".format(int(speed_base_port)))
+    speed_message = {
+        'm1': 127,
+        'm2': 127,
+    }
+
     # Instructions for moving the UGV.
     print ('\n\r'
            'Teleoperation program initialized. Available commands:\n\r'
@@ -121,100 +139,98 @@ def main():
         # Variables key pressed now and key previously pressed.
         prev_key = key
         key = get_key()
-        if communication_type == 'wifi':
+        if ugv_type == UgvType.lego_42039:
 
             # Move forward.
             if key in ('w', 'W'):
                 screen_message = 'moving forward'
-                speed_message['sp_m1'] = 255
-                speed_message['sp_m2'] = 127
+                speed_message['m1'] = 255
+                speed_message['m2'] = 127
                 speed_publisher.send_json(speed_message)
             # Move backwards.
             elif key in ('s', 'S'):
                 screen_message = 'moving backwards'
-                speed_message['sp_m1'] = 0
-                speed_message['sp_m2'] = 127
+                speed_message['m1'] = 0
+                speed_message['m2'] = 127
                 speed_publisher.send_json(speed_message)
             # Move left.
             elif key in ('a', 'A'):
                 screen_message = 'moving left'
-                speed_message['sp_m1'] = 230
-                speed_message['sp_m2'] = 0
+                speed_message['m1'] = 230
+                speed_message['m2'] = 0
                 speed_publisher.send_json(speed_message)
             # Move right.
             elif key in ('d', 'D'):
                 screen_message = 'moving right'
-                speed_message['sp_m1'] = 230
-                speed_message['sp_m2'] = 255
+                speed_message['m1'] = 230
+                speed_message['m2'] = 255
                 speed_publisher.send_json(speed_message)
             # Stop moving and exit.
             elif key in ('q', 'Q'):
                 print ('Stop and exiting program. Have a good day! =)')
-                speed_message['sp_m1'] = 127
-                speed_message['sp_m2'] = 127
+                speed_message['m1'] = 127
+                speed_message['m2'] = 127
                 speed_publisher.send_json(speed_message)
                 break
             # Stop moving.
             else:
                 screen_message = 'stop moving'
-                speed_message['sp_m1'] = 127
-                speed_message['sp_m2'] = 127
+                speed_message['m1'] = 127
+                speed_message['m2'] = 127
+                speed_publisher.send_json(speed_message)
+            # If key pressed now and key pressed previously are different,
+            # update message.
+            if prev_key != key:
+                print('Currently %s. \n\r' % screen_message)
+        elif ugv_type == UgvType.df_robot_baron4:
+
+            # Move forward.
+            if key in ('w', 'W'):
+                screen_message = 'moving forward'
+                speed_message['m1'] = int(speed.right_fwd_solver.solve(200, 0))
+                speed_message['m2'] = int(speed.left_fwd_solver.solve(200, 0))
+                speed_publisher.send_json(speed_message)
+            # Move backwards.
+            elif key in ('s', 'S'):
+                screen_message = 'moving backwards'
+                speed_message['m1'] = int(speed.right_fwd_solver.solve(-200, 0))
+                speed_message['m2'] = int(speed.left_fwd_solver.solve(-200, 0))
+                speed_publisher.send_json(speed_message)
+            # Move left.
+            elif key in ('a', 'A'):
+                screen_message = 'moving left'
+                speed_message['m1'] = int(speed.right_fwd_solver.solve(200, 1))
+                speed_message['m2'] = int(speed.left_fwd_solver.solve(200, 1))
+                speed_publisher.send_json(speed_message)
+            # Move right.
+            elif key in ('d', 'D'):
+                screen_message = 'moving right'
+                speed_message['m1'] = int(speed.right_fwd_solver.solve(200, -1))
+                speed_message['m2'] = int(speed.left_fwd_solver.solve(200, -1))
+                speed_publisher.send_json(speed_message)
+            # Stop moving and exit.
+            elif key in ('q', 'Q'):
+                print ('Stop and exiting program. Have a good day! =)')
+                speed_message['m1'] = int(speed.right_fwd_solver.solve(0, 0))
+                speed_message['m2'] = int(speed.left_fwd_solver.solve(0, 0))
+                speed_publisher.send_json(speed_message)
+                break
+            # Stop moving.
+            else:
+                screen_message = 'stop moving'
+                speed_message['m1'] = int(speed.right_fwd_solver.solve(0, 0))
+                speed_message['m2'] = int(speed.left_fwd_solver.solve(0, 0))
                 speed_publisher.send_json(speed_message)
             # If key pressed now and key pressed previously are different,
             # update message.
             if prev_key != key:
                 print('Currently %s. \n\r' % screen_message)
         else:
-
-
-            # Move forward.
-            if key in ('w', 'W'):
-
-                screen_message = 'moving forward'
-                speed_message['sp_m1'] = int(speed.right_fwd_solver.solve(200, 0))
-                speed_message['sp_m2'] = int(speed.left_fwd_solver.solve(200, 0))
-                speed_publisher.send_json(speed_message)
-            # Move backwards.
-            elif key in ('s', 'S'):
-                screen_message = 'moving backwards'
-                speed_message['sp_m1'] = int(speed.right_fwd_solver.solve(-200, 0))
-                speed_message['sp_m2'] = int(speed.left_fwd_solver.solve(-200, 0))
-                speed_publisher.send_json(speed_message)
-            # Move left.
-            elif key in ('a', 'A'):
-                screen_message = 'moving left'
-                speed_message['sp_m1'] = int(speed.right_fwd_solver.solve(200, 1))
-                speed_message['sp_m2'] = int(speed.left_fwd_solver.solve(200, 1))
-                speed_publisher.send_json(speed_message)
-            # Move right.
-            elif key in ('d', 'D'):
-                screen_message = 'moving right'
-                speed_message['sp_m1'] = int(speed.right_fwd_solver.solve(200, -1))
-                speed_message['sp_m2'] = int(speed.left_fwd_solver.solve(200, -1))
-                speed_publisher.send_json(speed_message)
-            # Stop moving and exit.
-            elif key in ('q', 'Q'):
-                print ('Stop and exiting program. Have a good day! =)')
-                speed_message['sp_m1'] = int(speed.right_fwd_solver.solve(0, 0))
-                speed_message['sp_m2'] = int(speed.left_fwd_solver.solve(0, 0))
-                speed_publisher.send_json(speed_message)
-                break
-            # Stop moving.
-            else:
-                screen_message = 'stop moving'
-                speed_message['sp_m1'] = int(speed.right_fwd_solver.solve(0, 0))
-                speed_message['sp_m2'] = int(speed.left_fwd_solver.solve(0, 0))
-                speed_publisher.send_json(speed_message)
-            # If key pressed now and key pressed previously are different,
-            # update message.
-            if prev_key != key:
-                print('Currently %s. \n\r' % screen_message)
+            print("Unrecognized UGV type: {}.".format(ugv_type))
 
     # Cleanup resources before end.
     speed_publisher.close()
     return
-
-
 
 if __name__ == '__main__':
     main()
