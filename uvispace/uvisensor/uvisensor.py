@@ -158,7 +158,6 @@ class UviSensor():
                 for num in range(self.number_nodes):
                     r, tri = self.nodes[num].get_triangles()
                     if r:
-                        print(tri)
                         pose_publishers[0].send_json(tri[0])
 
             if self.enable_img:

@@ -26,7 +26,7 @@ class UviSpace():
         print("Starting Uvispace!!!")
 
         # launch UviSensor in a new thread
-        sensor = UviSensor(enable_img = True, enable_triang = False, threaded = True)
+        sensor = UviSensor(enable_img = True, enable_triang = True, threaded = True)
         sensor.start_stream()
 
         # Launch UviRobot in a new thread

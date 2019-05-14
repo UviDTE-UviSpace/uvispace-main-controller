@@ -115,8 +115,8 @@ class MessageProtocol:
         while any(x > 255 or x < 0 for x in setpoint):
             logger.warn('Invalid set points. Please enter 2 values between '
                         '0 and 255 (Decimal values will be rounded)')
-            if any(type(x) == float for x in setpoint):
-                setpoint = [int(round(x)) for x in setpoint]
+        if any(type(x) == float for x in setpoint):
+            setpoint = [int(round(x)) for x in setpoint]
         # Values casted into bytes datatype
         setpoint_bytes = struct.pack('B', setpoint[0]) \
                          + struct.pack('B', setpoint[1])

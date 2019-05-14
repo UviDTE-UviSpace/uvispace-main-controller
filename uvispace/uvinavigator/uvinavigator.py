@@ -179,6 +179,7 @@ class UviNavigator():
                         if self.controllers[i].isRunning():
                             # execute controller to get new motor setpoints
                             motors_speed = self.controllers[i].step(poses[i])
+                            print(motors_speed)
                             # send the new motor speed setpoints to UGV
                             motor_speed_sockets[i].send_json(motors_speed)
                     except:
