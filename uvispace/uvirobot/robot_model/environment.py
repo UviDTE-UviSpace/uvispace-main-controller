@@ -134,7 +134,7 @@ class UgvEnv:
 
         else: #differential model
             # PWM to rads conversion
-            wm1 = (25 * (m1 - z) / 100)
+            wm1 = (25 * (m1 - 155) / 100)
             wm2 = (25 * (m2 - 155) / 100)
 
             # Calculate linear and angular velocity
