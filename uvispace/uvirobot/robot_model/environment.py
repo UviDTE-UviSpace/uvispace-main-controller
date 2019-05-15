@@ -134,13 +134,13 @@ class UgvEnv:
 
         else: #differential model
             # PWM to rads conversion
-            wm1 = (25 * (m1 - 127) / 128)
-            wm2 = (25 * (m2 - 127) / 128)
+            wm1 = (25 * (m1 - z) / 100)
+            wm2 = (25 * (m2 - 155) / 100)
 
             # Calculate linear and angular velocity
             self.v_linear = (wm2 + wm1) * (self.ro / 2)
             #wm1 - wm2 because m1 is the engine of  the right
-            self.w_ang = (wm1 - wm2) * (self.diameter / (4 * self.ro))
+            self.w_ang = (wm1 - wm2) * (self.diameter / (4 * self.ro))/1.5
 
         # Calculate position and theta
         self.x = self.x + self.v_linear * math.cos(self.theta) * self.time
@@ -367,8 +367,8 @@ class UgvEnv:
             discrete_m1=action//5
             discrete_m2=action%5
 
-            m1 = 127 + discrete_m1 * 128/(self.num_div_action - 1)
-            m2 = 127 + discrete_m2 * 128/(self.num_div_action - 1)
+            m1 = 155 + discrete_m1 * 100/(self.num_div_action - 1)
+            m2 = 155 + discrete_m2 * 100/(self.num_div_action - 1)
 
         else:
             discrete_m1 = action // 5

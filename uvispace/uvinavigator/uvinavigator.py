@@ -4,6 +4,7 @@ import logging
 import configparser
 import zmq
 import numpy as np
+import time
 
 from uvispace.uvinavigator.common import ControllerType
 from uvispace.uvinavigator.controllers.linefollowers.neural_controller.neural_controller import NeuralController
@@ -138,6 +139,7 @@ class UviNavigator():
                 # to be implemented
                 pass
 
+        t1 = time.time()
         while not self._kill_thread.isSet():
             for i in range(self.num_ugvs):
                 # if this ugv is active (can move)
@@ -179,7 +181,10 @@ class UviNavigator():
                         if self.controllers[i].isRunning():
                             # execute controller to get new motor setpoints
                             motors_speed = self.controllers[i].step(poses[i])
-                            print(motors_speed)
+                            t2 = time.time()
+                            fps=1/(t2-t1)
+                            t1 = t2
+                            print("speed={}, fps={}".format(motors_speed, fps))
                             # send the new motor speed setpoints to UGV
                             motor_speed_sockets[i].send_json(motors_speed)
                     except:
