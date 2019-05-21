@@ -99,6 +99,7 @@ class NeuralController(Controller):
             # call the neural agent to get the new values of m1 and m2
 
             agent_state = self.agent.format_state([distance,delta_theta])
+            print(distance*100,delta_theta*180/3.1415)
             action = self.agent.action(agent_state, training=False)
 
             m1, m2= self.env._dediscretize_action(action)

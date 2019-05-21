@@ -83,7 +83,7 @@ class MainWindow(QtWidgets.QMainWindow, reinforcement.Ui_fuzzy_window):
 
         x_limit=4
         y_limit=3
-        period= 1/30
+        period= 1/12
 
         self.yellow_back_x = x_limit
         self.yellow_back_y = y_limit
@@ -117,7 +117,7 @@ class MainWindow(QtWidgets.QMainWindow, reinforcement.Ui_fuzzy_window):
 
             self.tr = Training()
             if self.rbDifferential.isChecked():
-                self.tr.trainclosedcircuitplot(load=False, save_name=self.hdf5_file_name,reward_need=180,differential_car=True)
+                self.tr.trainclosedcircuitplot(load=False, save_name=self.hdf5_file_name,reward_need=65,differential_car=True)
             elif self.rbAckerman.isChecked():
                 self.tr.trainclosedcircuitplot(load=False, save_name=self.hdf5_file_name, reward_need=50,
                                                differential_car=False)

@@ -13,7 +13,7 @@ class Training(QtCore.QThread):
 
         self.SPACE_X = 4
         self.SPACE_Y = 3
-        self.PERIOD= 1/30
+        self.PERIOD= 1/12
         self.NUM_DIV_ACTION = 5
         self.INIT_TO_ZERO = True
         self.EPISODES = 2000
@@ -33,6 +33,7 @@ class Training(QtCore.QThread):
         self.start()
 
     def run(self):
+
         if self.differential_car:
             # Read csv file
             coordinates = np.loadtxt(
@@ -56,7 +57,7 @@ class Training(QtCore.QThread):
                 x_trajectory.append(point[0])
                 y_trajectory.append(point[1])
 
-
+        self.reward_need = (len(x_trajectory) // 50) * 5 + 15
         scores = deque(maxlen=50)
         self.epi_reward_average = []
         # To plot velocity and distance to trayectory
@@ -68,10 +69,10 @@ class Training(QtCore.QThread):
                       learning_rate=0.01, batch_size=128, tau=0.01)
         if self.differential_car:
             env = UgvEnv(x_trajectory, y_trajectory, self.PERIOD,
-                         self.NUM_DIV_ACTION, closed=True, differential_car=True)
+                         self.NUM_DIV_ACTION, closed=False, differential_car=True)
         else:
             env = UgvEnv(x_trajectory, y_trajectory, self.PERIOD,
-                         self.NUM_DIV_ACTION, closed=True, differential_car=False)
+                         self.NUM_DIV_ACTION, closed=False, differential_car=False)
         if self.load:
             agent.load_model(self.load_name)
 
@@ -135,7 +136,7 @@ class Testing(QtCore.QThread):
 
         self.SPACE_X = 4
         self.SPACE_Y = 3
-        self.PERIOD= 1/30
+        self.PERIOD= 1/12
         self.NUM_DIV_ACTION = 5
         self.INIT_TO_ZERO = True
         self.EPISODES = 2000
