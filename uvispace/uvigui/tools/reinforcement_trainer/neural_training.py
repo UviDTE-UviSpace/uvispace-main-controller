@@ -57,7 +57,8 @@ class Training(QtCore.QThread):
                 x_trajectory.append(point[0])
                 y_trajectory.append(point[1])
 
-        self.reward_need = (len(x_trajectory) // 50) * 5 + 15
+        #self.reward_need = (len(x_trajectory) // 50) * 5 + 15
+        #print(self.reward_need)
         scores = deque(maxlen=50)
         self.epi_reward_average = []
         # To plot velocity and distance to trayectory
@@ -70,6 +71,7 @@ class Training(QtCore.QThread):
         if self.differential_car:
             env = UgvEnv(x_trajectory, y_trajectory, self.PERIOD,
                          self.NUM_DIV_ACTION, closed=False, differential_car=True)
+            self.reward_need = (len(x_trajectory) // 50) * 5 + 15
         else:
             env = UgvEnv(x_trajectory, y_trajectory, self.PERIOD,
                          self.NUM_DIV_ACTION, closed=False, differential_car=False)

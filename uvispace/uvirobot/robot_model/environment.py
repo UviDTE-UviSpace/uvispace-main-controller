@@ -376,7 +376,7 @@ class UgvEnv:
             discrete_m2 = action % 5
 
             #the traction engine of the ackerman car starts working with pwm=180
-            m1 = 180 + discrete_m1 * 75 / (self.num_div_action - 1)
+            m1 = 180 + discrete_m1 * 50 / (self.num_div_action - 1)
 
             #it is the servo and goes from 0 to 255
             m2 =discrete_m2 * 255 / (self.num_div_action - 1)

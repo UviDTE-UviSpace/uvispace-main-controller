@@ -26,12 +26,12 @@ x_trajectory = np.append(x_trajectory,
 y_trajectory = np.append(y_trajectory,
                          np.sin(np.linspace(270 * np.pi / 180, 180 * np.pi / 180, 81)) * 0.2 + 0.2)
 
-x_trajectory = np.cos(np.linspace(180 * np.pi / 180, 0.01 * np.pi / 180, 61)) * 0.7 + 1
-y_trajectory = np.sin(np.linspace(180 * np.pi / 180, 0.01 * np.pi / 180, 61)) * 0.7 + 0.5
+x_trajectory = np.cos(np.linspace(180 * np.pi / 180, 0.01 * np.pi / 180, 61)) * 0.5 + 1
+y_trajectory = np.sin(np.linspace(180 * np.pi / 180, 0.01 * np.pi / 180, 61)) * 0.5 + 0.5
 
 l=[x_trajectory,y_trajectory]
 datos = np.asarray(l)
-np.savetxt("trajectory.csv",   # Archivo de salida
+np.savetxt("ackerman_small.csv",   # Archivo de salida
            datos.T,        # Trasponemos los datos
            fmt="%f",       # Usamos números enteros
            delimiter=";")  # Para que sea un CSV de verdad
