@@ -23,7 +23,7 @@ BAND_WIDTH = 0.02
 # Define Reward Zones
 ZONE0_LIMIT = 0.021  # Up to 2.1cm
 ZONE1_LIMIT = 0.056  # Up to 5.6 cm
-ZONE2_LIMIT = 0.071  # Up to 7.1 cm
+ZONE2_LIMIT = 0.09  # Up to 7.1 cm
 
 
 class UgvEnv:
@@ -134,14 +134,14 @@ class UgvEnv:
 
         else:  # differential model
             # PWM to rads conversion
-            wm1 = (25 * (m1 - 127) / 128)
-            wm2 = (25 * (m2 - 127) / 128)
+            wm1 = (25 * (m1 - 145) / 110) +np.random.uniform(-1,1,1)
+            wm2 = (25 * (m2 - 145) / 110) +np.random.uniform(-1,1,1)
 
             # Calculate linear and angular velocity
             self.v_linear = (wm2 + wm1) * (self.ro / 2)
 
-            # wm1 - wm2 because m1 is the right engine
-            self.w_ang = (wm1 - wm2) * (self.diameter / (4 * self.ro))  #Minorar
+            #wm1 - wm2 because m1 is the engine of  the right
+            self.w_ang = (wm1 - wm2) * (self.diameter / (4 * self.ro))/12
 
         # Calculate position and theta
         self.x = self.x + self.v_linear * math.cos(self.theta) * self.time
@@ -163,6 +163,7 @@ class UgvEnv:
         # self.y_noise = self.y + np.random.normal(self.mu, self.sigmaxy, 1)
         # self.theta_noise = self.theta + np.random.normal(self.mu,
         # self.sigmaangle, 1)
+
 
         # Calculate the distance to the closest point in trajectory,
         # depending on distance, delta theta (ugv to trajectory) and distance
@@ -263,10 +264,10 @@ class UgvEnv:
     def _calc_delta_theta(self):
 
         # Difference between the vehicle angle and the trajectory angle
-        next_index = self.index + 1
+        next_index = self.index + 10
 
-        if next_index >= len(self.x_trajectory):
-            next_index = self.index
+        while next_index >= len(self.x_trajectory):
+            next_index = next_index -1
 
         self.trajec_angle = math.atan2((self.y_trajectory[next_index]
                                        - self.y_trajectory[self.index]),
@@ -276,9 +277,10 @@ class UgvEnv:
         if self.trajec_angle < 0:
             self.trajec_angle = math.pi + self.trajec_angle + math.pi
 
-        self.delta_theta = self.trajec_angle - self.theta  # noise
+        self.delta_theta = self.trajec_angle - self.theta
         # if the difference is bigger than 180 is because
         # someone went trhoug a lap
+
         if self.delta_theta > math.pi:
             self.delta_theta = self.delta_theta - 2 * math.pi
 
@@ -365,8 +367,8 @@ class UgvEnv:
             discrete_m1 = action//5
             discrete_m2 = action % 5
 
-            m1 = 127 + discrete_m1 * 128/(self.num_div_action - 1)
-            m2 = 127 + discrete_m2 * 128/(self.num_div_action - 1)
+            m1 = 145 + discrete_m1 * 70/(self.num_div_action - 1)
+            m2 = 145 + discrete_m2 * 70/(self.num_div_action - 1)
 
         else:
             discrete_m1 = action // 5
@@ -374,7 +376,8 @@ class UgvEnv:
 
             # the traction engine of the ackerman car starts
             # working with pwm=180
-            m1 = 180 + discrete_m1 * 75 / (self.num_div_action - 1)
+
+            m1 = 180 + discrete_m1 * 50 / (self.num_div_action - 1)
 
             # it is the servo and goes from 0 to 255
             m2 = discrete_m2 * 255 / (self.num_div_action - 1)

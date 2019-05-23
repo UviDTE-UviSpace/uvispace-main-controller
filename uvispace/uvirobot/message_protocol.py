@@ -112,6 +112,7 @@ class MessageProtocol:
         """
         # Check that the values are correct. Invalid values may crash
         # the Arduino program.
+        print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!SENDINGGGGGGGGGGGGGGGGGG:',setpoint)
         while any(x > 255 or x < 0 for x in setpoint):
             logger.warn('Invalid set points. Please enter 2 values between '
                         '0 and 255 (Decimal values will be rounded)')
@@ -129,6 +130,7 @@ class MessageProtocol:
             logger.error('Unsuccessfull communication3')
             return False
         else:  # no errors
+            print('!!!!!!!!!!!!!!!!SENT!!!!!!!!!!',setpoint)
             if fun_code == self.ACK_MSG:
                 return True
             else:
