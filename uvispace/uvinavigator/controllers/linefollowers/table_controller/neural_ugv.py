@@ -4,8 +4,8 @@ from collections import deque
 import matplotlib.pyplot as plt
 import math
 
-from plot_ugv import PlotUgv
-from environment import UgvEnv
+# from plot_ugv import PlotUgv
+# from environment import UgvEnv
 
 # Size of Uvispace area
 SPACE_X = 4

@@ -29,7 +29,7 @@ ZONE2_LIMIT = 0.071  # Up to 7.1 cm
 class UgvEnv:
 
     def __init__(self, x_traj=[], y_traj=[], period=0, num_div_action=5,
-                 closed=True, differential_car=True):
+                 closed=True, differential_car=True, discrete_input=False):
 
         # Size of the space
         self.max_x = SPACE_X / 2  # [m]
@@ -69,6 +69,8 @@ class UgvEnv:
         # Choose car model
         self.differential_car = differential_car
 
+        self.discrete_input = discrete_input
+
         # parameters to add noise to x, y, angle values
         # self.mu = 0
         # self.sigmaxy = 0.002
@@ -95,8 +97,9 @@ class UgvEnv:
         self._distance_next()
         self._calc_delta_theta()
 
-        # discretize state for the agent to control
-        self._discretize_agent_state()
+        if self.discrete_input:
+            # discretize state for the agent to control
+            self._discretize_agent_state()
 
         # self.agent_state has to be a matrix to be accepted by keras
         self.agent_state = np.array([self.distance, self.delta_theta])
@@ -113,13 +116,11 @@ class UgvEnv:
 
     def step(self, action=[], simulation=False, m1=0, m2=0):
 
-        # m1 = left_motor, m2 = right_motor
-
         # receive  m1 and m2 if using it for the Uvirobot_model simulation
         if not simulation:
             m1, m2 = self._dediscretize_action(action)
 
-        if self.differential_car == False:  # Ackerman model.
+        if not self.differential_car:  # Ackerman model. Cambiado == por Not.
             # m1 = orientation  m2= engine
 
             wm1 = (16.257 * (m1 - 180) / 75)
@@ -138,8 +139,9 @@ class UgvEnv:
 
             # Calculate linear and angular velocity
             self.v_linear = (wm2 + wm1) * (self.ro / 2)
-            # wm1 - wm2 because m1 is the engine of  the right
-            self.w_ang = (wm1 - wm2) * (self.diameter / (4 * self.ro))
+
+            # wm1 - wm2 because m1 is the right engine
+            self.w_ang = (wm1 - wm2) * (self.diameter / (4 * self.ro))  #Minorar
 
         # Calculate position and theta
         self.x = self.x + self.v_linear * math.cos(self.theta) * self.time
@@ -186,7 +188,7 @@ class UgvEnv:
 
         elif self.steps >= self.max_steps:
             done = 1
-            # Reward of -10 if its open circuit, for closed circuit reward=0
+            # Reward of -10 if its open circuit, for closed circuit reward = 0
             # because it wouldnt make sense to punish because it is infinite
             if self.closed:
                 reward = 0
@@ -241,8 +243,8 @@ class UgvEnv:
 
         for w in range(self.index, self.index + 20):
 
-            self.dist_point = math.sqrt((self.x_trajectory[w] - self.x)**2 +
-                                        (self.y_trajectory[w] - self.y)**2)
+            self.dist_point = math.sqrt((self.x_trajectory[w] - self.x)**2
+                                        + (self.y_trajectory[w] - self.y)**2)
 
             if self.dist_point < self.distance:
                 self.distance = self.dist_point
@@ -391,27 +393,27 @@ class UgvEnv:
 
 if __name__ == "__main__":
 
-        env = UgvEnv()
-        action = (4, 1)
-        EPISODES = 1
-        epi_reward = np.zeros([EPISODES])
-        epi_reward_average = np.zeros([EPISODES])
+    env = UgvEnv()
+    action = (4, 1)
+    EPISODES = 1
+    epi_reward = np.zeros([EPISODES])
+    epi_reward_average = np.zeros([EPISODES])
 
-        state, agent_state = env.reset()
+    state, agent_state = env.reset()
 
-        b = PlotUgv(3, 4, env.x_trajectory, env.y_trajectory, 1 / 30)
-        b.reset(state)
+    # b = PlotUgv(3, 4, env.x_trajectory, env.y_trajectory, 1 / 30)
+    # b.reset(state)
 
-        # plot_ugv.reset(state[0], state[1], state[2])
+    # plot_ugv.reset(state[0], state[1], state[2])
 
-        done = False
-        while not done:
-            state, agent_state, reward, done = env.step(action)
-            # plot_ugv.execute(state[0], state[1], state[2])
-            b.execute(state)
+    done = False
+    while not done:
+        state, agent_state, reward, done = env.step(action)
+        # plot_ugv.execute(state[0], state[1], state[2])
+        # b.execute(state)
 
-            print("reward:{} distance:{} gap:{} zone_reward:{} "
-                  "theta:{} done:{} x:{} y:{} index:{}"
-                  .format(reward, env.distance, env.gap, env.zone_reward,
-                          env.theta, done, env.x, env.y, env.index))
-            time.sleep(1)
+        print("reward:{} distance:{} gap:{} zone_reward:{} "
+              "theta:{} done:{} x:{} y:{} index:{}"
+              .format(reward, env.distance, env.gap, env.zone_reward,
+                      env.theta, done, env.x, env.y, env.index))
+        time.sleep(1)
