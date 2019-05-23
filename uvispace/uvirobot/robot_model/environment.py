@@ -216,8 +216,9 @@ class UgvEnv:
             # Number of iterations in a episode
             self.steps += 1
 
-        # Discretize state for the agent to control
-        self._discretize_agent_state()
+        if self.discrete_input:
+            # Discretize state for the agent to control
+            self._discretize_agent_state()
 
         # self.norm_distance=(self.distance+0.071)/(0.071*2)
         # self.norm_delta_theta=(self.delta_theta+np.pi)/(2*np.pi)
