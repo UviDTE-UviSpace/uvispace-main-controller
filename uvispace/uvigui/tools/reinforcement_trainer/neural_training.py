@@ -16,7 +16,7 @@ class Training(QtCore.QThread):
         self.PERIOD= 1/12
         self.NUM_DIV_ACTION = 5
         self.INIT_TO_ZERO = True
-        self.EPISODES = 2000
+        self.EPISODES = 5000
         self.state_size = 2
         self.action_size = 5 * 5
 
@@ -68,10 +68,12 @@ class Training(QtCore.QThread):
         d = deque(maxlen=50)
         agent = Agent(self.state_size, self.action_size, gamma=0.999, epsilon=1, epsilon_min=0.01, epsilon_decay=0.995,
                       learning_rate=0.01, batch_size=128, tau=0.01)
+        self.reward_need = (len(x_trajectory) // 50) * 5 + 15
+        print(self.reward_need)
         if self.differential_car:
             env = UgvEnv(x_trajectory, y_trajectory, self.PERIOD,
                          self.NUM_DIV_ACTION, closed=False, differential_car=True)
-            self.reward_need = (len(x_trajectory) // 50) * 5 + 15
+
         else:
             env = UgvEnv(x_trajectory, y_trajectory, self.PERIOD,
                          self.NUM_DIV_ACTION, closed=False, differential_car=False)
@@ -141,7 +143,7 @@ class Testing(QtCore.QThread):
         self.PERIOD= 1/12
         self.NUM_DIV_ACTION = 5
         self.INIT_TO_ZERO = True
-        self.EPISODES = 2000
+        self.EPISODES = 5000
         self.state_size = 2
         self.action_size = 5 * 5
         self.v = []

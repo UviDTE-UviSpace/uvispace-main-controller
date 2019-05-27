@@ -15,7 +15,7 @@ SPACE_Y = 3
 MAX_STEPS = 500
 
 # Reward weights
-BETA_DIST = 0.1
+BETA_DIST = 1
 BETA_GAP = 0.1
 BETA_ZONE = 0.05
 
@@ -23,7 +23,7 @@ BAND_WIDTH = 0.02
 # Define Reward Zones
 ZONE0_LIMIT = 0.021  # Up to 2.1cm
 ZONE1_LIMIT = 0.056  # Up to 5.6 cm
-ZONE2_LIMIT = 0.09  # Up to 7.1 cm
+ZONE2_LIMIT = 0.20  # Up to 7.1 cm
 
 
 class UgvEnv:
@@ -45,7 +45,7 @@ class UgvEnv:
         if differential_car:
             self.max_steps = 500
         else:
-            self.max_steps = 500
+            self.max_steps = 800
 
         self.constant = -0.1
         self.x_ant = 0.0
@@ -123,11 +123,11 @@ class UgvEnv:
         if not self.differential_car:  # Ackerman model. Cambiado == por Not.
             # m1 = orientation  m2= engine
 
-            wm1 = (16.257 * (m1 - 180) / 75)
+            wm1 = (16.257 * (m1 - 180) / 75) +np.random.uniform(-0.3,0.3,1)
 
             # the negative sign is because it turns to the left with PWM 0-127
             # and for us turning to the left is positive w_ang
-            wm2 = - self.alpha_ack * (m2 - 128) / 127
+            wm2 = - self.alpha_ack * (m2 - 128) / 127 +np.random.uniform(-0.3,0.3,1)
 
             self.v_linear = wm1*self.r_ack*np.cos(wm2)
             self.w_ang = -(wm1*self.r_ack*np.cos(wm2)*np.tan(wm2))/self.l_ack
@@ -194,7 +194,7 @@ class UgvEnv:
             if self.closed:
                 reward = 0
             else:
-                reward = -10
+                reward = -50
 
         # elif math.fabs(self.delta_theta) > math.pi/2:
         #    done = 1
@@ -264,7 +264,7 @@ class UgvEnv:
     def _calc_delta_theta(self):
 
         # Difference between the vehicle angle and the trajectory angle
-        next_index = self.index + 10
+        next_index = self.index + 5
 
         while next_index >= len(self.x_trajectory):
             next_index = next_index -1
@@ -367,8 +367,8 @@ class UgvEnv:
             discrete_m1 = action//5
             discrete_m2 = action % 5
 
-            m1 = 145 + discrete_m1 * 70/(self.num_div_action - 1)
-            m2 = 145 + discrete_m2 * 70/(self.num_div_action - 1)
+            m1 = 145 + discrete_m1 * 90/(self.num_div_action - 1)
+            m2 = 145 + discrete_m2 * 90/(self.num_div_action - 1)
 
         else:
             discrete_m1 = action // 5
@@ -377,7 +377,7 @@ class UgvEnv:
             # the traction engine of the ackerman car starts
             # working with pwm=180
 
-            m1 = 180 + discrete_m1 * 50 / (self.num_div_action - 1)
+            m1 = 180 + discrete_m1 * 70 / (self.num_div_action - 1)
 
             # it is the servo and goes from 0 to 255
             m2 = discrete_m2 * 255 / (self.num_div_action - 1)
