@@ -4,8 +4,8 @@ from collections import deque
 import matplotlib.pyplot as plt
 import math
 
-# from plot_ugv import PlotUgv
-# from environment import UgvEnv
+from plot_ugv import PlotUgv
+from environment import UgvEnv
 
 # Size of Uvispace area
 SPACE_X = 4
@@ -22,7 +22,31 @@ EPISODES = 500
 # Define trajectory
 x_trajectory = np.linspace(0.2, 0.2, 201)
 y_trajectory = np.linspace(0.2, 1.2, 201)
+x_trajectory = np.append(np.linspace(0.2, 0.2, 41), np.cos(np.linspace(180 * np.pi / 180, 90 * np.pi / 180, 61)) * 0.1 + 0.3)
+y_trajectory = np.append(np.linspace(0.2, 0.4, 41), np.sin(np.linspace(180 * np.pi / 180, 90 * np.pi / 180, 61)) * 0.1 + 0.4)
+x_trajectory = np.append(x_trajectory,
+                         np.cos(np.linspace(270 * np.pi / 180, 360 * np.pi / 180, 81)) * 0.2 + 0.3)
+y_trajectory = np.append(y_trajectory,
+                         np.sin(np.linspace(270 * np.pi / 180, 360 * np.pi / 180, 81)) * 0.2 + 0.7)
+x_trajectory = np.append(x_trajectory,
+                         np.cos(np.linspace(180 * np.pi / 180, -90 * np.pi / 180, 141)) * 0.3 + 0.8)
+y_trajectory = np.append(y_trajectory,
+                         np.sin(np.linspace(180 * np.pi / 180, -90 * np.pi / 180, 141)) * 0.3 + 0.7)
+x_trajectory = np.append(x_trajectory,
+                         np.cos(np.linspace(90 * np.pi / 180, 180 * np.pi / 180, 61)) * 0.1 + 0.8)
+y_trajectory = np.append(y_trajectory,
+                         np.sin(np.linspace(90 * np.pi / 180, 180 * np.pi / 180, 61)) * 0.1 + 0.3)
+x_trajectory = np.append(x_trajectory,
+                         np.cos(np.linspace(360 * np.pi / 180, 270 * np.pi / 180, 61)) * 0.3 + 0.4)
+y_trajectory = np.append(y_trajectory,
+                         np.sin(np.linspace(360 * np.pi / 180, 270 * np.pi / 180, 61)) * 0.3 + 0.3)
+x_trajectory = np.append(x_trajectory,
+                         np.cos(np.linspace(270 * np.pi / 180, 180 * np.pi / 180, 81)) * 0.2 + 0.4)
+y_trajectory = np.append(y_trajectory,
+                         np.sin(np.linspace(270 * np.pi / 180, 180 * np.pi / 180, 81)) * 0.2 + 0.2)
 
+# x_trajectory = np.cos(np.linspace(180 * np.pi / 180, 0.01 * np.pi / 180, 61)) * 0.5 + 1
+# y_trajectory = np.sin(np.linspace(180 * np.pi / 180, 0.01 * np.pi / 180, 61)) * 0.5 + 0.5
 
 class Agent:
     def __init__(self, agent_type="SARSA"):
@@ -30,8 +54,8 @@ class Agent:
         self._build_model()
 
         # Define some constants for the learning
-        self.EPSILON_DECAY = 0.95
-        self.EPSILON_MIN = 0.0
+        self.EPSILON_DECAY = 0.995
+        self.EPSILON_MIN = 0.1
         self.ALFA = 0.16  # learning rate
         self.GANMA = 0.95  # discount factor
 
@@ -292,8 +316,8 @@ if __name__ == "__main__":
     plot_ugv = PlotUgv(SPACE_X, SPACE_Y, x_trajectory, y_trajectory, PERIOD)
 
     for i in range(len(agent_types)):
-        env = UgvEnv(x_trajectory, y_trajectory, PERIOD, NUM_DIV_STATE,
-                     NUM_DIV_ACTION)
+        env = UgvEnv(x_trajectory, y_trajectory, PERIOD,
+                     NUM_DIV_ACTION, True, True, True)
 
         agent = Agent(agent_types[i])
         epi_reward[i] = np.zeros([EPISODES])
