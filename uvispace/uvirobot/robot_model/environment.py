@@ -367,8 +367,8 @@ class UgvEnv:
             discrete_m1 = action//5
             discrete_m2 = action % 5
 
-            m1 = 145 + discrete_m1 * 90/(self.num_div_action - 1)
-            m2 = 145 + discrete_m2 * 90/(self.num_div_action - 1)
+            m1 = 145 + discrete_m1 * 80/(self.num_div_action - 1)
+            m2 = 145 + discrete_m2 * 80/(self.num_div_action - 1)
 
         else:
             discrete_m1 = action // 5
