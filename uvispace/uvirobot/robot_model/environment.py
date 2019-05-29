@@ -23,8 +23,8 @@ BAND_WIDTH = 0.02
 # Define Reward Zones
 ZONE0_LIMIT = 0.021  # Up to 2.1cm
 ZONE1_LIMIT = 0.056  # Up to 5.6 cm
-ZONE2_LIMIT = 0.09  # Up to 7.1 cm
-
+# ZONE2_LIMIT = 0.09  # Up to 7.1 cm
+ZONE2_LIMIT = 0.5
 
 class UgvEnv:
 
@@ -55,6 +55,7 @@ class UgvEnv:
         self.zone_1_limit = ZONE1_LIMIT
         self.zone_2_limit = ZONE2_LIMIT
         self.num_div_action = num_div_action
+        self.num_div_state = num_div_action  # Para que quede una matriz cuadrada. REVISAR
 
         # It is to inform if it´s an closed circuit without ending
         self.closed = closed
@@ -99,10 +100,11 @@ class UgvEnv:
 
         if self.discrete_input:
             # discretize state for the agent to control
-            self._discretize_agent_state()
-
-        # self.agent_state has to be a matrix to be accepted by keras
-        self.agent_state = np.array([self.distance, self.delta_theta])
+            self._discretize_agent_state(self.distance, self.delta_theta)
+            self.agent_state = np.array([self.discrete_distance, self.discrete_delta_theta])
+        else:
+            # self.agent_state has to be a matrix to be accepted by keras
+            self.agent_state = np.array([self.distance, self.delta_theta])
 
         # Create state (x,y,theta)
         self.state = [self.x, self.y, self.theta]
@@ -134,8 +136,8 @@ class UgvEnv:
 
         else:  # differential model
             # PWM to rads conversion
-            wm1 = (25 * (m1 - 145) / 110) +np.random.uniform(-1,1,1)
-            wm2 = (25 * (m2 - 145) / 110) +np.random.uniform(-1,1,1)
+            wm1 = (25 * (m1 - 145) / 110) + np.random.uniform(-1,1,1)
+            wm2 = (25 * (m2 - 145) / 110) + np.random.uniform(-1,1,1)
 
             # Calculate linear and angular velocity
             self.v_linear = (wm2 + wm1) * (self.ro / 2)
@@ -163,7 +165,6 @@ class UgvEnv:
         # self.y_noise = self.y + np.random.normal(self.mu, self.sigmaxy, 1)
         # self.theta_noise = self.theta + np.random.normal(self.mu,
         # self.sigmaangle, 1)
-
 
         # Calculate the distance to the closest point in trajectory,
         # depending on distance, delta theta (ugv to trajectory) and distance
@@ -218,19 +219,44 @@ class UgvEnv:
             self.steps += 1
 
         if self.discrete_input:
-            # Discretize state for the agent to control
-            self._discretize_agent_state()
+            # discretize state for the agent to control
+
+            self._discretize_agent_state(self.distance, self.delta_theta)
+            print("distance:{} discrete_distance:{} delta_theta:{} discrete_delta_theta:{} "
+                  .format(self.distance, self.discrete_distance, self.delta_theta, self.discrete_delta_theta))
+            self.agent_state = np.array([self.discrete_distance, self.discrete_delta_theta])
+        else:
+            # self.agent_state has to be a matrix to be accepted by keras
+            self.agent_state = np.array([self.distance, self.delta_theta])
 
         # self.norm_distance=(self.distance+0.071)/(0.071*2)
         # self.norm_delta_theta=(self.delta_theta+np.pi)/(2*np.pi)
-
-        self.agent_state = np.array([self.distance, self.delta_theta])
 
         # Create state (x,y,theta)
         self.state = [self.x, self.y, self.theta]
         # print(self.state,self.sign)
 
         return self.state, self.agent_state, reward, done
+
+    def _discretize_agent_state(self, distance, delta_theta):
+
+        # Calculate discrete_distance
+        left_band = -(((self.num_div_state-1)/2) - 0.5)
+
+        discrete_distance = 0
+        for div in range(self.num_div_state-1):
+            if distance > ((left_band + div) * BAND_WIDTH):
+                discrete_distance = div + 1
+
+        # Calculate discrete delta_theta
+        angle_band_width = math.pi/(self.num_div_state - 2)
+
+        discrete_delta_theta = 0
+        for div in range(self.num_div_state - 1):
+            if delta_theta > (left_band + div) * angle_band_width:
+                discrete_delta_theta = div + 1
+
+        return discrete_distance, discrete_delta_theta
 
     def _distance_next(self):
 
@@ -358,21 +384,28 @@ class UgvEnv:
 
         return self.sign
 
-        return self.sign
-
     def _dediscretize_action(self, action):
 
-        if self.differential_car:
-            # actions fron 0 to 24
-            discrete_m1 = action//5
-            discrete_m2 = action % 5
+        if self.discrete_input:
+
+            discrete_m1 = action[0]
+            discrete_m2 = action[1]
 
             m1 = 145 + discrete_m1 * 70/(self.num_div_action - 1)
             m2 = 145 + discrete_m2 * 70/(self.num_div_action - 1)
 
         else:
-            discrete_m1 = action // 5
-            discrete_m2 = action % 5
+            if self.differential_car:
+                # actions fron 0 to 24
+                discrete_m1 = action//5
+                discrete_m2 = action % 5
+
+                m1 = 145 + discrete_m1 * 70/(self.num_div_action - 1)
+                m2 = 145 + discrete_m2 * 70/(self.num_div_action - 1)
+
+            else:
+                discrete_m1 = action // 5
+                discrete_m2 = action % 5
 
             # the traction engine of the ackerman car starts
             # working with pwm=180
@@ -393,31 +426,3 @@ class UgvEnv:
         # m2 = 127 + discrete_m2 * 128/(self.num_div_action - 1)
 #
         # return m1, m2
-
-
-if __name__ == "__main__":
-
-    env = UgvEnv()
-    action = (4, 1)
-    EPISODES = 1
-    epi_reward = np.zeros([EPISODES])
-    epi_reward_average = np.zeros([EPISODES])
-
-    state, agent_state = env.reset()
-
-    # b = PlotUgv(3, 4, env.x_trajectory, env.y_trajectory, 1 / 30)
-    # b.reset(state)
-
-    # plot_ugv.reset(state[0], state[1], state[2])
-
-    done = False
-    while not done:
-        state, agent_state, reward, done = env.step(action)
-        # plot_ugv.execute(state[0], state[1], state[2])
-        # b.execute(state)
-
-        print("reward:{} distance:{} gap:{} zone_reward:{} "
-              "theta:{} done:{} x:{} y:{} index:{}"
-              .format(reward, env.distance, env.gap, env.zone_reward,
-                      env.theta, done, env.x, env.y, env.index))
-        time.sleep(1)
