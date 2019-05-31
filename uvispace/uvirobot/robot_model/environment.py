@@ -23,8 +23,8 @@ BAND_WIDTH = 0.02
 # Define Reward Zones
 ZONE0_LIMIT = 0.021  # Up to 2.1cm
 ZONE1_LIMIT = 0.056  # Up to 5.6 cm
-# ZONE2_LIMIT = 0.09  # Up to 7.1 cm
-ZONE2_LIMIT = 0.5
+ZONE2_LIMIT = 0.09  # Up to 7.1 cm
+
 
 class UgvEnv:
 
@@ -54,8 +54,13 @@ class UgvEnv:
         self.zone_0_limit = ZONE0_LIMIT
         self.zone_1_limit = ZONE1_LIMIT
         self.zone_2_limit = ZONE2_LIMIT
+        if discrete_input:
+            self.zone_2_limit = 2.5
+        else:
+            self.zone_2_limit = ZONE2_LIMIT
+
         self.num_div_action = num_div_action
-        self.num_div_state = num_div_action  # Para que quede una matriz cuadrada. REVISAR
+        self.num_div_state = num_div_action
 
         # It is to inform if it´s an closed circuit without ending
         self.closed = closed
@@ -100,8 +105,13 @@ class UgvEnv:
 
         if self.discrete_input:
             # discretize state for the agent to control
-            self._discretize_agent_state(self.distance, self.delta_theta)
-            self.agent_state = np.array([self.discrete_distance, self.discrete_delta_theta])
+
+            discrete_distance, discrete_delta_theta \
+                = self._discretize_agent_state(self.distance, self.delta_theta)
+
+            self.agent_state = np.array([discrete_distance,
+                                         discrete_delta_theta])
+
         else:
             # self.agent_state has to be a matrix to be accepted by keras
             self.agent_state = np.array([self.distance, self.delta_theta])
@@ -136,13 +146,17 @@ class UgvEnv:
 
         else:  # differential model
             # PWM to rads conversion
-            wm1 = (25 * (m1 - 145) / 110) + np.random.uniform(-1,1,1)
-            wm2 = (25 * (m2 - 145) / 110) + np.random.uniform(-1,1,1)
+            if self.discrete_input:
+                wm1 = (25 * (m1 - 145) / 110)
+                wm2 = (25 * (m2 - 145) / 110)
+            else:
+                wm1 = (25 * (m1 - 145) / 110) + np.random.uniform(-1, 1, 1)
+                wm2 = (25 * (m2 - 145) / 110) + np.random.uniform(-1, 1, 1)
 
             # Calculate linear and angular velocity
             self.v_linear = (wm2 + wm1) * (self.ro / 2)
 
-            #wm1 - wm2 because m1 is the engine of  the right
+            # wm1 - wm2 because m1 is the engine of  the right
             self.w_ang = (wm1 - wm2) * (self.diameter / (4 * self.ro))/12
 
         # Calculate position and theta
@@ -221,10 +235,11 @@ class UgvEnv:
         if self.discrete_input:
             # discretize state for the agent to control
 
-            self._discretize_agent_state(self.distance, self.delta_theta)
-            print("distance:{} discrete_distance:{} delta_theta:{} discrete_delta_theta:{} "
-                  .format(self.distance, self.discrete_distance, self.delta_theta, self.discrete_delta_theta))
-            self.agent_state = np.array([self.discrete_distance, self.discrete_delta_theta])
+            discrete_distance, discrete_delta_theta \
+                = self._discretize_agent_state(self.distance, self.delta_theta)
+
+            self.agent_state = np.array([discrete_distance,
+                                         discrete_delta_theta])
         else:
             # self.agent_state has to be a matrix to be accepted by keras
             self.agent_state = np.array([self.distance, self.delta_theta])
@@ -273,7 +288,7 @@ class UgvEnv:
         next_index = self.index + 10
 
         while next_index >= len(self.x_trajectory):
-            next_index = next_index -1
+            next_index = next_index - 1
 
         self.trajec_angle = math.atan2((self.y_trajectory[next_index]
                                        - self.y_trajectory[self.index]),
