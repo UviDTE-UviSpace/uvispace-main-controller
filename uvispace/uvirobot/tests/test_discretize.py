@@ -7,14 +7,15 @@ sys.path.append(uvispace_path)
 import numpy as np
 from uvispace.uvirobot.robot_model.environment import UgvEnv
 import matplotlib.pyplot as plt
+import math
 
 if __name__ == "__main__":
 
     env = UgvEnv()
-    distance = np.linspace(-2, 2, 100)
-    delta_theta = np.linspace(0.0, 360.0, 361)
+    distance = np.linspace(-0.05, 0.05, 101)
+    delta_theta = np.linspace(-180.0, 180.0, 361)
 
-    discrete_distance_vector = np.empty(100)
+    discrete_distance_vector = np.empty(101)
     discrete_delta_theta_vector = np.empty(361)
 
     index = 0
@@ -36,7 +37,7 @@ if __name__ == "__main__":
 
     for j in delta_theta:
 
-        discrete_distance, discrete_delta_theta = env._discretize_agent_state(0, j)
+        discrete_distance, discrete_delta_theta = env._discretize_agent_state(0, math.radians(j))
 
         discrete_delta_theta_vector[index] = discrete_delta_theta
 
