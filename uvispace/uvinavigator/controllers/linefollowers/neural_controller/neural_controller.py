@@ -1,10 +1,13 @@
 import configparser
 import logging
+import time
+import numpy as np
 
 from uvispace.uvinavigator.controllers.controller import Controller
 from uvispace.uvinavigator.controllers.linefollowers.neural_controller.DQNagent import  Agent
 from uvispace.uvirobot.robot_model.environment import UgvEnv
 from uvispace.uvirobot.common import UgvType
+from uvispace.uvinavigator.controllers.linefollowers.neural_controller.resources.validation_csv.csv_generator import generator
 
 try:
     # Logging setup.
@@ -53,6 +56,7 @@ class NeuralController(Controller):
 
 
 
+
         # initialize neural Agent (controller) with the first trajectory
         if not self.agent_initialized:
             self.agent_initialized = True
@@ -60,11 +64,21 @@ class NeuralController(Controller):
             self.action_size = 5 * 5
             self.NUM_DIV_ACTION = 5
             self.agent = Agent(self.state_size, self.action_size)
+
             self.agent.load_model('uvispace/uvinavigator/controllers/linefollowers/neural_controller/resources/neural_nets/ANN_ugv{}.h5'.format(self.ugv_id))
         # initialize an instance of UGV environment to help with calculations
         self.env = UgvEnv(self.trajectory['x'], self.trajectory['y'],0,
                      self.NUM_DIV_ACTION, closed=False, differential_car=self.differential)
         self.env.reset(self.trajectory['x'][0],self.trajectory['y'][0])
+
+        # Vectors for validation study
+        self.periods=[]
+        self.x=[]
+        self.y=[]
+        self.distance=[]
+        self.t1 = time.time()
+
+
 
 
 
@@ -79,10 +93,25 @@ class NeuralController(Controller):
         y = pose["y"]
         theta = pose["theta"]
 
+        self.t2=time.time()
+        period=self.t2-self.t1
+        self.t1=self.t2
+
+
         self.env.define_state(x, y, theta)
         distance=self.env._distance_next()
         delta_theta= self.env._calc_delta_theta()
         index=self.env._get_index()
+
+        self.periods.append(period)
+        self.x.append(x)
+        self.y.append(y)
+        self.distance.append(distance)
+
+
+
+
+
 
         #print(pose)
         #print(index)
@@ -94,8 +123,13 @@ class NeuralController(Controller):
             m2 = 128
             self.trajectory = []
             self.running = False
+            gen=generator()
+            gen.generate_csv([self.periods, self.x, self.y, self.distance])
+
+
 
         else:
+
             # call the neural agent to get the new values of m1 and m2
 
             agent_state = self.agent.format_state([distance,delta_theta])

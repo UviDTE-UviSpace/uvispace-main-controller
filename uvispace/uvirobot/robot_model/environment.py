@@ -123,25 +123,25 @@ class UgvEnv:
         if not self.differential_car:  # Ackerman model. Cambiado == por Not.
             # m1 = orientation  m2= engine
 
-            wm1 = (16.257 * (m1 - 180) / 75) +np.random.uniform(-0.3,0.3,1)
+            wm1 = (16.257 * (m1 - 180) / 75) +np.random.uniform(-0.3,0.3,1)[0]
 
             # the negative sign is because it turns to the left with PWM 0-127
             # and for us turning to the left is positive w_ang
-            wm2 = - self.alpha_ack * (m2 - 128) / 127 +np.random.uniform(-0.3,0.3,1)
+            wm2 = - self.alpha_ack * (m2 - 128) / 127 +np.random.uniform(-0.3,0.3,1)[0]
 
             self.v_linear = wm1*self.r_ack*np.cos(wm2)
             self.w_ang = -(wm1*self.r_ack*np.cos(wm2)*np.tan(wm2))/self.l_ack
 
         else:  # differential model
             # PWM to rads conversion
-            wm1 = (25 * (m1 - 145) / 110) +np.random.uniform(-1,1,1)
-            wm2 = (25 * (m2 - 145) / 110) +np.random.uniform(-1,1,1)
+            wm1 = (25 * (m1 - 145) / 110) +np.random.uniform(-1,1,1)[0]
+            wm2 = (25 * (m2 - 145) / 110) +np.random.uniform(-1,1,1)[0]
 
             # Calculate linear and angular velocity
             self.v_linear = (wm2 + wm1) * (self.ro / 2)
 
             #wm1 - wm2 because m1 is the engine of  the right
-            self.w_ang = (wm1 - wm2) * (self.diameter / (4 * self.ro))/12
+            self.w_ang = (wm1 - wm2) * (self.diameter / (4 * self.ro))/14
 
         # Calculate position and theta
         self.x = self.x + self.v_linear * math.cos(self.theta) * self.time
@@ -367,8 +367,8 @@ class UgvEnv:
             discrete_m1 = action//5
             discrete_m2 = action % 5
 
-            m1 = 145 + discrete_m1 * 80/(self.num_div_action - 1)
-            m2 = 145 + discrete_m2 * 80/(self.num_div_action - 1)
+            m1 = 145 + discrete_m1 * 90/(self.num_div_action - 1)
+            m2 = 145 + discrete_m2 * 90/(self.num_div_action - 1)
 
         else:
             discrete_m1 = action // 5
@@ -377,7 +377,7 @@ class UgvEnv:
             # the traction engine of the ackerman car starts
             # working with pwm=180
 
-            m1 = 180 + discrete_m1 * 70 / (self.num_div_action - 1)
+            m1 = 180 + discrete_m1 * 60 / (self.num_div_action - 1)
 
             # it is the servo and goes from 0 to 255
             m2 = discrete_m2 * 255 / (self.num_div_action - 1)
