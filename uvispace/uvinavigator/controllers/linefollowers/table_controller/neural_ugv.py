@@ -4,8 +4,14 @@ from collections import deque
 import matplotlib.pyplot as plt
 import math
 
-from plot_ugv import PlotUgv
-from environment import UgvEnv
+import sys
+from os.path import realpath, dirname
+
+uvispace_path = dirname(dirname(dirname(dirname(dirname(dirname(dirname(realpath(__file__))))))))
+sys.path.append(uvispace_path)
+
+from uvispace.uvirobot.robot_model.environment import UgvEnv
+from uvispace.uvinavigator.controllers.linefollowers.neural_controller.resources.plot_ugv import PlotUgv
 
 # Size of Uvispace area
 SPACE_X = 4
@@ -16,9 +22,9 @@ PERIOD = (1 / 30)
 NUM_DIV_STATE = 5
 NUM_DIV_ACTION = 5
 # Init to zero?
-INIT_TO_ZERO = True
+INIT_TO_ZERO = False
 # Number of episodes
-EPISODES = 500
+EPISODES = 2500
 # Define trajectory
 x_trajectory = np.linspace(0.2, 0.2, 201)
 y_trajectory = np.linspace(0.2, 1.2, 201)
@@ -54,7 +60,7 @@ class Agent:
         self._build_model()
 
         # Define some constants for the learning
-        self.EPSILON_DECAY = 0.995
+        self.EPSILON_DECAY = 0.9995
         self.EPSILON_MIN = 0.1
         self.ALFA = 0.16  # learning rate
         self.GANMA = 0.95  # discount factor
@@ -304,7 +310,7 @@ class Agent:
 
 if __name__ == "__main__":
 
-    # agent_types = ["SARSA","Q-Learning","Expected SARSA"]#, "n-step SARSA"]
+    # agent_types = ["SARSA","Q-Learning","Expected SARSA", "n-step SARSA"]
     agent_types = ["SARSA"]
     # agent_types = ["Q-Learning"]
     # agent_types = ["Expected SARSA"]
