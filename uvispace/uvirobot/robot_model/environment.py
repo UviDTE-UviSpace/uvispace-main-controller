@@ -238,26 +238,6 @@ class UgvEnv:
 
         return self.state, self.agent_state, reward, done
 
-    def _discretize_agent_state(self, distance, delta_theta):
-
-        # Calculate discrete_distance
-        left_band = -(((self.num_div_state-1)/2) - 0.5)
-
-        discrete_distance = 0
-        for div in range(self.num_div_state-1):
-            if distance > ((left_band + div) * BAND_WIDTH):
-                discrete_distance = div + 1
-
-        # Calculate discrete delta_theta
-        angle_band_width = math.pi/(self.num_div_state - 2)
-
-        discrete_delta_theta = 0
-        for div in range(self.num_div_state - 1):
-            if delta_theta > (left_band + div) * angle_band_width:
-                discrete_delta_theta = div + 1
-
-        return discrete_distance, discrete_delta_theta
-
     def _distance_next(self):
 
         self.distance = 10
@@ -383,6 +363,34 @@ class UgvEnv:
             self.sign = -1
 
         return self.sign
+
+    def _discretize_agent_state(self, distance, delta_theta):
+
+        # Calculate discrete_distance
+        upper = (self.num_div_state / 2) + 0.5
+
+        discrete_distance = 0
+
+        for i in np.arange(0, upper, 1.0):
+            if abs(distance) > (i * BAND_WIDTH):
+                if distance > 0:
+                    discrete_distance = int(i)
+                else:
+                    discrete_distance = -int(i)
+
+        # Calculate discrete delta_theta
+        angle_band_width = 2 * math.pi / self.num_div_state
+
+        discrete_delta_theta = 0
+
+        for j in range(self.num_div_state):
+            if abs(delta_theta) > (j + 1) * angle_band_width:
+                if delta_theta > 0:
+                    discrete_delta_theta = (j + 1)
+                else:
+                    discrete_delta_theta = -(j + 1)
+
+        return discrete_distance, discrete_delta_theta
 
     def _dediscretize_action(self, action):
 
