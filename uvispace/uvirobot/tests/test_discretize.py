@@ -14,6 +14,7 @@ if __name__ == "__main__":
     env = UgvEnv()
     distance = np.linspace(-0.05, 0.05, 101)
     delta_theta = np.linspace(-180.0, 180.0, 361)
+    # delta_theta = np.arange(-75, 75, 1)
 
     discrete_distance_vector = np.empty(101)
     discrete_delta_theta_vector = np.empty(361)
