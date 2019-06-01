@@ -387,23 +387,31 @@ class UgvEnv:
         discrete_distance = 0
 
         for i in np.arange(0, upper, 1.0):
-            if abs(distance) > (i * BAND_WIDTH):
-                if distance > 0:
-                    discrete_distance = int(i)
+            if abs(distance) >= (i * BAND_WIDTH):
+                if distance >= 0:
+                    discrete_distance = int(i + (self.num_div_state / 2) - 0.5)
+
                 else:
-                    discrete_distance = -int(i)
+                    discrete_distance = int(-i + (self.num_div_state / 2) - 0.5)
+
+        # discrete_distance += (self.num_div_state / 2) - 0.5
 
         # Calculate discrete delta_theta
         angle_band_width = 2 * math.pi / self.num_div_state
 
+        angle_band_degrees = math.degrees(angle_band_width)
+        degrees = math.degrees(delta_theta)
+
         discrete_delta_theta = 0
 
-        for j in range(self.num_div_state):
-            if abs(delta_theta) > (j + 1) * angle_band_width:
-                if delta_theta > 0:
-                    discrete_delta_theta = (j + 1)
+        for j in range(self.num_div_state):  # Para cada valor de num_div_state
+            if abs(delta_theta) >= (j + 1) * angle_band_width:  # Si o valor absoluto da desviación é > (banda * ancho banda)
+                if delta_theta >= 0:
+                    discrete_delta_theta = j + 1
                 else:
                     discrete_delta_theta = -(j + 1)
+
+        discrete_delta_theta = int(discrete_delta_theta + (self.num_div_state / 2) - 0.5)
 
         return discrete_distance, discrete_delta_theta
 
@@ -430,13 +438,13 @@ class UgvEnv:
                 discrete_m1 = action // 5
                 discrete_m2 = action % 5
 
-            # the traction engine of the ackerman car starts
-            # working with pwm=180
+                # the traction engine of the ackerman car starts
+                # working with pwm=180
 
-            m1 = 180 + discrete_m1 * 50 / (self.num_div_action - 1)
+                m1 = 180 + discrete_m1 * 50 / (self.num_div_action - 1)
 
-            # it is the servo and goes from 0 to 255
-            m2 = discrete_m2 * 255 / (self.num_div_action - 1)
+                # it is the servo and goes from 0 to 255
+                m2 = discrete_m2 * 255 / (self.num_div_action - 1)
 
         return m1, m2
 

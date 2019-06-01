@@ -19,12 +19,12 @@ SPACE_Y = 3
 # Sampling period (time between 2 images)
 PERIOD = (1 / 30)
 # Variable space quantization
-NUM_DIV_STATE = 5
-NUM_DIV_ACTION = 5
+NUM_DIV_STATE = 3
+NUM_DIV_ACTION = 3
 # Init to zero?
-INIT_TO_ZERO = False
+INIT_TO_ZERO = True
 # Number of episodes
-EPISODES = 2500
+EPISODES = 500
 # Define trajectory
 x_trajectory = np.linspace(0.2, 0.2, 201)
 y_trajectory = np.linspace(0.2, 1.2, 201)
@@ -60,7 +60,7 @@ class Agent:
         self._build_model()
 
         # Define some constants for the learning
-        self.EPSILON_DECAY = 0.9995
+        self.EPSILON_DECAY = 0.995
         self.EPSILON_MIN = 0.1
         self.ALFA = 0.16  # learning rate
         self.GANMA = 0.95  # discount factor
@@ -319,7 +319,7 @@ if __name__ == "__main__":
     epi_reward = {}
     epi_reward_average = {}
 
-    plot_ugv = PlotUgv(SPACE_X, SPACE_Y, x_trajectory, y_trajectory, PERIOD)
+    # plot_ugv = PlotUgv(SPACE_X, SPACE_Y, x_trajectory, y_trajectory, PERIOD)
 
     for i in range(len(agent_types)):
         env = UgvEnv(x_trajectory, y_trajectory, PERIOD,
@@ -332,16 +332,16 @@ if __name__ == "__main__":
         for e in range(EPISODES):
             state = agent.init_episode(env)
 
-            if e % 20 == 0:
-                plot_ugv.reset(state)
+            # if e % 20 == 0:
+                #plot_ugv.reset(state)
 
             done = False
             while not done:
                 state, reward, done, epsilon = agent.train_step(env)
                 epi_reward[i][e] += reward
 
-                if e % 20 == 0:
-                    plot_ugv.execute(state)
+                # if e % 20 == 0:
+                    #plot_ugv.execute(state)
 
             epi_reward_average[i][e] = np.mean(epi_reward[i][max(0, e-20):e])
             print("episode: {} epsilon:{} reward:{} averaged reward:{} distance:{} gap:{} theta:{}".format
@@ -350,8 +350,8 @@ if __name__ == "__main__":
     # Plot Rewards
     fig, ax = plt.subplots()
     fig.suptitle('Rewards')
-    print(agent.action)
-    # print(agent.model)
+    # print(agent.action)
+    print(agent.model)
 
     for j in range(len(epi_reward_average)):
         ax.plot(range(len(epi_reward_average[j])), epi_reward_average[j],
