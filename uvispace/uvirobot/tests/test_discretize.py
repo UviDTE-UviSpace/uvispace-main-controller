@@ -12,7 +12,7 @@ import math
 if __name__ == "__main__":
 
     env = UgvEnv()
-    distance = np.linspace(-0.05, 0.05, 101)
+    distance = np.linspace(-0.07, 0.07, 101)
     delta_theta = np.linspace(-180.0, 180.0, 361)
     # delta_theta = np.arange(-75, 75, 1)
 

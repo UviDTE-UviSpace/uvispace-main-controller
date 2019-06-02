@@ -29,7 +29,7 @@ ZONE2_LIMIT = 0.09  # Up to 7.1 cm
 class UgvEnv:
 
     def __init__(self, x_traj=[], y_traj=[], period=0, num_div_action=5,
-                 closed=True, differential_car=True, discrete_input=False):
+                 closed=True, differential_car=True, discrete_input=True):
 
         # Size of the space
         self.max_x = SPACE_X / 2  # [m]
@@ -399,19 +399,20 @@ class UgvEnv:
         # Calculate discrete delta_theta
         angle_band_width = 2 * math.pi / self.num_div_state
 
-        angle_band_degrees = math.degrees(angle_band_width)
-        degrees = math.degrees(delta_theta)
+        # angle_band_degrees = math.degrees(angle_band_width)
+        # degrees = math.degrees(delta_theta)
 
         discrete_delta_theta = 0
 
-        for j in range(self.num_div_state):  # Para cada valor de num_div_state
-            if abs(delta_theta) >= (j + 1) * angle_band_width:  # Si o valor absoluto da desviación é > (banda * ancho banda)
+        for j in range(self.num_div_state):
+            if abs(delta_theta) >= (j + 1) * angle_band_width:
                 if delta_theta >= 0:
                     discrete_delta_theta = j + 1
                 else:
                     discrete_delta_theta = -(j + 1)
 
-        discrete_delta_theta = int(discrete_delta_theta + (self.num_div_state / 2) - 0.5)
+        discrete_delta_theta = int(discrete_delta_theta + (self.num_div_state
+                                                           / 2) - 0.5)
 
         return discrete_distance, discrete_delta_theta
 
