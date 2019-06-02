@@ -75,34 +75,43 @@ class Agent:
                                NUM_DIV_ACTION, NUM_DIV_ACTION])
 
         # Initialize random Q table (except the terminal state that is 0)
-        for distance in range(NUM_DIV_STATE):
-            for delta_theta in range(NUM_DIV_STATE):
+        for discrete_distance in range(NUM_DIV_STATE):
+            for discrete_delta_theta in range(NUM_DIV_STATE):
                 for m1 in range(NUM_DIV_ACTION):
                     for m2 in range(NUM_DIV_ACTION):
                         if INIT_TO_ZERO:
-                            self.model[distance, delta_theta, m1, m2] = 0
+                            self.model[discrete_distance, discrete_delta_theta,
+                                       m1, m2] = 0
                         else:
-                            if delta_theta == 0:
+                            if discrete_delta_theta == 0:
                                 if m1 == m2:
-                                    self.model[distance, delta_theta, m1, m2] \
-                                        = 0.01
+                                    self.model[discrete_distance,
+                                               discrete_delta_theta,
+                                               m1, m2] = 0.01
                                 else:
-                                    self.model[distance, delta_theta, m1, m2] \
-                                        = -0.01
-                            elif delta_theta < 0:
+                                    self.model[discrete_distance,
+                                               discrete_delta_theta,
+                                               m1, m2] = -0.01
+
+                            elif discrete_delta_theta < 0:
                                 if m1 > m2:
-                                    self.model[distance, delta_theta, m1, m2] \
-                                        = 0.01
+                                    self.model[discrete_distance,
+                                               discrete_delta_theta,
+                                               m1, m2] = 0.01
                                 else:
-                                    self.model[distance, delta_theta, m1, m2] \
-                                        = -0.01
+                                    self.model[discrete_distance,
+                                               discrete_delta_theta,
+                                               m1, m2] = -0.01
+
                             else:
                                 if m1 < m2:
-                                    self.model[distance, delta_theta, m1, m2] \
-                                        = 0.01
+                                    self.model[discrete_distance,
+                                               discrete_delta_theta,
+                                               m1, m2] = 0.01
                                 else:
-                                    self.model[distance, delta_theta, m1, m2] \
-                                        = -0.01
+                                    self.model[discrete_distance,
+                                               discrete_delta_theta,
+                                               m1, m2] = -0.01
 
     def _choose_action(self, agent_state):
 
@@ -314,6 +323,7 @@ if __name__ == "__main__":
     agent_types = ["SARSA"]
     # agent_types = ["Q-Learning"]
     # agent_types = ["Expected SARSA"]
+    # agent_types = ["n-step SARSA"]
 
     # Train
     epi_reward = {}
