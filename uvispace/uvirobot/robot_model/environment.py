@@ -55,7 +55,7 @@ class UgvEnv:
         self.zone_1_limit = ZONE1_LIMIT
         self.zone_2_limit = ZONE2_LIMIT
         if discrete_input:
-            self.zone_2_limit = 2.5
+            self.zone_2_limit = 0.09  # self !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         else:
             self.zone_2_limit = ZONE2_LIMIT
 
@@ -157,7 +157,7 @@ class UgvEnv:
             self.v_linear = (wm2 + wm1) * (self.ro / 2)
 
             # wm1 - wm2 because m1 is the engine of  the right
-            self.w_ang = (wm1 - wm2) * (self.diameter / (4 * self.ro))/12
+            self.w_ang = (wm1 - wm2) * (self.diameter / (4 * self.ro))/2 #action !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         # Calculate position and theta
         self.x = self.x + self.v_linear * math.cos(self.theta) * self.time
@@ -217,7 +217,7 @@ class UgvEnv:
 
         elif self.zone_reward == 3:
             done = 1
-            reward = -10
+            reward = -100 #  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         else:
             done = 0
@@ -300,7 +300,7 @@ class UgvEnv:
 
         self.delta_theta = self.trajec_angle - self.theta
         # if the difference is bigger than 180 is because
-        # someone went trhoug a lap
+        # someone went throug a lap
 
         if self.delta_theta > math.pi:
             self.delta_theta = self.delta_theta - 2 * math.pi

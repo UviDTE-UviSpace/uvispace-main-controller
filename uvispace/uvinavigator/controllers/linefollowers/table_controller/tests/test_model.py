@@ -37,11 +37,19 @@ if __name__ == "__main__":
     for discrete_distance in range(NUM_DIV_STATE):
         for discrete_delta_theta in range(NUM_DIV_ACTION):
 
+            # Genero todos los posibles agent_state
             agent_state = [discrete_distance, discrete_delta_theta]
 
+            # Recojo las matrices de los motores de cada posible agent_state
             action_matrix = Agent.predict(agent_state)
 
+            # Escojo siempre la mejor acción posible
             action = Agent._choose_action(agent_state)
+
+            # Calculo la parte del predict, pasando la  matriz de acciones
+            this_thing = action_matrix[action[0], action[1]]
+
+            print(this_thing)
 
             print(action_matrix)
             print("-----------")
