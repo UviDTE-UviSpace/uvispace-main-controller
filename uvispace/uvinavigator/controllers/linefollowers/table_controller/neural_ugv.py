@@ -22,7 +22,7 @@ PERIOD = (1 / 30)
 NUM_DIV_STATE = 3
 NUM_DIV_ACTION = 3
 # Init to zero?
-INIT_TO_ZERO = False
+INIT_TO_ZERO = True
 # Number of episodes
 EPISODES = 500
 # Define trajectory
@@ -83,7 +83,8 @@ class Agent:
                             self.model[discrete_distance, discrete_delta_theta,
                                        m1, m2] = 0
                         else:
-                            if discrete_delta_theta == (NUM_DIV_STATE / 2) - 0.5:
+                            if discrete_delta_theta == (NUM_DIV_STATE/2) - 0.5:
+                                # Is well oriented
                                 if m1 == m2:
                                     self.model[discrete_distance,
                                                discrete_delta_theta,
@@ -93,8 +94,9 @@ class Agent:
                                                discrete_delta_theta,
                                                m1, m2] = -0.01
 
-                            elif discrete_delta_theta < (NUM_DIV_STATE / 2) - 0.5:
-                                if m1 > m2:
+                            elif discrete_delta_theta < (NUM_DIV_STATE/2) - 0.5:
+                                # Is oriented to the left
+                                if m1 < m2:
                                     self.model[discrete_distance,
                                                discrete_delta_theta,
                                                m1, m2] = 0.01
@@ -104,7 +106,8 @@ class Agent:
                                                m1, m2] = -0.01
 
                             else:
-                                if m1 < m2:
+                                # Is oriented to the right
+                                if m1 > m2:
                                     self.model[discrete_distance,
                                                discrete_delta_theta,
                                                m1, m2] = 0.01
@@ -359,7 +362,7 @@ if __name__ == "__main__":
 
     # Plot Rewards
     fig, ax = plt.subplots()
-    fig.suptitle('Rewards')
+    fig.suptitle('Reward average')
     # print(agent.action)
     print(agent.model)
 
@@ -369,5 +372,5 @@ if __name__ == "__main__":
 
     legend = ax.legend(loc='lower right', shadow=True, fontsize='x-large')
     plt.xlabel("Episode")
-    plt.ylabel("Reward")
+    plt.ylabel("Reward average")
     plt.show()
