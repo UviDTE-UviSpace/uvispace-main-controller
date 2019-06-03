@@ -22,7 +22,7 @@ PERIOD = (1 / 30)
 NUM_DIV_STATE = 3
 NUM_DIV_ACTION = 3
 # Init to zero?
-INIT_TO_ZERO = True
+INIT_TO_ZERO = False
 # Number of episodes
 EPISODES = 500
 # Define trajectory
@@ -83,7 +83,7 @@ class Agent:
                             self.model[discrete_distance, discrete_delta_theta,
                                        m1, m2] = 0
                         else:
-                            if discrete_delta_theta == 0:
+                            if discrete_delta_theta == (NUM_DIV_STATE / 2) - 0.5:
                                 if m1 == m2:
                                     self.model[discrete_distance,
                                                discrete_delta_theta,
@@ -93,7 +93,7 @@ class Agent:
                                                discrete_delta_theta,
                                                m1, m2] = -0.01
 
-                            elif discrete_delta_theta < 0:
+                            elif discrete_delta_theta < (NUM_DIV_STATE / 2) - 0.5:
                                 if m1 > m2:
                                     self.model[discrete_distance,
                                                discrete_delta_theta,
