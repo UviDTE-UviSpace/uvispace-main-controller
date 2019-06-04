@@ -24,7 +24,7 @@ NUM_DIV_ACTION = 9
 # Init to zero?
 INIT_TO_ZERO = True
 # Number of episodes
-EPISODES = 5000
+EPISODES = 5500
 # Define trajectory
 x_trajectory = np.linspace(0.2, 0.2, 201)
 y_trajectory = np.linspace(0.2, 1.2, 201)
@@ -62,7 +62,7 @@ class Agent:
         # Define some constants for the learning
         self.EPSILON_DECAY = 0.9995
         self.EPSILON_MIN = 0.1
-        self.ALFA = 0.16  # learning rate
+        self.ALFA = 0.08  # learning rate
         self.GANMA = 0.95  # discount factor
 
         # Reset the training variables
@@ -347,7 +347,7 @@ if __name__ == "__main__":
         for e in range(EPISODES):
             state = agent.init_episode(env)
 
-            if e % 2000 == 0:
+            if e % 1000 == 0:
                 plot_ugv.reset(state)
 
             done = False
@@ -356,7 +356,7 @@ if __name__ == "__main__":
                 epi_reward[i][e] += reward
                 # print(agent.action)
 
-                if e % 2000 == 0:
+                if e % 1000 == 0:
                     plot_ugv.execute(state)
 
             epi_reward_average[i][e] = np.mean(epi_reward[i][max(0, e-20):e])

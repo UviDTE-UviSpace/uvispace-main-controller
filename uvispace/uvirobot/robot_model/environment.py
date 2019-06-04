@@ -12,7 +12,7 @@ import time
 SPACE_X = 4
 SPACE_Y = 3
 # Maximum number of steps allowed
-MAX_STEPS = 500
+MAX_STEPS = 1000  # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 # Reward weights
 BETA_DIST = 0.1
@@ -42,10 +42,13 @@ class UgvEnv:
         self.time = period  # frames per second
 
         # More steps for Ackerman model because circuit is longer
-        if differential_car:
-            self.max_steps = 500
+        if discrete_input:
+            self.max_steps = 1000
         else:
-            self.max_steps = 500
+            if differential_car:
+                self.max_steps = 500
+            else:
+                self.max_steps = 500
 
         self.constant = -0.1
         self.x_ant = 0.0
@@ -55,7 +58,7 @@ class UgvEnv:
         self.zone_1_limit = ZONE1_LIMIT
         self.zone_2_limit = ZONE2_LIMIT
         if discrete_input:
-            self.zone_2_limit = 0.09  # self !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            self.zone_2_limit = 0.08
         else:
             self.zone_2_limit = ZONE2_LIMIT
 
@@ -147,8 +150,8 @@ class UgvEnv:
         else:  # differential model
             # PWM to rads conversion
             if self.discrete_input:
-                wm1 = (25 * (m1 - 145) / 110)
-                wm2 = (25 * (m2 - 145) / 110)
+                wm1 = (25 * (m1 - 145) / 110) + np.random.uniform(-1, 1, 1)  # Quitar
+                wm2 = (25 * (m2 - 145) / 110) + np.random.uniform(-1, 1, 1)
             else:
                 wm1 = (25 * (m1 - 145) / 110) + np.random.uniform(-1, 1, 1)
                 wm2 = (25 * (m2 - 145) / 110) + np.random.uniform(-1, 1, 1)
@@ -157,7 +160,7 @@ class UgvEnv:
             self.v_linear = (wm2 + wm1) * (self.ro / 2)
 
             # wm1 - wm2 because m1 is the engine of  the right
-            self.w_ang = (wm1 - wm2) * (self.diameter / (4 * self.ro))/2 #action !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            self.w_ang = (wm1 - wm2) * (self.diameter / (4 * self.ro))/2 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         # Calculate position and theta
         self.x = self.x + self.v_linear * math.cos(self.theta) * self.time
@@ -423,8 +426,11 @@ class UgvEnv:
             discrete_m1 = action[0]
             discrete_m2 = action[1]
 
-            m1 = 145 + discrete_m1 * 70/(self.num_div_action - 1)
-            m2 = 145 + discrete_m2 * 70/(self.num_div_action - 1)
+            # m1 = 145 + discrete_m1 * 70/(self.num_div_action - 1)
+            # m2 = 145 + discrete_m2 * 70/(self.num_div_action - 1)
+
+            m1 = 127 + discrete_m1 * 128/(self.num_div_action - 1)
+            m2 = 127 + discrete_m2 * 128/(self.num_div_action - 1)
 
         else:
             if self.differential_car:
