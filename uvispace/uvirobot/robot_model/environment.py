@@ -141,7 +141,8 @@ class UgvEnv:
             self.v_linear = (wm2 + wm1) * (self.ro / 2)
 
             #wm1 - wm2 because m1 is the engine of  the right
-            self.w_ang = (wm1 - wm2) * (self.ro / self.D)/3.5
+            # changed old ecuation because it was wrong and divided /3.35 to make it like the wrong ecuation that worked
+            self.w_ang = (wm1 - wm2) * (self.ro / self.D)/3.35
 
         # Calculate position and theta
         self.x = self.x + self.v_linear * math.cos(self.theta) * self.time
