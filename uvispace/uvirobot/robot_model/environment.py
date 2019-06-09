@@ -58,7 +58,7 @@ class UgvEnv:
         self.zone_1_limit = ZONE1_LIMIT
         self.zone_2_limit = ZONE2_LIMIT
         if discrete_input:
-            self.zone_2_limit = 0.06
+            self.zone_2_limit = 0.08
         else:
             self.zone_2_limit = ZONE2_LIMIT
 

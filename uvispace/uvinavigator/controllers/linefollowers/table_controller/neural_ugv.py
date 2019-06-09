@@ -266,8 +266,9 @@ class Agent:
             += self.ALFA * (reward + self.GANMA*(1/4)
                             * np.sum(self.predict(new_agent_state)
                                      [new_action[0], new_action[1]])
-                            - self.predict(self.agent_state)[self.action[0],
-                                                             self.action[1]])
+                            - self.model[self.agent_state[0],
+                                         self.agent_state[1],
+                                         self.action[0], self.action[1]])
 
         self.agent_state = new_agent_state
         self.action = new_action
@@ -334,7 +335,7 @@ if __name__ == "__main__":
     epi_reward = {}
     epi_reward_average = {}
 
-    plot_ugv = PlotUgv(SPACE_X, SPACE_Y, x_trajectory, y_trajectory, PERIOD)
+    # plot_ugv = PlotUgv(SPACE_X, SPACE_Y, x_trajectory, y_trajectory, PERIOD)
 
     for i in range(len(agent_types)):
         env = UgvEnv(x_trajectory, y_trajectory, PERIOD,
@@ -347,8 +348,8 @@ if __name__ == "__main__":
         for e in range(EPISODES):
             state = agent.init_episode(env)
 
-            if e % 1000 == 0:
-                plot_ugv.reset(state)
+            # if e % 1000 == 0:
+                # plot_ugv.reset(state)
 
             done = False
             while not done:
@@ -356,8 +357,8 @@ if __name__ == "__main__":
                 epi_reward[i][e] += reward
                 # print(agent.action)
 
-                if e % 1000 == 0:
-                    plot_ugv.execute(state)
+                # if e % 1000 == 0:
+                    # plot_ugv.execute(state)
 
             epi_reward_average[i][e] = np.mean(epi_reward[i][max(0, e-20):e])
             print("episode: {} epsilon:{} reward:{} averaged reward:{} distance:{} gap:{} theta:{}".format
