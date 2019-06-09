@@ -38,7 +38,7 @@ class UgvEnv:
         self.x_trajectory = x_traj
         self.y_trajectory = y_traj
         self.ro = 0.0325  # [m]
-        self.diameter = 0.133  # [m]
+        self.D = 0.133  # [m]
         self.time = period  # frames per second
 
         # More steps for Ackerman model because circuit is longer
@@ -141,7 +141,7 @@ class UgvEnv:
             self.v_linear = (wm2 + wm1) * (self.ro / 2)
 
             #wm1 - wm2 because m1 is the engine of  the right
-            self.w_ang = (wm1 - wm2) * (self.diameter / (4 * self.ro))/14
+            self.w_ang = (wm1 - wm2) * (self.ro / self.D)/3.5
 
         # Calculate position and theta
         self.x = self.x + self.v_linear * math.cos(self.theta) * self.time
