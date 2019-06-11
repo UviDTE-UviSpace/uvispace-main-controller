@@ -1,19 +1,22 @@
+"""This module trains a tests the controller in a different thread of the GUI
+"""
 import sys
-from uvispace.uvinavigator.controllers.linefollowers.neural_controller.DQNagent import  Agent
+from uvispace.uvinavigator.controllers.linefollowers.neural_controller.DQNagent import Agent
 import numpy as np
 from uvispace.uvirobot.robot_model.environment import UgvEnv
-import math
 from collections import deque
 import threading
 import copy
 from PyQt5 import QtCore
+
+
 class Training(QtCore.QThread):
     def __init__(self):
         QtCore.QThread.__init__(self)
 
         self.SPACE_X = 4
         self.SPACE_Y = 3
-        self.PERIOD= 1/12
+        self.PERIOD = 1/12
         self.NUM_DIV_ACTION = 5
         self.INIT_TO_ZERO = True
         self.EPISODES = 5000
@@ -22,17 +25,20 @@ class Training(QtCore.QThread):
 
         self.lock = threading.Lock()
 
-    def trainclosedcircuitplot(self, load=False, load_name='emodel.h5', save_name='emodel.h5', reward_need=100, differential_car=True):
+    def trainclosedcircuitplot(self, load=False, load_name='emodel.h5', save_name='emodel.h5', differential_car=True):
+        """This function defines the training variables and start the thread to train
+        """
 
         self.load = load
         self.load_name = load_name
         self.save_name = save_name
-        self.reward_need = reward_need
-        self.differential_car=differential_car
+        self.differential_car = differential_car
 
         self.start()
 
     def run(self):
+        """This function runs the training algorithm
+        """
 
         if self.differential_car:
             # Read csv file
@@ -57,8 +63,6 @@ class Training(QtCore.QThread):
                 x_trajectory.append(point[0])
                 y_trajectory.append(point[1])
 
-        #self.reward_need = (len(x_trajectory) // 50) * 5 + 15
-        #print(self.reward_need)
         scores = deque(maxlen=50)
         self.epi_reward_average = []
         # To plot velocity and distance to trayectory
@@ -115,7 +119,7 @@ class Training(QtCore.QThread):
             self.epi_d_average.append(np.mean(d))
             self.lock.release()
 
-            if e%100 == 0:
+            if e % 100 == 0:
                 print("episode: {}, score: {}, e: {:.2}, mean_score: {}, final state :({},{})"
                       .format(e, R, agent.epsilon, mean_score, env.state[0], env.state[1]))
 
@@ -126,6 +130,8 @@ class Training(QtCore.QThread):
                 break
 
     def read_averages(self):
+        """This function locks the variables to be read by the GUI
+         """
         self.lock.acquire()
         return_reward = copy.deepcopy(self.epi_reward_average)
         return_v = copy.deepcopy(self.epi_v_average)
@@ -140,7 +146,7 @@ class Testing(QtCore.QThread):
 
         self.SPACE_X = 4
         self.SPACE_Y = 3
-        self.PERIOD= 1/12
+        self.PERIOD = 1/12
         self.NUM_DIV_ACTION = 5
         self.INIT_TO_ZERO = True
         self.EPISODES = 5000
@@ -149,31 +155,34 @@ class Testing(QtCore.QThread):
         self.v = []
         self.d = []
 
-
         self.lock = threading.Lock()
 
     def testing(self, load_name, x_trajectory, y_trajectory, closed=True, differential_car=True):
+        """This function defines the testing variables
+        """
 
         self.load_name = load_name
-        self.x_trajectory=x_trajectory
-        self.y_trajectory=y_trajectory
-        self.closed=closed
-        self.states=[]
+        self.x_trajectory = x_trajectory
+        self.y_trajectory = y_trajectory
+        self.closed = closed
+        self.states = []
         self.differential_car = differential_car
 
         self.start()
 
     def run(self):
+        """This function runs the testing algorithm
+        """
         if not self.closed:
             reward_need = (len(self.x_trajectory) // 50) * 5 + 15
             print("Reward if it finishes: {}".format(reward_need))
         scores = deque(maxlen=3)
-        agent = Agent(self.state_size, self.action_size, gamma=0.99, epsilon=1, epsilon_min=0.01, epsilon_decay=0.92,
-                      learning_rate=0.005, batch_size=64, tau=0.01)
+        agent = Agent(self.state_size, self.action_size, gamma=0.999, epsilon=1, epsilon_min=0.01, epsilon_decay=0.995,
+                      learning_rate=0.01, batch_size=128, tau=0.01)
 
         if self.differential_car:
             env = UgvEnv(self.x_trajectory, self.y_trajectory, self.PERIOD,
-                         self.NUM_DIV_ACTION, closed=self.closed,differential_car=True)
+                         self.NUM_DIV_ACTION, closed=self.closed, differential_car=True)
 
         else:
             env = UgvEnv(self.x_trajectory, self.y_trajectory, self.PERIOD,
@@ -210,13 +219,11 @@ class Testing(QtCore.QThread):
             "score: {}, laps: {:}, mean_score: {}, final state :({},{}), velocidad media: {}, Distancia media: {}"
             .format(R, env.laps, mean_score, env.state[0], env.state[1], mean_v, mean_d))
 
-
-
-
     def read_values(self):
+        """This function locks the variables to be read by the GUI
+        """
         self.lock.acquire()
         return_v = copy.deepcopy(self.v)
         return_d = copy.deepcopy(self.d)
         self.lock.release()
         return return_v, return_d
-

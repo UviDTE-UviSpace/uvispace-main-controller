@@ -1,11 +1,12 @@
-import numpy as np
+"""This module creates the trainig GUI and its logic
+"""
+import math
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavTbar
 from PyQt5.QtCore import QTimer
 from PyQt5 import QtWidgets
 import matplotlib.patches as ptch
 import matplotlib.pyplot as plt
-
 
 
 import uvispace.uvigui.tools.reinforcement_trainer.interface.reinforcement_trainer as reinforcement
@@ -21,7 +22,7 @@ class MainWindow(QtWidgets.QMainWindow, reinforcement.Ui_fuzzy_window):
         # set the main page for the training process
         self.stackedWidget.setCurrentIndex(0)
 
-        #hide  buttons
+        # hide  buttons
         self.pbStartTesting.hide()
         self.pbRetrain.hide()
 
@@ -40,7 +41,6 @@ class MainWindow(QtWidgets.QMainWindow, reinforcement.Ui_fuzzy_window):
 
         # add title
         self.figure_training.suptitle('Reward    Velocity[m/s]    Distance[m]')
-
 
         # define axes for Reward Velocity and Distance to trajectory
         self.axes1training = self.figure_training.add_axes([0.1, 0.65, 0.8, 0.25])
@@ -66,7 +66,6 @@ class MainWindow(QtWidgets.QMainWindow, reinforcement.Ui_fuzzy_window):
 
         self.axes2testing.set_xlabel('Steps')
 
-
         # Testing simulation plot
         self.state_number = 0
 
@@ -81,9 +80,9 @@ class MainWindow(QtWidgets.QMainWindow, reinforcement.Ui_fuzzy_window):
         self.arrayX = [] * 500  # max_steps
         self.arrayY = [] * 500
 
-        x_limit=4
-        y_limit=3
-        period= 1/12
+        x_limit = 4
+        y_limit = 3
+        period = 1/12
 
         self.yellow_back_x = x_limit
         self.yellow_back_y = y_limit
@@ -95,32 +94,34 @@ class MainWindow(QtWidgets.QMainWindow, reinforcement.Ui_fuzzy_window):
 
         self.period = period
 
-
         # Qt timer set-up for updating the training plots.
         self.timer_training = QTimer()
         self.timer_training.timeout.connect(self.update_training_plot)
-
 
         # Qt timer set-up for updating the simulation plots.
         self.timer_sim = QTimer()
         self.timer_sim.timeout.connect(self.plot_sim)
 
     def start_training(self):
+        """This function checks what type of training has to do and runs the training of the controller
+        """
 
-        self.hdf5_file_name = 'uvispace/uvinavigator/controllers/linefollowers/neural_controller/resources/neural_nets/ANN_ugv{}.h5'.format(self.lineEdit_ugvid.text())
+        self.hdf5_file_name = 'uvispace/uvinavigator/controllers/linefollowers/neural_controller/resources/neural_nets/ANN_ugv{}.h5'.format(
+            self.lineEdit_ugvid.text())
 
         if self.rbNeural.isChecked():
 
-            #Hide start button to avoid multiple training
+            # Hide start button to avoid multiple training
             self.pbStartTraining.hide()
             self.pbStartTesting.hide()
 
             self.tr = Training()
             if self.rbDifferential.isChecked():
-                self.tr.trainclosedcircuitplot(load=False, save_name=self.hdf5_file_name,reward_need=65,differential_car=True)
+                self.tr.trainclosedcircuitplot(
+                    load=False, save_name=self.hdf5_file_name, differential_car=True)
             elif self.rbAckerman.isChecked():
-                self.tr.trainclosedcircuitplot(load=False, save_name=self.hdf5_file_name, reward_need=60,
-                                               differential_car=False)
+                self.tr.trainclosedcircuitplot(
+                    load=False, save_name=self.hdf5_file_name, differential_car=False)
             self.timer_training.start(500)
             self.tr.finished.connect(self.finish_training)
 
@@ -130,28 +131,31 @@ class MainWindow(QtWidgets.QMainWindow, reinforcement.Ui_fuzzy_window):
             print((self.hdf5_file_name))
             pass
 
-
     def start_testing(self):
+        """This function checks what type of testing has to be done and runs the testing of the controller
+        """
 
         self._begin()
-        #redraw to avoid visual bug
+        # redraw to avoid visual bug
         self.canvas_testing.draw()
-        self.reset([0.2,0.2,np.pi/4])
+        self.reset([0.2, 0.2, np.pi/4])
 
         self.next_page()
 
         self.ts = Testing()
         if self.rbDifferential.isChecked():
 
-            #Read csv file
-            coordinates = np.loadtxt(open("uvispace/uvigui/tools/reinforcement_trainer/resources/testing_differential.csv", "r"), delimiter=";")
-            x_trajectory=[]
-            y_trajectory=[]
+            # Read csv file
+            coordinates = np.loadtxt(open(
+                "uvispace/uvigui/tools/reinforcement_trainer/resources/testing_differential.csv", "r"), delimiter=";")
+            x_trajectory = []
+            y_trajectory = []
             for point in coordinates:
                 x_trajectory.append(point[0])
                 y_trajectory.append(point[1])
 
-            self.ts.testing(load_name=self.hdf5_file_name, x_trajectory=x_trajectory, y_trajectory=y_trajectory, closed=False, differential_car=True)
+            self.ts.testing(load_name=self.hdf5_file_name, x_trajectory=x_trajectory,
+                            y_trajectory=y_trajectory, closed=False, differential_car=True)
 
         elif self.rbAckerman.isChecked():
 
@@ -165,23 +169,29 @@ class MainWindow(QtWidgets.QMainWindow, reinforcement.Ui_fuzzy_window):
                 x_trajectory.append(point[0])
                 y_trajectory.append(point[1])
 
-            self.ts.testing(load_name=self.hdf5_file_name, x_trajectory=x_trajectory, y_trajectory=y_trajectory, closed=False, differential_car=False)
-
+            self.ts.testing(load_name=self.hdf5_file_name, x_trajectory=x_trajectory,
+                            y_trajectory=y_trajectory, closed=False, differential_car=False)
 
         self.ts.finished.connect(self.finish_testing)
 
     def finish_training(self):
+        """This function shows the testing bottom after training is done
+        """
         self.pbStartTraining.show()
         self.timer_training.stop()
         self.pbStartTesting.show()
         QtWidgets.QMessageBox.about(self, 'Attention', 'Training finished')
 
     def finish_testing(self):
-        #self.timer_testing.stop()
+        """This function starts the plot of the training results
+        """
+        # self.timer_testing.stop()
         self.update_testing_plot()
         self.timer_sim.start(1000/12)
 
     def update_training_plot(self):
+        """This function update the training plots in real time
+        """
         self.axes1training.cla()
         self.axes2training.cla()
         self.axes3training.cla()
@@ -197,6 +207,8 @@ class MainWindow(QtWidgets.QMainWindow, reinforcement.Ui_fuzzy_window):
         self.canvas_training.draw()
 
     def update_testing_plot(self):
+        """This function updates the training plot
+        """
         self.axes1testing.cla()
         self.axes2testing.cla()
 
@@ -204,30 +216,33 @@ class MainWindow(QtWidgets.QMainWindow, reinforcement.Ui_fuzzy_window):
 
         v, d = self.ts.read_values()
 
-
         self.axes1testing.plot(v)
         self.axes2testing.plot(d)
 
         self.canvas_testing.draw()
 
-
-
     def next_page(self):
+        """This function changes the window to the testing section
+        """
         # goes to the next step in the interface
         index = self.stackedWidget.currentIndex()
         self.stackedWidget.setCurrentIndex(index + 1)
 
     def first_page(self):
+        """This function goes back to the training window
+        """
 
-        #redraw to avoid visual bug
+        # redraw to avoid visual bug
         self.canvas_training.draw()
 
         self.pbRetrain.hide()
         self.stackedWidget.setCurrentIndex(0)
 
     def _begin(self):
+        """This function initialises the testing plot of the circuit
+        """
 
-        #create the trajectories to plot
+        # create the trajectories to plot
 
         if self.rbDifferential.isChecked():
             # Read csv file
@@ -239,9 +254,6 @@ class MainWindow(QtWidgets.QMainWindow, reinforcement.Ui_fuzzy_window):
             for point in coordinates:
                 x_trajectory.append(point[0])
                 y_trajectory.append(point[1])
-
-
-
 
         elif self.rbAckerman.isChecked():
 
@@ -265,7 +277,6 @@ class MainWindow(QtWidgets.QMainWindow, reinforcement.Ui_fuzzy_window):
         self.ax.set_xlim(self.x_origin - 0.5,
                          self.x_origin + self.yellow_back_x + 0.5)
 
-
         self.ax.set_facecolor('xkcd:black')
 
         rect2 = ptch.Rectangle((self.x_origin, self.y_origin),
@@ -278,12 +289,14 @@ class MainWindow(QtWidgets.QMainWindow, reinforcement.Ui_fuzzy_window):
 
         self.ax.add_patch(rect2)
 
-        #Christian wrote false in the plt.show argumant and it
-        #it generated an error
-        #plt.show(False)
+        # Christian wrote false in the plt.show argumant and it
+        # it generated an error
+        # plt.show(False)
         plt.draw()
 
     def execute(self, state):
+        """This function updates the testing plot
+        """
 
         self.x = state[0]
         self.y = state[1]
@@ -296,7 +309,6 @@ class MainWindow(QtWidgets.QMainWindow, reinforcement.Ui_fuzzy_window):
 
         self.point.set_marker((3, 0, math.degrees(self.angle)))
 
-
         self.arrayX.append(self.x)
         self.arrayY.append(self.y)
 
@@ -305,6 +317,8 @@ class MainWindow(QtWidgets.QMainWindow, reinforcement.Ui_fuzzy_window):
         # self.theta = self.theta+20  # Check if is necessary
 
     def reset(self, state):
+        """This function reset the testing plot
+        """
 
         self.x = state[0]
         self.y = state[1]
@@ -316,13 +330,17 @@ class MainWindow(QtWidgets.QMainWindow, reinforcement.Ui_fuzzy_window):
         self.execute(state)
 
     def plot_sim(self):
+        """This function calls the update of the testing plot if it has not finished
+        """
         if self.state_number < len(self.ts.states):
             self.execute(self.ts.states[self.state_number])
-            self.state_number+=1
+            self.state_number += 1
         else:
             self.end_simulation()
 
     def end_simulation(self):
+        """This function finishes the testing plot
+        """
         self.state_number = 0
         self.timer_sim.stop()
         self.pbRetrain.show()
