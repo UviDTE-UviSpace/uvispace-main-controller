@@ -7,7 +7,7 @@ from collections import deque
 import threading
 import copy
 from PyQt5 import QtCore
-class Training(QtCore.QThread):
+class NeuralTraining(QtCore.QThread):
     def __init__(self):
         QtCore.QThread.__init__(self)
 
@@ -132,7 +132,7 @@ class Training(QtCore.QThread):
         return return_reward, return_v, return_d
 
 
-class Testing(QtCore.QThread):
+class NeuralTesting(QtCore.QThread):
     def __init__(self):
         QtCore.QThread.__init__(self)
 

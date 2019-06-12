@@ -10,6 +10,8 @@ import matplotlib.pyplot as plt
 
 import uvispace.uvigui.tools.reinforcement_trainer.interface.reinforcement_trainer as reinforcement
 from uvispace.uvigui.tools.reinforcement_trainer.neural_training import *
+from uvispace.uvigui.tools.reinforcement_trainer.table_training import *
+from uvispace.uvinavigator.common import TableAgentType
 
 
 class MainWindow(QtWidgets.QMainWindow, reinforcement.Ui_fuzzy_window):
@@ -107,15 +109,18 @@ class MainWindow(QtWidgets.QMainWindow, reinforcement.Ui_fuzzy_window):
 
     def start_training(self):
 
-        self.hdf5_file_name = 'uvispace/uvinavigator/controllers/linefollowers/neural_controller/resources/neural_nets/ANN_ugv{}.h5'.format(self.lineEdit_ugvid.text())
+
 
         if self.rbNeural.isChecked():
+
+            self.hdf5_file_name = 'uvispace/uvinavigator/controllers/linefollowers/neural_controller/resources/neural_nets/ANN_ugv{}.h5'.format(
+                self.lineEdit_ugvid.text())
 
             #Hide start button to avoid multiple training
             self.pbStartTraining.hide()
             self.pbStartTesting.hide()
 
-            self.tr = Training()
+            self.tr = NeuralTraining()
             if self.rbDifferential.isChecked():
                 self.tr.trainclosedcircuitplot(load=False, save_name=self.hdf5_file_name,reward_need=65,differential_car=True)
             elif self.rbAckerman.isChecked():
@@ -125,10 +130,22 @@ class MainWindow(QtWidgets.QMainWindow, reinforcement.Ui_fuzzy_window):
             self.tr.finished.connect(self.finish_training)
 
         elif self.rbTables.isChecked():
-            self.pbStartTesting.show()
 
-            print((self.hdf5_file_name))
-            pass
+            self.csv_file_name = 'uvispace/uvinavigator/controllers/linefollowers/table_controller/resources/tables_agents/table_ugv{}.csv'.format(
+                self.lineEdit_ugvid.text())
+
+            # Hide start button to avoid multiple training
+            self.pbStartTraining.hide()
+            self.pbStartTesting.hide()
+
+            self.tr = TableTraining()
+
+            if self.rbDifferential.isChecked():
+                self.tr.trainclosedcircuitplot(save_name=self.csv_file_name, differential_car =True, agent_type = TableAgentType.sarsa)
+            elif self.rbAckerman.isChecked():
+                self.tr.trainclosedcircuitplot(save_name=self.csv_file_name, differential_car = True, agent_type = TableAgentType.sarsa)
+            self.timer_training.start(500)
+            self.tr.finished.connect(self.finish_training)
 
 
     def start_testing(self):
@@ -140,35 +157,39 @@ class MainWindow(QtWidgets.QMainWindow, reinforcement.Ui_fuzzy_window):
 
         self.next_page()
 
-        self.ts = Testing()
-        if self.rbDifferential.isChecked():
+        if self.rbNeural.isChecked():
+            self.ts = NeuralTesting()
+            if self.rbDifferential.isChecked():
 
-            #Read csv file
-            coordinates = np.loadtxt(open("uvispace/uvigui/tools/reinforcement_trainer/resources/testing_differential.csv", "r"), delimiter=";")
-            x_trajectory=[]
-            y_trajectory=[]
-            for point in coordinates:
-                x_trajectory.append(point[0])
-                y_trajectory.append(point[1])
+                #Read csv file
+                coordinates = np.loadtxt(open("uvispace/uvigui/tools/reinforcement_trainer/resources/testing_differential.csv", "r"), delimiter=";")
+                x_trajectory=[]
+                y_trajectory=[]
+                for point in coordinates:
+                    x_trajectory.append(point[0])
+                    y_trajectory.append(point[1])
 
-            self.ts.testing(load_name=self.hdf5_file_name, x_trajectory=x_trajectory, y_trajectory=y_trajectory, closed=False, differential_car=True)
+                self.ts.testing(load_name=self.hdf5_file_name, x_trajectory=x_trajectory, y_trajectory=y_trajectory, closed=False, differential_car=True)
 
-        elif self.rbAckerman.isChecked():
+            elif self.rbAckerman.isChecked():
 
-            # Read csv file
-            coordinates = np.loadtxt(
-                open("uvispace/uvigui/tools/reinforcement_trainer/resources/testing_ackerman.csv", "r"),
-                delimiter=";")
-            x_trajectory = []
-            y_trajectory = []
-            for point in coordinates:
-                x_trajectory.append(point[0])
-                y_trajectory.append(point[1])
+                # Read csv file
+                coordinates = np.loadtxt(
+                    open("uvispace/uvigui/tools/reinforcement_trainer/resources/testing_ackerman.csv", "r"),
+                    delimiter=";")
+                x_trajectory = []
+                y_trajectory = []
+                for point in coordinates:
+                    x_trajectory.append(point[0])
+                    y_trajectory.append(point[1])
 
-            self.ts.testing(load_name=self.hdf5_file_name, x_trajectory=x_trajectory, y_trajectory=y_trajectory, closed=False, differential_car=False)
+                self.ts.testing(load_name=self.hdf5_file_name, x_trajectory=x_trajectory, y_trajectory=y_trajectory, closed=False, differential_car=False)
 
 
-        self.ts.finished.connect(self.finish_testing)
+            self.ts.finished.connect(self.finish_testing)
+
+        elif self.rbTables.isChecked():
+            pass
 
     def finish_training(self):
         self.pbStartTraining.show()
