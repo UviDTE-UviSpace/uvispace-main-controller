@@ -12,7 +12,7 @@ import time
 SPACE_X = 4
 SPACE_Y = 3
 # Maximum number of steps allowed
-MAX_STEPS = 1000  # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+MAX_STEPS = 1000  # !!!!
 
 # Reward weights
 BETA_DIST = 0.1
@@ -150,7 +150,7 @@ class UgvEnv:
         else:  # differential model
             # PWM to rads conversion
             if self.discrete_input:
-                wm1 = (25 * (m1 - 145) / 110) + np.random.uniform(-1, 1, 1)  # Quitar
+                wm1 = (25 * (m1 - 145) / 110) + np.random.uniform(-1, 1, 1)
                 wm2 = (25 * (m2 - 145) / 110) + np.random.uniform(-1, 1, 1)
             else:
                 wm1 = (25 * (m1 - 145) / 110) + np.random.uniform(-1, 1, 1)
@@ -160,7 +160,7 @@ class UgvEnv:
             self.v_linear = (wm2 + wm1) * (self.ro / 2)
 
             # wm1 - wm2 because m1 is the engine of  the right
-            self.w_ang = (wm1 - wm2) * (self.diameter / (4 * self.ro))/2 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            self.w_ang = (wm1 - wm2) * (self.diameter / (4 * self.ro))/2  # !!!!
 
         # Calculate position and theta
         self.x = self.x + self.v_linear * math.cos(self.theta) * self.time
@@ -220,7 +220,10 @@ class UgvEnv:
 
         elif self.zone_reward == 3:
             done = 1
-            reward = -100 #  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            if self.discrete_input:
+                reward = -100
+            else:
+                reward = -10
 
         else:
             done = 0
