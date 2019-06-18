@@ -133,7 +133,7 @@ class UviNavigator():
             if self.controller_types[i] == ControllerType.neural_line_follower:
                 self.controllers.append(NeuralController(self.ugv_ids[i]))
             elif self.controller_types[i] == ControllerType.tables_line_follower:
-                # to be implemented
+                #  self.controllers.append(TableController(self.ugv_ids[i]))
                 pass
             elif self.controller_types[i] == ControllerType.fuzzy_point_to_point:
                 # to be implemented
