@@ -39,8 +39,8 @@ class UgvEnv:
         self.state = []
         self.x_trajectory = x_traj
         self.y_trajectory = y_traj
-        self.ro = 0.0325  # [m]
-        self.D = 0.133  # [m]
+        self.r= 0.0325  # [m] wheel´s radius
+        self.rho = 0.133  # [m] distance between wheel
         self.time = period  # frames per second
 
         # More steps for Ackerman model because circuit is longer
@@ -146,11 +146,11 @@ class UgvEnv:
             wm2 = (25 * (m2 - 145) / 110) + np.random.uniform(-1, 1, 1)[0]
 
             # Calculate linear and angular velocity
-            self.v_linear = (wm2 + wm1) * (self.ro / 2)
+            self.v_linear = (wm2 + wm1) * (self.r / 2)
 
             # wm1 - wm2 because m1 is the engine of  the right
             # changed old ecuation because it was wrong and divided /3.35 to make it like the wrong ecuation that worked
-            self.w_ang = (wm1 - wm2) * (self.ro / self.D)/3.35
+            self.w_ang = (wm1 - wm2) * (self.r / self.rho)/3.35
 
         # Calculate position and theta
         self.x = self.x + self.v_linear * math.cos(self.theta) * self.time

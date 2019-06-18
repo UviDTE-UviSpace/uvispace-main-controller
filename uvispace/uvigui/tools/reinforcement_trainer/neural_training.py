@@ -174,7 +174,7 @@ class Testing(QtCore.QThread):
         """This function runs the testing algorithm
         """
         if not self.closed:
-            reward_need = (len(self.x_trajectory) // 50) * 5 + 15
+            reward_need = (len(self.x_trajectory) // 50) * 5 + 10
             print("Reward if it finishes: {}".format(reward_need))
         scores = deque(maxlen=3)
         agent = Agent(self.state_size, self.action_size, gamma=0.999, epsilon=1, epsilon_min=0.01, epsilon_decay=0.995,
