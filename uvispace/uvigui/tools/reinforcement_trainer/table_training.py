@@ -7,6 +7,7 @@ from collections import deque
 import threading
 import copy
 from PyQt5 import QtCore
+
 class TableTraining(QtCore.QThread):
     def __init__(self):
         QtCore.QThread.__init__(self)

@@ -60,3 +60,6 @@ venv/
 
 #h5 files
 *.h5
+
+#csv files
+*.csv

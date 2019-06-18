@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """This module trains a table Agent using different Reinforcement Learning
-techniques.
-
+techniques. It is also used during by the line follower controller to know
+the state variables
 """
 import numpy as np
 import math
@@ -15,7 +15,7 @@ SPACE_Y = 3
 MAX_STEPS = 1000  # !!!!
 
 # Reward weights
-BETA_DIST = 0.1
+BETA_DIST = 1
 BETA_GAP = 0.1
 BETA_ZONE = 0.05
 
@@ -23,14 +23,13 @@ BAND_WIDTH = 0.02
 # Define Reward Zones
 ZONE0_LIMIT = 0.021  # Up to 2.1cm
 ZONE1_LIMIT = 0.056  # Up to 5.6 cm
-ZONE2_LIMIT = 0.09  # Up to 7.1 cm
+ZONE2_LIMIT = 0.20  # Up to 7.1 cm
 
 
 class UgvEnv:
 
     def __init__(self, x_traj=[], y_traj=[], period=0, num_div_action=5,
-                 closed=True, differential_car=True, discrete_input=True):
-
+                 closed=True, differential_car=True, discrete_input=False):
         """This function initialises all the needed variables
         """
 
@@ -40,18 +39,15 @@ class UgvEnv:
         self.state = []
         self.x_trajectory = x_traj
         self.y_trajectory = y_traj
-        self.ro = 0.0325  # [m]
-        self.diameter = 0.133  # [m]
+        self.r= 0.0325  # [m] wheel´s radius
+        self.rho = 0.133  # [m] distance between wheel
         self.time = period  # frames per second
 
         # More steps for Ackerman model because circuit is longer
         if discrete_input:
             self.max_steps = 1000
         else:
-            if differential_car:
-                self.max_steps = 500
-            else:
-                self.max_steps = 500
+            self.max_steps = 800
 
         self.constant = -0.1
         self.x_ant = 0.0
@@ -141,7 +137,6 @@ class UgvEnv:
         self.theta = theta
 
     def step(self, action=[], simulation=False, m1=0, m2=0):
-
         """This function is used during training and simulation, it simulates
         every step, calculating the kinematics of the UGVs and the rewards
         received because of the action taken"""
@@ -153,29 +148,26 @@ class UgvEnv:
         if not self.differential_car:  # Ackerman model. Cambiado == por Not.
             # m1 = orientation  m2= engine
 
-            wm1 = (16.257 * (m1 - 180) / 75)
+            wm1 = (16.257 * (m1 - 180) / 75) + np.random.uniform(-0.3, 0.3, 1)[0]
 
             # the negative sign is because it turns to the left with PWM 0-127
             # and for us turning to the left is positive w_ang
-            wm2 = - self.alpha_ack * (m2 - 128) / 127
+            wm2 = - self.alpha_ack * (m2 - 128) / 127 + np.random.uniform(-0.3, 0.3, 1)[0]
 
             self.v_linear = wm1*self.r_ack*np.cos(wm2)
             self.w_ang = -(wm1*self.r_ack*np.cos(wm2)*np.tan(wm2))/self.l_ack
 
         else:  # differential model
             # PWM to rads conversion
-            if self.discrete_input:
-                wm1 = (25 * (m1 - 145) / 110) + np.random.uniform(-1, 1, 1)
-                wm2 = (25 * (m2 - 145) / 110) + np.random.uniform(-1, 1, 1)
-            else:
-                wm1 = (25 * (m1 - 145) / 110) + np.random.uniform(-1, 1, 1)
-                wm2 = (25 * (m2 - 145) / 110) + np.random.uniform(-1, 1, 1)
+            wm1 = (25 * (m1 - 145) / 110) + np.random.uniform(-1, 1, 1)[0]
+            wm2 = (25 * (m2 - 145) / 110) + np.random.uniform(-1, 1, 1)[0]
 
             # Calculate linear and angular velocity
-            self.v_linear = (wm2 + wm1) * (self.ro / 2)
+            self.v_linear = (wm2 + wm1) * (self.r / 2)
 
             # wm1 - wm2 because m1 is the engine of  the right
-            self.w_ang = (wm1 - wm2) * (self.diameter / (4 * self.ro))/2  # !!!!
+            # changed old ecuation because it was wrong and divided /3.35 to make it like the wrong ecuation that worked
+            self.w_ang = (wm1 - wm2) * (self.r / self.rho)/3.35
 
         # Calculate position and theta
         self.x = self.x + self.v_linear * math.cos(self.theta) * self.time
@@ -227,7 +219,7 @@ class UgvEnv:
             if self.closed:
                 reward = 0
             else:
-                reward = -10
+                reward = -50
 
         # elif math.fabs(self.delta_theta) > math.pi/2:
         #    done = 1
@@ -244,7 +236,7 @@ class UgvEnv:
             done = 0
             # I removed Christians rewards
             reward = -1 * BETA_DIST * math.fabs(self.distance) + \
-                     BETA_GAP * self.gap
+                BETA_GAP * self.gap
 
             if (self.index//50) > self.farthest:
                 self.farthest = self.index//50
@@ -275,7 +267,6 @@ class UgvEnv:
         return self.state, self.agent_state, reward, done
 
     def _distance_next(self):
-
         """This function calculates the distance of the UGV to the trajectory,
         is used also with the real UGVs"""
 
@@ -307,18 +298,17 @@ class UgvEnv:
         return self.distance
 
     def _calc_delta_theta(self):
-
         """This function calculates the angle between the UGV and the line of
         the point of the trayectory where it is and 5 poing ahead"""
 
         # Difference between the vehicle angle and the trajectory angle
-        next_index = self.index + 10
+        next_index = self.index + 5
 
         while next_index >= len(self.x_trajectory):
             next_index = next_index - 1
 
         self.trajec_angle = math.atan2((self.y_trajectory[next_index]
-                                       - self.y_trajectory[self.index]),
+                                        - self.y_trajectory[self.index]),
                                        (self.x_trajectory[next_index]
                                         - self.x_trajectory[self.index]))
         # to set trajec_angle between [0,2pi]
@@ -347,7 +337,6 @@ class UgvEnv:
         # to avoid having differences bigger than 2pi
 
     def _calc_zone(self):
-
         """This function is used to know in which zone is the UGV"""
 
         if np.abs(self.distance) < self.zone_0_limit:
@@ -369,7 +358,6 @@ class UgvEnv:
         return
 
     def _distance_covered(self):
-
         """This function is used to know how far reached the UGV in the last
         step"""
 
@@ -383,7 +371,6 @@ class UgvEnv:
         return self.gap
 
     def _calc_side(self):
-
         """This function is used to know in which side of the trajectory is the
         UGV, giving a positive or negative sign to the distance calculated"""
 
@@ -404,7 +391,7 @@ class UgvEnv:
         ugv_vector = (x_diff, y_diff)
 
         vector_z = ugv_vector[0] * trajectory_vector[1] \
-                   - ugv_vector[1] * trajectory_vector[0]
+            - ugv_vector[1] * trajectory_vector[0]
 
         if vector_z >= 0:
 
@@ -419,7 +406,6 @@ class UgvEnv:
         return self.sign
 
     def _discretize_agent_state(self, distance, delta_theta):
-
         """This function is used to discretize the distance and the delta_theta
         to do a discrete agent_state for the tabular agent"""
 
@@ -455,7 +441,6 @@ class UgvEnv:
 
         discrete_delta_theta = int(discrete_delta_theta + (self.num_div_state
                                                            / 2) - 0.5)
-
         return discrete_distance, discrete_delta_theta
 
     def _dediscretize_action(self, action):
@@ -480,8 +465,8 @@ class UgvEnv:
                 discrete_m1 = action//5
                 discrete_m2 = action % 5
 
-                m1 = 145 + discrete_m1 * 70/(self.num_div_action - 1)
-                m2 = 145 + discrete_m2 * 70/(self.num_div_action - 1)
+                m1 = 145 + discrete_m1 * 90/(self.num_div_action - 1)
+                m2 = 145 + discrete_m2 * 90/(self.num_div_action - 1)
 
             else:
                 discrete_m1 = action // 5
@@ -490,7 +475,7 @@ class UgvEnv:
                 # the traction engine of the ackerman car starts
                 # working with pwm=180
 
-                m1 = 180 + discrete_m1 * 50 / (self.num_div_action - 1)
+                m1 = 180 + discrete_m1 * 60 / (self.num_div_action - 1)
 
                 # it is the servo and goes from 0 to 255
                 m2 = discrete_m2 * 255 / (self.num_div_action - 1)
