@@ -31,6 +31,9 @@ class UgvEnv:
     def __init__(self, x_traj=[], y_traj=[], period=0, num_div_action=5,
                  closed=True, differential_car=True, discrete_input=True):
 
+        """This function initialises all the needed variables
+        """
+
         # Size of the space
         self.max_x = SPACE_X / 2  # [m]
         self.max_y = SPACE_Y / 2  # [m]
@@ -87,6 +90,10 @@ class UgvEnv:
 
     def reset(self, x=0.2, y=0.2):
 
+        """This function places the virtual UGV in the initial position after
+        every training episode
+        """
+
         # Reset the environment (start a new episode)
         self.y = y
         self.x = x
@@ -125,11 +132,19 @@ class UgvEnv:
         return self.state, self.agent_state
 
     def define_state(self, x, y, theta):
+
+        """This function is used working with the real UGVs to know where they
+        are."""
+
         self.x = x
         self.y = y
         self.theta = theta
 
     def step(self, action=[], simulation=False, m1=0, m2=0):
+
+        """This function is used during training and simulation, it simulates
+        every step, calculating the kinematics of the UGVs and the rewards
+        received because of the action taken"""
 
         # receive  m1 and m2 if using it for the Uvirobot_model simulation
         if not simulation:
@@ -261,6 +276,9 @@ class UgvEnv:
 
     def _distance_next(self):
 
+        """This function calculates the distance of the UGV to the trajectory,
+        is used also with the real UGVs"""
+
         self.distance = 10
 
         # Here a set index to 0 if the car is finishing a lap
@@ -290,6 +308,9 @@ class UgvEnv:
 
     def _calc_delta_theta(self):
 
+        """This function calculates the angle between the UGV and the line of
+        the point of the trayectory where it is and 5 poing ahead"""
+
         # Difference between the vehicle angle and the trajectory angle
         next_index = self.index + 10
 
@@ -317,11 +338,17 @@ class UgvEnv:
         return self.delta_theta
 
     def _get_index(self):
+
+        """This function is used to know in which point of the trajectory
+        is the UGV"""
+
         return self.index
 
         # to avoid having differences bigger than 2pi
 
     def _calc_zone(self):
+
+        """This function is used to know in which zone is the UGV"""
 
         if np.abs(self.distance) < self.zone_0_limit:
 
@@ -343,6 +370,9 @@ class UgvEnv:
 
     def _distance_covered(self):
 
+        """This function is used to know how far reached the UGV in the last
+        step"""
+
         # Calculation of distance traveled compared to the previous point
         self.gap = math.sqrt((self.x - self.x_ant)**2
                              + (self.y - self.y_ant)**2)
@@ -353,6 +383,9 @@ class UgvEnv:
         return self.gap
 
     def _calc_side(self):
+
+        """This function is used to know in which side of the trajectory is the
+        UGV, giving a positive or negative sign to the distance calculated"""
 
         # Calculation of the side of the car with respect to the trajectory
         next_index = self.index + 1
@@ -386,6 +419,9 @@ class UgvEnv:
         return self.sign
 
     def _discretize_agent_state(self, distance, delta_theta):
+
+        """This function is used to discretize the distance and the delta_theta
+        to do a discrete agent_state for the tabular agent"""
 
         # Calculate discrete_distance
         upper = (self.num_div_state / 2) + 0.5
@@ -424,6 +460,9 @@ class UgvEnv:
 
     def _dediscretize_action(self, action):
 
+        """This function transforms the index of the action taken into the
+        PWM values"""
+
         if self.discrete_input:
 
             discrete_m1 = action[0]
@@ -457,13 +496,3 @@ class UgvEnv:
                 m2 = discrete_m2 * 255 / (self.num_div_action - 1)
 
         return m1, m2
-
-        # Christian´s function
-
-        # discrete_m1 = action[0]
-        # discrete_m2 = action[1]
-#
-        # m1 = 127 + discrete_m1 * 128/(self.num_div_action - 1)
-        # m2 = 127 + discrete_m2 * 128/(self.num_div_action - 1)
-#
-        # return m1, m2
