@@ -162,12 +162,17 @@ class UgvEnv:
             wm1 = (25 * (m1 - 145) / 110) + np.random.uniform(-1, 1, 1)[0]
             wm2 = (25 * (m2 - 145) / 110) + np.random.uniform(-1, 1, 1)[0]
 
+
             # Calculate linear and angular velocity
             self.v_linear = (wm2 + wm1) * (self.r / 2)
 
             # wm1 - wm2 because m1 is the engine of  the right
             # changed old ecuation because it was wrong and divided /3.35 to make it like the wrong ecuation that worked
-            self.w_ang = (wm1 - wm2) * (self.r / self.rho)/3.35
+
+            if not self.discrete_input:
+                self.w_ang = (wm1 - wm2) * (self.r / self.rho)/3.35
+            else:
+                self.w_ang = (wm1 - wm2) * (2*self.r / self.rho)
 
         # Calculate position and theta
         self.x = self.x + self.v_linear * math.cos(self.theta) * self.time
@@ -456,8 +461,8 @@ class UgvEnv:
             # m1 = 145 + discrete_m1 * 70/(self.num_div_action - 1)
             # m2 = 145 + discrete_m2 * 70/(self.num_div_action - 1)
 
-            m1 = 127 + discrete_m1 * 128/(self.num_div_action - 1)
-            m2 = 127 + discrete_m2 * 128/(self.num_div_action - 1)
+            m1 = 145 + discrete_m1 * 90/(self.num_div_action - 1)
+            m2 = 145 + discrete_m2 * 90/(self.num_div_action - 1)
 
         else:
             if self.differential_car:
