@@ -14,14 +14,20 @@ class TableTraining(QtCore.QThread):
 
         self.SPACE_X = 4
         self.SPACE_Y = 3
-        self.PERIOD= 1 / 30
+        self.PERIOD = 1 / 30
         self.NUM_DIV_ACTION = 9
         self.INIT_TO_ZERO = True
         self.EPISODES = 5500
 
         self.lock = threading.Lock()
 
-    def trainclosedcircuitplot(self, save_name='table.csv', differential_car=True, agent_type = TableAgentType.sarsa):
+    def trainclosedcircuitplot(self, save_name='table.csv',
+                               differential_car=True,
+                               agent_type=TableAgentType.sarsa):
+
+        """ This function defines the training variables and start the thread
+        to train
+        """
 
         self.save_name = save_name
         self.differential_car=differential_car
@@ -30,6 +36,9 @@ class TableTraining(QtCore.QThread):
         self.start()
 
     def run(self):
+
+        """ This function runs the training algorithm
+        """
 
         if self.differential_car:
             # Read csv file
@@ -103,9 +112,14 @@ class TableTraining(QtCore.QThread):
             self.lock.release()
 
 
-            print(
-                "episode: {} epsilon:{} reward:{} averaged reward:{} distance:{} gap:{} theta:{}".format
+            print("episode: {} epsilon:{} reward:{} averaged reward:{} distance:{} gap:{} theta:{}".format
                 (e, epsilon, R, mean_score, env.distance, env.gap, env.state[2]))
+
+            # if mean_score > self.reward_need:
+              #  print("episode: {}, score: {}, e: {:.2}, mean_score: {}, final state :({},{})"
+              #        .format(e, R, agent.epsilon, mean_score, env.state[0], env.state[1]))
+              #  agent.save_model(self.save_name)
+              #  break
 
     def read_averages(self):
         self.lock.acquire()
