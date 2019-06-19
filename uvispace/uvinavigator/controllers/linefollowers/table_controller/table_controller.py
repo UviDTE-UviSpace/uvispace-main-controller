@@ -59,12 +59,12 @@ class TableController(Controller):
         self.num_points = len(self.trajectory['y'])
 
         # initialize table Agent (controller) with the first trajectory
-        if not self.agent_initialized:   #  Que necesito pa iniciar o agente?????????????????????????????????????????????????
+        if not self.agent_initialized:   #  Que necesito pa iniciar o agente?
             self.agent_initialized = True
             self.state_size = 2
             self.action_size = 5 * 5
-            self.NUM_DIV_ACTION = 5
-            self.agent = Agent(self.state_size, self.action_size)
+            self.NUM_DIV_ACTION = 9
+            self.agent = Agent(self.state_size, self.action_size)  # REVISAR
 
             self.agent.load_model(
                 'uvispace/uvinavigator/controllers/linefollowers/neural_controller/resources/neural_nets/ANN_ugv{}.h5'.format(self.ugv_id))
@@ -122,7 +122,7 @@ class TableController(Controller):
 
         else:
 
-            # call the neural agent to get the new values of m1 and m2
+            # call the table agent to get the new values of m1 and m2
 
             agent_state = self.agent.format_state([distance, delta_theta])
             print(distance*100, delta_theta*180/3.1415)

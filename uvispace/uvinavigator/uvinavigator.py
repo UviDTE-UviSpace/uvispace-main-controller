@@ -8,6 +8,7 @@ import time
 
 from uvispace.uvinavigator.common import ControllerType
 from uvispace.uvinavigator.controllers.linefollowers.neural_controller.neural_controller import NeuralController
+from uvispace.uvinavigator.controllers.linefollowers.table_controller.table_controller import TableController
 
 try:
     # Logging setup.
@@ -132,9 +133,10 @@ class UviNavigator():
         for i in range(self.num_ugvs):
             if self.controller_types[i] == ControllerType.neural_line_follower:
                 self.controllers.append(NeuralController(self.ugv_ids[i]))
+
             elif self.controller_types[i] == ControllerType.tables_line_follower:
-                #  self.controllers.append(TableController(self.ugv_ids[i])) !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                pass
+                self.controllers.append(TableController(self.ugv_ids[i]))
+
             elif self.controller_types[i] == ControllerType.fuzzy_point_to_point:
                 # to be implemented
                 pass

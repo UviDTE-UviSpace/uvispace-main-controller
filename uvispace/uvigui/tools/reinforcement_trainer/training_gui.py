@@ -146,7 +146,8 @@ class MainWindow(QtWidgets.QMainWindow, reinforcement.Ui_fuzzy_window):
             self.tr.finished.connect(self.finish_training)
 
     def start_testing(self):
-        """This function checks what type of testing has to be done and runs the testing of the controller
+        """This function checks what type of testing has to be done and runs
+        the testing of the controller
         """
 
         self._begin()
@@ -188,7 +189,45 @@ class MainWindow(QtWidgets.QMainWindow, reinforcement.Ui_fuzzy_window):
             self.ts.finished.connect(self.finish_testing)
 
         elif self.rbTables.isChecked():
-            pass
+            self.ts = TableTesting()
+
+            if self.rbDifferential.isChecked():
+
+                # Read csv file
+                coordinates = np.loadtxt(
+                    open("uvispace/uvigui/tools/reinforcement_trainer/resources/testing_differential.csv",
+                    "r"), delimiter=";")
+
+                x_trajectory = []
+                y_trajectory = []
+                for point in coordinates:
+                    x_trajectory.append(point[0])
+                    y_trajectory.append(point[1])
+
+                self.ts.testing(load_name=self.csv_file_name,
+                                x_trajectory=x_trajectory,
+                                y_trajectory=y_trajectory, closed=False,
+                                differential_car=True, discrete_input=True)
+
+            elif self.rbAckerman.isChecked():
+
+                # Read csv file
+                coordinates = np.loadtxt(
+                    open("uvispace/uvigui/tools/reinforcement_trainer/resources/testing_ackerman.csv",
+                        "r"), delimiter=";")
+
+                x_trajectory = []
+                y_trajectory = []
+                for point in coordinates:
+                    x_trajectory.append(point[0])
+                    y_trajectory.append(point[1])
+
+                self.ts.testing(load_name=self.csv_file_name,
+                                x_trajectory=x_trajectory,
+                                y_trajectory=y_trajectory, closed=False,
+                                differential_car=False, discrete_input=True)
+
+            self.ts.finished.connect(self.finish_testing)
 
     def finish_training(self):
         """This function shows the testing bottom after training is done
@@ -346,7 +385,8 @@ class MainWindow(QtWidgets.QMainWindow, reinforcement.Ui_fuzzy_window):
         self.execute(state)
 
     def plot_sim(self):
-        """This function calls the update of the testing plot if it has not finished
+        """This function calls the update of the testing plot if it has not
+        finished
         """
         if self.state_number < len(self.ts.states):
             self.execute(self.ts.states[self.state_number])

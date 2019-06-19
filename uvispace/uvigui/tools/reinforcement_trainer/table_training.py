@@ -128,3 +128,94 @@ class TableTraining(QtCore.QThread):
         return_d = copy.deepcopy(self.epi_d_average)
         self.lock.release()
         return return_reward, return_v, return_d
+
+
+class TableTesting(QtCore.QThread):
+    def __init__(self):
+        QtCore.QThread.__init__(self)
+
+        self.SPACE_X = 4
+        self.SPACE_Y = 3
+        self.PERIOD = 1/12
+        self.NUM_DIV_ACTION = 9
+        self.INIT_TO_ZERO = True
+        self.EPISODES = 5500
+        # self.state_size = 2
+        # self.action_size = 5 * 5
+        self.v = []
+        self.d = []
+
+        self.lock = threading.Lock()
+
+    def testing(self, load_name, x_trajectory, y_trajectory, closed=True, differential_car=True, discrete_input=True):
+        """This function defines the testing variables
+        """
+
+        self.load_name = load_name
+        self.x_trajectory = x_trajectory
+        self.y_trajectory = y_trajectory
+        self.closed = closed
+        self.states = []
+        self.differential_car = differential_car
+        self.discrete_input = discrete_input
+
+        self.start()
+
+    def run(self):
+        """This function runs the testing algorithm
+        """
+        if not self.closed:
+            reward_need = (len(self.x_trajectory) // 50) * 5 + 10
+            print("Reward if it finishes: {}".format(reward_need))
+
+        scores = deque(maxlen=3)
+        agent = Agent(self.state_size, self.action_size, gamma=0.999, epsilon=1, epsilon_min=0.01, epsilon_decay=0.995,
+                      learning_rate=0.01, batch_size=128, tau=0.01)  #  Revisar a parte final de tabular agent para completar aqui
+
+        if self.differential_car:
+            env = UgvEnv(self.x_trajectory, self.y_trajectory, self.PERIOD,
+                         self.NUM_DIV_ACTION, closed=self.closed, differential_car=True, discrete_input=True)
+
+        else:
+            env = UgvEnv(self.x_trajectory, self.y_trajectory, self.PERIOD,
+                         self.NUM_DIV_ACTION, closed=self.closed, differential_car=False, discrete_input=True)
+
+        agent.load_model(self.load_name)
+
+        state, agent_state = env.reset()
+        agent_state = agent.format_state(agent_state)
+        done = False
+        R = 0
+        self.v = []
+        self.d = []
+        self.states.append(state)
+        while not done:
+            action = agent.action(agent_state, training=False)
+            new_state, new_agent_state, reward, done = env.step(action)
+
+            self.states.append(new_state)
+
+            self.lock.acquire()
+            self.v.append(env.v_linear)
+            self.d.append(np.sqrt(env.distance ** 2))
+            self.lock.release()
+
+            new_agent_state = agent.format_state(new_agent_state)
+            agent_state = new_agent_state
+            R += reward
+        scores.append(R)
+        mean_score = np.mean(scores)
+        mean_v = np.mean(self.v)
+        mean_d = np.mean(self.d)
+        print(
+            "score: {}, laps: {:}, mean_score: {}, final state :({},{}), velocidad media: {}, Distancia media: {}"
+            .format(R, env.laps, mean_score, env.state[0], env.state[1], mean_v, mean_d))
+
+    def read_values(self):
+        """This function locks the variables to be read by the GUI
+        """
+        self.lock.acquire()
+        return_v = copy.deepcopy(self.v)
+        return_d = copy.deepcopy(self.d)
+        self.lock.release()
+        return return_v, return_d
