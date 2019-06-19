@@ -94,7 +94,7 @@ class UviNavigator():
         """
         logger.info("Stopping UviNavigator.")
         self._kill_thread.set()
-        # wait until the thrad finishes
+        # wait until the thread finishes
         self.thread.join()
 
     def loop(self):
@@ -124,8 +124,8 @@ class UviNavigator():
             speed_publisher.bind("tcp://*:{}".format(self.speed_base_port + i))
             motor_speed_sockets.append(speed_publisher)
 
-        #Varible to store poses
-        poses=[None]*self.num_ugvs
+        # Variable to store poses
+        poses = [None]*self.num_ugvs
 
         # create the controller for each UGV
         self.controllers = []
@@ -133,7 +133,7 @@ class UviNavigator():
             if self.controller_types[i] == ControllerType.neural_line_follower:
                 self.controllers.append(NeuralController(self.ugv_ids[i]))
             elif self.controller_types[i] == ControllerType.tables_line_follower:
-                #  self.controllers.append(TableController(self.ugv_ids[i]))
+                #  self.controllers.append(TableController(self.ugv_ids[i])) !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 pass
             elif self.controller_types[i] == ControllerType.fuzzy_point_to_point:
                 # to be implemented
