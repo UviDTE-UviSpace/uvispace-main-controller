@@ -105,15 +105,15 @@ class MainWindow(QtWidgets.QMainWindow, reinforcement.Ui_fuzzy_window):
         self.timer_sim.timeout.connect(self.plot_sim)
 
     def start_training(self):
-        """This function checks what type of training has to do and runs the training of the controller
-        """
+        """ This function checks what type of training has to do and runs the
+        training of the controller """
 
         if self.rbNeural.isChecked():
 
             self.hdf5_file_name = 'uvispace/uvinavigator/controllers/linefollowers/neural_controller/resources/neural_nets/ANN_ugv{}.h5'.format(
                 self.lineEdit_ugvid.text())
 
-            #Hide start button to avoid multiple training
+            # Hide start button to avoid multiple training
             self.pbStartTraining.hide()
             self.pbStartTesting.hide()
 
@@ -129,7 +129,7 @@ class MainWindow(QtWidgets.QMainWindow, reinforcement.Ui_fuzzy_window):
 
         elif self.rbTables.isChecked():
 
-            self.csv_file_name = 'uvispace/uvinavigator/controllers/linefollowers/table_controller/resources/tables_agents/table_ugv{}.csv'.format(
+            self.npy_file_name = 'uvispace/uvinavigator/controllers/linefollowers/table_controller/resources/tables_agents/table_ugv{}'.format(
                 self.lineEdit_ugvid.text())
 
             # Hide start button to avoid multiple training
@@ -139,9 +139,15 @@ class MainWindow(QtWidgets.QMainWindow, reinforcement.Ui_fuzzy_window):
             self.tr = TableTraining()
 
             if self.rbDifferential.isChecked():
-                self.tr.trainclosedcircuitplot(save_name=self.csv_file_name, differential_car =True, agent_type = TableAgentType.sarsa)
+                self.tr.trainclosedcircuitplot(save_name=self.npy_file_name,
+                                               differential_car=True,
+                                               agent_type=TableAgentType.sarsa)
+
             elif self.rbAckerman.isChecked():
-                self.tr.trainclosedcircuitplot(save_name=self.csv_file_name, differential_car = True, agent_type = TableAgentType.sarsa)
+                self.tr.trainclosedcircuitplot(save_name=self.npy_file_name,
+                                               differential_car=True,
+                                               agent_type=TableAgentType.sarsa)
+
             self.timer_training.start(500)
             self.tr.finished.connect(self.finish_training)
 
@@ -161,7 +167,7 @@ class MainWindow(QtWidgets.QMainWindow, reinforcement.Ui_fuzzy_window):
             self.ts = NeuralTesting()
             if self.rbDifferential.isChecked():
 
-                #Read csv file
+                # Read csv file
                 coordinates = np.loadtxt(open("uvispace/uvigui/tools/reinforcement_trainer/resources/testing_differential.csv", "r"), delimiter=";")
                 x_trajectory=[]
                 y_trajectory=[]
@@ -185,7 +191,6 @@ class MainWindow(QtWidgets.QMainWindow, reinforcement.Ui_fuzzy_window):
 
                 self.ts.testing(load_name=self.hdf5_file_name, x_trajectory=x_trajectory, y_trajectory=y_trajectory, closed=False, differential_car=False)
 
-
             self.ts.finished.connect(self.finish_testing)
 
         elif self.rbTables.isChecked():
@@ -204,7 +209,7 @@ class MainWindow(QtWidgets.QMainWindow, reinforcement.Ui_fuzzy_window):
                     x_trajectory.append(point[0])
                     y_trajectory.append(point[1])
 
-                self.ts.testing(load_name=self.csv_file_name,
+                self.ts.testing(load_name=self.npy_file_name,
                                 x_trajectory=x_trajectory,
                                 y_trajectory=y_trajectory, closed=False,
                                 differential_car=True, discrete_input=True)
@@ -222,7 +227,7 @@ class MainWindow(QtWidgets.QMainWindow, reinforcement.Ui_fuzzy_window):
                     x_trajectory.append(point[0])
                     y_trajectory.append(point[1])
 
-                self.ts.testing(load_name=self.csv_file_name,
+                self.ts.testing(load_name=self.npy_file_name,
                                 x_trajectory=x_trajectory,
                                 y_trajectory=y_trajectory, closed=False,
                                 differential_car=False, discrete_input=True)
