@@ -48,10 +48,9 @@ class TableController(Controller):
         self.agent_initialized = False
 
     def start_new_trajectory(self, trajectory):
-        """
-        This function overwrites previous trajectories and makes the UGV
-        to start executing the new one.
-        """
+
+        """ This function overwrites previous trajectories and makes the UGV
+        to start executing the new one. """
 
         # overwrite previous trajectory with the new one
 
