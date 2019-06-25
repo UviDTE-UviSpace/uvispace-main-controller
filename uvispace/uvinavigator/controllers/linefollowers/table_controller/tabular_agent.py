@@ -51,13 +51,13 @@ x_trajectory = np.append(x_trajectory,
 y_trajectory = np.append(y_trajectory,
                          np.sin(np.linspace(270 * np.pi / 180, 180 * np.pi / 180, 81)) * 0.2 + 0.2)
 
-# x_trajectory = np.cos(np.linspace(180 * np.pi / 180, 0.01 * np.pi / 180, 61)) * 0.5 + 1
-# y_trajectory = np.sin(np.linspace(180 * np.pi / 180, 0.01 * np.pi / 180, 61)) * 0.5 + 0.5
 
 class Agent:
-    def __init__(self, agent_type="SARSA"):
+    def __init__(self, agent_type="SARSA", training=True):
         self.agent_type = agent_type
-        self._build_model()
+
+        if training:
+            self._build_model()
 
         # Define some constants for the learning
         self.EPSILON_DECAY = 0.9995
@@ -116,9 +116,9 @@ class Agent:
                                                discrete_delta_theta,
                                                m1, m2] = -0.01
 
-    def _choose_action(self, agent_state):
+    def _choose_action(self, agent_state, training=True):
 
-        if np.random.rand() <= self.epsilon:
+        if training and np.random.rand() <= self.epsilon:
             action = [random.randrange(NUM_DIV_ACTION),
                       random.randrange(NUM_DIV_ACTION)]
 
@@ -321,6 +321,20 @@ class Agent:
                 self.epsilon = self.EPSILON_MIN
 
         return new_state, reward, done, self.epsilon
+
+    def save_model(self, name):
+
+        """ This function saves a tabular model """
+
+        np.save(name, self.model)  # Poner la ruta correcta al archivo
+
+    def load_model(self, name):
+
+        """ This function loads a tabular model """
+
+        self.model = np.load(name+'.npy')  # Poner la ruta correcta al archivo
+
+        return self.model
 
 
 if __name__ == "__main__":
