@@ -140,7 +140,7 @@ class UviNavigator():
             elif self.controller_types[i] == ControllerType.fuzzy_point_to_point:
                 # to be implemented
                 pass
-
+        debug=0
         t1 = time.time()
         while not self._kill_thread.isSet():
             for i in range(self.num_ugvs):
@@ -151,7 +151,8 @@ class UviNavigator():
                         #check for a message, this will not block
                         # if no message it leaves the try because zmq behaviour
                         trajectory = trajectory_sockets[i].recv_json(flags=zmq.NOBLOCK)
-                        print('uvinavigator: trajectory recieved')
+                        print("after1")
+                        print('uvinavigator: trajectory received')
 
                         #calculate distance from first point of the trajectory to the vehicle
                         distance_trajec=np.sqrt((trajectory['x'][0]-poses[i]['x'])**2+(trajectory['y'][0]-poses[i]['y'])**2)
@@ -167,12 +168,17 @@ class UviNavigator():
                             trajectory['y']=np.concatenate((y_appendize, trajectory['y']))
 
                         # set the received trajectory as new trajectory
-                        self.controllers[i].start_new_trajectory(trajectory)
+                        print("before")
+                        debug = 1
+                        print("after")
 
                         # print a message in logger
                         logger.debug("Starting a new trajectory with UGV {}".format(self.ugv_ids[i]))
                     except:
                         pass
+                    if debug==1:
+                        self.controllers[i].start_new_trajectory(trajectory)
+                        debug=0
 
                     # read the pose socket to get the UGV current pose
                     try:

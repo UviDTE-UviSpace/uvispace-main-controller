@@ -5,7 +5,7 @@ import numpy as np
 import sys
 
 from uvispace.uvinavigator.controllers.controller import Controller
-from uvispace.uvinavigator.controllers.linefollowers.neural_controller.DQNagent import Agent
+from uvispace.uvinavigator.controllers.linefollowers.table_controller.tabular_agent import Agent
 from uvispace.uvirobot.robot_model.environment import UgvEnv
 from uvispace.uvirobot.common import UgvType
 from uvispace.uvinavigator.controllers.linefollowers.neural_controller.resources.validation_csv.csv_generator import generator
@@ -47,6 +47,7 @@ class TableController(Controller):
 
         self.agent_initialized = False
 
+
     def start_new_trajectory(self, trajectory):
 
         """ This function overwrites previous trajectories and makes the UGV
@@ -54,14 +55,16 @@ class TableController(Controller):
 
         # overwrite previous trajectory with the new one
 
+        print("Hello")
+
         Controller.start_new_trajectory(self, trajectory)
         self.num_points = len(self.trajectory['y'])
 
         # initialize table Agent (controller) with the first trajectory
-        if not self.agent_initialized:   #  Que necesito pa iniciar o agente?
+        if not self.agent_initialized:
             self.agent_initialized = True
             self.NUM_DIV_ACTION = 9
-            self.agent = Agent("SARSA")  # REVISAR
+            self.agent = Agent("SARSA")
 
             self.agent.load_model(
                 'uvispace/uvinavigator/controllers/linefollowers/table_controller/resources/tables_agents/table_ugv{}.npy'.format(self.ugv_id))
@@ -72,12 +75,7 @@ class TableController(Controller):
 
         self.env.reset(self.trajectory['x'][0], self.trajectory['y'][0])
 
-        # Vectors for validation study
-        self.periods = []
-        self.x = []
-        self.y = []
-        self.distance = []
-        self.t1 = time.time()
+
 
     def step(self, pose):
         """
@@ -90,40 +88,28 @@ class TableController(Controller):
         y = pose["y"]
         theta = pose["theta"]
 
-        self.t2 = time.time()
-        period = self.t2-self.t1
-        self.t1 = self.t2
-
         self.env.define_state(x, y, theta)
+
         distance = self.env._distance_next()
         delta_theta = self.env._calc_delta_theta()
         index = self.env._get_index()
 
-        self.periods.append(period)
-        self.x.append(x)
-        self.y.append(y)
-        self.distance.append(distance)
 
-        # print(pose)
-        # print(index)
-
-        # call the neural agent to get the new motor setpoints for the motors
+        # call the table agent to get the new motor setpoints for the motors
         if index >= (self.num_points-1):
             # stop the UGV
             m1 = 128
             m2 = 128
             self.trajectory = []
             self.running = False
-            gen = generator()
-            gen.generate_csv([self.periods, self.x, self.y, self.distance])
 
         else:
 
             # call the table agent to get the new values of m1 and m2
 
-            agent_state = self.agent.format_state([distance, delta_theta])
-            print(distance*100, delta_theta*180/3.1415)
-            action = self.agent.action(agent_state, training=False)
+            agent_state = self.env._discretize_agent_state(distance, delta_theta)
+
+            action = self.agent._choose_action(agent_state, False)
 
             m1, m2 = self.env._dediscretize_action(action)
 

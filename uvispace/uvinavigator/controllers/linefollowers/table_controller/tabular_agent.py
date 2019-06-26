@@ -10,7 +10,7 @@ from os.path import realpath, dirname
 uvispace_path = dirname(dirname(dirname(dirname(dirname(dirname(dirname(realpath(__file__))))))))
 sys.path.append(uvispace_path)
 
-from uvispace.uvigui.tools.reinforcement_trainer.table_training import *
+# from uvispace.uvigui.tools.reinforcement_trainer.table_training import *
 from uvispace.uvirobot.robot_model.environment import UgvEnv
 from uvispace.uvinavigator.controllers.linefollowers.neural_controller.resources.plot_ugv import PlotUgv
 
@@ -332,7 +332,7 @@ class Agent:
 
         """ This function loads a tabular model """
 
-        self.model = np.load(name+'.npy')
+        self.model = np.load(name)
 
         return self.model
 
