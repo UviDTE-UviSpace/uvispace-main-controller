@@ -64,7 +64,7 @@ class TableTraining(QtCore.QThread):
                 x_trajectory.append(point[0])
                 y_trajectory.append(point[1])
 
-        self.reward_need = 50
+        self.reward_need = 90
         # print(self.reward_need)
 
         scores = deque(maxlen=50)
@@ -124,7 +124,7 @@ class TableTraining(QtCore.QThread):
             print("episode: {} epsilon:{} reward:{} averaged reward:{} distance:{} gap:{} theta:{}".format
                 (e, epsilon, R, mean_score, env.distance, env.gap, env.state[2]))
 
-            if count == 3:
+            if epsilon == agent.EPSILON_MIN:
                 # print("episode: {}, score: {}, e: {:.2}, mean_score: {}, final state :({},{})"
                 # .format(e, R, agent.epsilon, mean_score, env.state[0], env.state[1]))
                 agent.save_model(self.save_name)
@@ -211,8 +211,8 @@ class TableTesting(QtCore.QThread):
             state, agent_state, reward, done = env.step(action)
 
             self.states.append(state)
-            self.v.append(env.wm_1)
-            self.d.append(env.wm_2)
+            self.v.append(env.v_linear)
+            self.d.append(math.fabs(env.distance))
             R += reward
 
         scores.append(R)

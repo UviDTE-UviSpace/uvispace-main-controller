@@ -60,8 +60,8 @@ class Agent:
         self._build_model()
 
         # Define some constants for the learning
-        self.EPSILON_DECAY = 0.9995
-        self.EPSILON_MIN = 0.1
+        self.EPSILON_DECAY = 0.9975
+        self.EPSILON_MIN = 0.01
         self.ALFA = 0.08  # learning rate
         self.GANMA = 0.95  # discount factor
 

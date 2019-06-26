@@ -17,6 +17,7 @@ MAX_STEPS = 1000  # !!!!
 # Reward weights
 BETA_DIST = 1
 BETA_GAP = 0.1
+BETA_GAP_DISCRETE = 2
 BETA_ZONE = 0.05
 
 BAND_WIDTH = 0.02
@@ -58,8 +59,12 @@ class UgvEnv:
         self.zone_2_limit = ZONE2_LIMIT
         if discrete_input:
             self.zone_2_limit = 0.08
+            self.beta_gap = BETA_GAP_DISCRETE
+            self.beta_dist = BETA_DIST
         else:
             self.zone_2_limit = ZONE2_LIMIT
+            self.beta_gap = BETA_GAP
+            self.beta_dist = BETA_DIST
 
         self.num_div_action = num_div_action
         self.num_div_state = num_div_action
@@ -234,15 +239,15 @@ class UgvEnv:
         elif self.zone_reward == 3:
             done = 1
             if self.discrete_input:
-                reward = -100
+                reward = -10
             else:
                 reward = -10
 
         else:
             done = 0
             # I removed Christians rewards
-            reward = -1 * BETA_DIST * math.fabs(self.distance) + \
-                BETA_GAP * self.gap
+            reward = -1 * self.beta_dist * math.fabs(self.distance) + \
+                self.beta_gap * self.gap
 
             if (self.index//50) > self.farthest:
                 self.farthest = self.index//50
