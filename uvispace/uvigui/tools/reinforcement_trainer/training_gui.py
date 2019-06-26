@@ -349,9 +349,6 @@ class MainWindow(QtWidgets.QMainWindow, reinforcement.Ui_fuzzy_window):
 
         self.ax.add_patch(rect2)
 
-        # Christian wrote false in the plt.show argumant and it
-        # it generated an error
-        # plt.show(False)
         plt.draw()
 
     def execute(self, state):
