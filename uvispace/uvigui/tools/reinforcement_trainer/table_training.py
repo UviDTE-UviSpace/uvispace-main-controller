@@ -147,7 +147,7 @@ class TableTesting(QtCore.QThread):
 
         self.SPACE_X = 4
         self.SPACE_Y = 3
-        self.PERIOD = 1/12
+        self.PERIOD = 1/30
         self.NUM_DIV_ACTION = 9
         self.INIT_TO_ZERO = True
         self.EPISODES = 5500
@@ -166,7 +166,6 @@ class TableTesting(QtCore.QThread):
         self.x_trajectory = x_trajectory
         self.y_trajectory = y_trajectory
         self.closed = closed
-        # self.states = []
         self.differential_car = differential_car
         self.discrete_input = discrete_input
 
@@ -182,10 +181,9 @@ class TableTesting(QtCore.QThread):
 
         scores = deque(maxlen=3)
 
-        # INSTANCIO EL AGENTE
-        agent = Agent("SARSA", training=False)  #  training sirve para q non chame a _build_model e colla o modelo q se carga do archivo
+        agent = Agent("SARSA", training=False)
 
-        agent.load_model(self.load_name)
+        #
 
         # INSTANCIO EL ENVIRONMENT EN FUNCIÓN DEL TIPO DE COCHE
         if self.differential_car:
@@ -200,6 +198,7 @@ class TableTesting(QtCore.QThread):
 
         for e in range(self.EPISODES):
 
+            # Aquí o único q necesito é chamar ao _choose_action e pasarlle o agent_state q sea
             agent.init_episode(env)
 
             done = False
@@ -208,7 +207,20 @@ class TableTesting(QtCore.QThread):
             epi_d = []
 
             while not done:
+                # Ver como inicializar o agent_state para empezar a testear, así q escolla a
+                # primeira accion, chamar a step e así en bucle
+
+                # Recoller estes valores de env.step(action)
+
                 state, reward, done, epsilon = agent.train_step(env)  # putada. ollo q non volva entrenar. de algunha forma hai que meter o training = false
+
+                # chamar de cada vez ao choose_action e pasarlle o agent_state
+                # basicamente facer o que fai o step_train pero sin a parte de
+                # modificar o model
+
+                # Actualizo los valores
+                self.agent_state = new_agent_state
+                self.action = new_action
 
                 epi_v.append(env.v_linear)
                 epi_d.append(env.distance)
@@ -229,3 +241,9 @@ class TableTesting(QtCore.QThread):
         return_d = copy.deepcopy(self.d)
         self.lock.release()
         return return_v, return_d
+
+    def read_name(self):
+
+        name = self.load_name
+
+        return name
