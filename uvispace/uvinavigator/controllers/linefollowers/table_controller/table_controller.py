@@ -60,17 +60,15 @@ class TableController(Controller):
         # initialize table Agent (controller) with the first trajectory
         if not self.agent_initialized:   #  Que necesito pa iniciar o agente?
             self.agent_initialized = True
-            self.state_size = 2
-            self.action_size = 5 * 5
             self.NUM_DIV_ACTION = 9
-            self.agent = Agent(self.state_size, self.action_size)  # REVISAR
+            self.agent = Agent("SARSA")  # REVISAR
 
             self.agent.load_model(
-                'uvispace/uvinavigator/controllers/linefollowers/neural_controller/resources/neural_nets/ANN_ugv{}.h5'.format(self.ugv_id))
+                'uvispace/uvinavigator/controllers/linefollowers/table_controller/resources/tables_agents/table_ugv{}.npy'.format(self.ugv_id))
 
         # initialize an instance of UGV environment to help with calculations
         self.env = UgvEnv(self.trajectory['x'], self.trajectory['y'], 0,
-                          self.NUM_DIV_ACTION, closed=False, differential_car=self.differential)  #  discrete_input = TRUE
+                          self.NUM_DIV_ACTION, closed=False, differential_car=self.differential, discrete_input=True)
 
         self.env.reset(self.trajectory['x'][0], self.trajectory['y'][0])
 
