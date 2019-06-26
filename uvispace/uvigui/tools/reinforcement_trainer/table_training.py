@@ -183,9 +183,6 @@ class TableTesting(QtCore.QThread):
 
         agent = Agent("SARSA", training=False)
 
-        #
-
-        # INSTANCIO EL ENVIRONMENT EN FUNCIÓN DEL TIPO DE COCHE
         if self.differential_car:
             env = UgvEnv(self.x_trajectory, self.y_trajectory, self.PERIOD,
                          self.NUM_DIV_ACTION, closed=self.closed,
@@ -198,8 +195,7 @@ class TableTesting(QtCore.QThread):
 
         for e in range(self.EPISODES):
 
-            # Aquí o único q necesito é chamar ao _choose_action e pasarlle o agent_state q sea
-            agent.init_episode(env)
+            state, agent_state = env.reset()
 
             done = False
             R = 0
@@ -207,20 +203,10 @@ class TableTesting(QtCore.QThread):
             epi_d = []
 
             while not done:
-                # Ver como inicializar o agent_state para empezar a testear, así q escolla a
-                # primeira accion, chamar a step e así en bucle
 
-                # Recoller estes valores de env.step(action)
+                action = agent._choose_action(agent_state, False)
 
-                state, reward, done, epsilon = agent.train_step(env)  # putada. ollo q non volva entrenar. de algunha forma hai que meter o training = false
-
-                # chamar de cada vez ao choose_action e pasarlle o agent_state
-                # basicamente facer o que fai o step_train pero sin a parte de
-                # modificar o model
-
-                # Actualizo los valores
-                self.agent_state = new_agent_state
-                self.action = new_action
+                state, agent_state, reward, done = env.step(action)
 
                 epi_v.append(env.v_linear)
                 epi_d.append(env.distance)
@@ -231,8 +217,8 @@ class TableTesting(QtCore.QThread):
             self.d.append(np.mean(epi_d))
             mean_score = np.mean(scores)
 
-            print("episode: {} epsilon:{} reward:{} averaged reward:{} distance:{} gap:{} theta:{}".format
-                (e, epsilon, R, mean_score, env.distance, env.gap, env.state[2]))
+            # print("episode: {} epsilon:{} reward:{} averaged reward:{} distance:{} gap:{} theta:{}".format
+            #     (e, epsilon, R, mean_score, env.distance, env.gap, env.state[2]))
 
     def read_values(self):
         """ This function locks the variables to be read by the GUI """
