@@ -166,6 +166,7 @@ class TableTesting(QtCore.QThread):
         self.x_trajectory = x_trajectory
         self.y_trajectory = y_trajectory
         self.closed = closed
+        self.states = []
         self.differential_car = differential_car
         self.discrete_input = discrete_input
 
@@ -181,7 +182,8 @@ class TableTesting(QtCore.QThread):
 
         scores = deque(maxlen=3)
 
-        agent = Agent("SARSA", training=False)
+        agent = Agent("SARSA")
+        agent.load_model(self.load_name)
 
         if self.differential_car:
             env = UgvEnv(self.x_trajectory, self.y_trajectory, self.PERIOD,
@@ -193,32 +195,32 @@ class TableTesting(QtCore.QThread):
                          self.NUM_DIV_ACTION, closed=self.closed,
                          differential_car=False, discrete_input=True)
 
-        for e in range(self.EPISODES):
 
-            state, agent_state = env.reset()
+        state, agent_state = env.reset()
+        done = False
+        R = 0
+        self.v = []
+        self.d = []
 
-            done = False
-            R = 0
-            epi_v = []
-            epi_d = []
+        self.states.append(state)
 
-            while not done:
+        while not done:
 
-                action = agent._choose_action(agent_state, False)
+            action = agent._choose_action(agent_state, False)
 
-                state, agent_state, reward, done = env.step(action)
+            state, agent_state, reward, done = env.step(action)
 
-                epi_v.append(env.v_linear)
-                epi_d.append(env.distance)
-                R += reward
+            self.states.append(state)
+            self.v.append(env.wm_1)
+            self.d.append(env.wm_2)
+            R += reward
 
-            scores.append(R)
-            self.v.append(np.mean(epi_v))
-            self.d.append(np.mean(epi_d))
-            mean_score = np.mean(scores)
+        scores.append(R)
 
-            # print("episode: {} epsilon:{} reward:{} averaged reward:{} distance:{} gap:{} theta:{}".format
-            #     (e, epsilon, R, mean_score, env.distance, env.gap, env.state[2]))
+        mean_score = np.mean(scores)
+
+        # print("episode: {} epsilon:{} reward:{} averaged reward:{} distance:{} gap:{} theta:{}".format
+        #     (e, epsilon, R, mean_score, env.distance, env.gap, env.state[2]))
 
     def read_values(self):
         """ This function locks the variables to be read by the GUI """
@@ -226,6 +228,7 @@ class TableTesting(QtCore.QThread):
         return_v = copy.deepcopy(self.v)
         return_d = copy.deepcopy(self.d)
         self.lock.release()
+
         return return_v, return_d
 
     def read_name(self):

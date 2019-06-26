@@ -161,7 +161,8 @@ class UgvEnv:
             # PWM to rads conversion
             wm1 = (25 * (m1 - 145) / 110) + np.random.uniform(-1, 1, 1)[0]
             wm2 = (25 * (m2 - 145) / 110) + np.random.uniform(-1, 1, 1)[0]
-
+            self.wm_1 = wm1
+            self.wm_2 = wm2
 
             # Calculate linear and angular velocity
             self.v_linear = (wm2 + wm1) * (self.r / 2)

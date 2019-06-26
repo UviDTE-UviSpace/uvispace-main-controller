@@ -104,6 +104,9 @@ class MainWindow(QtWidgets.QMainWindow, reinforcement.Ui_fuzzy_window):
         self.timer_sim = QTimer()
         self.timer_sim.timeout.connect(self.plot_sim)
 
+        # Show Testing button
+        self.pbStartTesting.show()
+
     def start_training(self):
         """ This function checks what type of training has to do and runs the
         training of the controller """
@@ -175,6 +178,9 @@ class MainWindow(QtWidgets.QMainWindow, reinforcement.Ui_fuzzy_window):
                     x_trajectory.append(point[0])
                     y_trajectory.append(point[1])
 
+                self.hdf5_file_name = 'uvispace/uvinavigator/controllers/linefollowers/neural_controller/resources/neural_nets/ANN_ugv{}.h5'.format(
+                    self.lineEdit_ugvid.text())
+
                 self.ts.testing(load_name=self.hdf5_file_name, x_trajectory=x_trajectory, y_trajectory=y_trajectory, closed=False, differential_car=True)
 
             elif self.rbAckerman.isChecked():
@@ -208,6 +214,9 @@ class MainWindow(QtWidgets.QMainWindow, reinforcement.Ui_fuzzy_window):
                 for point in coordinates:
                     x_trajectory.append(point[0])
                     y_trajectory.append(point[1])
+
+                self.npy_file_name = 'uvispace/uvinavigator/controllers/linefollowers/table_controller/resources/tables_agents/table_ugv{}'.format(
+                    self.lineEdit_ugvid.text())
 
                 self.ts.testing(load_name=self.npy_file_name,
                                 x_trajectory=x_trajectory,

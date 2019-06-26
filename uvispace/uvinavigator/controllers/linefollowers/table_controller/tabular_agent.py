@@ -54,10 +54,10 @@ y_trajectory = np.append(y_trajectory,
 
 
 class Agent:
-    def __init__(self, agent_type="SARSA", training=True):
+    def __init__(self, agent_type="SARSA"):
 
         self.agent_type = agent_type
-        self._build_model(training)
+        self._build_model()
 
         # Define some constants for the learning
         self.EPSILON_DECAY = 0.9995
@@ -68,60 +68,53 @@ class Agent:
         # Reset the training variables
         self.epsilon = 1.0
 
-    def _build_model(self, training):
+    def _build_model(self):
 
-        if not training:
-            # Ask for the route to the model.
-            self.name = TableTesting.read_name()
+        # Create the model all with zeros
+        self.model = np.zeros([NUM_DIV_STATE, NUM_DIV_STATE,
+                               NUM_DIV_ACTION, NUM_DIV_ACTION])
 
-            self.model = self.load_model(self.name)
-
-        else:
-            # Create the model all with zeros
-            self.model = np.zeros([NUM_DIV_STATE, NUM_DIV_STATE,
-                                   NUM_DIV_ACTION, NUM_DIV_ACTION])
-
-            # Initialize random Q table (except the terminal state that is 0)
-            for discrete_distance in range(NUM_DIV_STATE):
-                for discrete_delta_theta in range(NUM_DIV_STATE):
-                    for m1 in range(NUM_DIV_ACTION):
-                        for m2 in range(NUM_DIV_ACTION):
-                            if INIT_TO_ZERO:
-                                self.model[discrete_distance, discrete_delta_theta,
-                                           m1, m2] = 0
-                            else:
-                                if discrete_delta_theta == (NUM_DIV_STATE/2) - 0.5:
-                                    # Is well oriented
-                                    if m1 == m2:
-                                        self.model[discrete_distance,
-                                                   discrete_delta_theta,
-                                                   m1, m2] = 0.01
-                                    else:
-                                        self.model[discrete_distance,
-                                                   discrete_delta_theta,
-                                                   m1, m2] = -0.01
-
-                                elif discrete_delta_theta < (NUM_DIV_STATE/2) - 0.5:
-                                    # Is oriented to the left
-                                    if m1 < m2:
-                                        self.model[discrete_distance,
-                                                   discrete_delta_theta,
-                                                   m1, m2] = 100.0
-                                    else:
-                                        self.model[discrete_distance,
-                                                   discrete_delta_theta,
-                                                   m1, m2] = -0.01
-
+        # Initialize random Q table (except the terminal state that is 0)
+        for discrete_distance in range(NUM_DIV_STATE):
+            for discrete_delta_theta in range(NUM_DIV_STATE):
+                for m1 in range(NUM_DIV_ACTION):
+                    for m2 in range(NUM_DIV_ACTION):
+                        if INIT_TO_ZERO:
+                            self.model[discrete_distance, discrete_delta_theta,
+                                       m1, m2] = 0
+                        else:
+                            if discrete_delta_theta == (NUM_DIV_STATE/2) - 0.5:
+                                # Is well oriented
+                                if m1 == m2:
+                                    self.model[discrete_distance,
+                                               discrete_delta_theta,
+                                               m1, m2] = 0.01
                                 else:
-                                    # Is oriented to the right
-                                    if m1 > m2:
-                                        self.model[discrete_distance,
-                                                   discrete_delta_theta,
-                                                   m1, m2] = 100.0
-                                    else:
-                                        self.model[discrete_distance,
-                                                   discrete_delta_theta,
-                                                   m1, m2] = -0.01
+                                    self.model[discrete_distance,
+                                               discrete_delta_theta,
+                                               m1, m2] = -0.01
+
+                            elif discrete_delta_theta < (NUM_DIV_STATE/2) - 0.5:
+                                # Is oriented to the left
+                                if m1 < m2:
+                                    self.model[discrete_distance,
+                                               discrete_delta_theta,
+                                               m1, m2] = 100.0
+                                else:
+                                    self.model[discrete_distance,
+                                               discrete_delta_theta,
+                                               m1, m2] = -0.01
+
+                            else:
+                                # Is oriented to the right
+                                if m1 > m2:
+                                    self.model[discrete_distance,
+                                               discrete_delta_theta,
+                                               m1, m2] = 100.0
+                                else:
+                                    self.model[discrete_distance,
+                                               discrete_delta_theta,
+                                               m1, m2] = -0.01
 
     def _choose_action(self, agent_state, training=True):
 
@@ -333,13 +326,13 @@ class Agent:
 
         """ This function saves a tabular model """
 
-        np.save(name, self.model)  # Poner la ruta correcta al archivo
+        np.save(name, self.model)
 
     def load_model(self, name):
 
         """ This function loads a tabular model """
 
-        self.model = np.load(name+'.npy')  # Poner la ruta correcta al archivo
+        self.model = np.load(name+'.npy')
 
         return self.model
 
