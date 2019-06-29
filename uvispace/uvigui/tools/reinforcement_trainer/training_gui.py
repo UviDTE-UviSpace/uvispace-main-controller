@@ -215,7 +215,7 @@ class MainWindow(QtWidgets.QMainWindow, reinforcement.Ui_fuzzy_window):
                     x_trajectory.append(point[0])
                     y_trajectory.append(point[1])
 
-                self.npy_file_name = 'uvispace/uvinavigator/controllers/linefollowers/table_controller/resources/tables_agents/table_ugv{}'.format(
+                self.npy_file_name = 'uvispace/uvinavigator/controllers/linefollowers/table_controller/resources/tables_agents/table_ugv{}.npy'.format(
                     self.lineEdit_ugvid.text())
 
                 self.ts.testing(load_name=self.npy_file_name,
