@@ -45,9 +45,9 @@ class MainWindow(QtWidgets.QMainWindow, reinforcement.Ui_fuzzy_window):
         self.figure_training.suptitle('Reward    Velocity[m/s]    Distance[m]')
 
         # define axes for Reward Velocity and Distance to trajectory
-        self.axes1training = self.figure_training.add_axes([0.1, 0.65, 0.8, 0.25])
-        self.axes2training = self.figure_training.add_axes([0.1, 0.4, 0.8, 0.25])
-        self.axes3training = self.figure_training.add_axes([0.1, 0.15, 0.8, 0.25])
+        self.axes1training = self.figure_training.add_axes([0.1, 0.65, 0.8, 0.22])
+        self.axes2training = self.figure_training.add_axes([0.1, 0.40, 0.8, 0.22])
+        self.axes3training = self.figure_training.add_axes([0.1, 0.15, 0.8, 0.22])
 
         self.axes3training.set_xlabel('Episode')
 
