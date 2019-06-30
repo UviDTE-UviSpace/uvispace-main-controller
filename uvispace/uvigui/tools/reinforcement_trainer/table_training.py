@@ -18,7 +18,7 @@ class TableTraining(QtCore.QThread):
         self.SPACE_X = 4
         self.SPACE_Y = 3
         self.PERIOD = 1 / 30
-        self.NUM_DIV_ACTION = 9
+        self.NUM_DIV_ACTION = 25
         self.INIT_TO_ZERO = True
         self.EPISODES = 5500
 
@@ -148,7 +148,7 @@ class TableTesting(QtCore.QThread):
         self.SPACE_X = 4
         self.SPACE_Y = 3
         self.PERIOD = 1/30
-        self.NUM_DIV_ACTION = 9
+        self.NUM_DIV_ACTION = 25
         self.INIT_TO_ZERO = True
         self.EPISODES = 5500
 

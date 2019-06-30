@@ -15,9 +15,9 @@ SPACE_Y = 3
 MAX_STEPS = 1000  # !!!!
 
 # Reward weights
-BETA_DIST = 1
+BETA_DIST = 2
 BETA_GAP = 0.1
-BETA_GAP_DISCRETE = 2
+BETA_GAP_DISCRETE = 1
 BETA_ZONE = 0.05
 
 BAND_WIDTH = 0.02
@@ -150,7 +150,7 @@ class UgvEnv:
         if not simulation:
             m1, m2 = self._dediscretize_action(action)
 
-        if not self.differential_car:  # Ackerman model. Cambiado == por Not.
+        if not self.differential_car:  # Ackerman model.
             # m1 = orientation  m2= engine
 
             wm1 = (16.257 * (m1 - 180) / 75) + np.random.uniform(-0.3, 0.3, 1)[0]
@@ -173,7 +173,6 @@ class UgvEnv:
             self.v_linear = (wm2 + wm1) * (self.r / 2)
 
             # wm1 - wm2 because m1 is the engine of  the right
-            # changed old ecuation because it was wrong and divided /3.35 to make it like the wrong ecuation that worked
 
             if not self.discrete_input:
                 self.w_ang = (wm1 - wm2) * (self.r / self.rho)/3.35
@@ -245,7 +244,6 @@ class UgvEnv:
 
         else:
             done = 0
-            # I removed Christians rewards
             reward = -1 * self.beta_dist * math.fabs(self.distance) + \
                 self.beta_gap * self.gap
 
@@ -467,8 +465,8 @@ class UgvEnv:
             # m1 = 145 + discrete_m1 * 70/(self.num_div_action - 1)
             # m2 = 145 + discrete_m2 * 70/(self.num_div_action - 1)
 
-            m1 = 145 + discrete_m1 * 90/(self.num_div_action - 1)
-            m2 = 145 + discrete_m2 * 90/(self.num_div_action - 1)
+            m1 = 145 + discrete_m1 * 90/self.num_div_action
+            m2 = 145 + discrete_m2 * 90/self.num_div_action
 
         else:
             if self.differential_car:
