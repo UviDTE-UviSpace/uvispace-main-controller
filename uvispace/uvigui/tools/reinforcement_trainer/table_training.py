@@ -26,7 +26,7 @@ class TableTraining(QtCore.QThread):
 
     def trainclosedcircuitplot(self, save_name='table.npy',
                                differential_car=True,
-                               agent_type=TableAgentType.sarsa):
+                               agent_type=TableAgentType.qlearning):
 
         """ This function defines the training variables and start the thread
         to train """
@@ -64,7 +64,7 @@ class TableTraining(QtCore.QThread):
                 x_trajectory.append(point[0])
                 y_trajectory.append(point[1])
 
-        self.reward_need = 90
+        self.reward_need = 60
         # print(self.reward_need)
 
         scores = deque(maxlen=50)
@@ -124,10 +124,12 @@ class TableTraining(QtCore.QThread):
             print("episode: {} epsilon:{} reward:{} averaged reward:{} distance:{} gap:{} theta:{}".format
                 (e, epsilon, R, mean_score, env.distance, env.gap, env.state[2]))
 
-            if epsilon == agent.EPSILON_MIN:
+            # if epsilon == agent.EPSILON_MIN:
+            if count == 5:
                 # print("episode: {}, score: {}, e: {:.2}, mean_score: {}, final state :({},{})"
                 # .format(e, R, agent.epsilon, mean_score, env.state[0], env.state[1]))
                 agent.save_model(self.save_name)
+                print("Training finished after {} episodes".format(e))
                 break
 
     def read_averages(self):
@@ -182,7 +184,7 @@ class TableTesting(QtCore.QThread):
 
         scores = deque(maxlen=3)
 
-        agent = Agent("SARSA")
+        agent = Agent("Q-Learning")
         agent.load_model(self.load_name)
 
         if self.differential_car:

@@ -144,12 +144,12 @@ class MainWindow(QtWidgets.QMainWindow, reinforcement.Ui_fuzzy_window):
             if self.rbDifferential.isChecked():
                 self.tr.trainclosedcircuitplot(save_name=self.npy_file_name,
                                                differential_car=True,
-                                               agent_type=TableAgentType.sarsa)
+                                               agent_type=TableAgentType.qlearning)
 
             elif self.rbAckerman.isChecked():
                 self.tr.trainclosedcircuitplot(save_name=self.npy_file_name,
                                                differential_car=True,
-                                               agent_type=TableAgentType.sarsa)
+                                               agent_type=TableAgentType.qlearning)
 
             self.timer_training.start(500)
             self.tr.finished.connect(self.finish_training)
